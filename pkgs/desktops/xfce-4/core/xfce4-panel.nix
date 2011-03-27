@@ -2,11 +2,11 @@
 , libwnck, exo, libstartup_notification }:
 
 stdenv.mkDerivation rec {
-  name = "xfce4-panel-4.6.4";
-  
+  name = "xfce4-panel-4.8.2";
+
   src = fetchurl {
-    url = "http://www.xfce.org/archive/xfce/4.6.2/src/${name}.tar.bz2";
-    sha1 = "d2b310c036be84ed9886c06ae35b7a1a8eabfcb8";
+    url = "mirror://xfce/${name}.tar.bz2";
+    sha256 = "0rmvh2inzgb2qixxfmacvvhkqvdmh8qfvxb3csbh5vbrg838hzj9";
   };
 
   buildInputs =
