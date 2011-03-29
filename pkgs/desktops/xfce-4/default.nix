@@ -1,9 +1,25 @@
 { callPackage, pkgs }:
 
+  let lib = import "../../lib"; in
 {
+
+
   inherit (pkgs.gtkLibs) gtk glib;
-  inherit (pkgs.gnome) libglade libwnck;
+  inherit (pkgs.gnome) libglade libwnck vte;
   inherit (pkgs.perlPackages) URI;
+
+  fetchXfce = rec {
+    generic = prepend : name : hash :
+      let p = builtins.parseDrvName name;
+          versions = lib.splitString "." p.version;
+          ver_maj = lib.intersperse "." (lib.take 2 versions);
+      in pkgs.fetchurl {
+        url = "mirror://xfce/${prepend}/${p.name}/xx/${name}.tar.bz2";
+        sha256 = hash;
+      };
+    core = generic "xfce";
+    app = generic "apps";
+  };
 
   #### CORE
 
@@ -15,30 +31,25 @@
 
   libxfcegui4 = callPackage ./core/libxfcegui4.nix { };
 
-  # not tested yet?
   exo = callPackage ./core/exo.nix { };
 
-  # not tested yet
+  garcon = callPackage ./core/garcon.nix { };
+
   xfce4panel = callPackage ./core/xfce4-panel.nix { };
 
-  # not tested yet
   thunar = callPackage ./core/thunar.nix { };
 
-  # not tested yet
   xfce4settings = callPackage ./core/xfce4-settings.nix { };
 
-  # not tested yet
   xfce4session = callPackage ./core/xfce4-session.nix { };
 
-  # not tested yet
   xfwm4 = callPackage ./core/xfwm4.nix { };
 
-  # not tested yet
   xfdesktop = callPackage ./core/xfdesktop.nix { };
 
-  # needs 4ui
   xfceutils = callPackage ./core/xfce-utils.nix { };
 
+  xfce4_power_manager = callPackage ./core/xfce4-power-manager.nix { };
 
   # not used anymore
   libxfce4menu = callPackage ./core/libxfce4menu.nix { };
@@ -55,17 +66,13 @@
 
   #### APPLICATIONS
 
-#TODO: appfinder
+#TODO: correct links; more stuff: appfinder etc.
 
-  terminal = callPackage ./applications/terminal.nix {
-    inherit (pkgs.gnome) vte;
-  };
+  terminal = callPackage ./applications/terminal.nix { };
 
   mousepad = callPackage ./applications/mousepad.nix { };
 
   ristretto = callPackage ./applications/ristretto.nix { };
-
-  xfce4_power_manager = callPackage ./applications/xfce4-power-manager.nix { };
 
   xfce4mixer = callPackage ./applications/xfce4-mixer.nix { };
 

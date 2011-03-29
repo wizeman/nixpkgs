@@ -1,12 +1,9 @@
-{ stdenv, fetchurl, pkgconfig, glib, intltool }:
+{ stdenv, fetchXfce, pkgconfig, glib, intltool }:
 
 stdenv.mkDerivation rec {
   name = "libxfce4util-4.8.1";
 
-  src = fetchurl {
-    url = "mirror://xfce/${name}.tar.bz2";
-    sha256 = "108clym2drr9fsyy9wdrzsjlwm5qymi9dr47akxjxfazhi7ynakk";
-  };
+  src = fetchXfce.app name "108clym2drr9fsyy9wdrzsjlwm5qymi9dr47akxjxfazhi7ynakk";
 
   buildInputs = [ pkgconfig glib intltool ];
 

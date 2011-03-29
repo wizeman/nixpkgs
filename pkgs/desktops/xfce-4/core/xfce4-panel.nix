@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfcegui4
-, libwnck, exo, libstartup_notification }:
+{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui
+, libwnck, exo, garcon, xfconf, libstartup_notification }:
 
 stdenv.mkDerivation rec {
   name = "xfce4-panel-4.8.2";
@@ -11,10 +11,10 @@ stdenv.mkDerivation rec {
 
   buildInputs =
     [ pkgconfig intltool gtk libxfce4util exo libwnck
-      libstartup_notification
+      garcon xfconf libstartup_notification
     ];
 
-  propagatedBuildInputs = [ libxfcegui4 ];
+  propagatedBuildInputs = [ libxfce4ui ];
 
   meta = {
     homepage = http://www.xfce.org/;
