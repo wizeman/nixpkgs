@@ -1,12 +1,9 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gtk }:
+{ stdenv, fetchXfce, pkgconfig, intltool, gtk }:
 
 stdenv.mkDerivation rec {
   name = "xfce4-icon-theme-4.4.3";
 
-  src = fetchurl {
-    url = "http://www.xfce.org/archive/src/art/xfce4-icon-theme/4.4/${name}.tar.bz2";
-    sha1 = "0c0d0c45cd4a7f609310db8e9d17c1c4a131a6e7";
-  };
+  src = fetchXfce.art name "1yk6rx3zr9grm4jwpjvqdkl13pisy7qn1wm5cqzmd2kbsn96cy6l";
 
   buildInputs = [ pkgconfig intltool gtk ];
 
