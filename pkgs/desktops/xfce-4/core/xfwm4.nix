@@ -1,5 +1,5 @@
 { stdenv, fetchurl, pkgconfig, gtk, intltool, libglade, libxfce4util
-, libxfcegui4, xfconf, libwnck, libstartup_notification, xorg }:
+, libxfce4ui, xfconf, libwnck, libstartup_notification, xorg }:
 
 stdenv.mkDerivation rec {
   name = "xfwm4-4.8.1";
@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs =
-    [ pkgconfig intltool gtk libglade libxfce4util libxfcegui4 xfconf
+    [ pkgconfig intltool gtk libglade libxfce4util libxfce4ui xfconf
       libwnck libstartup_notification
       xorg.libXcomposite xorg.libXfixes xorg.libXdamage
     ];

@@ -1,52 +1,62 @@
 { callPackage, pkgs }:
 
-rec {
+{
   inherit (pkgs.gtkLibs) gtk glib;
+  inherit (pkgs.gnome) libglade libwnck;
+  inherit (pkgs.perlPackages) URI;
 
   #### CORE
 
-  exo = callPackage ./core/exo.nix {
-    inherit (pkgs.perlPackages) URI;
-  };
-
   libxfce4util = callPackage ./core/libxfce4util.nix { };
-
-  libxfcegui4 = callPackage ./core/libxfcegui4.nix {
-    inherit (pkgs.gnome) libglade;
-  };
-
-  libxfce4menu = callPackage ./core/libxfce4menu.nix { };
 
   xfconf = callPackage ./core/xfconf.nix { };
 
-  xfwm4 = callPackage ./core/xfwm4.nix {
-    inherit (pkgs.gnome) libglade libwnck;
-  };
+  libxfce4ui = callPackage ./core/libxfce4ui.nix { };
 
+  libxfcegui4 = callPackage ./core/libxfcegui4.nix { };
+
+  # not tested yet?
+  exo = callPackage ./core/exo.nix { };
+
+  # not tested yet
+  xfce4panel = callPackage ./core/xfce4-panel.nix { };
+
+  # not tested yet
+  thunar = callPackage ./core/thunar.nix { };
+
+  # not tested yet
+  xfce4settings = callPackage ./core/xfce4-settings.nix { };
+
+  # not tested yet
+  xfce4session = callPackage ./core/xfce4-session.nix { };
+
+  # not tested yet
+  xfwm4 = callPackage ./core/xfwm4.nix { };
+
+  # not tested yet
+  xfdesktop = callPackage ./core/xfdesktop.nix { };
+
+  # needs 4ui
   xfceutils = callPackage ./core/xfce-utils.nix { };
 
-  xfce4session = callPackage ./core/xfce4-session.nix {
-    inherit (pkgs.gnome) libglade libwnck;
-  };
 
-  xfce4settings = callPackage ./core/xfce4-settings.nix {
-    inherit (pkgs.gnome) libglade libwnck;
-  };
+  # not used anymore
+  libxfce4menu = callPackage ./core/libxfce4menu.nix { };
 
-  xfce4panel = callPackage ./core/xfce4-panel.nix {
-    inherit (pkgs.gnome) libwnck;
-  };
 
-  xfdesktop = callPackage ./core/xfdesktop.nix {
-    inherit (pkgs.gnome) libwnck libglade;
-  };
 
-  thunar = callPackage ./core/thunar.nix { };
+
+
+
+
+
 
   gtk_xfce_engine = callPackage ./core/gtk-xfce-engine.nix { };
 
   #### APPLICATIONS
-  
+
+#TODO: appfinder
+
   terminal = callPackage ./applications/terminal.nix {
     inherit (pkgs.gnome) vte;
   };
@@ -62,5 +72,5 @@ rec {
   #### ART
 
   xfce4icontheme = callPackage ./art/xfce4-icon-theme.nix { };
-  
+
 }

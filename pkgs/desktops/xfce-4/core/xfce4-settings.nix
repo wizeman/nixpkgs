@@ -1,6 +1,7 @@
-{ stdenv, fetchurl, pkgconfig, intltool, exo, gtk, libxfce4util, libxfcegui4
+{ stdenv, fetchurl, pkgconfig, intltool, exo, gtk, libxfce4util, libxfce4ui
 , libglade, xfconf, xorg, libwnck, libnotify }:
 
+#TODO: optional packages
 stdenv.mkDerivation rec {
   name = "xfce4-settings-4.8.1";
 
@@ -10,7 +11,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs =
-    [ pkgconfig intltool exo gtk libxfce4util libxfcegui4 libglade
+    [ pkgconfig intltool exo gtk libxfce4util libxfce4ui libglade
       xfconf xorg.libXi xorg.libXcursor libwnck libnotify
     #gtk libxfce4util libxfcegui4 libwnck dbus_glib
       #xfconf libglade xorg.iceauth

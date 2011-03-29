@@ -3,7 +3,7 @@
 , gamin }:
 
 stdenv.mkDerivation rec {
-  name = "thunar-1.3.0";
+  name = "Thunar-1.3.0";
 
   src = fetchurl {
     url = "mirror://xfce/${name}.tar.bz2";

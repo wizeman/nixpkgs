@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfcegui4
+{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui
 , libwnck, dbus_glib, xfconf, libglade, xorg }:
 
 stdenv.mkDerivation rec {
@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs =
-    [ pkgconfig intltool gtk libxfce4util libxfcegui4 libwnck dbus_glib
+    [ pkgconfig intltool gtk libxfce4util libxfce4ui libwnck dbus_glib
       xfconf libglade xorg.iceauth
     ];
 
