@@ -1,0 +1,6 @@
+From: Vladimír Čunát <vcunat@gmail.com>
+Subject: [PATCH] vlada/wpa_supplicant
+
+Updated wpa_supplicant to 0.7.3 and added optional readline support (on by default).
+
+Signed-off-by: Vladimír Čunát <vcunat@gmail.com>

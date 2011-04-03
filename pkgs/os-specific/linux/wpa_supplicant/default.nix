@@ -1,31 +1,39 @@
 {stdenv, fetchurl, openssl
-, guiSupport ? false
-, qt4}:
+, readlineSupport ? true, readline
+, guiSupport ? false, qt4}:
 
-assert !guiSupport || qt4 != null;
+assert readlineSupport -> readline!=null;
+assert guiSupport -> qt4!=null;
 
 let
   buildDirs = "wpa_supplicant wpa_passphrase wpa_cli";
+  lib = stdenv.lib;
+
+  extraConfig = lib.concatStringsSep "\n" (
+    ["CONFIG_DEBUG_SYSLOG=y"]
+    ++ lib.optional readlineSupport "CONFIG_READLINE=y"
+  );
 in
 
 stdenv.mkDerivation rec {
-  name = "wpa_supplicant-0.7.2";
+  name = "wpa_supplicant-0.7.3";
 
   src = fetchurl {
     url = "http://hostap.epitest.fi/releases/${name}.tar.gz";
-    sha256 = "1gnwhnczli50gidsq22ya68hixmdrhd1sxw202ygihvg6xsjl06z";
+    sha256 = "0hwlsn512q2ps8wxxjmkjfdg3vjqqb9mxnnwfv1wqijkm3551kfh";
   };
 
   preBuild = ''
     cd wpa_supplicant
     cp defconfig .config
-    echo CONFIG_DEBUG_SYSLOG=y >> .config
+    echo "${extraConfig}" >> .config
     substituteInPlace Makefile --replace /usr/local $out
     makeFlagsArray=(ALL="${buildDirs} ${if guiSupport then "wpa_gui-qt4" else ""}")
   '';
 
   buildInputs = [openssl]
-    ++ stdenv.lib.optional guiSupport qt4;
+    ++ lib.optional readlineSupport readline
+    ++ lib.optional guiSupport qt4;
 
   # qt gui doesn't install because the executable is named differently from directory name
   # so never include wpa_gui_-qt4 in buildDirs when running make install
@@ -46,6 +54,7 @@ stdenv.mkDerivation rec {
   meta = {
     homepage = http://hostap.epitest.fi/wpa_supplicant/;
     description = "A tool for connecting to WPA and WPA2-protected wireless networks";
+    license = "GPLv2";
     maintainers = [stdenv.lib.maintainers.marcweber];
     platforms = stdenv.lib.platforms.linux;
   };
