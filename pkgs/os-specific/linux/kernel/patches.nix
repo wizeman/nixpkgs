@@ -128,6 +128,17 @@ in
       features.fbConDecor = true;
     };
 
+  fbcondecor_2_6_38 =
+    rec {
+      name = "fbcondecor-0.9.6-2.6.38";
+      patch = fetchurl {
+        url = "http://dev.gentoo.org/~spock/projects/fbcondecor/archive/${name}.patch";
+        sha256 = "1l8xqf5z227m5ay6azqba1qw10y26a4cwfhzzapzmmwq1bpr8mlw";
+      };
+      extraConfig = fbcondecorConfig;
+      features.fbConDecor = true;
+    };
+
   # From http://patchwork.kernel.org/patch/19495/
   ext4_softlockups_2_6_28 =
     { name = "ext4-softlockups-fix";
@@ -212,6 +223,16 @@ in
       features.aufs2_1 = true;
     };
 
+  aufs2_1_2_6_38 =
+    { # From http://aufs.git.sourceforge.net/git/gitweb.cgi?p=aufs/aufs2-standalone.git;a=tree;h=refs/heads/aufs2.1-38;hb=refs/heads/aufs2.1-38
+      # Note that this merely the patch needed to build AUFS2.1 as a
+      # standalone package.
+      name = "aufs2.1";
+      patch = ./aufs2.1-38.patch;
+      features.aufsBase = true;
+      features.aufs2_1 = true;
+    };
+
   # Increase the timeout on CIFS requests from 15 to 120 seconds to
   # make CIFS more resilient to high load on the CIFS server.
   cifs_timeout =
@@ -286,4 +307,11 @@ in
     sha256 = "0acllabvbm9pmjnh0zx9mgnp47xbrl9ih6i037c85h0ymnjsxdhk";
   };
 
+  glibc_getline =
+    {
+      # Patch to work around conflicting types for the `getline' function
+      # with recent Glibcs (2009).
+      name = "glibc-getline";
+      patch = ./getline.patch;
+    };
 }

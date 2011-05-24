@@ -4,18 +4,16 @@
 args: with args; with pkgs;
 let
   inherit (pkgs) stdenv fetchurl subversion;
-  config = param: getConfig [ "git" param ];
 in
 rec {
 
   git = lib.makeOverridable (import ./git) {
     inherit fetchurl stdenv curl openssl zlib expat perl python gettext gnugrep
-      asciidoc texinfo xmlto docbook2x
-      docbook_xsl docbook_xml_dtd_45 libxslt
+      asciidoc texinfo xmlto docbook2x docbook_xsl docbook_xml_dtd_45 libxslt
       cpio tcl tk makeWrapper subversion;
-    svnSupport = config "svnSupport" false; # for git-svn support
-    guiSupport = config "guiSupport" false;
-    sendEmailSupport = config "sendEmailSupport" false;
+    svnSupport = false;		# for git-svn support
+    guiSupport = false;		# requires tcl/tk
+    sendEmailSupport = false;	# requires plenty of perl libraries
     perlLibs = [perlPackages.LWP perlPackages.URI perlPackages.TermReadKey];
     smtpPerlLibs = [
       perlPackages.NetSMTP perlPackages.NetSMTPSSL
@@ -25,26 +23,31 @@ rec {
     ];
   };
 
+  # Git with SVN support, but without GUI.
+  gitSVN = lowPrio (appendToName "with-svn" (git.override {
+    svnSupport = true;
+  }));
+
   # The full-featured Git.
-  gitFull = git.override {
+  gitFull = lowPrio (appendToName "full" (git.override {
     svnSupport = true;
     guiSupport = true;
     sendEmailSupport = stdenv.isDarwin == false;
-  };
+  }));
 
   gitGit = import ./git/git-git.nix {
     inherit fetchurl sourceFromHead stdenv curl openssl zlib expat perl gettext
       asciidoc texinfo xmlto docbook2x
       docbook_xsl docbook_xml_dtd_45 libxslt
       cpio tcl tk makeWrapper subversion autoconf;
-    svnSupport = config "svnSupport" false; # for git-svn support
-    guiSupport = config "guiSupport" false;
+    svnSupport = false;
+    guiSupport = false;
     perlLibs = [perlPackages.LWP perlPackages.URI perlPackages.TermReadKey subversion];
   };
 
   gitAnnex = lib.makeOverridable (import ./git-annex) {
     inherit stdenv fetchurl libuuid rsync findutils curl perl;
-    inherit (haskellPackages) ghc MissingH utf8String QuickCheck2 pcreLight;
+    inherit (haskellPackages) ghc MissingH utf8String QuickCheck2 pcreLight SHA dataenc;
   };
 
   qgit = import ./qgit {
@@ -93,6 +96,10 @@ rec {
 
   git2cl = import ./git2cl {
     inherit fetchgit stdenv perl;
+  };
+
+  svn2git = import ./svn2git {
+    inherit stdenv fetchgit qt47 subversion apr;
   };
 
   gitSubtree = stdenv.mkDerivation {

@@ -1,16 +1,23 @@
 { stdenv, fetchurl, pkgconfig, glib }:
 
-stdenv.mkDerivation rec {
-  name = "nbd-2.9.20";
+let
+  name = "nbd-2.9.21a";
+in
+stdenv.mkDerivation {
+  inherit name;
 
   src = fetchurl {
     url = "mirror://sourceforge/nbd/${name}.tar.bz2";
-    sha256 = "98f0de421f0b2f683d46dff3eb679a3409a41f08e6fad7c2f71f60c5d409939c";
+    sha256 = "9946dd7f4a63cf20ea8617100d0f599211d4a5fd5b6cfb8f50f8975431222bbd";
   };
 
   buildInputs = [pkgconfig glib];
   postInstall = ''install -D -m 444 README "$out/share/doc/nbd/README"'';
-  
+
+  # The test suite doesn't succeed on Hydra (NixOS), because it assumes
+  # that certain global configuration files available.
+  doCheck = false;
+
   # Glib calls `clock_gettime', which is in librt.  Since we're using
   # a static Glib, we need to pass it explicitly.
   NIX_LDFLAGS = "-lrt";

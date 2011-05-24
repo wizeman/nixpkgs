@@ -1,9 +1,9 @@
 rec {
-   version="r74228";
-   name="webkit-r74228";
-   hash="1vwh72zzvj2p9lrs847wmcxgpjl2411blfk6ry3wczcdwg712a46";
-   url="http://builds.nightly.webkit.org/files/trunk/src/WebKit-r74228.tar.bz2";
-   advertisedUrl="http://builds.nightly.webkit.org/files/trunk/src/WebKit-r74228.tar.bz2";
+   version="1.4.0";
+   name="webkit-1.4.0";
+   hash="123zllzlnkjgw4d2ag73dvrjmkikbapxlz5730ps6y4qm43gxc1y";
+   url="http://webkitgtk.org/webkit-1.4.0.tar.gz";
+   advertisedUrl="http://webkitgtk.org/webkit-1.4.0.tar.gz";
   
   
 }

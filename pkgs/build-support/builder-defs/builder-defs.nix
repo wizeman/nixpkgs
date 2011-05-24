@@ -384,13 +384,28 @@ let inherit (builtins) head tail trace; in
                 echo '${toString (attrByPath ["propagatedBuildInputs"] [] args)}' >\$out/nix-support/propagated-build-inputs
         ") ["minInit" "defEnsureDir"];
 
-        cmakeFlags = "-DCMAKE_SKIP_BUILD_RPATH=ON";
+        cmakeFlags = attrByPath ["cmakeFlags"] [] args;
+
+        cmakeRPathFlag = if (attrByPath ["cmakeSkipRpath "] true args) then " -DCMAKE_SKIP_BUILD_RPATH=ON " else "";
 
 	doCmake = fullDepEntry (''
           mkdir build
 	  cd build
-	  cmake -D CMAKE_INSTALL_PREFIX="$out" ${toString cmakeFlags} ..
+	  cmake -D CMAKE_INSTALL_PREFIX="$out" ${cmakeRPathFlag}${toString cmakeFlags} ..
 	'') ["minInit" "addInputs" "doUnpack"];
+
+	doScons = fullDepEntry (''
+		ensureDir $out
+		${if (attrByPath ["sconsCleanEnv"] false args)
+		 then ""
+		 else ''
+                   sed -e '1iimport os' -i SConstruct
+                   sed -e 's/env *= *Environment *.*/&; env['"'"'ENV'"'"']=os.environ;/' -i SConstruct
+		 ''
+		}
+		scons ${toString (attrByPath ["sconsFlags"] [] args)} PREFIX=$out 
+		scons ${toString (attrByPath ["sconsFlags"] [] args)} PREFIX=$out install
+	'') ["minInit" "doUnpack" "addInputs" "defEnsureDir"];
 
         /*debug = x:(trace x x);
         debugX = x:(trace (toXML x) x);*/

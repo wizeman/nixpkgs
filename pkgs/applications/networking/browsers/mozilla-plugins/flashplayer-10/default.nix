@@ -17,6 +17,7 @@
 , pango
 , cairo
 , atk
+, gdk_pixbuf
 , debug ? false
 
 /* you have to add ~/mm.cfg :
@@ -52,9 +53,9 @@ let
         url = http://download.macromedia.com/pub/labs/flashplayer10/flashplayer_square_p2_32bit_debug_linux_092710.tar.gz;
         sha256 = "11w3mxa39l4mnlsqzlwbdh1sald549afyqbx2kbid7in5qzamlcc";
       } else {
-        version = "10.2.152.27";
+        version = "10.3.181.14";
         url = http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_10_linux.tar.gz;
-        sha256 = "1xfa0m1h02lvl5an225z4n2l4rv4s35x7a4w3rc413jbggbd0f6k";
+        sha256 = "00sh25g2h7yq9kwrqv9d0fgrd6n87i7biycgkxm46sh65mxb1aif";
       }
     else throw "flashplayer is not supported on this platform";
 
@@ -75,7 +76,7 @@ stdenv.mkDerivation {
 
   rpath = stdenv.lib.makeLibraryPath
     [ zlib alsaLib curl nss nspr fontconfig freetype expat libX11
-      libXext libXrender libXt gtk glib pango atk cairo
+      libXext libXrender libXt gtk glib pango atk cairo gdk_pixbuf
     ];
 
   buildPhase = ":";
