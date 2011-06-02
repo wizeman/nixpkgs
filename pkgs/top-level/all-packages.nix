@@ -2115,9 +2115,9 @@ let
 
   lazarus = builderDefsPackage (import ../development/compilers/fpc/lazarus.nix) {
     inherit makeWrapper;
-    inherit (gtkLibs) gtk glib pango atk;
+    inherit (gtkLibs) gtk glib pango atk gdk_pixbuf;
     inherit (xlibs) libXi inputproto libX11 xproto libXext xextproto;
-    fpc = fpc_2_4_0;
+    fpc = fpc;
   };
 
   llvm = callPackage ../development/compilers/llvm { };
@@ -2157,9 +2157,8 @@ let
 
     camlzip = callPackage ../development/ocaml-modules/camlzip { };
 
-    camomile = camomile_0_7_3;
-    camomile_0_7_3 = callPackage ../development/ocaml-modules/camomile/0.7.3.nix { };
-    camomile_0_8_1 = callPackage ../development/ocaml-modules/camomile/0.8.1.nix { };
+    camomile_0_8_2 = callPackage ../development/ocaml-modules/camomile/0.8.2.nix { };
+    camomile = callPackage ../development/ocaml-modules/camomile { };
 
     cryptokit = callPackage ../development/ocaml-modules/cryptokit { };
 
@@ -2177,7 +2176,9 @@ let
 
     menhir = callPackage ../development/ocaml-modules/menhir { };
 
-    ocaml_batteries = callPackage ../development/ocaml-modules/batteries { };
+    ocaml_batteries = callPackage ../development/ocaml-modules/batteries {
+      camomile = camomile_0_8_2;
+    };
 
     ocaml_cryptgps = callPackage ../development/ocaml-modules/cryptgps { };
 
@@ -2901,6 +2902,7 @@ let
   scmccid = callPackage ../development/libraries/scmccid { };
 
   ccrtp = callPackage ../development/libraries/ccrtp { };
+  ccrtp_1_8 = callPackage ../development/libraries/ccrtp/1.8.nix { };
 
   cgui = callPackage ../development/libraries/cgui {};
 
@@ -3198,6 +3200,9 @@ let
   libdwg = callPackage ../development/libraries/libdwg { };
 
   libgadu = callPackage ../development/libraries/libgadu { };
+
+  libgdata = (newScope gnome) ../development/libraries/libgdata {};
+  libgdata_0_6 = (newScope gnome) ../development/libraries/libgdata/0.6.nix {};
 
   eglibc = callPackage ../development/libraries/eglibc {
     kernelHeaders = linuxHeaders;
@@ -3877,6 +3882,9 @@ let
   libzip = callPackage ../development/libraries/libzip { };
 
   libzrtpcpp = callPackage ../development/libraries/libzrtpcpp { };
+  libzrtpcpp_1_6 = callPackage ../development/libraries/libzrtpcpp/1.6.nix {
+    ccrtp = ccrtp_1_8;
+  };
 
   lightning = callPackage ../development/libraries/lightning { };
 
@@ -4208,6 +4216,8 @@ let
   soqt = callPackage ../development/libraries/soqt { };
 
   speechd = callPackage ../development/libraries/speechd { };
+
+  speech_tools = callPackage ../development/libraries/speech-tools {};
 
   speex = callPackage ../development/libraries/speex { };
 
@@ -5702,6 +5712,8 @@ let
 
   clearlyU = callPackage ../data/fonts/clearlyU { };
 
+  cm_unicode = callPackage ../data/fonts/cm-unicode {};
+
   dejavu_fonts = callPackage ../data/fonts/dejavu-fonts {
     inherit (perlPackages) FontTTF;
   };
@@ -5728,6 +5740,8 @@ let
 
   freefont_ttf = callPackage ../data/fonts/freefont-ttf { };
 
+  gentium = callPackage ../data/fonts/gentium {};
+
   hicolor_icon_theme = callPackage ../data/misc/hicolor-icon-theme { };
 
   inconsolata = callPackage ../data/fonts/inconsolata {};
@@ -5736,10 +5750,8 @@ let
 
   liberation_ttf = callPackage ../data/fonts/redhat-liberation-fonts { };
 
-  libertine = builderDefsPackage (import ../data/fonts/libertine/2.7.nix) {
+  libertine = builderDefsPackage (import ../data/fonts/libertine) {
     inherit fontforge;
-  };
-  libertineBin = builderDefsPackage (import ../data/fonts/libertine/2.7.bin.nix) {
   };
 
   lmodern = callPackage ../data/fonts/lmodern { };
@@ -5749,6 +5761,8 @@ let
   miscfiles = callPackage ../data/misc/miscfiles { };
 
   mph_2b_damase = callPackage ../data/fonts/mph-2b-damase { };
+
+  oldstandard = callPackage ../data/fonts/oldstandard { };
 
   posix_man_pages = callPackage ../data/documentation/man-pages-posix { };
 
@@ -5773,6 +5787,10 @@ let
   themes = name: import (../data/misc/themes + ("/" + name + ".nix")) {
     inherit fetchurl;
   };
+
+  theano = callPackage ../data/fonts/theano { };
+
+  tempora_lgc = callPackage ../data/fonts/tempora-lgc { };
 
   terminus_font = callPackage ../data/fonts/terminus-font { };
 
@@ -6962,6 +6980,8 @@ let
   twinkle = callPackage ../applications/networking/twinkle {
     qt = qt3;
     boost = boostFull;
+    ccrtp = ccrtp_1_8;
+    libzrtpcpp = libzrtpcpp_1_6;
   };
 
   unison = callPackage ../applications/networking/sync/unison {
@@ -7125,7 +7145,7 @@ let
 
   xneur = callPackage ../applications/misc/xneur {
     GStreamer=gst_all.gstreamer;
-    inherit (gtkLibs) glib gtk pango atk;
+    inherit (gtkLibs) glib gtk pango atk gdk_pixbuf;
   };
 
   xneur_0_8 = callPackage ../applications/misc/xneur/0.8.nix {
@@ -7451,6 +7471,8 @@ let
       libICE libXmu libXext libXpm;
     inherit gnuchess texinfo;
   };
+
+  xconq = callPackage ../games/xconq {};
 
   xsokoban = builderDefsPackage (import ../games/xsokoban) {
     inherit (xlibs) libX11 xproto libXpm libXt;
@@ -7806,6 +7828,7 @@ let
   ghostscript = callPackage ../misc/ghostscript {
     x11Support = false;
     cupsSupport = getConfig [ "ghostscript" "cups" ] true;
+    gnuFork = getConfig [ "ghostscript" "gnu" ] true;
   };
 
   ghostscriptX = appendToName "with-X" (ghostscript.override {
