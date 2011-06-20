@@ -1,31 +1,31 @@
 { stdenv, fetchurl, pkgconfig, libxml2, gnutls, devicemapper, perl, python
 , iproute, iptables, readline, lvm2, utillinux, udev, libpciaccess, gettext 
-, libtasn1
+, libtasn1, ebtables, libgcrypt
 }:
 
-let version = "0.8.8"; in
+let version = "0.9.1"; in
 
 stdenv.mkDerivation {
   name = "libvirt-${version}";
 
   src = fetchurl {
     url = "http://libvirt.org/sources/libvirt-${version}.tar.gz";
-    sha256 = "04z1757qpi3ssnjv5h2qnw1sds2m50yxk67cbdam6w4i50vyl2h3";
+    sha256 = "0avv3c95l95rpk5n5b6hwir52px5k2v5rvn3x82ak948n4xl5cq2";
   };
 
   buildInputs =
     [ pkgconfig libxml2 gnutls devicemapper perl python readline lvm2
-      utillinux udev libpciaccess gettext libtasn1
+      utillinux udev libpciaccess gettext libtasn1 libgcrypt
     ];
 
   preConfigure =
     ''
-      PATH=${iproute}/sbin:${iptables}/sbin:${lvm2}/sbin:${udev}/sbin:$PATH
+      PATH=${iproute}/sbin:${iptables}/sbin:${ebtables}/sbin:${lvm2}/sbin:${udev}/sbin:$PATH
     '';
 
-  configureFlags = "--localstatedir=/var --with-init-script=redhat";
+  configureFlags = "--localstatedir=/var --sysconfdir=/etc --with-init-script=redhat";
 
-  installFlags = "localstatedir=$(TMPDIR)/var";
+  installFlags = "localstatedir=$(TMPDIR)/var sysconfdir=$(out)/etc";
 
   postInstall =
     ''

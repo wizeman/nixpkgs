@@ -1,12 +1,12 @@
-{ stdenv, fetchurl, cmake, mesa, sfml_svn, fribidi, taglib }:
+{ stdenv, fetchurl, cmake, mesa, sfml_git, fribidi, taglib }:
 stdenv.mkDerivation rec {
   name = "mars-${version}";
-  version = "0.7.1";
+  version = "0.7.2";
   src = fetchurl {
     url = "mirror://sourceforge/mars-game/mars_source_${version}.tar.gz";
-    sha256 = "050li9adkkr2br5b4r5iq4prg4qklxnmf1i34aw6qkpw89qafzha";
+    sha256 = "092y0y1dghkvs0syjg9cv8iq0w29hkin8bznqc8sqm21v0swk451";
   };
-  buildInputs = [ cmake mesa sfml_svn fribidi taglib ];
+  buildInputs = [ cmake mesa sfml_git fribidi taglib ];
   installPhase = ''
     cd ..
     find -name '*.svn' -exec rm -rf {} \;

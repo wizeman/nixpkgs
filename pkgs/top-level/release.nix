@@ -13,7 +13,7 @@ with (import ./release-lib.nix);
 
   tarball = import ./make-tarball.nix;
 
-} // (mapTestOn (/* (packagesWithMetaPlatform pkgs) // */ rec {
+} // (mapTestOn ((packagesWithMetaPlatform pkgs) // rec {
 
   MPlayer = linux;
   abcde = linux;
@@ -380,7 +380,6 @@ with (import ./release-lib.nix);
     jdee = linux;
   };
 
-  /*
   firefox36Pkgs.firefox = linux;
   firefox40Pkgs.firefox = linux;
 
@@ -437,11 +436,31 @@ with (import ./release-lib.nix);
     kile = linux;
   };
 
+  linuxPackages_2_6_25 = {
+    aufs = linux;
+    kernel = linux;
+  };
+
   linuxPackages_2_6_27 = {
     aufs = linux;
     kernel = linux;
     virtualbox = linux;
     virtualboxGuestAdditions = linux;
+  };
+
+  linuxPackages_2_6_28 = {
+    aufs = linux;
+    kernel = linux;
+  };
+
+  linuxPackages_2_6_29 = {
+    aufs = linux;
+    kernel = linux;
+  };
+
+  linuxPackages_2_6_31 = {
+    aufs = linux;
+    kernel = linux;
   };
 
   linuxPackages_2_6_32 = {
@@ -457,6 +476,18 @@ with (import ./release-lib.nix);
   };
 
   linuxPackages_2_6_36 = {
+    kernel = linux;
+    virtualbox = linux;
+    virtualboxGuestAdditions = linux;
+  };
+
+  linuxPackages_2_6_37 = {
+    kernel = linux;
+    virtualbox = linux;
+    virtualboxGuestAdditions = linux;
+  };
+
+  linuxPackages_2_6_38 = {
     kernel = linux;
     virtualbox = linux;
     virtualboxGuestAdditions = linux;
@@ -542,7 +573,6 @@ with (import ./release-lib.nix);
     xfdesktop = linux;
     xfwm4 = linux;
   };
-  */
 
 } ))
 

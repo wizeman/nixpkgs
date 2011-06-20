@@ -947,7 +947,7 @@ rec {
 
   DBDSQLite = import ../development/perl-modules/DBD-SQLite {
     inherit fetchurl buildPerlPackage DBI;
-    sqlite = pkgs.sqlite36;
+    inherit (pkgs) sqlite;
   };
 
   DBDmysql = import ../development/perl-modules/DBD-mysql {
@@ -966,10 +966,10 @@ rec {
   };
 
   DBI = buildPerlPackage rec {
-    name = "DBI-1.609";
+    name = "DBI-1.616";
     src = fetchurl {
       url = "mirror://cpan/authors/id/T/TI/TIMB/${name}.tar.gz";
-      sha256 = "0hfnd8i696x01a52v6vx97bdwaymai7m0gyr2w64lrsyws7ni6wv";
+      sha256 = "0m6hk66xprjl314d5c665hnd1vch9a0b9y6ywvmf04kdqj33kkk0";
     };
   };
 
@@ -1966,6 +1966,17 @@ rec {
       sha256 = "00fpj8a5p9z577cha3cgb95r042v7kbz7pwls5p0rl7jqvpax4lb";
     };
     propagatedBuildInputs = [BHooksEndOfScope];
+  };
+
+  NetAmazonEC2 = buildPerlPackage rec {
+    name = "Net-Amazon-EC2-0.14";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/J/JK/JKIM/${name}.tar.gz";
+      sha256 = "14am9m19ziyv12bjxljhfyl0zy120yf4gligsa9v26smb61fxyjr";
+    };
+    propagatedBuildInputs =
+      [ DigestHMAC LWP Moose URI ParamsValidate XMLSimple Moose CryptSSLeay ];
+    doCheck = false; # wants to create actual EC2 instances (for $$$)
   };
 
   NetDNS = buildPerlPackage {
