@@ -34,10 +34,10 @@ in
 
 stdenv.mkDerivation rec {
   name = "hydra-${version}";
-  version = "0.1pre26321";
+  version = "0.1pre27415";
   src = fetchurl {
-    url = http://hydra.nixos.org/build/976452/download/2/hydra-0.1pre26321.tar.gz;
-    sha256 = "1fzvvyad3ggms7qyy6x0xgcpj9w5zq11nmfpsx7m6z0xgilg3lil";
+    url = http://hydra.nixos.org/build/1114800/download/2/hydra-0.1pre27415.tar.gz;
+    sha256 = "17ris0wn486qb0ibgl8h6gb94gaiy0vbjpbv48sczp93cns5v0vh";
   };
 
   configureFlags = "--with-nix=${nix}";

@@ -617,7 +617,7 @@ let
   fcron = callPackage ../tools/system/fcron {  # see also cron
   };
 
-  fdisk = callPackage ../tools/system/fdisk { };
+  fdisk = callPackage ../tools/system/fdisk { parted = parted_2_3; };
 
   fdm = callPackage ../tools/networking/fdm {};
 
@@ -736,6 +736,11 @@ let
     inherit (gtkLibs) pango;
   };
 
+  /* Last version to export to dia */
+  graphviz_2_24 = callPackage ../tools/graphics/graphviz/2.0.nix {
+    inherit (gtkLibs) pango;
+  };
+
   /* Readded by Michael Raskin. There are programs in the wild
    * that do want 2.0 but not 2.22. Please give a day's notice for
    * objections before removal.
@@ -818,6 +823,8 @@ let
 
   inetutils = callPackage ../tools/networking/inetutils { };
 
+  ioping = callPackage ../tools/system/ioping {};
+
   iodine = callPackage ../tools/networking/iodine { };
 
   iperf = callPackage ../tools/networking/iperf { };
@@ -850,6 +857,8 @@ let
     inherit (gnome) glib;
   };
 
+  jscoverage = callPackage ../development/tools/misc/jscoverage { };
+
   jwhois = callPackage ../tools/networking/jwhois { };
 
   kdiff3 = newScope pkgs.kde4 ../tools/text/kdiff3 { };
@@ -862,6 +871,8 @@ let
 
   most = callPackage ../tools/misc/most { };
 
+  ninka = callPackage ../development/tools/misc/ninka { };
+  
   nodejs = callPackage ../development/web/nodejs {};
 
   lftp = callPackage ../tools/networking/lftp { };
@@ -1070,6 +1081,7 @@ let
   patchutils = callPackage ../tools/text/patchutils { };
 
   parted = callPackage ../tools/misc/parted { };
+  parted_2_3 = callPackage ../tools/misc/parted/2.3.nix { };
 
   hurdPartedCross =
     if crossSystem != null && crossSystem.config == "i586-pc-gnu"
@@ -1261,6 +1273,8 @@ let
 
   shebangfix = callPackage ../tools/misc/shebangfix { };
 
+  siege = callPackage ../tools/networking/siege {};
+
   slimrat = callPackage ../tools/networking/slimrat {
     inherit (perlPackages) WWWMechanize LWP;
   };
@@ -1382,6 +1396,8 @@ let
 
   vtun = callPackage ../tools/networking/vtun { };
 
+  welkin = callPackage ../tools/graphics/welkin {};
+
   testdisk = callPackage ../tools/misc/testdisk { };
 
   htmlTidy = callPackage ../tools/text/html-tidy { };
@@ -1436,6 +1452,8 @@ let
   vlan = callPackage ../tools/networking/vlan { };
 
   wakelan = callPackage ../tools/networking/wakelan { };
+
+  wavemon = callPackage ../tools/networking/wavemon { };
 
   w3cCSSValidator = callPackage ../tools/misc/w3c-css-validator {
     tomcat = tomcat6;
@@ -2046,10 +2064,15 @@ let
   haskellPackages_ghc702 =
     haskellPackagesFun ../development/compilers/ghc/7.0.2.nix  (x : x.ghc702Prefs) false (x : x);
 
-  # Can become default after a short testing phase. There's also a minor platform
-  # release planned based on 703. Please keep at lowPrio until then.
+  # The only thing that keeps this one from becoming default is that
+  # the Haskell Platform based on 703 is released improperly.
+  # Please keep at lowPrio until fixed.
   haskellPackages_ghc703 =
     haskellPackagesFun ../development/compilers/ghc/7.0.3.nix  (x : x.ghc703Prefs) false lowPrio;
+
+  # Just released. Needs some testing first. Please keep at lowPrio for now.
+  haskellPackages_ghc704 =
+    haskellPackagesFun ../development/compilers/ghc/7.0.4.nix  (x : x.ghc704Prefs) false lowPrio;
 
   haskellPackages_ghcHEAD =
     haskellPackagesFun ../development/compilers/ghc/head.nix   (x : x.ghcHEADPrefs) false lowPrio;
@@ -2471,6 +2494,7 @@ let
       xulrunner = firefox40Pkgs.xulrunner;
     };
 
+  xulrunner = firefox40Pkgs.xulrunner;
 
   ### DEVELOPMENT / MISC
 
@@ -2716,7 +2740,20 @@ let
 
   ltrace = callPackage ../development/tools/misc/ltrace { };
 
-  mig = callPackage ../os-specific/gnu/mig { };
+  mig = callPackage ../os-specific/gnu/mig
+    (if stdenv.isLinux
+     then {
+       # Build natively, but force use of a 32-bit environment because we're
+       # targeting `i586-pc-gnu'.
+       stdenv = (import ../stdenv {
+         system = "i686-linux";
+         stdenvType = "i686-linux";
+         allPackages = args:
+           import ./all-packages.nix ({ inherit config; } // args);
+         inherit platform;
+       }).stdenv;
+     }
+     else { });
 
   mk = callPackage ../development/tools/build-managers/mk { };
 
@@ -2906,6 +2943,9 @@ let
   ccrtp = callPackage ../development/libraries/ccrtp { };
   ccrtp_1_8 = callPackage ../development/libraries/ccrtp/1.8.nix { };
 
+  celt = callPackage ../development/libraries/celt {};
+  celt_0_7 = callPackage ../development/libraries/celt/0.7.nix {};
+
   cgui = callPackage ../development/libraries/cgui {};
 
   check = callPackage ../development/libraries/check { };
@@ -3033,10 +3073,7 @@ let
 
   eventlog = callPackage ../development/libraries/eventlog { };
 
-  facile = callPackage ../development/libraries/facile {
-    # Actually, we don't need this version but we need native-code compilation
-    ocaml = ocaml_3_10_0;
-  };
+  facile = callPackage ../development/libraries/facile { };
 
   faac = callPackage ../development/libraries/faac { };
 
@@ -3197,15 +3234,6 @@ let
 
   libcCross = assert crossSystem != null; libcCrossChooser crossSystem.libc;
 
-  libdbusmenu_qt = callPackage ../development/libraries/libdbusmenu-qt { };
-
-  libdwg = callPackage ../development/libraries/libdwg { };
-
-  libgadu = callPackage ../development/libraries/libgadu { };
-
-  libgdata = (newScope gnome) ../development/libraries/libgdata {};
-  libgdata_0_6 = (newScope gnome) ../development/libraries/libgdata/0.6.nix {};
-
   eglibc = callPackage ../development/libraries/eglibc {
     kernelHeaders = linuxHeaders;
     installLocales = getConfig [ "glibc" "locales" ] false;
@@ -3292,6 +3320,8 @@ let
   gsasl = callPackage ../development/libraries/gsasl { };
 
   gsl = callPackage ../development/libraries/gsl { };
+
+  gsm = callPackage ../development/libraries/gsm {};
 
   gsoap = callPackage ../development/libraries/gsoap { };
 
@@ -3559,16 +3589,22 @@ let
     inherit sqlite mysql;
   };
 
+  libdbusmenu_qt = callPackage ../development/libraries/libdbusmenu-qt { };
+
   libdevil = callPackage ../development/libraries/libdevil { };
 
   libdiscid = callPackage ../development/libraries/libdiscid { };
 
-  libdv = callPackage ../development/libraries/libdv { };
+  libdmtx = callPackage ../development/libraries/libdmtx { };
 
   libdrm = if stdenv.isDarwin then null else (callPackage ../development/libraries/libdrm {
     inherit fetchurl stdenv pkgconfig;
     inherit (xorg) libpthreadstubs;
   });
+
+  libdv = callPackage ../development/libraries/libdv { };
+
+  libdwg = callPackage ../development/libraries/libdwg { };
 
   libdvdcss = callPackage ../development/libraries/libdvdcss { };
 
@@ -3581,6 +3617,11 @@ let
   libedit = callPackage ../development/libraries/libedit { };
 
   libelf = callPackage ../development/libraries/libelf { };
+
+  libgadu = callPackage ../development/libraries/libgadu { };
+
+  libgdata = (newScope gnome) ../development/libraries/libgdata {};
+  libgdata_0_6 = (newScope gnome) ../development/libraries/libgdata/0.6.nix {};
 
   liblo = callPackage ../development/libraries/liblo { };
 
@@ -3996,6 +4037,8 @@ let
   nssTools = callPackage ../development/libraries/nss {
     includeTools = true;
   };
+
+  ntrack = callPackage ../development/libraries/ntrack { };
 
   ode = builderDefsPackage (import ../development/libraries/ode) {
   };
@@ -4630,6 +4673,8 @@ let
 
   firebird = callPackage ../servers/firebird { };
 
+  freepops = callPackage ../servers/mail/freepops { };
+
   freeswitch = callPackage ../servers/sip/freeswitch { };
 
   ghostOne = callPackage ../servers/games/ghost-one {
@@ -4894,6 +4939,8 @@ let
 
   hibernate = callPackage ../os-specific/linux/hibernate { };
 
+  hostapd = callPackage ../os-specific/linux/hostapd { };
+
   htop = callPackage ../os-specific/linux/htop { };
 
   hurdCross = forceBuildDrv(import ../os-specific/gnu/hurd {
@@ -4977,6 +5024,8 @@ let
   libcgroup = callPackage ../os-specific/linux/libcg { };
 
   libnl = callPackage ../os-specific/linux/libnl { };
+
+  libnl2 = callPackage ../os-specific/linux/libnl/v2.nix { };
 
   libnl1 = callPackage ../os-specific/linux/libnl/v1.nix { };
 
@@ -5528,6 +5577,8 @@ let
 
   rfkill = callPackage ../os-specific/linux/rfkill { };
 
+  rt2860fw = callPackage ../os-specific/linux/firmware/rt2860 { };
+
   rt2870fw = callPackage ../os-specific/linux/firmware/rt2870 { };
 
   rt73fw = callPackage ../os-specific/linux/firmware/rt73 { };
@@ -5670,15 +5721,9 @@ let
   wirelesstools = callPackage ../os-specific/linux/wireless-tools { };
 
   wpa_supplicant = callPackage ../os-specific/linux/wpa_supplicant {
-    guiSupport = false;
   };
-  # prebuild binaries:
-  wpa_supplicant_gui = wpa_supplicant.override { guiSupport = true; };
 
-  # deprecated, but contains icon ? Does no longer build
-  /* didn't build Sun Apr 25 20:34:18 CEST 2010
-  wpa_supplicant_gui_qt4_old = callPackage ../os-specific/linux/wpa_supplicant/gui-qt4.nix { };
-  */
+  wpa_supplicant_gui = pkgs.wpa_supplicant.gui;
 
   xf86_input_wacom = callPackage ../os-specific/linux/xf86-input-wacom { };
 
@@ -5948,7 +5993,6 @@ let
   chromeWrapper = wrapFirefox chrome "chrome" "";
 
   cinelerra = callPackage ../applications/video/cinelerra {
-    fftw = fftwSinglePrec;
     inherit (gnome) esound;
   };
 
@@ -6018,7 +6062,7 @@ let
   dmtx = builderDefsPackage (import ../tools/graphics/dmtx) {
     inherit libpng libtiff libjpeg imagemagick librsvg
       pkgconfig bzip2 zlib libtool freetype fontconfig
-      ghostscript jasper;
+      ghostscript jasper xz;
     inherit (xlibs) libX11;
   };
 
@@ -6139,6 +6183,8 @@ let
 
   evopedia = callPackage ../applications/misc/evopedia { };
 
+  keepassx = callPackage ../applications/misc/keepassx { };
+
   # FIXME: Evince and other GNOME/GTK+ apps (e.g., Viking) provide
   # `share/icons/hicolor/icon-theme.cache'.  Arbitrarily give this one a
   # higher priority.
@@ -6210,6 +6256,13 @@ let
   };
 
   firefox40Wrapper = wrapFirefox firefox40Pkgs.firefox "firefox" "";
+
+  firefox50Pkgs = callPackage ../applications/networking/browsers/firefox/5.0.nix {
+    inherit (gtkLibs) gtk pango;
+    inherit (gnome) libIDL;
+  };
+
+  firefox50Wrapper = wrapFirefox firefox50Pkgs.firefox "firefox" "";
 
   flac = callPackage ../applications/audio/flac { };
 
@@ -6296,6 +6349,7 @@ let
 
   gnunet = callPackage ../applications/networking/p2p/gnunet {
     inherit (gnome) gtk libglade;
+    guile = guile_1_8;
     gtkSupport = getConfig [ "gnunet" "gtkSupport" ] true;
   };
 
@@ -6445,10 +6499,9 @@ let
 
   # Impressive, formerly known as "KeyJNote".
   impressive = callPackage ../applications/office/impressive {
-
     # XXX These are the PyOpenGL dependencies, which we need here.
-
-    inherit (pythonPackages) pyopengl;  };
+    inherit (pythonPackages) pyopengl;
+  };
 
   inkscape = callPackage ../applications/graphics/inkscape {
     inherit (pythonPackages) lxml;
@@ -6493,12 +6546,8 @@ let
 
   kermit = callPackage ../tools/misc/kermit { };
 
-  kino = import ../applications/video/kino {
-    inherit fetchurl stdenv pkgconfig libxml2 perl perlXMLParser
-      libdv libraw1394 libavc1394 libiec61883 x11 gettext cairo; /* libavformat */
-    inherit libsamplerate ffmpeg;
-    inherit (gnome) libglade gtk glib;
-    inherit (xlibs) libXv libX11;
+  kino = callPackage ../applications/video/kino {
+    inherit (gnome) libglade;
   };
 
   kipi_plugins = newScope pkgs.kde4 ../applications/graphics/kipi-plugins { };
@@ -6692,11 +6741,15 @@ let
 
   nova = callPackage ../applications/virtualization/nova { };
 
+  novaclient = callPackage ../applications/virtualization/nova/client.nix { };
+
   nvi = callPackage ../applications/editors/nvi { };
 
   ocrad = callPackage ../applications/graphics/ocrad { };
 
   offrss = callPackage ../applications/networking/offrss { };
+
+  oneteam = callPackage ../applications/networking/instant-messengers/oneteam {};
 
   openbox = callPackage ../applications/window-managers/openbox { };
 
@@ -6826,6 +6879,11 @@ let
   rsibreak = newScope pkgs.kde4 ../applications/misc/rsibreak { };
 
   recode = callPackage ../tools/text/recode { };
+
+  retroshare = callPackage ../applications/networking/p2p/retroshare {
+    qt = qt4;
+   inherit (gnome) gnome_keyring;
+  };
 
   rsync = callPackage ../applications/networking/sync/rsync {
     enableACLs = !(stdenv.isDarwin || stdenv.isSunOS);
@@ -7324,11 +7382,14 @@ let
   gnugo = callPackage ../games/gnugo { };
 
   gparted = callPackage ../tools/misc/gparted {
+    parted = parted_2_3;
     inherit (gtkLibs) gtk glib gtkmm;
     inherit (gnome) gnomedocutils;
   };
 
   hexen = callPackage ../games/hexen { };
+
+  icbm3d = callPackage ../games/icbm3d { };
 
   instead = callPackage ../games/instead {
     lua = lua5;
@@ -7355,6 +7416,8 @@ let
   };
 
   pioneers = callPackage ../games/pioneers { };
+
+  pong3d = callPackage ../games/pong3d { };
 
   prboom = callPackage ../games/prboom { };
 
@@ -7420,6 +7483,8 @@ let
 
   tbe = callPackage ../games/the-butterfly-effect {};
 
+  teetertorture = callPackage ../games/teetertorture { };
+
   teeworlds = callPackage ../games/teeworlds { };
 
   tennix = callPackage ../games/tennix { };
@@ -7457,6 +7522,8 @@ let
   ut2004demo = callPackage ../games/ut2004demo { };
 
   vdrift = callPackage ../games/vdrift { };
+
+  vectoroids = callPackage ../games/vectoroids { };
 
   warmux = callPackage ../games/warmux { };
 
@@ -7706,6 +7773,8 @@ let
     camlp5 = ocamlPackages.camlp5_transitional;
   };
 
+  tptp = callPackage ../applications/science/logic/tptp {};
+
   ### SCIENCE / ELECTRONICS
 
   caneda = callPackage ../applications/science/electronics/caneda {
@@ -7757,7 +7826,7 @@ let
   simgrid = callPackage ../applications/science/misc/simgrid { };
 
   tulip = callPackage ../applications/science/misc/tulip {
-    qt = qt4;
+    qt = qt46;
   };
 
   vite = callPackage ../applications/science/misc/vite {
@@ -7889,6 +7958,8 @@ let
       inherit docbook5_xsl libxslt docbook5 docbook_xml_dtd_43 w3m;
     };
 
+  nut = callPackage ../applications/misc/nut { };
+
   disnix = callPackage ../tools/package-management/disnix { };
 
   disnix_activation_scripts = callPackage ../tools/package-management/disnix/activation-scripts {
@@ -7916,6 +7987,8 @@ let
     inherit (pythonPackages) pexpect paramiko;
   };
 
+  opkg = callPackage ../tools/package-management/opkg { };
+
   pgadmin = callPackage ../applications/misc/pgadmin { };
 
   pgf = pgf2;
@@ -7931,6 +8004,8 @@ let
   polytable = callPackage ../misc/tex/polytable { };
 
   psi = newScope pkgs.kde45 ../applications/networking/instant-messengers/psi { };
+
+  uae = callPackage ../misc/emulators/uae { };
 
   putty = callPackage ../applications/networking/remote/putty { };
 
@@ -8030,6 +8105,8 @@ let
     inherit substituteAll pkgs;
     inherit (stdenv) mkDerivation;
   };
+
+  zsnes = callPackage_i686 ../misc/emulators/zsnes { };
 
   misc = import ../misc/misc.nix { inherit pkgs stdenv; };
 
