@@ -1,17 +1,20 @@
-{ fetchurl, stdenv, libtool }:
+{ fetchurl, stdenv, libtool, ncurses }:
 
 stdenv.mkDerivation rec {
-  name = "global-5.9.4";
+  name = "global-5.9.6";
 
   src = fetchurl {
     url = "mirror://gnu/global/${name}.tar.gz";
-    sha256 = "0ay6f1fffics3vkls1xykzmz9cmgj3hdighni7asnpa38s8j0lmn";
+    sha256 = "1hs6dspwl3pnh03blwnhlbm9lm16afm7z8f8sbvim19d7ylm7zkb";
   };
 
-  buildInputs = [ libtool ];
+  buildInputs = [ libtool ncurses ];
 
   configurePhase =
-    '' ./configure --prefix="$out" --disable-static --with-posix-sort=$(type -p sort) '';
+    '' ./configure --prefix="$out" --disable-static ''
+    + ''--with-posix-sort=$(type -p sort) ''
+    + ''--with-ltdl-include=${libtool}/include --with-ltdl-lib=${libtool}/lib ''
+    + ''--with-ncurses=${ncurses}'';
 
   doCheck = true;
 

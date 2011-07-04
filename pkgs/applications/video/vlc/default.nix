@@ -5,18 +5,18 @@
 , libcaca, pulseaudio, flac, schroedinger, libxml2, librsvg
 , mpeg2dec, udev, gnutls, avahi, libcddb, jackaudio, SDL, SDL_image
 , libmtp, unzip, taglib, libkate, libtiger, libv4l, samba, liboggz
-, libass
+, libass, libva
 }:
 
 stdenv.mkDerivation rec {
   name = "vlc-${version}";
-  version = "1.1.5";
+  version = "1.1.9";
 
   patchPhase = ''sed -e "s@/bin/echo@echo@g" -i configure'';
 
   src = fetchurl {
     url = "mirror://sourceforge/vlc/${name}.tar.bz2";
-    sha256 = "09nawmvw5zs6hywk5xkqn2iyvrh4r5d7z6rbpaaydckz66fazqzq";
+    sha256 = "02rdrfxh7d70yxz0qinmkw2jad2hxzfrw0r1hiyyxandrgg73ggh";
   };
 
   buildInputs = [
@@ -26,7 +26,7 @@ stdenv.mkDerivation rec {
     udev gnutls avahi libcddb jackaudio SDL SDL_image libmtp unzip taglib
     libkate libtiger libv4l samba liboggz libass
   ]
-  ++ (with xlibs; [ xlibs.xlibs libXv libXpm xcbutil ]);
+  ++ (with xlibs; [ xlibs.xlibs libXv libXvMC libXpm xcbutil libva ]);
 
   configureFlags = [ "--enable-alsa"
     "--disable-glx"

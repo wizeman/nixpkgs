@@ -1,11 +1,11 @@
 {stdenv, fetchurl, libcap}:
 
 stdenv.mkDerivation rec{
-  name = "lxc-0.7.3";
+  name = "lxc-0.7.4";
 
   src = fetchurl {
     url = "mirror://sourceforge/lxc/${name}.tar.gz";
-    sha256 = "02fs90gj8vc3sls2kknqhdv8nk7r2k85slx8x8slfz4vnz6jhfzs";
+    sha256 = "a8237b2a42a05266a39aa9f9d64d7aa6f12b197cf1982d7764a0b0f9b940eef6";
   };
 
   patchPhase = ''
@@ -13,6 +13,12 @@ stdenv.mkDerivation rec{
   '';
 
   configureFlags = [ "--localstatedir=/var" ];
+
+  postInstall = '' 
+    cd "$out/lib"
+    lib=liblxc.so.?.*
+    ln -s $lib $(echo $lib | sed -re 's/(liblxc[.]so[.].)[.].*/\1/')
+  '';
 
   buildInputs = [ libcap ];
 
