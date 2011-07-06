@@ -99,7 +99,8 @@ let
 
 
   # Return the complete set of packages, after applying the overrides
-  # returned by the `overrider' function (see above).
+  # returned by the `overrider' function (see above).  Warning: this
+  # function is very expensive!
   applyGlobalOverrides = overrider:
     let
       # Call the overrider function.  We don't want stdenv overrides
@@ -4349,46 +4350,34 @@ let
 
   vxl = callPackage ../development/libraries/vxl { };
 
-  webkit = let p = applyGlobalOverrides (x : {
-    libsoup = x.gnome28.libsoup_2_33;
-    gnome28 = x.gnome28 // {
-      libsoup = x.gnome28.libsoup_2_33;
+  webkit =
+    builderDefsPackage ../development/libraries/webkit {
+      inherit (gnome28) gtkdoc libsoup;
+      inherit (gtkLibs) gtk atk pango glib;
+      inherit freetype fontconfig gettext gperf curl
+        libjpeg libtiff libpng libxml2 libxslt sqlite
+        icu cairo perl intltool automake libtool
+        pkgconfig autoconf bison libproxy enchant
+        python ruby which flex geoclue;
+      inherit (gst_all) gstreamer gstPluginsBase gstFfmpeg
+        gstPluginsGood;
+      inherit (xlibs) libXt renderproto libXrender;
     };
-  });
-  in
-  (p.builderDefsPackage ../development/libraries/webkit {
-    inherit (p.gnome28) gtkdoc;
-    inherit (p.gtkLibs) gtk atk pango glib;
-    inherit (p) freetype fontconfig gettext gperf curl
-      libjpeg libtiff libpng libxml2 libxslt sqlite
-      icu cairo perl intltool automake libtool
-      pkgconfig autoconf bison libproxy enchant
-      python ruby which flex geoclue libsoup;
-    inherit (p.gst_all) gstreamer gstPluginsBase gstFfmpeg
-      gstPluginsGood;
-    inherit (p.xlibs) libXt renderproto libXrender;
-  });
-  webkitSVN = let p = applyGlobalOverrides (x : {
-    libsoup = x.gnome28.libsoup_2_33;
-    gnome28 = x.gnome28 // {
-      libsoup = x.gnome28.libsoup_2_33;
+  
+  webkitSVN =
+    builderDefsPackage ../development/libraries/webkit/svn.nix {
+      inherit (gnome28) gtkdoc libsoup;
+      inherit (gtkLibs) gtk atk pango glib;
+      inherit freetype fontconfig gettext gperf curl
+        libjpeg libtiff libpng libxml2 libxslt sqlite
+        icu cairo perl intltool automake libtool
+        pkgconfig autoconf bison libproxy enchant
+        python ruby which flex geoclue;
+      inherit (gst_all) gstreamer gstPluginsBase gstFfmpeg
+        gstPluginsGood;
+      inherit (xlibs) libXt renderproto libXrender;
     };
-  });
-  in
-  (p.builderDefsPackage ../development/libraries/webkit/svn.nix {
-    inherit (p.gnome28) gtkdoc;
-    inherit (p.gtkLibs) gtk atk pango glib;
-    inherit (p) freetype fontconfig gettext gperf curl
-      libjpeg libtiff libpng libxml2 libxslt sqlite
-      icu cairo perl intltool automake libtool
-      pkgconfig autoconf bison libproxy enchant
-      python ruby which flex geoclue libsoup;
-    inherit (p.gst_all) gstreamer gstPluginsBase gstFfmpeg
-      gstPluginsGood;
-    inherit (p.xlibs) libXt renderproto libXrender;
-  });
-
-
+    
   wvstreams = callPackage ../development/libraries/wvstreams { };
 
   wxGTK = wxGTK28;
@@ -7055,8 +7044,7 @@ let
     inherit pkgconfig webkit makeWrapper;
     inherit (gtkLibs) gtk glib;
     inherit (xlibs) libX11 kbproto;
-    libsoup = gnome28.libsoup_2_33;
-    inherit (gnome28) glib_networking;
+    inherit (gnome28) glib_networking libsoup;
   };
 
   valknut = callPackage ../applications/networking/p2p/valknut {
@@ -7618,21 +7606,11 @@ let
   kde4 = kde45;
 
   kde45 = callPackage ../desktops/kde-4.5 {
-    callPackage =
-      let
-        # !!! Ugly, inefficient.
-        pkgs_for_45 = (applyGlobalOverrides (p: { kde4 = p.kde45; }));
-      in
-        pkgs_for_45.newScope pkgs_for_45.kde45;
+    callPackage = newScope pkgs.kde45;
   };
-
+    
   kde46 = callPackage ../desktops/kde-4.6 {
-    callPackage =
-      let
-        # !!! Ugly, inefficient.
-        pkgs_for_46 = (applyGlobalOverrides (p: { kde4 = p.kde46; }));
-      in
-        pkgs_for_46.newScope pkgs_for_46.kde46;
+    callPackage = newScope pkgs.kde46;
   };
 
   redshift = callPackage ../applications/misc/redshift {
