@@ -32,12 +32,13 @@ let
   ];
 in
 
-stdenv.mkDerivation rec {
+let version = "0.1pre27592"; in
+stdenv.mkDerivation {
   name = "hydra-${version}";
-  version = "0.1pre26321";
+
   src = fetchurl {
-    url = http://hydra.nixos.org/build/976452/download/2/hydra-0.1pre26321.tar.gz;
-    sha256 = "1fzvvyad3ggms7qyy6x0xgcpj9w5zq11nmfpsx7m6z0xgilg3lil";
+    url = http://hydra.nixos.org/build/1142240/download/2/hydra-0.1pre27592.tar.gz;
+    sha256 = "0197bcfkabqqv7611fh9kjabfm0nfci8kanfaa59hqwf3h6fmpwz";
   };
 
   configureFlags = "--with-nix=${nix}";

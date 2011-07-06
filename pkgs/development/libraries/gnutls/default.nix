@@ -5,11 +5,11 @@ assert guileBindings -> guile != null;
 
 stdenv.mkDerivation rec {
 
-  name = "gnutls-2.12.5";
+  name = "gnutls-2.12.7";
 
   src = fetchurl {
     url = "mirror://gnu/gnutls/${name}.tar.bz2";
-    sha256 = "0q4b8jc2izq66knvya37lpp37glwf9d6prnqc6jk9b17yf03h9mz";
+    sha256 = "09vmm1b2iypwk5vh0adyqzra7sgx5hb9xyr1wjncv7947bk4zn3p";
   };
 
   configurePhase = ''

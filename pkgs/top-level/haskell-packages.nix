@@ -87,6 +87,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   ghc701Prefs  = super : super // super.haskellPlatformDefaults_2011_2_0_0 super; # link
   ghc702Prefs  = super : super // super.haskellPlatformDefaults_2011_2_0_0 super;
   ghc703Prefs  = super : super // super.haskellPlatformDefaults_2011_2_0_1 super;
+  ghc704Prefs  = super : super // super.haskellPlatformDefaults_2011_2_0_1 super; # link
   ghcHEADPrefs = super : super // super.haskellPlatformDefaults_2011_2_0_1 super; # link
 
   # GHC and its wrapper
@@ -837,6 +838,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   sendfile = callPackage ../development/libraries/haskell/sendfile {};
 
+  smallcheck = callPackage ../development/libraries/haskell/smallcheck {};
+
   snapCore = callPackage ../development/libraries/haskell/snap/core.nix {};
   snapServer = callPackage ../development/libraries/haskell/snap/server.nix {};
 
@@ -1121,6 +1124,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   };
 
   xmonadContrib = callPackage ../applications/window-managers/xmonad/xmonad-contrib.nix {};
+
+  xmonadExtras = callPackage ../applications/window-managers/xmonad/xmonad-extras.nix {};
 
   # Tools.
 

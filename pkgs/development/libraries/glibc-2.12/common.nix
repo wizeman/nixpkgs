@@ -11,7 +11,7 @@ cross :
 
 let
   # For GNU/Hurd, see below.
-  version = if hurdHeaders != null then "20100512" else "2.12.2";
+  version = if hurdHeaders != null then "20110623" else "2.12.2";
 
   needsPortsNative = stdenv.isMips || stdenv.isArm;
   needsPortsCross = cross.arch == "mips" || cross.arch == "arm";
@@ -73,7 +73,6 @@ stdenv.mkDerivation ({
 
     /* Allow nixos and nix handle the locale-archive. */
     ./nix-locale-archive.patch
-
   ];
 
   postPatch = ''
@@ -142,8 +141,8 @@ stdenv.mkDerivation ({
       # maintained by the Hurd folks, `tschwinge/Roger_Whittaker' branch.
       # See <http://www.gnu.org/software/hurd/source_repositories/glibc.html>.
       url = "git://git.sv.gnu.org/hurd/glibc.git";
-      sha256 = "f3590a54a9d897d121f91113949edbaaf3e30cdeacbb8d0a44de7b6564f6643e";
-      rev = "df4c3faf0ccc848b5a8086c222bdb42679a9798f";
+      sha256 = "e51c6b0bb8544ee4547fda22272bfa6a23677655d15da3c041be6e820f37f844";
+      rev = "05862f9210fb029df3773ef004af954461f07478";
     }
     else fetchurl {
       url = "mirror://gnu/glibc/glibc-${version}.tar.bz2";
