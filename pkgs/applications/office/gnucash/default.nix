@@ -1,38 +1,52 @@
 { fetchurl, stdenv, pkgconfig, libxml2, gconf, glib, gtk
-, libglade, libgnomeui, libgtkhtml, gtkhtml, libgnomeprint, goffice, enchant
+, libbonoboui, libgnomeui, libgtkhtml, gtkhtml, libgnomeprint, goffice, enchant
 , gettext, intltool, perl, guile, slibGuile, swig, isocodes, bzip2
 , makeWrapper }:
 
-stdenv.mkDerivation rec {
-  name = "gnucash-2.2.9";
+# TODO: Fix the gconf issue. The following posting might be the missing clue:
+# <http://osdir.com/ml/linux.distributions.nixos/2007-09/msg00003.html>.
+
+let
+  name = "gnucash-2.4.7";
+in
+stdenv.mkDerivation {
+  inherit name;
 
   src = fetchurl {
-    url = "http://ftp.at.gnucash.org/pub/gnucash/gnucash/sources/stable/${name}.tar.bz2";
-    sha256 = "0sj83mmshx50122n1i3y782p4b54k37n7sb4vldmqmhwww32925i";
+    url = "mirror://sourceforge/gnucash/${name}.tar.bz2";
+    sha256 = "eeb3b17f9081a544f8705db735df88ab3f468642a1d01552ea4e36bcb5b0730e";
   };
 
   buildInputs = [
     pkgconfig libxml2 gconf glib gtk
-    libglade libgnomeui libgtkhtml gtkhtml libgnomeprint goffice enchant
+    libgnomeui libgtkhtml gtkhtml libgnomeprint goffice enchant
     gettext intltool perl guile slibGuile swig isocodes bzip2 makeWrapper
   ];
 
-  preConfigure = ''
-    # The `.gnucash' directory, used by the test suite.
-    export GNC_DOT_DIR="$PWD/dot-gnucash"
-    echo "\$GNC_DOT_DIR set to \`$GNC_DOT_DIR'"
-  '';
+  NIX_LDFLAGS = "-rpath=${libgnomeui}/lib/libglade/2.0 -rpath=${libbonoboui}/lib/libglade/2.0 -rpath=${guile}/lib";
+
+  configureFlags = "CPPFLAGS=-DNDEBUG CFLAGS=-O2 CXXFLAGS=-O2 --disable-dbi";
+  /* More flags to figure out:
+
+       --enable-gtkmm            enable gtkmm gui
+       --enable-ofx              compile with ofx support (needs LibOFX)
+       --enable-aqbanking        compile with AqBanking support
+       --enable-python-bindings  enable python bindings
+   */
 
   postInstall = ''
     for prog in "$out/bin/"*
     do
       wrapProgram "$prog"                                       \
         --set SCHEME_LIBRARY_PATH "$SCHEME_LIBRARY_PATH"        \
-        --prefix GUILE_LOAD_PATH ":" "$GUILE_LOAD_PATH"
+        --prefix GUILE_LOAD_PATH ":" "$GUILE_LOAD_PATH"         \
+        --prefix PATH ":" "${gconf}/bin"
     done
   '';
 
+  preCheck = "export GNC_DOT_DIR=$PWD/dot-gnucash";
   doCheck = true;
+  enableParallelBuilding = true;
 
   meta = {
     description = "GnuCash, a personal and small-business financial-accounting application";
@@ -52,7 +66,7 @@ stdenv.mkDerivation rec {
 
     homepage = http://www.gnucash.org/;
 
-    maintainers = [ stdenv.lib.maintainers.ludo ];
+    maintainers = [ stdenv.lib.maintainers.ludo stdenv.lib.maintainers.simons ];
     platforms = stdenv.lib.platforms.gnu;
   };
 }
