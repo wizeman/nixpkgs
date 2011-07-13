@@ -403,6 +403,8 @@ let
 
   azureus = callPackage ../tools/networking/p2p/azureus { };
 
+  banner = callPackage ../games/banner {};
+
   barcode = callPackage ../tools/graphics/barcode {};
 
   bc = callPackage ../tools/misc/bc { };
@@ -873,7 +875,7 @@ let
   most = callPackage ../tools/misc/most { };
 
   ninka = callPackage ../development/tools/misc/ninka { };
-  
+
   nodejs = callPackage ../development/web/nodejs {};
 
   lftp = callPackage ../tools/networking/lftp { };
@@ -1025,7 +1027,7 @@ let
   nylon = callPackage ../tools/networking/nylon { };
 
   nzbget = callPackage ../tools/networking/nzbget { };
-  
+
   obex_data_server = callPackage ../tools/bluetooth/obex-data-server { };
 
   obexd = callPackage ../tools/bluetooth/obexd { };
@@ -2368,6 +2370,8 @@ let
   lua4 = callPackage ../development/interpreters/lua-4 { };
 
   lua5 = callPackage ../development/interpreters/lua-5 { };
+
+  lua5_0 = callPackage ../development/interpreters/lua-5/5.0.3.nix { };
 
   maude = callPackage ../development/interpreters/maude { };
 
@@ -4250,7 +4254,7 @@ let
   slang = callPackage ../development/libraries/slang { };
 
   slibGuile = callPackage ../development/libraries/slib {
-    scheme = guile;
+    scheme = guile_1_8;
   };
 
   smpeg = callPackage ../development/libraries/smpeg { };
@@ -4363,7 +4367,7 @@ let
         gstPluginsGood;
       inherit (xlibs) libXt renderproto libXrender;
     };
-  
+
   webkitSVN =
     builderDefsPackage ../development/libraries/webkit/svn.nix {
       inherit (gnome28) gtkdoc libsoup;
@@ -4377,7 +4381,7 @@ let
         gstPluginsGood;
       inherit (xlibs) libXt renderproto libXrender;
     };
-    
+
   wvstreams = callPackage ../development/libraries/wvstreams { };
 
   wxGTK = wxGTK28;
@@ -4683,6 +4687,8 @@ let
   joseki = callPackage ../servers/http/joseki {};
 
   lighttpd = callPackage ../servers/http/lighttpd { };
+
+  mediatomb = callPackage ../servers/mediatomb { };
 
   mod_python = callPackage ../servers/http/apache-modules/mod_python { };
 
@@ -5544,7 +5550,7 @@ let
     config = getConfig ["pcmciaUtils" "config"] null;
   };
 
-  phat = callPackage ../development/libraries/phat { 
+  phat = callPackage ../development/libraries/phat {
     inherit (gnome) gtk libgnomecanvas;
   };
 
@@ -5659,10 +5665,11 @@ let
 
   utillinuxng = callPackage ../os-specific/linux/util-linux-ng {
     ncurses = null;
+    perl = null;
   };
 
   utillinuxngCurses = utillinuxng.override {
-    inherit ncurses;
+    inherit ncurses perl;
   };
 
   windows = rec {
@@ -5890,7 +5897,7 @@ let
 
   audacious = callPackage ../applications/audio/audacious { };
 
-  audacity = callPackage ../applications/audio/audacity { 
+  audacity = callPackage ../applications/audio/audacity {
     portaudio = portaudioSVN;
   };
 
@@ -6312,10 +6319,11 @@ let
   };
 
   gnucash = callPackage ../applications/office/gnucash {
-    inherit (gnome) gtk glib libglade libgnomeui libgtkhtml gtkhtml
-      libgnomeprint;
+    inherit (gnome) gtk glib libgnomeui libgtkhtml gtkhtml
+      libbonoboui libgnomeprint;
     gconf = gnome.GConf;
     guile = guile_1_8;
+    slibGuile = slibGuile.override { scheme = guile_1_8; };
   };
 
   qcad = callPackage ../applications/misc/qcad { };
@@ -6473,9 +6481,9 @@ let
   ikiwiki = callPackage ../applications/misc/ikiwiki {
     inherit (perlPackages) TextMarkdown URI HTMLParser HTMLScrubber
       HTMLTemplate TimeDate CGISession DBFile CGIFormBuilder LocaleGettext
-      RpcXML XMLSimple PerlMagick;
-    gitSupport = getConfig [ "ikiwiki" "git" ] false;
-    monotoneSupport = getConfig [ "ikiwiki" "monotone" ] false;
+      RpcXML XMLSimple PerlMagick YAML;
+    gitSupport = false;
+    monotoneSupport = false;
     extraUtils = [];
   };
 
@@ -6837,11 +6845,11 @@ let
 
   qtpfsgui = callPackage ../applications/graphics/qtpfsgui { };
 
-  qtractor = callPackage ../applications/audio/qtractor { 
+  qtractor = callPackage ../applications/audio/qtractor {
     inherit (gtkLibs) gtk;
   };
 
-  rakarrack = callPackage ../applications/audio/rakarrack { 
+  rakarrack = callPackage ../applications/audio/rakarrack {
     inherit (xorg) libXpm libXft;
     fltk = fltk11;
   };
@@ -7608,7 +7616,7 @@ let
   kde45 = callPackage ../desktops/kde-4.5 {
     callPackage = newScope pkgs.kde45;
   };
-    
+
   kde46 = callPackage ../desktops/kde-4.6 {
     callPackage = newScope pkgs.kde46;
   };
@@ -7631,10 +7639,13 @@ let
 
   ### SCIENCE
 
-  xplanet = callPackage ../applications/science/xplanet {
+  xplanet = callPackage ../applications/science/astronomy/xplanet {
     inherit (gtkLibs) pango;
   };
 
+  gravit = callPackage ../applications/science/astronomy/gravit { };
+
+  stellarium = callPackage ../applications/science/astronomy/stellarium { };
 
   ### SCIENCE/GEOMETRY
 
@@ -7776,6 +7787,8 @@ let
   ### SCIENCE / MATH
 
   ecm = callPackage ../applications/science/math/ecm { };
+
+  eukleides = callPackage ../applications/science/math/eukleides { };
 
   maxima = callPackage ../applications/science/math/maxima { };
 
