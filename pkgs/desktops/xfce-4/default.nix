@@ -70,6 +70,8 @@
 
   xfce4mixer = callPackage ./applications/xfce4-mixer.nix { };
 
+  xfce4notifyd = callPackage ./applications/xfce4-notifyd.nix { };
+
   #### ART
 
   xfce4icontheme = callPackage ./art/xfce4-icon-theme.nix { };
