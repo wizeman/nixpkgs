@@ -1,10 +1,12 @@
-{ fetchurl, stdenv, pkgconfig, libxml2, gconf, glib, gtk
-, libbonoboui, libgnomeui, libgtkhtml, gtkhtml, libgnomeprint, goffice, enchant
-, gettext, intltool, perl, guile, slibGuile, swig, isocodes, bzip2
-, makeWrapper }:
+{ fetchurl, stdenv, pkgconfig, libxml2, gconf, glib, gtk, libgnomeui, libofx
+, libgtkhtml, gtkhtml, libgnomeprint, goffice, enchant, gettext, libbonoboui
+, intltool, perl, guile, slibGuile, swig, isocodes, bzip2, makeWrapper
+}:
 
-# TODO: Fix the gconf issue. The following posting might be the missing clue:
-# <http://osdir.com/ml/linux.distributions.nixos/2007-09/msg00003.html>.
+/* If you experience GConf errors when running GnuCash on NixOS, see
+ * http://wiki.nixos.org/wiki/Solve_GConf_errors_when_running_GNOME_applications
+ * for a possible solution.
+ */
 
 let
   name = "gnucash-2.4.7";
@@ -18,34 +20,34 @@ stdenv.mkDerivation {
   };
 
   buildInputs = [
-    pkgconfig libxml2 gconf glib gtk
-    libgnomeui libgtkhtml gtkhtml libgnomeprint goffice enchant
-    gettext intltool perl guile slibGuile swig isocodes bzip2 makeWrapper
+    pkgconfig libxml2 gconf glib gtk libgnomeui libgtkhtml gtkhtml
+    libgnomeprint goffice enchant gettext intltool perl guile slibGuile
+    swig isocodes bzip2 makeWrapper libofx
   ];
 
-  NIX_LDFLAGS = "-rpath=${libgnomeui}/lib/libglade/2.0 -rpath=${libbonoboui}/lib/libglade/2.0 -rpath=${guile}/lib";
-
-  configureFlags = "CPPFLAGS=-DNDEBUG CFLAGS=-O2 CXXFLAGS=-O2 --disable-dbi";
-  /* More flags to figure out:
-
-       --enable-gtkmm            enable gtkmm gui
-       --enable-ofx              compile with ofx support (needs LibOFX)
-       --enable-aqbanking        compile with AqBanking support
-       --enable-python-bindings  enable python bindings
-   */
+  configureFlags = "CFLAGS=-O3 CXXFLAGS=-O3 --disable-dbi --enable-ofx";
 
   postInstall = ''
+    sed -i $out/bin/update-gnucash-gconf                                \
+       -e 's|--config-source=[^ ]* --install-schema-file|--makefile-install-rule|'
     for prog in "$out/bin/"*
     do
-      wrapProgram "$prog"                                       \
-        --set SCHEME_LIBRARY_PATH "$SCHEME_LIBRARY_PATH"        \
-        --prefix GUILE_LOAD_PATH ":" "$GUILE_LOAD_PATH"         \
-        --prefix PATH ":" "${gconf}/bin"
+      wrapProgram "$prog"                                               \
+        --set SCHEME_LIBRARY_PATH "$SCHEME_LIBRARY_PATH"                \
+        --prefix GUILE_LOAD_PATH ":" "$GUILE_LOAD_PATH"                 \
+        --prefix LD_LIBRARY_PATH ":" "${libgnomeui}/lib/libglade/2.0"   \
+        --prefix LD_LIBRARY_PATH ":" "${libbonoboui}/lib/libglade/2.0"  \
+        --set GCONF_CONFIG_SOURCE 'xml::~/.gconf'                       \
+        --prefix PATH ":" "${gconf}/bin"                                \
+        --suffix PATH ":" "$out/bin"
     done
   '';
 
+  # The following settings fix failures in the test suite. It's not required otherwise.
+  NIX_LDFLAGS = "-rpath=${guile}/lib";
   preCheck = "export GNC_DOT_DIR=$PWD/dot-gnucash";
   doCheck = true;
+
   enableParallelBuilding = true;
 
   meta = {

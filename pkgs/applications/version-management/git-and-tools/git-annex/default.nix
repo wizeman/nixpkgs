@@ -1,19 +1,20 @@
 { stdenv, fetchurl, ghc, libuuid, rsync, findutils, curl, perl, MissingH, utf8String
-, QuickCheck2, pcreLight, SHA, dataenc, HTTP, testpack, git, ikiwiki }:
+, QuickCheck2, pcreLight, SHA, dataenc, HTTP, testpack, git, ikiwiki, which
+, monadControl }:
 
 let
-  version = "3.20110705";
+  version = "3.20110719";
 in
 stdenv.mkDerivation {
   name = "git-annex-${version}";
 
   src = fetchurl {
     url = "http://ftp.de.debian.org/debian/pool/main/g/git-annex/git-annex_${version}.tar.gz";
-    sha256 = "781b0c02f992e46f3c2555db803caed2a9bbd274a62fcebab3f596bfd7888c9a";
+    sha256 = "0wkfm6sc3rnprigi8xxw1h0d1bs3lwzzzwgqfzlcbsh44rdlnz54";
   };
 
   buildInputs = [ghc libuuid rsync findutils curl perl MissingH utf8String QuickCheck2 pcreLight
-    SHA dataenc HTTP testpack git ikiwiki];
+    SHA dataenc HTTP testpack git ikiwiki which monadControl];
 
   checkTarget = "test";
   doCheck = true;
@@ -45,7 +46,7 @@ stdenv.mkDerivation {
       control.
     '';
 
-    platforms = stdenv.lib.platforms.unix;
+    platforms = stdenv.lib.platforms.haskellPlatforms;
     maintainers = [ stdenv.lib.maintainers.simons ];
   };
 }

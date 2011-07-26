@@ -354,6 +354,8 @@ let
 
   aircrackng = callPackage ../tools/networking/aircrack-ng { };
 
+  archivemount = callPackage ../tools/filesystems/archivemount { };
+
   asymptote = builderDefsPackage ../tools/graphics/asymptote {
     inherit freeglut ghostscriptX imagemagick fftw boehmgc
       mesa ncurses readline gsl libsigsegv python zlib perl
@@ -846,7 +848,9 @@ let
 
   jdiskreport = callPackage ../tools/misc/jdiskreport { };
 
-  jfsrec = callPackage ../tools/filesystems/jfsrec { };
+  jfsrec = callPackage ../tools/filesystems/jfsrec {
+    boost = boost144;
+  };
 
   jfsutils = callPackage ../tools/filesystems/jfsutils { };
 
@@ -1568,6 +1572,8 @@ let
   bashInteractive = appendToName "interactive" (callPackage ../shells/bash {
     interactive = true;
   });
+
+  bashCompletion = callPackage ../shells/bash-completion { };
 
   dash = callPackage ../shells/dash { };
 
@@ -2616,6 +2622,8 @@ let
 
   bison24 = callPackage ../development/tools/parsing/bison/bison-2.4.nix { };
 
+  bison25 = callPackage ../development/tools/parsing/bison/bison-2.5.nix { };
+
   buildbot = callPackage ../development/tools/build-managers/buildbot {
     inherit (pythonPackages) twisted;
   };
@@ -2873,10 +2881,7 @@ let
 
   acl = callPackage ../development/libraries/acl { };
 
-  adns = import ../development/libraries/adns/1.4.nix {
-    inherit stdenv fetchurl;
-    static = getConfig [ "adns" "static" ] (stdenv ? isStatic || stdenv ? isDietLibC);
-  };
+  adns = callPackage ../development/libraries/adns { };
 
   agg = callPackage ../development/libraries/agg { };
 
@@ -2923,6 +2928,7 @@ let
   boost = callPackage ../development/libraries/boost { };
 
   boost142 = callPackage ../development/libraries/boost/1.42.nix { };
+  boost144 = callPackage ../development/libraries/boost/1.44.nix { };
   boost146 = callPackage ../development/libraries/boost/1.46.nix { };
 
   # A Boost build with all library variants enabled.  Very large (about 250 MB).
@@ -3548,6 +3554,8 @@ let
   libassuan1 = callPackage ../development/libraries/libassuan1 { };
 
   libassuan = callPackage ../development/libraries/libassuan { };
+
+  libav = callPackage ../development/libraries/libav { };
 
   libavc1394 = callPackage ../development/libraries/libavc1394 { };
 
@@ -5052,13 +5060,34 @@ let
 
   kernelPatches = callPackage ../os-specific/linux/kernel/patches.nix { };
 
+  linux_2_6_15 = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.15.nix) {
+    inherit fetchurl perl mktemp module_init_tools;
+    stdenv = overrideInStdenv stdenv [gcc34 gnumake381];
+    kernelPatches =
+      [ kernelPatches.cifs_timeout_2_6_15
+      ];
+  };
+
   linux_2_6_25 = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.25.nix) {
+    inherit fetchurl perl mktemp module_init_tools;
+    extraConfig = "KMOD y";
+    stdenv = overrideInStdenv stdenv [gnumake381];
+    kernelPatches =
+      [ kernelPatches.fbcondecor_2_6_25
+        kernelPatches.sec_perm_2_6_24
+        kernelPatches.glibc_getline
+	kernelPatches.cifs_timeout_2_6_25
+      ];
+  };
+
+  linux_2_6_26 = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.26.nix) {
     inherit fetchurl perl mktemp module_init_tools;
     stdenv = overrideInStdenv stdenv [gnumake381];
     kernelPatches =
       [ kernelPatches.fbcondecor_2_6_25
         kernelPatches.sec_perm_2_6_24
         kernelPatches.glibc_getline
+	kernelPatches.cifs_timeout_2_6_25
       ];
   };
 
@@ -5068,6 +5097,7 @@ let
     kernelPatches =
       [ kernelPatches.fbcondecor_2_6_27
         kernelPatches.sec_perm_2_6_24
+	kernelPatches.cifs_timeout_2_6_25
       ];
   };
 
@@ -5079,6 +5109,7 @@ let
         kernelPatches.sec_perm_2_6_24
         kernelPatches.ext4_softlockups_2_6_28
         kernelPatches.glibc_getline
+	kernelPatches.cifs_timeout_2_6_25
       ];
   };
 
@@ -5087,12 +5118,15 @@ let
     kernelPatches =
       [ kernelPatches.fbcondecor_2_6_29
         kernelPatches.sec_perm_2_6_24
+	kernelPatches.cifs_timeout_2_6_29
       ];
   };
 
   linux_2_6_31 = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.31.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools platform;
-    kernelPatches = [];
+    kernelPatches =
+      [ kernelPatches.cifs_timeout_2_6_29
+      ];
   };
 
   linux_2_6_32 = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.32.nix) {
@@ -5101,7 +5135,7 @@ let
       [ kernelPatches.fbcondecor_2_6_31
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs2_2_6_32
-        kernelPatches.cifs_timeout
+        kernelPatches.cifs_timeout_2_6_29
         kernelPatches.no_xsave
         kernelPatches.dell_rfkill
       ];
@@ -5159,6 +5193,7 @@ let
     kernelPatches =
       [ kernelPatches.fbcondecor_2_6_33
         kernelPatches.sec_perm_2_6_24
+	kernelPatches.cifs_timeout_2_6_29
       ];
   };
 
@@ -5184,6 +5219,7 @@ let
       [ /*kernelPatches.fbcondecor_2_6_33*/
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs2_2_6_34
+	kernelPatches.cifs_timeout_2_6_29
       ];
   };
 
@@ -5199,6 +5235,7 @@ let
       [ #kernelPatches.fbcondecor_2_6_35
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs2_2_6_35
+	kernelPatches.cifs_timeout_2_6_35
       ] ++ lib.optional (platform.kernelArch == "arm")
         kernelPatches.sheevaplug_modules_2_6_35;
   };
@@ -5227,6 +5264,7 @@ let
           kernelPatches.sec_perm_2_6_24
           #kernelPatches.aufs2_2_6_35
           kernelPatches.mips_restart_2_6_36
+	  kernelPatches.cifs_timeout_2_6_35
         ];
     };
 
@@ -5248,6 +5286,7 @@ let
         kernelPatches.sec_perm_2_6_24
         #kernelPatches.aufs2_2_6_35
         kernelPatches.mips_restart_2_6_36
+	kernelPatches.cifs_timeout_2_6_35
       ];
   };
 
@@ -5263,6 +5302,7 @@ let
       [ kernelPatches.fbcondecor_2_6_37
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs2_1_2_6_37
+	kernelPatches.cifs_timeout_2_6_35
         #kernelPatches.mips_restart_2_6_36
       ];
   };
@@ -5279,11 +5319,24 @@ let
       [ kernelPatches.fbcondecor_2_6_38
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs2_1_2_6_38
+	kernelPatches.cifs_timeout_2_6_38
         #kernelPatches.mips_restart_2_6_36
       ];
   };
 
+  linux_2_6_38_ati = linux_2_6_38.override { extraConfig="DRM_RADEON_KMS y"; };
+
   linux_2_6_39 = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.39.nix) {
+    inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
+    kernelPatches =
+      [ #kernelPatches.fbcondecor_2_6_38
+        kernelPatches.sec_perm_2_6_24
+        #kernelPatches.aufs2_1_2_6_38
+        #kernelPatches.mips_restart_2_6_36
+      ];
+  };
+
+  linux_3_0 = makeOverridable (import ../os-specific/linux/kernel/linux-3.0.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
     kernelPatches =
       [ #kernelPatches.fbcondecor_2_6_38
@@ -5421,7 +5474,9 @@ let
   linuxPackages_2_6_37 = recurseIntoAttrs (linuxPackagesFor linux_2_6_37 pkgs.linuxPackages_2_6_37);
   linuxPackages_2_6_37_tuxonice = recurseIntoAttrs (linuxPackagesFor linux_2_6_37_tuxonice pkgs.linuxPackages_2_6_37_tuxonice);
   linuxPackages_2_6_38 = recurseIntoAttrs (linuxPackagesFor linux_2_6_38 pkgs.linuxPackages_2_6_38);
+  linuxPackages_2_6_38_ati = recurseIntoAttrs (linuxPackagesFor linux_2_6_38_ati pkgs.linuxPackages_2_6_38);
   linuxPackages_2_6_39 = recurseIntoAttrs (linuxPackagesFor linux_2_6_39 pkgs.linuxPackages_2_6_39);
+  linuxPackages_3_0 = recurseIntoAttrs (linuxPackagesFor linux_3_0 pkgs.linuxPackages_3_0);
   linuxPackages_nanonote_jz_2_6_34 = recurseIntoAttrs (linuxPackagesFor linux_nanonote_jz_2_6_34 pkgs.linuxPackages_nanonote_jz_2_6_34);
   linuxPackages_nanonote_jz_2_6_35 = recurseIntoAttrs (linuxPackagesFor linux_nanonote_jz_2_6_35 pkgs.linuxPackages_nanonote_jz_2_6_35);
   linuxPackages_nanonote_jz_2_6_36 = recurseIntoAttrs (linuxPackagesFor linux_nanonote_jz_2_6_36 pkgs.linuxPackages_nanonote_jz_2_6_36);
@@ -5570,6 +5625,9 @@ let
 
   radeontools = callPackage ../os-specific/linux/radeontools { };
 
+  radeonR700 = callPackage ../os-specific/linux/firmware/radeon-r700 { };
+  radeonR600 = callPackage ../os-specific/linux/firmware/radeon-r600 { };
+
   rfkill = callPackage ../os-specific/linux/rfkill { };
 
   rt2860fw = callPackage ../os-specific/linux/firmware/rt2860 { };
@@ -5577,6 +5635,8 @@ let
   rt2870fw = callPackage ../os-specific/linux/firmware/rt2870 { };
 
   rt73fw = callPackage ../os-specific/linux/firmware/rt73 { };
+
+  rtl8192cfw = callPackage ../os-specific/linux/firmware/rtl8192c { };
 
   sdparm = callPackage ../os-specific/linux/sdparm { };
 
@@ -5642,7 +5702,9 @@ let
     cross = assert crossSystem != null; crossSystem;
   };
 
-  udev = callPackage ../os-specific/linux/udev { };
+  udev145 = callPackage ../os-specific/linux/udev/145.nix { };
+  udev166 = callPackage ../os-specific/linux/udev/166.nix { };
+  udev = udev166;
 
   uml = import ../os-specific/linux/kernel/linux-2.6.29.nix {
     inherit fetchurl stdenv perl mktemp module_init_tools;
@@ -5663,10 +5725,10 @@ let
 
   utillinuxCurses = utillinuxngCurses;
 
-  utillinuxng = callPackage ../os-specific/linux/util-linux-ng {
+  utillinuxng = lowPrio (callPackage ../os-specific/linux/util-linux-ng {
     ncurses = null;
     perl = null;
-  };
+  });
 
   utillinuxngCurses = utillinuxng.override {
     inherit ncurses perl;
@@ -6264,20 +6326,14 @@ let
 
   flashplayer = flashplayer10;
 
-  flashplayer9 = (
-    import ../applications/networking/browsers/mozilla-plugins/flashplayer-9 {
-      inherit fetchurl stdenv zlib alsaLib nss nspr fontconfig freetype expat;
-      inherit (xlibs) libX11 libXext libXrender libXt;
-      inherit (gtkLibs) gtk glib pango atk;
-    });
+  flashplayer9 = callPackage ../applications/networking/browsers/mozilla-plugins/flashplayer-9 {
+    inherit (gtkLibs) atk;
+  };
 
-  flashplayer10 = (
-    import ../applications/networking/browsers/mozilla-plugins/flashplayer-10 {
-      inherit fetchurl stdenv zlib alsaLib curl nss nspr fontconfig freetype expat cairo;
-      inherit (xlibs) libX11 libXext libXrender libXt ;
-      inherit (gtkLibs) gtk glib pango atk gdk_pixbuf;
-      debug = getConfig ["flashplayer" "debug"] false;
-    });
+  flashplayer10 = callPackage ../applications/networking/browsers/mozilla-plugins/flashplayer-10 {
+    inherit (gtkLibs) atk gdk_pixbuf;
+    debug = getConfig ["flashplayer" "debug"] false;
+  };
 
   freecad = callPackage ../applications/graphics/freecad {
     boost = boost146;
@@ -6371,6 +6427,10 @@ let
     inherit (gnome) libglade;
   };
 
+  jbidwatcher = callPackage ../applications/misc/jbidwatcher {
+    java = if stdenv.isLinux then jre else jdk;
+  };
+
   qrdecode = builderDefsPackage (import ../tools/graphics/qrdecode) {
     inherit libpng opencv;
   };
@@ -6389,6 +6449,10 @@ let
   gqview = callPackage ../applications/graphics/gqview { };
 
   googleearth = callPackage_i686 ../applications/misc/googleearth { };
+
+  google_talk_plugin = callPackage ../applications/networking/browsers/mozilla-plugins/google-talk-plugin {
+    inherit pkgsi686Linux;
+  };
 
   gosmore = builderDefsPackage ../applications/misc/gosmore {
     inherit fetchsvn curl pkgconfig libxml2;
@@ -6590,6 +6654,7 @@ let
   links = callPackage ../applications/networking/browsers/links { };
 
   ledger = callPackage ../applications/office/ledger { };
+  ledger3 = callPackage ../applications/office/ledger/3.0.nix { };
 
   links2 = (builderDefsPackage ../applications/networking/browsers/links2) {
     inherit fetchurl stdenv bzip2 zlib libjpeg libpng libtiff
@@ -6867,8 +6932,8 @@ let
   rdesktop = callPackage ../applications/networking/remote/rdesktop { };
 
   RealPlayer = callPackage ../applications/video/RealPlayer {
-      inherit (gtkLibs) glib pango atk gtk;
-      libstdcpp5 = gcc33.gcc;
+    inherit (gtkLibs) glib pango atk gtk;
+    libstdcpp5 = gcc33.gcc;
   };
 
   rekonq = newScope pkgs.kde4 ../applications/networking/browsers/rekonq { };
@@ -6879,7 +6944,7 @@ let
 
   retroshare = callPackage ../applications/networking/p2p/retroshare {
     qt = qt4;
-   inherit (gnome) gnome_keyring;
+    inherit (gnome) gnome_keyring;
   };
 
   rsync = callPackage ../applications/networking/sync/rsync {
@@ -6890,7 +6955,8 @@ let
 
   # = urxvt
   rxvt_unicode = callPackage ../applications/misc/rxvt_unicode {
-    perlSupport = false;  };
+    perlSupport = false;
+  };
 
   sakura = callPackage ../applications/misc/sakura {
     inherit (gnome) vte;
@@ -6906,9 +6972,7 @@ let
   seeks = callPackage ../tools/networking/p2p/seeks { };
 
   seg3d = callPackage ../applications/graphics/seg3d {
-    wxGTK = wxGTK28.override {
-      unicode = false;
-  };
+    wxGTK = wxGTK28.override { unicode = false; };
   };
 
   semnotes = newScope pkgs.kde4 ../applications/misc/semnotes { };
@@ -7032,6 +7096,8 @@ let
 
   transmission = callPackage ../applications/networking/p2p/transmission { };
 
+  tree = callPackage ../tools/system/tree { };
+
   tribler = callPackage ../applications/networking/p2p/tribler { };
 
   twinkle = callPackage ../applications/networking/twinkle {
@@ -7144,7 +7210,7 @@ let
         enableGnash = getConfig [ browserName "enableGnash" ] false;
       in
        assert !(enableGnash && enableAdobeFlash);
-       ([]
+       ([ ]
         ++ lib.optional enableGnash gnash
         ++ lib.optional enableAdobeFlash flashplayer
         # RealPlayer is disabled by default for legal reasons.
@@ -7153,6 +7219,7 @@ let
         ++ lib.optional (getConfig [browserName "enableMPlayer"] false) (MPlayerPlugin browser)
         ++ lib.optional (getConfig [browserName "enableGeckoMediaPlayer"] false) gecko_mediaplayer
         ++ lib.optional (supportsJDK && getConfig [browserName "jre"] false && jrePlugin ? mozillaPlugin) jrePlugin
+        ++ lib.optional (getConfig [browserName "enableGoogleTalkPlugin"] false) google_talk_plugin
        );
   };
 
@@ -7925,6 +7992,8 @@ let
 
   mess = callPackage ../misc/emulators/mess { };
 
+  mupen64plus = callPackage ../misc/emulators/mupen64plus { };
+
   nix = nixStable;
 
   nixStable = callPackage ../tools/package-management/nix {
@@ -8002,9 +8071,7 @@ let
 
   rssglx = callPackage ../misc/screensavers/rss-glx { };
 
-  xlockmore = callPackage ../misc/screensavers/xlockmore {
-    pam = if getConfig [ "xlockmore" "pam" ] true then pam else null;
-  };
+  xlockmore = callPackage ../misc/screensavers/xlockmore { };
 
   saneBackends = callPackage ../misc/sane-backends {
     gt68xxFirmware = getConfig ["sane" "gt68xxFirmware"] null;
@@ -8073,11 +8140,17 @@ let
     inherit texLiveLatexXColor texLivePGF texLive;
   };
 
+  texLiveModerncv = builderDefsPackage (import ../misc/tex/texlive/moderncv.nix) {
+    inherit texLive unzip;
+  };
+
   trac = callPackage ../misc/trac {
     inherit (pythonPackages) pysqlite;
   };
 
   vice = callPackage ../misc/emulators/vice { };
+
+  VisualBoyAdvance = callPackage ../misc/emulators/VisualBoyAdvance { };
 
   # Wine cannot be built in 64-bit; use a 32-bit build instead.
   wine = callPackage_i686 ../misc/emulators/wine { };

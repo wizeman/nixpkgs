@@ -35,6 +35,11 @@
 , extraMeta ? {}
 , ubootChooser ? null
 , postInstall ? ""
+, setModuleDir ? true
+
+, # After the builder did a 'make all' (kernel + modules)
+  # we force building the target asked: bzImage/zImage/uImage/...
+  postBuild ? "make $makeFlags $kernelTarget; make $makeFlags -C scripts unifdef"
 , ...
 }:
 
@@ -65,12 +70,21 @@ stdenv.mkDerivation {
     # Combine the `features' attribute sets of all the kernel patches.
     features = lib.fold (x: y: (if x ? features then x.features else {}) // y) features kernelPatches;
   };
-  
+
   builder = ./builder.sh;
 
   generateConfig = ./generate-config.pl;
 
   inherit preConfigure src module_init_tools localVersion postInstall;
+
+  #Currently, the builder sets $MODULE_DIR during installPhase. This causes
+  #problems with at least linux 3.0, so we need to conditionally avoid
+  #setting $MODULE_DIR. This prepend to postBuild accomplishes this with a
+  #sed/eval trick thanks to MarcWeber
+
+  postBuild = (if setModuleDir then "" else '' 
+    eval "$(type installPhase | sed -e '1d' -e '/export MODULE_DIR/d')";
+  '') + postBuild;
 
   patches = map (p: p.patch) kernelPatches;
 
@@ -87,7 +101,7 @@ stdenv.mkDerivation {
   kernelBaseConfig = stdenv.platform.kernelBaseConfig;
   kernelTarget = stdenv.platform.kernelTarget;
   autoModules = stdenv.platform.kernelAutoModules;
-  
+
   # Should we trust platform.kernelArch? We can only do
   # that once we differentiate i686/x86_64 in platforms.
   arch =
@@ -133,5 +147,7 @@ stdenv.mkDerivation {
     license = "GPLv2";
     homepage = http://www.kernel.org/;
     maintainers = [ lib.maintainers.eelco ];
+    platforms = lib.platforms.linux;
   } // extraMeta;
 }
+

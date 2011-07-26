@@ -468,6 +468,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   fclabels = callPackage ../development/libraries/haskell/fclabels {};
 
+  funcmp = callPackage ../development/libraries/haskell/funcmp {};
+
   feed = callPackage ../development/libraries/haskell/feed {};
 
   filestore = callPackage ../development/libraries/haskell/filestore {};
@@ -609,6 +611,11 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   Hipmunk = callPackage ../development/libraries/haskell/Hipmunk {};
 
+  hledger = callPackage ../development/libraries/haskell/hledger {};
+  hledgerLib = callPackage ../development/libraries/haskell/hledger-lib {};
+  hledgerVty = callPackage ../development/libraries/haskell/hledger-vty {};
+  hledgerChart = callPackage ../development/libraries/haskell/hledger-chart {};
+
   HList = callPackage ../development/libraries/haskell/HList {};
 
   hmatrix = callPackage ../development/libraries/haskell/hmatrix {
@@ -624,6 +631,10 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   hp2anyGraph = callPackage ../development/libraries/haskell/hp2any-graph {};
 
   hscolour = callPackage ../development/libraries/haskell/hscolour {};
+
+  hsdns = callPackage ../development/libraries/haskell/hsdns {
+    inherit (pkgs) adns;
+  };
 
   hsemail = callPackage ../development/libraries/haskell/hsemail {};
 
@@ -697,6 +708,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   monadLoops = callPackage ../development/libraries/haskell/monad-loops {};
 
+  monadPar = callPackage ../development/libraries/haskell/monad-par {};
+
   monadPeel = callPackage ../development/libraries/haskell/monad-peel {};
 
   MonadPrompt = callPackage ../development/libraries/haskell/MonadPrompt {};
@@ -713,6 +726,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   mtl1 = self.mtl_1_1_0_2;
   mtl2 = self.mtl_2_0_1_0;
   mtl  = self.mtl1;
+
+  mtlparse  = callPackage ../development/libraries/haskell/mtlparse {};
 
   multiplate = callPackage ../development/libraries/haskell/multiplate {};
 
@@ -850,6 +865,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   regexPCRE = callPackage ../development/libraries/haskell/regex-pcre {};
 
+  regexpr = callPackage ../development/libraries/haskell/regexpr {};
+
   regular = callPackage ../development/libraries/haskell/regular {};
 
   repa = callPackage ../development/libraries/haskell/repa {};
@@ -931,6 +948,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   stm = self.stm_2_1_1_2;
 
   storableComplex = callPackage ../development/libraries/haskell/storable-complex {};
+
+  storableRecord = callPackage ../development/libraries/haskell/storable-record {};
 
   strictConcurrency = callPackage ../development/libraries/haskell/strictConcurrency {};
 
