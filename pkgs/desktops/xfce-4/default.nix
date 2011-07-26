@@ -48,7 +48,7 @@ in {
 
   xfdesktop = callPackage ./core/xfdesktop.nix { };
 
-  xfce_utils = callPackage ./core/xfce-utils.nix { };
+  xfceutils = callPackage ./core/xfce-utils.nix { };
 
   xfce4_power_manager = callPackage ./core/xfce4-power-manager.nix { };
 
