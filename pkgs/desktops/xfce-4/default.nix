@@ -1,9 +1,8 @@
 { callPackage, pkgs }:
 
-  let lib = import ../../lib; in
-{
-
-
+let
+  lib = import ../../lib;
+in {
   inherit (pkgs.gtkLibs) gtk glib;
   inherit (pkgs.gnome) libglade libwnck vte;
   inherit (pkgs.perlPackages) URI;
@@ -49,7 +48,7 @@
 
   xfdesktop = callPackage ./core/xfdesktop.nix { };
 
-  xfceutils = callPackage ./core/xfce-utils.nix { };
+  xfce_utils = callPackage ./core/xfce-utils.nix { };
 
   xfce4_power_manager = callPackage ./core/xfce4-power-manager.nix { };
 

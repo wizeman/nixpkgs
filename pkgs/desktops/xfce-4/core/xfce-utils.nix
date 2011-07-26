@@ -7,6 +7,7 @@ stdenv.mkDerivation rec {
 
   configureFlags = "--with-xsession-prefix=$(out)/share/xsessions";
 
+  fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs = [ pkgconfig intltool gtk libxfce4util libxfce4ui ];
 
   meta = {

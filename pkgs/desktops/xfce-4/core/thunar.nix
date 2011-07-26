@@ -7,10 +7,12 @@ stdenv.mkDerivation rec {
 
   src = fetchXfce.core name "02j3dcgk65mig3jmrg740d1swc8sbn3mkkyrca1ijvv1a955345n";
 
+  fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs =
     [ pkgconfig intltool exo gtk libxfce4util
       dbus_glib libstartup_notification xfconf xfce4panel gamin
     ];
+  # TODO: gudev, libnotify, libexif, libpcre?
 
   propagatedBuildInputs = if enableHAL then [ hal ] else [];
 

@@ -9,6 +9,7 @@ stdenv.mkDerivation rec {
   buildInputs =
     [ pkgconfig intltool URI glib gtk libxfce4util ] ++
     stdenv.lib.optionals enableHAL [ hal dbus_glib ];
+  # TODO: python support?
 
   meta = {
     homepage = http://www.xfce.org/projects/exo;

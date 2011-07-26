@@ -11,6 +11,7 @@ stdenv.mkDerivation rec {
 
   src = fetchXfce.app "Terminal-${version}" "0zw9dy072g1cgwfqybr3y9x9afmaw13fqnv9gan58d5zn79mb39s";
 
+  fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs = [ pkgconfig intltool exo gtk vte libxfce4util ncurses ];
 
   meta = {

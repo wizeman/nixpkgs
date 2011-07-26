@@ -6,6 +6,7 @@ stdenv.mkDerivation rec {
 
   src = fetchXfce.core name "0adqd1gf48mck8dy7i5xchnl4d331cxg18j09xxx5m3yv1vjmx8x";
 
+  fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs =
     [ pkgconfig intltool gtk libxfce4util libxfce4ui libwnck dbus_glib
       xfconf libglade xorg.iceauth
