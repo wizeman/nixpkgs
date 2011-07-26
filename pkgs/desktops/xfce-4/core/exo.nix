@@ -1,5 +1,5 @@
 { stdenv, fetchXfce, pkgconfig, intltool, URI, glib, gtk, libxfce4util
-, enableHAL ? true, hal, dbus_glib }:
+, enableHAL ? false, hal, dbus_glib }:
 
 stdenv.mkDerivation rec {
   name = "exo-0.6.0";
