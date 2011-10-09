@@ -1,13 +1,17 @@
-{cabal, network, parsec, utf8String}:
+{ cabal, mtl, network, parsec, utf8String }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "web-routes";
-  version = "0.22.0";
-  sha256 = "6482ecba585cf7b1f32c29bfd5cb6f5e06dba72231e38ae5baa15b6b95f7c6c8";
-  propagatedBuildInputs = [network parsec utf8String];
+  version = "0.25.3";
+  sha256 = "09bqz7vn2050jr67m3rrqi0krfxa9n1fxm9rgi3c837g522nb4kk";
+  buildDepends = [ mtl network parsec utf8String ];
   meta = {
     description = "Library for maintaining correctness and composability of URLs within an application";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })

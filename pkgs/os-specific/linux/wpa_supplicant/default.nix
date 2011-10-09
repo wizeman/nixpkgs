@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, lib, openssl, qt4, inkscape
+{ stdenv, fetchurl, lib, openssl, qt4, inkscape, dbus_libs, pkgconfig, libnl1
 , readlineSupport ? true, readline
 }:
 assert readlineSupport -> readline!=null;
@@ -9,8 +9,12 @@ let
     sha256 = "0hwlsn512q2ps8wxxjmkjfdg3vjqqb9mxnnwfv1wqijkm3551kfh";
   };
   extraConfig = lib.concatStringsSep "\n" (
-    ["CONFIG_DEBUG_SYSLOG=y"]
-    ++ lib.optional readlineSupport "CONFIG_READLINE=y"
+    [ "CONFIG_DEBUG_SYSLOG=y"
+      "CONFIG_CTRL_IFACE_DBUS=y"
+      "CONFIG_CTRL_IFACE_DBUS_NEW=y"
+      "CONFIG_CTRL_IFACE_DBUS_INTRO=y"
+      "CONFIG_DRIVER_NL80211=y"
+    ] ++ lib.optional readlineSupport "CONFIG_READLINE=y"
   );
 in
 
@@ -25,12 +29,26 @@ in
     substituteInPlace Makefile --replace /usr/local $out
   '';
 
-  buildInputs = [openssl] ++ lib.optional readlineSupport readline;
+  buildInputs = [openssl dbus_libs libnl1]
+    ++ lib.optional readlineSupport readline;
+
+  buildNativeInputs = [ pkgconfig ];
+
+  # Upstream patch required for NetworkManager-0.9
+  patches = [ (fetchurl {
+    url = "http://w1.fi/gitweb/gitweb.cgi?p=hostap-07.git;a=commitdiff_plain;h=b80b5639935d37b95d00f86b57f2844a9c775f57";
+    name = "wpa_supplicant-nm-0.9.patch";
+    sha256 = "1pqba0l4rfhba5qafvvbywi9x1qmphs944p704bh1flnx7cz6ya8";
+    }) ];
 
   postInstall = ''
     ensureDir $out/share/man/man5 $out/share/man/man8
     cp -v doc/docbook/*.5 $out/share/man/man5/
     cp -v doc/docbook/*.8 $out/share/man/man8/
+    ensureDir $out/etc/dbus-1/system.d $out/share/dbus-1/system-services
+    cp -v dbus/*service $out/share/dbus-1/system-services
+    sed -e "s@/sbin/wpa_supplicant@$out&@" -i $out/share/dbus-1/system-services/*
+    cp -v dbus/dbus-wpa_supplicant.conf $out/etc/dbus-1/system.d
   '';
 
   meta = {

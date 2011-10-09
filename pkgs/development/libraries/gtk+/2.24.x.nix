@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, pkgconfig, glib, atk, pango, libtiff, libjpeg
-, libpng, cairo, perl, jasper, xlibs, gdk_pixbuf
+{ stdenv, fetchurl_gnome, pkgconfig, glib, atk, pango, cairo, perl, xlibs
+, gdk_pixbuf, xz
 , xineramaSupport ? true
 , cupsSupport ? true, cups ? null
 }:
@@ -8,11 +8,12 @@ assert xineramaSupport -> xlibs.libXinerama != null;
 assert cupsSupport -> cups != null;
 
 stdenv.mkDerivation rec {
-  name = "gtk+-2.24.3";
+  name = src.pkgname;
   
-  src = fetchurl {
-    url = "mirror://gnome/sources/gtk+/2.24/${name}.tar.bz2";
-    sha256 = "336ddf3dd342cc36bee80dd4f86ef036044a2deb10cda67c8eecf5315b279ef7";
+  src = fetchurl_gnome {
+    project = "gtk+";
+    major = "2"; minor = "24"; patchlevel = "6"; extension = "xz";
+    sha256 = "1jpgxycxgz1g5yd7spxyc2i8zvn8swm275dkd4d0ryn1bma6n0la";
   };
 
   patches =
@@ -23,11 +24,10 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
   
-  buildNativeInputs = [ perl ];
-  buildInputs = [ pkgconfig jasper ];
+  buildNativeInputs = [ perl pkgconfig xz ];
   
   propagatedBuildInputs =
-    [ xlibs.xlibs glib atk pango gdk_pixbuf /* libtiff libjpeg libpng */ cairo
+    [ xlibs.xlibs glib atk pango gdk_pixbuf cairo
       xlibs.libXrandr xlibs.libXrender xlibs.libXcomposite xlibs.libXi
     ]
     ++ stdenv.lib.optional xineramaSupport xlibs.libXinerama
@@ -37,8 +37,6 @@ stdenv.mkDerivation rec {
 
   postInstall = "rm -rf $out/share/gtk-doc";
   
-  passthru = { inherit libtiff libjpeg libpng; };
-
   meta = {
     description = "A multi-platform toolkit for creating graphical user interfaces";
 

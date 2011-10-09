@@ -1,14 +1,17 @@
-{cabal, text}:
+{ cabal, hashable, text }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "case-insensitive";
-  version = "0.2.0.2";
-  sha256 = "0qn2scaxxbqi4770nwvcmb1ldj0ipa2ljxcavcn0kv48xzs519l7";
-  propagatedBuildInputs = [text];
+  version = "0.3.0.1";
+  sha256 = "0aaj7avg3rd2bvjjcny7wjdif60ikk7q49896g12jnczi5ba97ml";
+  buildDepends = [ hashable text ];
   meta = {
     description = "Case insensitive string comparison";
-    license = "BSD3";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

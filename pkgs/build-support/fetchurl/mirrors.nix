@@ -7,7 +7,7 @@ rec {
 
   # Mirrors for mirror://site/filename URIs, where "site" is
   # "sourceforge", "gnu", etc.
-  
+
   # SourceForge.
   sourceforge = [
     http://prdownloads.sourceforge.net/
@@ -97,6 +97,8 @@ rec {
     http://www.all.kernel.org/pub/
     http://www.eu.kernel.org/pub/
     http://www.de.kernel.org/pub/
+    http://ramses.wh2.tu-dresden.de/pub/mirrors/kernel.org/
+    http://linux-kernel.uio.no/pub/
   ];
 
   # Mirrors of ftp://ftp.kde.org/pub/kde/.
@@ -196,6 +198,7 @@ rec {
     http://ftp.belnet.be/mirror/ftp.opensuse.org/distribution/
     http://ftp.uni-kassel.de/opensuse/distribution/
     http://ftp.opensuse.org/pub/opensuse/distribution/
+    http://ftp5.gwdg.de/pub/opensuse/discontinued/distribution/
     http://ftp.hosteurope.de/mirror/ftp.opensuse.org/discontinued/
     http://opensuse.mirror.server4you.net/distribution/
     http://ftp.nsysu.edu.tw/Linux/OpenSuSE/distribution/
