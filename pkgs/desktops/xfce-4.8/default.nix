@@ -50,6 +50,8 @@ in {
 
   thunar = callPackage ./core/thunar.nix { };
 
+  thunar_volman = callPackage ./core/thunar-volman.nix { };
+
   xfce4settings = callPackage ./core/xfce4-settings.nix { };
 
   xfce4session = callPackage ./core/xfce4-session.nix { };
