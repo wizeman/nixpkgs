@@ -77,8 +77,6 @@ in {
 
   ristretto = callPackage ./applications/ristretto.nix { };
 
-  xfce4_power_manager = callPackage ./applications/xfce4-power-manager.nix { };
-
   xfce4mixer = callPackage ./applications/xfce4-mixer.nix { };
 
   xfce4notifyd = callPackage ./applications/xfce4-notifyd.nix { };
