@@ -921,14 +921,16 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   parallel_1_1_0_1 = callPackage ../development/libraries/haskell/parallel/1.1.0.1.nix {};
   parallel_2_2_0_1 = callPackage ../development/libraries/haskell/parallel/2.2.0.1.nix {};
   parallel_3_1_0_1 = callPackage ../development/libraries/haskell/parallel/3.1.0.1.nix {};
+  parallel_3_2_0_0 = callPackage ../development/libraries/haskell/parallel/3.2.0.0.nix {};
   parallel = self.parallel_1_1_0_1;
 
   parseargs = callPackage ../development/libraries/haskell/parseargs {};
 
   parsec_2_1_0_1 = callPackage ../development/libraries/haskell/parsec/2.1.0.1.nix {};
   parsec_3_1_1   = callPackage ../development/libraries/haskell/parsec/3.1.1.nix {};
+  parsec_3_1_2   = callPackage ../development/libraries/haskell/parsec/3.1.2.nix {};
   parsec2 = self.parsec_2_1_0_1;
-  parsec3 = self.parsec_3_1_1;
+  parsec3 = self.parsec_3_1_2;
   parsec  = self.parsec2;
 
   parsimony = callPackage ../development/libraries/haskell/parsimony {};
@@ -1175,6 +1177,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   text_0_11_1_5 = callPackage ../development/libraries/haskell/text/0.11.1.5.nix {};
   text = self.text_0_11_1_5;
 
+  thespian = callPackage ../development/libraries/haskell/thespian {};
+
   thLift = callPackage ../development/libraries/haskell/th-lift {};
 
   threadmanager = callPackage ../development/libraries/haskell/threadmanager {};
@@ -1335,6 +1339,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   zlibBindings = callPackage ../development/libraries/haskell/zlib-bindings {};
 
   zlibEnum = callPackage ../development/libraries/haskell/zlib-enum {};
+
+  Zwaluw = callPackage ../development/libraries/haskell/Zwaluw {};
 
   # Compilers.
 
