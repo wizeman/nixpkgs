@@ -6,7 +6,7 @@
 stdenv.mkDerivation rec {
   name = "xfce4-session-4.8.1";
 
-  src = fetchXfce.core name "a33534e53fa36a38a1f9bd164469a9fb62c765a7";
+  src = fetchXfce.core name "0adqd1gf48mck8dy7i5xchnl4d331cxg18j09xxx5m3yv1vjmx8x";
 
   fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs =

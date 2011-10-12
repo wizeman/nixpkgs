@@ -1,9 +1,9 @@
 { stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui }:
 
 stdenv.mkDerivation rec {
-  name = "xfce-utils-4.8.2";
+  name = "xfce-utils-4.8.3";
 
-  src = fetchXfce.core name "c9358f47f57b961fc51008cf6752d2761b4c4f25";
+  src = fetchXfce.core name "09mr0amp2f632q9i3vykaa0x5nrfihfm9v5nxsx9vch8wvbp0l03";
 
   configureFlags = "--with-xsession-prefix=$(out)/share/xsessions --with-vendor-info=NixOS.org";
 

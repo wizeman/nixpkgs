@@ -4,9 +4,9 @@
 #TODO: garcon
 
 stdenv.mkDerivation rec {
-  name = "xfce4-panel-4.8.5";
+  name = "xfce4-panel-4.8.6";
 
-  src = fetchXfce.core name "67b9d5bc422663f60f5a05e7cfd7ca67b4542813";
+  src = fetchXfce.core name "00zdkg1jg4n2n109nxan8ji2m06r9mc4lnlrvb55xvj229m2dwb6";
 
   buildInputs =
     [ pkgconfig intltool gtk libxfce4util exo libwnck
@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
     ];
 
   propagatedBuildInputs = [ libxfce4ui ];
-  
+
   enableParallelBuilding = true;
 
   meta = {

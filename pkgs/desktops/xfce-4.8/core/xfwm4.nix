@@ -4,7 +4,7 @@
 stdenv.mkDerivation rec {
   name = "xfwm4-4.8.1";
 
-  src = fetchXfce.core name "4075a689f572ae157ed80ab3ce5be85f09dac766";
+  src = fetchXfce.core name "16c4ix559hm32vbb89pcd13kbrpabg1na9fgyz53pk50j9nbyg3a";
 
   buildInputs =
     [ pkgconfig intltool gtk libglade libxfce4util libxfce4ui xfconf

@@ -4,9 +4,9 @@
 #TODO: garcon, dbus_glib, libnotify
 
 stdenv.mkDerivation rec {
-  name = "xfdesktop-4.8.2";
+  name = "xfdesktop-4.8.3";
 
-  src = fetchXfce.core name "fe7d71bb502197b0353b952947826a5a50ab13bc";
+  src = fetchXfce.core name "097lc9djmay0jyyl42jmvcfda75ndp265nzn0aa3hv795bsn1175";
 
   buildInputs =
     [ pkgconfig intltool gtk libxfce4util libxfce4ui libwnck xfconf

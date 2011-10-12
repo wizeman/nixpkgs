@@ -60,8 +60,6 @@ in {
 
   xfceutils = callPackage ./core/xfce-utils.nix { };
 
-  xfce4_power_manager = callPackage ./core/xfce4-power-manager.nix { };
-
   # not used anymore
   libxfce4menu = callPackage ./core/libxfce4menu.nix { };
 
@@ -80,6 +78,8 @@ in {
   xfce4mixer = callPackage ./applications/xfce4-mixer.nix { };
 
   xfce4notifyd = callPackage ./applications/xfce4-notifyd.nix { };
+
+  xfce4_power_manager = callPackage ./core/xfce4-power-manager.nix { };
 
   #### ART
 
