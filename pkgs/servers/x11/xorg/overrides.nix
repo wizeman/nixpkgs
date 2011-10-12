@@ -47,6 +47,10 @@ in
     buildNativeInputs = [ args.perl ];
   };
 
+  libpciaccess = attrs : attrs // {
+    patches = [ ./libpciaccess-apple.patch ];
+  };
+
   libX11 = attrs: attrs // {
     preConfigure = setMalloc0ReturnsNullCrossCompiling;
     postInstall =
@@ -99,6 +103,7 @@ in
 
   libXext = attrs: attrs // {
     buildInputs = attrs.buildInputs ++ [xorg.libXau];
+    propagatedBuildInputs = [ xorg.xproto ];
     preConfigure = setMalloc0ReturnsNullCrossCompiling;
   };
 
@@ -150,6 +155,10 @@ in
 
   xdriinfo = attrs: attrs // {
     buildInputs = attrs.buildInputs ++ [xorg.glproto args.mesa];
+  };
+
+  xvinfo = attrs: attrs // {
+    buildInputs = attrs.buildInputs ++ [xorg.libXext];
   };
 
   xkbcomp = attrs: attrs // {

@@ -1,13 +1,20 @@
-{cabal, hledger, hledgerLib, vty, safe}:
+{ cabal, cmdargs, hledger, hledgerLib, HUnit, safe, time, vty }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "hledger-vty";
-  version = "0.14";
-  sha256 = "3d9972430053548a65bfe5fb39ba374d1c930c6e0cfc704be5c59de742a4287e";
-  propagatedBuildInputs = [hledger hledgerLib vty safe];
+  version = "0.16.1";
+  sha256 = "10aq9apxz6nrzvvynha0wkhy34dn8dybizr8assni6rns8ylh188";
+  isLibrary = false;
+  isExecutable = true;
+  buildDepends = [ cmdargs hledger hledgerLib HUnit safe time vty ];
   meta = {
-    description = "a simple curses-style console interface to hledger";
-    platforms = self.stdenv.lib.platforms.haskellPlatforms;
-    maintainers = [ self.stdenv.lib.maintainers.simons ];
+    homepage = "http://hledger.org";
+    description = "A curses-style console interface for the hledger accounting tool";
+    license = "GPL";
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })

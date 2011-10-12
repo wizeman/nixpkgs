@@ -1,13 +1,24 @@
-{cabal, Chart, colour, hledger, hledgerLib, safe}:
+{ cabal, Chart, cmdargs, colour, hledger, hledgerLib, HUnit, safe
+, time
+}:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "hledger-chart";
-  version = "0.14";
-  sha256 = "fe321e4e31c72aef22945080323992a0033ae8fb48213ad7b708f86f9e2f6462";
-  propagatedBuildInputs = [Chart colour hledger hledgerLib safe];
+  version = "0.16.1";
+  sha256 = "1yk563032ir98gqdvxazjjl1alg6q1pflzawh11pr3zrdnriracn";
+  isLibrary = false;
+  isExecutable = true;
+  buildDepends = [
+    Chart cmdargs colour hledger hledgerLib HUnit safe time
+  ];
   meta = {
-    description = "generate simple pie chart graphics showing hledger account balances";
+    homepage = "http://hledger.org";
+    description = "A pie chart image generator for the hledger accounting tool";
+    license = "GPL";
     platforms = self.stdenv.lib.platforms.linux;
-    maintainers = [ self.stdenv.lib.maintainers.simons ];
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })

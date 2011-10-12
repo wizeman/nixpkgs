@@ -1,14 +1,17 @@
-{cabal, monadsFd}:
+{ cabal, mtl, transformers }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "fclabels";
-  version = "0.4.2";
-  sha256 = "d1abfd94f8970e55ed839645a58697b8beeacc5e5ea4a5861001539aa8fc28d7";
-  propagatedBuildInputs = [monadsFd];
+  version = "1.0.4";
+  sha256 = "051ryqjzc74lnlbdd1ngxgqj56p43ls5xhafmldnyhkv75x59svw";
+  buildDepends = [ mtl transformers ];
   meta = {
     description = "First class accessor labels";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

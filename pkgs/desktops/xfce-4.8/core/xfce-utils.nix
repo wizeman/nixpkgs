@@ -1,11 +1,11 @@
 { stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui }:
 
 stdenv.mkDerivation rec {
-  name = "xfce-utils-4.8.1";
+  name = "xfce-utils-4.8.2";
 
-  src = fetchXfce.core name "11l6mxy9ml2ji4ymq8mwfh6vjgb70wj7616z991mxilwddmwc17d";
+  src = fetchXfce.core name "c9358f47f57b961fc51008cf6752d2761b4c4f25";
 
-  configureFlags = "--with-xsession-prefix=$(out)/share/xsessions";
+  configureFlags = "--with-xsession-prefix=$(out)/share/xsessions --with-vendor-info=NixOS.org";
 
   fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs = [ pkgconfig intltool gtk libxfce4util libxfce4ui ];
@@ -14,5 +14,7 @@ stdenv.mkDerivation rec {
     homepage = http://www.xfce.org/;
     description = "Utilities and scripts for Xfce";
     license = "GPLv2+";
+    platforms = stdenv.lib.platforms.linux;
+    maintainers = [ stdenv.lib.maintainers.eelco ];
   };
 }

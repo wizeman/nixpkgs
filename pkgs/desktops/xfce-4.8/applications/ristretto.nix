@@ -4,7 +4,7 @@
 stdenv.mkDerivation rec {
   name = "ristretto-0.0.93";
 
-  src = fetchXfce.app name "1zrc4q6619nvzlqhcg1qg48cvfcxfyy3fb7f5cpps1nq58lbyk0h";
+  src = fetchXfce.app name "c71acaad169633faffe26609f9cc671b04ff52d3";
 
   buildInputs =
     [ pkgconfig intltool libexif gtk thunar exo dbus_glib
@@ -17,5 +17,7 @@ stdenv.mkDerivation rec {
     homepage = http://goodies.xfce.org/projects/applications/ristretto;
     description = "A fast and lightweight picture-viewer for the Xfce desktop environment";
     license = "GPLv2+";
+    platforms = stdenv.lib.platforms.linux;
+    maintainers = [ stdenv.lib.maintainers.eelco ];
   };
 }

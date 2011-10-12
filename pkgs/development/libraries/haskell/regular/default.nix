@@ -1,13 +1,16 @@
-{cabal}:
+{ cabal }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "regular";
-  version = "0.3.2";
-  sha256 = "104rz28a22p5pn3rdzvmh13s1hpr46n463cfaz3w3bj9cimi2rcj";
+  version = "0.3.3";
+  sha256 = "1xlpp60nvdiqkcn66dnpww72hcawyc1w7cd9zk9kk88x574kqzf7";
   meta = {
     description = "Generic programming library for regular datatypes";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

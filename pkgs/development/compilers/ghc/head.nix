@@ -1,17 +1,16 @@
 {stdenv, fetchurl, ghc, perl, gmp, ncurses}:
 
 stdenv.mkDerivation rec {
-  version = "7.0.1.20110217";
-  label = "7.0.2-rc2";
-  
+  version = "7.3.20110910";
+
   name = "ghc-${version}";
-  
+
   # TODO: Does this have to be here, or can it go to meta?
   homepage = "http://haskell.org/ghc";
 
   src = fetchurl {
-    url = "${homepage}/dist/${label}/${name}-src.tar.bz2";
-    sha256 = "18jbw5na4v8v2vzswbi8xfd73mx8zv1diym0bg5bns5337q76lzi";
+    url = "${homepage}/dist/current/dist/${name}-src.tar.bz2";
+    sha256 = "1y8ixh6vcbqxqddc872kjfzxj94q4dhyaprdv7kv2yzwgp49qza5";
   };
 
   buildInputs = [ghc perl gmp ncurses];
@@ -40,7 +39,7 @@ stdenv.mkDerivation rec {
       stdenv.lib.maintainers.marcweber
       stdenv.lib.maintainers.andres
     ];
-    platforms = stdenv.lib.platforms.linux;
+    platforms = ghc.meta.platforms;
   };
 
 }

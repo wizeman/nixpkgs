@@ -19,6 +19,8 @@ stdenv.mkDerivation rec {
       libstartup_notification
     ];
 
+  enableParallelBuilding = true;
+
   meta = {
     homepage = http://www.xfce.org/;
 #TODO

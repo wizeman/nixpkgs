@@ -1,11 +1,18 @@
-{cabal}:
+{ cabal, text }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "xml";
-  version = "1.3.5";
-  sha256 = "d61abd617e6e4d5b384e19403486ecc0e5dccf412a235acce2a7b7072e97c3ab";
+  version = "1.3.10";
+  sha256 = "0mmibqzbbqmw4a8gc4f2yy144nx48gpfwj3iqq6dydvcikajxav2";
+  buildDepends = [ text ];
   meta = {
+    homepage = "http://code.galois.com";
     description = "A simple XML library";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

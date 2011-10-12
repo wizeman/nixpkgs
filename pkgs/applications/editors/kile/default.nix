@@ -1,21 +1,21 @@
-{stdenv, fetchurl, perl, arts, qt, kdelibs,
- libX11, libXt, libXext, libXrender, libXft,
- zlib, libpng, libjpeg, freetype, expat }:
+{stdenv, fetchurl, kdelibs, cmake, gettext }:
 
-stdenv.mkDerivation {
-  name = "kile-2.0.3";
+stdenv.mkDerivation rec {
+  name = "kile-2.1";
 
   src = fetchurl {
-    url = mirror://sourceforge/kile/kile-2.0.3.tar.bz2;
-    md5 = "f0296547d3e916dd385e0b8913918852";
+    url = "mirror://sourceforge/kile/${name}.tar.bz2";
+    sha256 = "0ag6ya0625w34hpk0bpkjyi0ydw699zbkf86vwc19mh9cb0n0aic";
   };
 
-  buildInputs = [ perl arts qt kdelibs libX11 libXt libXext libXrender libXft
-                  zlib libpng libjpeg freetype expat ];
+  buildNativeInputs = [ cmake gettext ];
+  buildInputs = [ kdelibs ];
 
   meta = {
     description = "An integrated LaTeX editor for KDE";
     homepage = http://kile.sourceforge.net;
-    license = "GPLv2";
+    maintainers = [ stdenv.lib.maintainers.urkud ];
+    license = stdenv.lib.licenses.gpl2Plus;
+    inherit (kdelibs.meta) platforms;
   };
 }

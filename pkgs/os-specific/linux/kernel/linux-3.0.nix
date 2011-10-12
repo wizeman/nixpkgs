@@ -56,6 +56,8 @@ let
       IPW2200_MONITOR y # support promiscuous mode
       HOSTAP_FIRMWARE y # Support downloading firmware images with Host AP driver
       HOSTAP_FIRMWARE_NVRAM y
+      ATH9K_PCI y # Detect Atheros AR9xxx cards on PCI(e) bus
+      ATH9K_AHB y # Ditto, AHB bus
 
       # Some settings to make sure that fbcondecor works - in particular,
       # disable tileblitting and the drivers that need it.
@@ -147,6 +149,7 @@ let
       BT_HCIUART_H4 y # UART (H4) protocol support
       BT_HCIUART_LL y
       BT_L2CAP y
+      BT_SCO y # audio support
       BT_RFCOMM m
       BT_RFCOMM_TTY y # RFCOMM TTY support
       CRASH_DUMP n
@@ -182,6 +185,13 @@ let
       X86_CHECK_BIOS_CORRUPTION y
       X86_MCE y
 
+      # Linux Containers
+      RT_GROUP_SCHED? y
+      CGROUP_DEVICE? y
+      CGROUP_MEM_RES_CTLR? y
+      CGROUP_MEM_RES_CTLR_SWAP? y
+      DEVPTS_MULTIPLE_INSTANCES? y
+
       ${if kernelPlatform ? kernelExtraConfig then kernelPlatform.kernelExtraConfig else ""}
       ${extraConfig}
     '';
@@ -190,17 +200,19 @@ in
 import ./generic.nix (
 
   rec {
-    version = "3.0";
+    version = "3.0.4";
   
+    preConfigure = ''
+      substituteInPlace scripts/depmod.sh --replace '-b "$INSTALL_MOD_PATH"' ""
+    '';
+
     src = fetchurl {
-      url = "mirror://kernel/linux/kernel/v3.0/linux-${version}.tar.bz2";
-      sha256 = "182n0glwxb6wdm87kxzl7n7fbk9pnykhjq88vyrb0fffaj5j5c34";
+      url = "mirror://kernel/linux/kernel/v3.x/linux-${version}.tar.bz2";
+      sha256 = "1vypjcdii75h5f4zsw9lm8wzxd5ix0mk5p94c96hxv828mqqkmhk";
     };
 
     config = configWithPlatform stdenv.platform;
     configCross = configWithPlatform stdenv.cross.platform;
-
-    setModuleDir = false;
 
     features.iwlwifi = true;
   }

@@ -1,14 +1,22 @@
-{cabal, blazeBuilder, enumerator, network, httpTypes, text, transformers}:
+{ cabal, blazeBuilder, enumerator, httpTypes, network, text
+, transformers
+}:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "wai";
-  version = "0.4.0";
-  sha256 = "1xp03g3q967rpgas896a5j3y7hjiir4ny0qlwmaj5ki61zivjsln";
-  propagatedBuildInputs = [blazeBuilder enumerator network httpTypes text transformers];
+  version = "0.4.2";
+  sha256 = "18w4wzryyqcqqihwckbz92smkqhhxh3lmi0kgxkcgivyzvhd2jqy";
+  buildDepends = [
+    blazeBuilder enumerator httpTypes network text transformers
+  ];
   meta = {
+    homepage = "https://github.com/yesodweb/wai";
     description = "Web Application Interface";
-    license = "BSD3";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

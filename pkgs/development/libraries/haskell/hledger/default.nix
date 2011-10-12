@@ -1,13 +1,25 @@
-{cabal, hledgerLib, csv, haskeline}:
+{ cabal, cmdargs, csv, haskeline, hledgerLib, HUnit, mtl, parsec
+, regexpr, safe, split, time, utf8String
+}:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "hledger";
-  version = "0.14";
-  sha256 = "1bfcb1dcc88d8cec924afbf7aefd1ccf88b7be785b522c1595b75b91f8c82d35";
-  propagatedBuildInputs = [hledgerLib csv haskeline];
+  version = "0.16.1";
+  sha256 = "182a5qlcxbh9q8hzrmgm99hcgvxjq8j5xq202iff14p1yqv0irs2";
+  isLibrary = true;
+  isExecutable = true;
+  buildDepends = [
+    cmdargs csv haskeline hledgerLib HUnit mtl parsec regexpr safe
+    split time utf8String
+  ];
   meta = {
-    description = "a reliable, practical financial reporting tool for day-to-day use";
-    platforms = self.stdenv.lib.platforms.haskellPlatforms;
-    maintainers = [ self.stdenv.lib.maintainers.simons ];
+    homepage = "http://hledger.org";
+    description = "The main command-line interface for the hledger accounting tool";
+    license = "GPL";
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })

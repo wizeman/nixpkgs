@@ -1,4 +1,4 @@
-{ stdenv, fetchurl }:
+{ stdenv, fetchurl, fetchgit }:
 
 let
 
@@ -35,6 +35,24 @@ let
         '';
       };
     };
+
+    makeAufs3StandalonePatch =  {version, rev, sha256}:
+
+      stdenv.mkDerivation {
+        name = "aufs3-standalone-${version}.patch";
+
+        src = fetchgit {
+          url = git://aufs.git.sourceforge.net/gitroot/aufs/aufs3-standalone.git;
+          inherit sha256 rev;
+        };
+
+        phases = [ "unpackPhase" "installPhase" ];
+
+        #Instructions from http://aufs.git.sourceforge.net/git/gitweb.cgi?p=aufs/aufs3-standalone.git;a=blob;f=Documentation/filesystems/aufs/README;h=b8cf077635b323d1b454266366f05f476bbd09cb;hb=1067b9d8d64d23c70d905c9cd3c90a669e39c4d4
+        installPhase = ''
+          cat aufs3-base.patch aufs3-proc_map.patch aufs3-standalone.patch > $out
+        '';
+      };
 
 in
 
@@ -164,22 +182,22 @@ rec {
     };
 
   tracehook_2_6_32 =
-    { # From <http://people.redhat.com/roland/utrace/>.
+    { # From <http://userweb.kernel.org/~frob/utrace/>.
       name = "tracehook";
       patch = fetchurl {
-        url = http://people.redhat.com/roland/utrace/2.6.32/tracehook.patch;
+        url = http://userweb.kernel.org/~frob/utrace/2.6.32/tracehook.patch;
         sha256 = "1y009p8dyqknbjm8ryb495jqmvl372gfhswdn167xh2g1f24xqv8";
       };
     };
 
   utrace_2_6_32 =
-    { # From <http://people.redhat.com/roland/utrace/>, depends on the
+    { # From <http://userweb.kernel.org/~frob/utrace/>, depends on the
       # `tracehook' patch above.
       # See also <http://sourceware.org/systemtap/wiki/utrace>.
       name = "utrace";
       patch = fetchurl {
-        url = http://people.redhat.com/roland/utrace/2.6.32/utrace.patch;
-        sha256 = "1951mwc8jfiwrl0d2bb1zk9yrl7n7kadc00ymjsxrg2irda1b89r";
+        url = http://userweb.kernel.org/~frob/utrace/2.6.32/utrace.patch;
+        sha256 = "0argf19k9f0asiv4l4cnsxm5hw2xx8d794npaln88vwz87sj5nnq";
       };
       extraConfig =
         '' UTRACE y
@@ -193,6 +211,17 @@ rec {
       name = "aufs2";
       patch = ./aufs2.patch;
       features.aufsBase = true;
+      features.aufs2 = true;
+    };
+
+  aufs2_2_6_33 =
+    { # From http://git.c3sl.ufpr.br/gitweb?p=aufs/aufs2-standalone.git;a=tree;h=refs/heads/aufs2-33;hb=aufs2-33
+      # Note that this merely the patch needed to build AUFS2 as a
+      # standalone package.
+      name = "aufs2";
+      patch = ./aufs2-33.patch;
+      features.aufsBase = true;
+      features.aufs2 = true;
     };
 
   aufs2_2_6_34 =
@@ -202,6 +231,7 @@ rec {
       name = "aufs2";
       patch = ./aufs2-34.patch;
       features.aufsBase = true;
+      features.aufs2 = true;
     };
 
   aufs2_2_6_35 =
@@ -211,6 +241,17 @@ rec {
       name = "aufs2";
       patch = ./aufs2-35.patch;
       features.aufsBase = true;
+      features.aufs2 = true;
+    };
+
+  aufs2_2_6_36 =
+    { # From http://git.c3sl.ufpr.br/gitweb?p=aufs/aufs2-standalone.git;a=tree;h=refs/heads/aufs2.1-36;hb=aufs2.1-36
+      # Note that this merely the patch needed to build AUFS2 as a
+      # standalone package.
+      name = "aufs2";
+      patch = ./aufs2.1-36.patch;
+      features.aufsBase = true;
+      features.aufs2_1 = true;
     };
 
   aufs2_1_2_6_37 =
@@ -232,6 +273,40 @@ rec {
       features.aufsBase = true;
       features.aufs2_1 = true;
     };
+
+  aufs2_1_2_6_39 =
+    { # From http://aufs.git.sourceforge.net/git/gitweb.cgi?p=aufs/aufs2-standalone.git;a=tree;h=refs/heads/aufs2.1-39;hb=refs/heads/aufs2.1-39
+      # Note that this merely the patch needed to build AUFS2.1 as a
+      # standalone package.
+      name = "aufs2.1";
+      patch = ./aufs2.1-39.patch;
+      features.aufsBase = true;
+      features.aufs2_1 = true;
+    };
+
+  aufs2_1_3_0 =
+    { # From http://aufs.git.sourceforge.net/git/gitweb.cgi?p=aufs/aufs2-standalone.git;a=tree;h=ac52a37b0debba539bdfabba101f82b99136b380;hb=ac52a37b0debba539bdfabba101f82b99136b380
+      # Note that this merely the patch needed to build AUFS2.1 as a
+      # standalone package.
+      name = "aufs2.1";
+      patch = ./aufs2.1-3.0.patch;
+      features.aufsBase = true;
+      features.aufs2_1 = true;
+    };
+
+  aufs3_0 = rec {
+    name = "aufs3.0";
+    version = "3.0";
+    utilRev = "a08d17d433567c7c2586c5fc2625a714b20fe155";
+    utilHash = "4772c1c6a36da7bbd448057c227a9cd1856ccf72748765cf85421ab0c4e34535";
+    patch = makeAufs3StandalonePatch {
+      inherit version;
+      rev = "1067b9d8d64d23c70d905c9cd3c90a669e39c4d4";
+      sha256 = "b508cab5987a623f057ae5fdc006c909a6bae6151af6e12fe672bf97b1a7549d";
+    };
+    features.aufsBase = true;
+    features.aufs3 = true;
+  };
 
   # Increase the timeout on CIFS requests from 15 to 120 seconds to
   # make CIFS more resilient to high load on the CIFS server.
@@ -339,5 +414,14 @@ rec {
       # with recent Glibcs (2009).
       name = "glibc-getline";
       patch = ./getline.patch;
+    };
+
+  efi_stub = 
+    {
+      # Patch to enable making the kernel a bootable efi image to avoid
+      # needing a bootloader on efi systems
+      # From the x86/efi-stub branch of git://github.com/mfleming/linux-2.6.git
+      name = "efi-stub";
+      patch = ./efi-stub.patch;
     };
 }

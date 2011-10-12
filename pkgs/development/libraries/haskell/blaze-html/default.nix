@@ -1,13 +1,17 @@
-{cabal, text, blazeBuilder}:
+{ cabal, blazeBuilder, text }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "blaze-html";
-  version = "0.4.1.4";
-  sha256 = "1xf302dapwmmlxj9alfbdv6rcrxhr9p305s4jz2d6ckq2xzz8yjf";
-  propagatedBuildInputs = [text blazeBuilder];
+  version = "0.4.2.0";
+  sha256 = "098y9mzq6jr73lavv7ky58bl3aajvdg72y12varpf3v3rr4l0lb2";
+  buildDepends = [ blazeBuilder text ];
   meta = {
-    description = "A blazingly fast HTML combinator library";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    homepage = "http://jaspervdj.be/blaze";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })

@@ -21,6 +21,16 @@ in {
     app = generic "apps";
     art = generic "art";
   };
+  
+  #### SUPPORT
+
+  libgdu = callPackage ./support/libgdu.nix { };  
+
+  # Gvfs is required by Thunar for the trash feature and for volume
+  # mounting.  Should use the one from Gnome, but I don't want to mess
+  # with the Gnome packages (or pull in a zillion Gnome dependencies).
+  gvfs = callPackage ./support/gvfs.nix { };
+
 
   #### CORE
 
@@ -59,13 +69,15 @@ in {
 
   #### APPLICATIONS
 
-#TODO: correct links; more stuff: appfinder etc.
+#TODO: correct links; more stuff: appfinder, thunar_volman etc.
 
   terminal = callPackage ./applications/terminal.nix { };
 
   mousepad = callPackage ./applications/mousepad.nix { };
 
   ristretto = callPackage ./applications/ristretto.nix { };
+
+  xfce4_power_manager = callPackage ./applications/xfce4-power-manager.nix { };
 
   xfce4mixer = callPackage ./applications/xfce4-mixer.nix { };
 

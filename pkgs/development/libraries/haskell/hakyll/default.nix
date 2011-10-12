@@ -1,17 +1,23 @@
-{cabal, binary, blazeHtml, hamlet, hopenssl, mtl, network, pandoc, regexBase
-, regexPCRE, snapCore, snapServer, strictConcurrency}:
+{ cabal, binary, blazeHtml, cryptohash, hamlet, mtl, pandoc, parsec
+, regexBase, regexPcre, snapCore, snapServer, tagsoup, time
+}:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "hakyll";
-  version = "3.2.0.3";
-  sha256 = "0biy9p662anhhlmwa502iy8cck597q0vlwj57l6cj8kpyxj4g0lz";
-  propagatedBuildInputs =
-    [ binary blazeHtml hamlet hopenssl mtl network pandoc regexBase
-     regexPCRE snapCore snapServer strictConcurrency
-    ];
+  version = "3.2.0.9";
+  sha256 = "1gb10bvzlm8qn6ap7cxykscbhbs2jsfqgsw53r8vd8k5bfgm5jv6";
+  buildDepends = [
+    binary blazeHtml cryptohash hamlet mtl pandoc parsec regexBase
+    regexPcre snapCore snapServer tagsoup time
+  ];
   meta = {
-    description = "A simple static site generator library";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    homepage = "http://jaspervdj.be/hakyll";
+    description = "A static website compiler library";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })

@@ -3,7 +3,7 @@
 stdenv.mkDerivation rec {
   name = "gtk-xfce-engine-2.8.1";
 
-  src = fetchXfce.core name "05z63cbgbb4ldpdra4bpd37knwny2k9anjw9hrm5rvfdfhnsbc3w";
+  src = fetchXfce.core name "d7779f07cc76585be063bc25fa91e660e1fd9c97";
 
   buildInputs = [ pkgconfig intltool gtk ];
 
@@ -11,5 +11,7 @@ stdenv.mkDerivation rec {
     homepage = http://www.xfce.org/;
     description = "GTK+ theme engine for Xfce";
     license = "GPLv2+";
+    platforms = stdenv.lib.platforms.linux;
+    maintainers = [ stdenv.lib.maintainers.eelco ];
   };
 }

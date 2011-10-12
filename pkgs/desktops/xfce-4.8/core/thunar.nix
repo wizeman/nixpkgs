@@ -15,10 +15,14 @@ stdenv.mkDerivation rec {
   # TODO: gudev, libnotify, libexif, libpcre?
 
   propagatedBuildInputs = if enableHAL then [ hal ] else [];
+  
+  enableParallelBuilding = true;
 
   meta = {
     homepage = http://thunar.xfce.org/;
     description = "Xfce file manager";
     license = "GPLv2+";
+    platforms = stdenv.lib.platforms.linux;
+    maintainers = [ stdenv.lib.maintainers.eelco ];
   };
 }
