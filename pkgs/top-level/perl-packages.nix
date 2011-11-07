@@ -954,6 +954,14 @@ rec {
     propagatedBuildInputs = [TestException ClassAccessorChained];
   };
 
+  DataUUID = buildPerlPackage rec {
+    name = "Data-UUID-1.217";
+    src = fetchurl {
+      url = "mirror://cpan/modules/by-module/Data/${name}.tar.gz";
+      sha256 = "0vgykclw1mn06a53d8y3g7s7vanks8078dh2j4jb84djk0cw9h0q";
+    };
+  };
+
   DataVisitor = buildPerlPackage rec {
     name = "Data-Visitor-0.25";
     src = fetchurl {
@@ -2116,13 +2124,14 @@ rec {
   };
 
   LWP = buildPerlPackage rec {
-    name = "libwww-perl-6.02";
+    name = "libwww-perl-6.03";
     src = fetchurl {
       url = "mirror://cpan/modules/by-module/LWP/${name}.tar.gz";
-      sha256 = "0cn2cbrz5mrpqmnfhhk0bgv0c1q1x722xlnlnzw6zymj5sg3w6dm";
+      sha256 = "1zlnz4ylk1y0rw56vlf9knawwjx72b1gm09yp06ccpgmmndif4dg";
     };
     propagatedBuildInputs =
       [ EncodeLocale FileListing HTMLParser HTTPCookies HTTPMessage LWPMediaTypes URI NetHTTP ];
+    doCheck = false; # tries to start a daemon
   };
 
   LWPMediaTypes = buildPerlPackage rec {
@@ -2401,19 +2410,23 @@ rec {
   };
 
   NetAmazonEC2 = buildPerlPackage rec {
-    name = "Net-Amazon-EC2-0.14";
+    name = "Net-Amazon-EC2-0.14-stanaka-bc66577e13";
     src = fetchurl {
-      url = "mirror://cpan/authors/id/J/JK/JKIM/${name}.tar.gz";
-      sha256 = "14am9m19ziyv12bjxljhfyl0zy120yf4gligsa9v26smb61fxyjr";
+      url = https://github.com/stanaka/net-amazon-ec2/zipball/bc66577e1312e828e252937d95f9f5f637af6a0b;
+      sha256 = "1c0k3addkaaf4zj7z87svm9xc3c06v0r06rf5rpqmps413lqisbn";
+      name  = "${name}.zip";
     };
+    buildInputs = [ pkgs.unzip ];
     patches =
       [ # In DescribeInstance requests, say "InstanceId.1" instead of
         # "InstanceId", as required by the Amazon spec.  EC2 tolerates
         # "InstanceId", but Nova doesn't.
         ../development/perl-modules/net-amazon-ec2-nova-compat.patch
+        # Support DescribeInstancesV6.
+        ../development/perl-modules/net-amazon-ec2-ipv6.patch
       ];
     propagatedBuildInputs =
-      [ DigestHMAC LWP Moose URI ParamsValidate XMLSimple Moose CryptSSLeay ];
+      [ DigestHMAC LWP LWPProtocolHttps Moose URI ParamsValidate XMLSimple ];
     doCheck = false; # wants to create actual EC2 instances (for $$$)
   };
 
