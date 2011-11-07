@@ -571,6 +571,8 @@ let
     # TODO i18n can be installed as well, implement it?
   };
 
+  dnstop = callPackage ../tools/networking/dnstop { };
+
   dhcp = callPackage ../tools/networking/dhcp { };
 
   dhcpcd = callPackage ../tools/networking/dhcpcd { };
@@ -580,6 +582,8 @@ let
   diffutils = callPackage ../tools/text/diffutils { };
 
   dirmngr = callPackage ../tools/security/dirmngr { };
+
+  disper = callPackage ../tools/misc/disper { };
 
   dmg2img = callPackage ../tools/misc/dmg2img { };
 
@@ -637,7 +641,7 @@ let
   fcron = callPackage ../tools/system/fcron {  # see also cron
   };
 
-  fdisk = callPackage ../tools/system/fdisk { parted = parted_2_3; };
+  fdisk = callPackage ../tools/system/fdisk { };
 
   fdm = callPackage ../tools/networking/fdm {};
 
@@ -785,7 +789,7 @@ let
 
   grub2 = grub19x;
 
-  # grub2_efi = callPackage ../tools/misc/grub/1.9x.nix { EFIsupport = true; };
+  grub2_efi = callPackage ../tools/misc/grub/1.9x.nix { EFIsupport = true; };
 
   gssdp = callPackage ../development/libraries/gssdp {
     inherit (gnome) libsoup;
@@ -796,6 +800,8 @@ let
   gtkgnutella = callPackage ../tools/networking/p2p/gtk-gnutella { };
 
   gtkvnc = callPackage ../tools/admin/gtk-vnc {};
+
+  gtmess = callPackage ../applications/networking/instant-messengers/gtmess { };
 
   gupnp = callPackage ../development/libraries/gupnp {
     inherit (gnome) libsoup;
@@ -897,11 +903,17 @@ let
 
   most = callPackage ../tools/misc/most { };
 
+  netperf = callPackage ../applications/networking/netperf { };
+
   ninka = callPackage ../development/tools/misc/ninka { };
 
   nodejs = callPackage ../development/web/nodejs {};
 
+  ldns = callPackage ../development/libraries/ldns { };
+
   lftp = callPackage ../tools/networking/lftp { };
+
+  libtirpc = callPackage ../development/libraries/ti-rpc { };
 
   libtorrent = callPackage ../tools/networking/p2p/libtorrent { };
 
@@ -924,6 +936,8 @@ let
   xz = callPackage ../tools/compression/xz { };
 
   lzop = callPackage ../tools/compression/lzop { };
+
+  mu0 = callPackage ../tools/networking/mu0 { };
 
   mailutils = callPackage ../tools/networking/mailutils {
     guile = guile_1_8;
@@ -969,6 +983,8 @@ let
 
   mpage = callPackage ../tools/text/mpage { };
 
+  mscgen = callPackage ../tools/graphics/mscgen { };
+
   msf = builderDefsPackage (import ../tools/security/metasploit/3.1.nix) {
     inherit ruby makeWrapper;
   };
@@ -1003,11 +1019,7 @@ let
 
   namazu = callPackage ../tools/text/namazu { };
 
-  nbd = callPackage ../tools/networking/nbd {
-    glib = gtkLibs.glib.override {
-      stdenv = makeStaticBinaries stdenv;
-    };
-  };
+  nbd = callPackage ../tools/networking/nbd { };
 
   netcdf = callPackage ../development/libraries/netcdf { };
 
@@ -1114,14 +1126,14 @@ let
 
   patchutils = callPackage ../tools/text/patchutils { };
 
-  parted = callPackage ../tools/misc/parted { };
-  parted_2_3 = callPackage ../tools/misc/parted/2.3.nix { };
+  parted = callPackage ../tools/misc/parted { hurd = null; };
+  parted_2_3 = callPackage ../tools/misc/parted/2.3.nix { hurd = null; };
 
   hurdPartedCross =
     if crossSystem != null && crossSystem.config == "i586-pc-gnu"
     then (callPackage ../tools/misc/parted {
         # Needs the Hurd's libstore.
-        hurd = hurdCrossIntermediate;
+        hurd = gnu.hurdCrossIntermediate;
 
         # The Hurd wants a libparted.a.
         enableStatic = true;
@@ -1227,6 +1239,8 @@ let
   qdu = callPackage ../tools/misc/qdu { };
 
   qhull = callPackage ../development/libraries/qhull { };
+
+  qjoypad = callPackage ../tools/misc/qjoypad { };
 
   qshowdiff = callPackage ../tools/text/qshowdiff { };
 
@@ -1640,9 +1654,19 @@ let
 
   ccl = builderDefsPackage ../development/compilers/ccl {};
 
-  clang = llvm.override {
-    buildClang = true;
+  clangBootUnwrapped = callPackage ../development/compilers/llvm/clang.nix { };
+
+  clangBoot = wrapClang clangBootUnwrapped;
+
+  clangUnwrapped = let clangBootStdenv = stdenvAdapters.overrideGCC stdenv clangBoot; in clangBootUnwrapped.override {
+    stdenv = clangBootStdenv;
+    llvm = llvm.override { stdenv = clangBootStdenv; };
   };
+
+  clang = wrapClang clangUnwrapped;
+
+  #Use this instead of stdenv to build with clang
+  clangStdenv = stdenvAdapters.overrideGCC stdenv clang;
 
   clangSVN = llvmSVN.override {
     buildClang = true;
@@ -1653,10 +1677,7 @@ let
   cmucl_binary = callPackage ../development/compilers/cmucl/binary.nix { };
 
   dylan = callPackage ../development/compilers/gwydion-dylan {
-    dylan =
-      import ../development/compilers/gwydion-dylan/binary.nix {
-        inherit fetchurl stdenv;
-  };
+    dylan = callPackage ../development/compilers/gwydion-dylan/binary.nix {  };
   };
 
   ecl = callPackage ../development/compilers/ecl { };
@@ -1795,7 +1816,7 @@ let
       libpthreadCross =
         # FIXME: Don't explicitly refer to `i586-pc-gnu'.
         if crossSystem != null && crossSystem.config == "i586-pc-gnu"
-        then hurdLibpthreadCross
+        then gnu.libpthreadCross
         else null;
      });
     libc = libcCross;
@@ -2426,6 +2447,18 @@ let
     inherit stdenv binutils coreutils zlib;
   };
 
+  wrapClangWith = clangWrapper: glibc: baseClang: clangWrapper {
+    nativeTools = stdenv ? gcc && stdenv.gcc.nativeTools;
+    nativeLibc = stdenv ? gcc && stdenv.gcc.nativeLibc;
+    nativePrefix = if stdenv ? gcc then stdenv.gcc.nativePrefix else "";
+    clang = baseClang;
+    libc = glibc;
+    shell = bash;
+    inherit stdenv binutils coreutils zlib;
+  };
+
+  wrapClang = wrapClangWith (import ../build-support/clang-wrapper) glibc;
+
   wrapGCC = wrapGCCWith (import ../build-support/gcc-wrapper) glibc;
 
   wrapGCCCross =
@@ -2494,11 +2527,7 @@ let
 
   guile = guile_2_0;
 
-  io = builderDefsPackage (import ../development/interpreters/io) {
-    inherit sqlite zlib gmp libffi cairo ncurses freetype mesa
-      libpng libtiff libjpeg readline libsndfile libxml2
-      freeglut e2fsprogs libsamplerate pcre libevent libedit;
-  };
+  io = callPackage ../development/interpreters/io { };
 
   j = callPackage ../development/interpreters/j {};
 
@@ -2588,8 +2617,16 @@ let
     sw_vers = if stdenv.isDarwin then pkgs.darwinSwVersUtility else null;
   };
 
-  pythonFull = callPackage ../development/interpreters/python/wrapper.nix {
-    extraLibs = lib.attrValues python.modules;
+  pythonFull = python27Full;
+
+  python26Full = callPackage ../development/interpreters/python/wrapper.nix {
+    extraLibs = lib.attrValues python26.modules;
+    python = python26;
+  };
+
+  python27Full = callPackage ../development/interpreters/python/wrapper.nix {
+    extraLibs = lib.attrValues python27.modules;
+    python = python27;
   };
 
   pythonhomeWrapper = callPackage ../development/interpreters/python/pythonhome-wrapper.nix { };
@@ -2766,6 +2803,8 @@ let
 
   byacc = callPackage ../development/tools/parsing/byacc { };
 
+  cbrowser = callPackage ../development/tools/misc/cbrowser { };
+
   ccache = callPackage ../development/tools/misc/ccache { };
 
   complexity = callPackage ../development/tools/misc/complexity { };
@@ -2896,21 +2935,6 @@ let
   lsof = callPackage ../development/tools/misc/lsof { };
 
   ltrace = callPackage ../development/tools/misc/ltrace { };
-
-  mig = callPackage ../os-specific/gnu/mig
-    (if stdenv.isLinux
-     then {
-       # Build natively, but force use of a 32-bit environment because we're
-       # targeting `i586-pc-gnu'.
-       stdenv = (import ../stdenv {
-         system = "i686-linux";
-         stdenvType = "i686-linux";
-         allPackages = args:
-           import ./all-packages.nix ({ inherit config; } // args);
-         inherit platform;
-       }).stdenv;
-     }
-     else { });
 
   mk = callPackage ../development/tools/build-managers/mk { };
 
@@ -3395,14 +3419,17 @@ let
      in ({
        inherit stdenv fetchurl;
        gccCross = gccCrossStageStatic;
-       kernelHeaders = if crossGNU then hurdHeaders else linuxHeadersCross;
+       kernelHeaders = if crossGNU then gnu.hurdHeaders else linuxHeadersCross;
        installLocales = getConfig [ "glibc" "locales" ] false;
      }
 
      //
 
      (if crossGNU
-      then { inherit machHeaders hurdHeaders mig fetchgit; }
+      then {
+        inherit (gnu) machHeaders hurdHeaders libpthreadHeaders mig;
+        inherit fetchgit;
+      }
       else { }))));
 
   glibcCross = glibc212Cross;
@@ -3688,6 +3715,10 @@ let
   jetty_util = callPackage ../development/libraries/java/jetty-util { };
 
   json_glib = callPackage ../development/libraries/json-glib { };
+
+  json_c = callPackage ../development/libraries/json-c { };
+
+  libjson = callPackage ../development/libraries/libjson { };
 
   judy = callPackage ../development/libraries/judy { };
 
@@ -4632,6 +4663,8 @@ let
 
   xvidcore = callPackage ../development/libraries/xvidcore { };
 
+  yajl = callPackage ../development/libraries/yajl { };
+
   zangband = builderDefsPackage (import ../games/zangband) {
     inherit ncurses flex bison autoconf automake m4 coreutils;
   };
@@ -4842,6 +4875,7 @@ let
 
   dovecot = callPackage ../servers/mail/dovecot { };
   dovecot_1_1_1 = callPackage ../servers/mail/dovecot/1.1.1.nix { };
+  dovecot_2_0 = callPackage ../servers/mail/dovecot/2.0.nix { };
 
   ejabberd = callPackage ../servers/xmpp/ejabberd {
     erlang = erlangR13B ;
@@ -4895,9 +4929,7 @@ let
 
   myserver = callPackage ../servers/http/myserver { };
 
-  nginx = builderDefsPackage (import ../servers/http/nginx) {
-    inherit openssl pcre zlib libxml2 libxslt;
-  };
+  nginx = callPackage ../servers/http/nginx { };
 
   postfix = callPackage ../servers/mail/postfix { };
 
@@ -5041,6 +5073,8 @@ let
 
   alsaUtils = callPackage ../os-specific/linux/alsa-utils { };
 
+  bcm43xx = callPackage ../os-specific/linux/firmware/bcm43xx { };
+
   bluez = callPackage ../os-specific/linux/bluez { };
 
   bridge_utils = callPackage ../os-specific/linux/bridge-utils { };
@@ -5092,6 +5126,8 @@ let
     inherit devicemapper;
   };
 
+  drbd = callPackage ../os-specific/linux/drbd { };
+  
   libuuid =
     if crossSystem != null && crossSystem.config == "i586-pc-gnu"
     then (utillinuxng // {
@@ -5145,50 +5181,10 @@ let
 
   htop = callPackage ../os-specific/linux/htop { };
 
-  hurdCross = forceBuildDrv(import ../os-specific/gnu/hurd {
-    inherit fetchgit stdenv autoconf libtool texinfo machHeaders
-      mig glibcCross hurdPartedCross;
-    libuuid = libuuid.hostDrv;
-    automake = automake111x;
-    headersOnly = false;
-    cross = assert crossSystem != null; crossSystem;
-    gccCross = gccCrossStageFinal;
-  });
-
-  hurdCrossIntermediate = forceBuildDrv(import ../os-specific/gnu/hurd {
-    inherit fetchgit stdenv autoconf libtool texinfo machHeaders
-      mig glibcCross;
-    automake = automake111x;
-    headersOnly = false;
-    cross = assert crossSystem != null; crossSystem;
-
-    # The "final" GCC needs glibc and the Hurd libraries (libpthread in
-    # particular) so we first need an intermediate Hurd built with the
-    # intermediate GCC.
-    gccCross = gccCrossStageStatic;
-
-    # This intermediate Hurd is only needed to build libpthread, which needs
-    # libihash, and to build Parted, which needs libstore and
-    # libshouldbeinlibc.
-    buildTarget = "libihash libstore libshouldbeinlibc";
-    installTarget = "libihash-install libstore-install libshouldbeinlibc-install";
-  });
-
-  hurdHeaders = callPackage ../os-specific/gnu/hurd {
-    automake = automake111x;
-    headersOnly = true;
-    gccCross = null;
-    glibcCross = null;
-    libuuid = null;
-    hurdPartedCross = null;
-  };
-
-  hurdLibpthreadCross = forceBuildDrv(import ../os-specific/gnu/libpthread {
-    inherit fetchgit stdenv autoconf automake libtool
-      machHeaders hurdHeaders glibcCross;
-    hurd = hurdCrossIntermediate;
-    gccCross = gccCrossStageStatic;
-    cross = assert crossSystem != null; crossSystem;
+  # GNU/Hurd core packages.
+  gnu = recurseIntoAttrs (callPackage ../os-specific/gnu {
+    callPackage = newScope pkgs.gnu;
+    inherit platform crossSystem;
   });
 
   hwdata = callPackage ../os-specific/linux/hwdata { };
@@ -5549,6 +5545,24 @@ let
       ];
   };
 
+  linux_2_6_39_powertop = linux_2_6_39.override {
+    extraConfig = ''
+        DEBUG_KERNEL y
+        PM_ADVANCED_DEBUG y
+        PM_RUNTIME y
+        TIMER_STATS y
+        USB_SUSPEND y
+        BACKTRACE_SELF_TEST n
+        CPU_NOTIFIER_ERROR_INJECT n
+        DEBUG_DEVRES n
+        DEBUG_NX_TEST n
+        DEBUG_STACK_USAGE n
+        DEBUG_STACKOVERFLOW n
+        RCU_TORTURE_TEST n
+        SCHEDSTATS n
+    '';
+  };
+
   linux_3_0 = makeOverridable (import ../os-specific/linux/kernel/linux-3.0.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
     kernelPatches =
@@ -5560,15 +5574,50 @@ let
       ];
   };
 
+  linux_3_0_powertop = linux_3_0.override {
+    extraConfig = ''
+        DEBUG_KERNEL y
+        PM_ADVANCED_DEBUG y
+        PM_RUNTIME y
+        TIMER_STATS y
+        USB_SUSPEND y
+        BACKTRACE_SELF_TEST n
+        CPU_NOTIFIER_ERROR_INJECT n
+        DEBUG_DEVRES n
+        DEBUG_NX_TEST n
+        DEBUG_STACK_USAGE n
+        DEBUG_STACKOVERFLOW n
+        RCU_TORTURE_TEST n
+        SCHEDSTATS n
+    '';
+  };
+
   linux_3_1 = makeOverridable (import ../os-specific/linux/kernel/linux-3.1.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
     kernelPatches =
       [ #kernelPatches.fbcondecor_2_6_38
         kernelPatches.sec_perm_2_6_24
-        kernelPatches.efi_stub
         #kernelPatches.aufs2_1_2_6_38
         #kernelPatches.mips_restart_2_6_36
       ];
+  };
+
+  linux_3_1_powertop = linux_3_1.override {
+    extraConfig = ''
+        DEBUG_KERNEL y
+        PM_ADVANCED_DEBUG y
+        PM_RUNTIME y
+        TIMER_STATS y
+        USB_SUSPEND y
+        BACKTRACE_SELF_TEST n
+        CPU_NOTIFIER_ERROR_INJECT n
+        DEBUG_DEVRES n
+        DEBUG_NX_TEST n
+        DEBUG_STACK_USAGE n
+        DEBUG_STACKOVERFLOW n
+        RCU_TORTURE_TEST n
+        SCHEDSTATS n
+    '';
   };
 
   /* Linux kernel modules are inherently tied to a specific kernel.  So
@@ -5650,6 +5699,10 @@ let
       inherit kernel perl;
     };
 
+    klibc = callPackage ../os-specific/linux/klibc {
+      linuxHeaders = glibc.kernelHeaders;
+    };
+
     splashutils =
       if kernel.features ? fbConDecor then pkgs.splashutils else null;
 
@@ -5684,6 +5737,8 @@ let
       inherit (gnome) gtkmm libglademm;
     };
 
+    v86d = callPackage ../os-specific/linux/v86d { };
+
     virtualbox = callPackage ../applications/virtualization/virtualbox {
       stdenv = stdenv_32bit;
       inherit (gnome) libIDL;
@@ -5715,8 +5770,11 @@ let
   linuxPackages_2_6_38 = recurseIntoAttrs (linuxPackagesFor linux_2_6_38 pkgs.linuxPackages_2_6_38);
   linuxPackages_2_6_38_ati = recurseIntoAttrs (linuxPackagesFor linux_2_6_38_ati pkgs.linuxPackages_2_6_38);
   linuxPackages_2_6_39 = recurseIntoAttrs (linuxPackagesFor linux_2_6_39 pkgs.linuxPackages_2_6_39);
+  linuxPackages_2_6_39_powertop = recurseIntoAttrs (linuxPackagesFor linux_2_6_39_powertop pkgs.linuxPackages_2_6_39_powertop);
   linuxPackages_3_0 = recurseIntoAttrs (linuxPackagesFor linux_3_0 pkgs.linuxPackages_3_0);
+  linuxPackages_3_0_powertop = recurseIntoAttrs (linuxPackagesFor linux_3_0_powertop pkgs.linuxPackages_3_0_powertop);
   linuxPackages_3_1 = recurseIntoAttrs (linuxPackagesFor linux_3_1 pkgs.linuxPackages_3_1);
+  linuxPackages_3_1_powertop = recurseIntoAttrs (linuxPackagesFor linux_3_1_powertop pkgs.linuxPackages_3_1_powertop);
   linuxPackages_nanonote_jz_2_6_34 = recurseIntoAttrs (linuxPackagesFor linux_nanonote_jz_2_6_34 pkgs.linuxPackages_nanonote_jz_2_6_34);
   linuxPackages_nanonote_jz_2_6_35 = recurseIntoAttrs (linuxPackagesFor linux_nanonote_jz_2_6_35 pkgs.linuxPackages_nanonote_jz_2_6_35);
   linuxPackages_nanonote_jz_2_6_36 = recurseIntoAttrs (linuxPackagesFor linux_nanonote_jz_2_6_36 pkgs.linuxPackages_nanonote_jz_2_6_36);
@@ -5770,18 +5828,6 @@ let
   lsscsi = callPackage ../os-specific/linux/lsscsi { };
 
   lvm2 = callPackage ../os-specific/linux/lvm2 { };
-
-  # In theory GNU Mach doesn't have to be cross-compiled.  However, since it
-  # has to be built for i586 (it doesn't work on x86_64), one needs a cross
-  # compiler for that host.
-  mach = callPackage ../os-specific/gnu/mach {
-    automake = automake111x;  };
-
-  machHeaders = callPackage ../os-specific/gnu/mach {
-    automake = automake111x;
-    headersOnly = true;
-    mig = null;
-  };
 
   mdadm = callPackage ../os-specific/linux/mdadm { };
 
@@ -5868,6 +5914,8 @@ let
   radeonR700 = callPackage ../os-specific/linux/firmware/radeon-r700 { };
   radeonR600 = callPackage ../os-specific/linux/firmware/radeon-r600 { };
   radeonJuniper = callPackage ../os-specific/linux/firmware/radeon-juniper { };
+
+  regionset = callPackage ../os-specific/linux/regionset { };
 
   rfkill = callPackage ../os-specific/linux/rfkill { };
 
@@ -6078,6 +6126,8 @@ let
   };
 
   docbook5 = callPackage ../data/sgml+xml/schemas/docbook-5.0 { };
+
+  docbook_sgml_dtd_41 = callPackage ../data/sgml+xml/schemas/sgml-dtd/docbook/4.1.nix { };
 
   docbook_xml_dtd_412 = callPackage ../data/sgml+xml/schemas/xml-dtd/docbook/4.1.2.nix { };
 
@@ -6939,7 +6989,11 @@ let
 
   mercurial = callPackage ../applications/version-management/mercurial {
     guiSupport = getConfig ["mercurial" "guiSupport"] false; # for hgk (gitk gui for hg)
-    inherit (pythonPackages) ssl;
+    inherit (pythonPackages) ssl curses;
+    # when used with hg-fast-export (git) mercurials files are using
+    # httplib.FakeSocket which is not provided after python 2.6.  (httplib2
+    # has removed it from its interface).
+    python = python27;
   };
 
   merkaartor = callPackage ../applications/misc/merkaartor { };
@@ -7208,7 +7262,7 @@ let
 
   scribus = callPackage ../applications/office/scribus {
     inherit (gnome) libart_lgpl;
-    qt = qt3;
+    qt = qt4;
   };
 
   seeks = callPackage ../tools/networking/p2p/seeks { };
@@ -7591,6 +7645,8 @@ let
 
   ### GAMES
 
+  alienarena = callPackage ../games/alienarena { };
+
   asc = callPackage ../games/asc {
     lua = lua5;
     libsigcxx = libsigcxx12;
@@ -7834,6 +7890,8 @@ let
   # TODO: the corresponding nix file is missing
   # xracer = callPackage ../games/xracer { };
 
+  xonotic = callPackage ../games/xonotic { };
+
   xsokoban = builderDefsPackage (import ../games/xsokoban) {
     inherit (xlibs) libX11 xproto libXpm libXt;
   };
@@ -7902,7 +7960,7 @@ let
 
   };
 
-  kde4 = recurseIntoAttrs pkgs.kde45;
+  kde4 = recurseIntoAttrs pkgs.kde47;
 
   # TODO: merge with branches/drop-kde4.5 if you want to remove KDE SC 4.5
   # This branch removes kde45 and quite a few compatibility hacks
