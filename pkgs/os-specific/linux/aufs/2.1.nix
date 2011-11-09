@@ -8,7 +8,7 @@ let version =
   else "20110408"; in
 
 stdenv.mkDerivation {
-  name = "aufs2.1-${version}";
+  name = "aufs2.1-${version}-${kernel.version}";
 
   src =
   if (builtins.lessThan (builtins.compareVersions kernel.version "2.6.38") 0) 
@@ -42,8 +42,7 @@ stdenv.mkDerivation {
     description = "Another Unionfs implementation for Linux (second generation)";
     homepage = http://aufs.sourceforge.net/;
     maintainers = [ stdenv.lib.maintainers.eelco
-                    stdenv.lib.maintainers.raskin
-                    stdenv.lib.maintainers.shlevy ];
+                    stdenv.lib.maintainers.raskin ];
     platforms = stdenv.lib.platforms.linux;
   };
 }
