@@ -3183,6 +3183,8 @@ let
 
   cminpack = callPackage ../development/libraries/cminpack { };
 
+  cogl = callPackage ../development/libraries/cogl { };
+
   coin3d = callPackage ../development/libraries/coin3d { };
 
   commoncpp2 = callPackage ../development/libraries/commoncpp2 { };
@@ -3550,7 +3552,7 @@ let
 
   gtkLibs = pkgs.gtkLibs224;
 
-  inherit (pkgs.gtkLibs) glib gtk pango cairo;
+  inherit (pkgs.gtkLibs) glib gtk pango cairo gdk_pixbuf;
 
   gtkLibs1x = recurseIntoAttrs (let callPackage = newScope pkgs.gtkLibs1x; in {
 
@@ -4313,6 +4315,8 @@ let
   opensslNew = callPackage ../development/libraries/openssl/1.0.0e.nix { };
 
   ortp = callPackage ../development/libraries/ortp { };
+
+  p11_kit = callPackage ../development/libraries/p11-kit { };
 
   pangoxsl = callPackage ../development/libraries/pangoxsl {
     inherit (gtkLibs) glib pango;
@@ -5597,7 +5601,7 @@ let
     kernelPatches =
       [ #kernelPatches.fbcondecor_2_6_38
         kernelPatches.sec_perm_2_6_24
-        #kernelPatches.aufs2_1_2_6_38
+        kernelPatches.aufs3_1
         #kernelPatches.mips_restart_2_6_36
       ];
   };
@@ -5620,6 +5624,15 @@ let
     '';
   };
 
+  linux_3_2 = makeOverridable (import ../os-specific/linux/kernel/linux-3.2.nix) {
+    inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
+    kernelPatches =
+      [ #kernelPatches.fbcondecor_2_6_38
+        kernelPatches.sec_perm_2_6_24
+        #kernelPatches.aufs3_1
+        #kernelPatches.mips_restart_2_6_36
+      ];
+  };
   /* Linux kernel modules are inherently tied to a specific kernel.  So
      rather than provide specific instances of those packages for a
      specific kernel, we have a function that builds those packages
@@ -5634,32 +5647,24 @@ let
 
     ati_drivers_x11 = callPackage ../os-specific/linux/ati-drivers { };
 
-    aufs = callPackage ../os-specific/linux/aufs { };
-
-    aufs2 = if kernel.features ? aufs2 then
-      callPackage ../os-specific/linux/aufs2 { }
+    aufs =
+      if kernel.features ? aufs2 then
+        callPackage ../os-specific/linux/aufs/2.nix { }
+      else if kernel.features ? aufs2_1 then
+        callPackage ../os-specific/linux/aufs/2.1.nix { }
+      else if kernel.features ? aufs3 then
+        callPackage ../os-specific/linux/aufs/3.nix { }
       else null;
 
-    aufs2_1 = if kernel.features ? aufs2_1 then
-      callPackage ../os-specific/linux/aufs2.1 { }
+    aufs_util = 
+      if kernel.features ? aufs2 then
+        callPackage ../os-specific/linux/aufs-util/2.nix { }
+      else if kernel.features ? aufs2_1 then
+        callPackage ../os-specific/linux/aufs-util/2.1.nix { }
+      else if kernel.features ? aufs3 then
+        callPackage ../os-specific/linux/aufs-util/3.nix { }
       else null;
-
-    aufs3 = if kernel.features ? aufs3 then
-      callPackage ../os-specific/linux/aufs3 { }
-      else null;
-
-    aufs2_util = if kernel.features ? aufs2 then
-      callPackage ../os-specific/linux/aufs2-util { }
-      else null;
-
-    aufs2_1_util = if kernel.features ? aufs2_1 then
-      callPackage ../os-specific/linux/aufs2.1-util { }
-      else null;
-
-    aufs3_util = if kernel.features ? aufs3 then
-      callPackage ../os-specific/linux/aufs3-util { }
-      else null;
-
+      
     blcr = callPackage ../os-specific/linux/blcr {
       #libtool = libtool_1_5; # libtool 2 causes a fork bomb
     };
@@ -5778,6 +5783,7 @@ let
   linuxPackages_nanonote_jz_2_6_34 = recurseIntoAttrs (linuxPackagesFor linux_nanonote_jz_2_6_34 pkgs.linuxPackages_nanonote_jz_2_6_34);
   linuxPackages_nanonote_jz_2_6_35 = recurseIntoAttrs (linuxPackagesFor linux_nanonote_jz_2_6_35 pkgs.linuxPackages_nanonote_jz_2_6_35);
   linuxPackages_nanonote_jz_2_6_36 = recurseIntoAttrs (linuxPackagesFor linux_nanonote_jz_2_6_36 pkgs.linuxPackages_nanonote_jz_2_6_36);
+  linuxPackages_3_2 = recurseIntoAttrs (linuxPackagesFor linux_3_2 pkgs.linuxPackages_3_2);
 
   # The current default kernel / kernel modules.
   linux = linuxPackages.kernel;
@@ -5902,6 +5908,8 @@ let
   policycoreutils = callPackage ../os-specific/linux/policycoreutils { };
 
   powertop = callPackage ../os-specific/linux/powertop { };
+
+  prayer = callPackage ../servers/prayer { };
 
   procps = callPackage ../os-specific/linux/procps { };
 
@@ -7409,6 +7417,8 @@ let
   };
 
   uucp = callPackage ../tools/misc/uucp { };
+
+  uwimap = callPackage ../tools/networking/uwimap { };
 
   uzbl = builderDefsPackage (import ../applications/networking/browsers/uzbl) {
     inherit pkgconfig webkit makeWrapper;
