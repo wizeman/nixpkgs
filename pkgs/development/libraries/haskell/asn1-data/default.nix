@@ -2,8 +2,8 @@
 
 cabal.mkDerivation (self: {
   pname = "asn1-data";
-  version = "0.6.1";
-  sha256 = "1kj1h1z4ix8kdxq5838xk70sgz9rq0vdii5nli1rcycx3y2ipi84";
+  version = "0.6.1.2";
+  sha256 = "1655fp71l8qjif4p6c1y2xk8r0gj58djg7np5zwwm6jlj780773r";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [

@@ -1,20 +1,21 @@
-{ cabal, aesonNative, attoparsec, base64Bytestring, blazeBuilder
+{ cabal, aeson, attoparsec, base64Bytestring, blazeBuilder
 , caseInsensitive, enumerator, failure, httpEnumerator, httpTypes
 , network, random, RSA, SHA, tagsoup, text, time, tls, transformers
-, xmlEnumerator
+, unorderedContainers, xmlEnumerator
 }:
 
 cabal.mkDerivation (self: {
   pname = "authenticate";
-  version = "0.10.2.2";
-  sha256 = "10w13wcd8cwaf4ifxllsiijwza2ys4a5zyhjcbl4938609p60hi8";
+  version = "0.10.4";
+  sha256 = "0bjxlnc2qf1900ch9cnab26qz6a0vdz5nz1dwrjby1n5xqqzjd7x";
   buildDepends = [
-    aesonNative attoparsec base64Bytestring blazeBuilder
-    caseInsensitive enumerator failure httpEnumerator httpTypes network
-    random RSA SHA tagsoup text time tls transformers xmlEnumerator
+    aeson attoparsec base64Bytestring blazeBuilder caseInsensitive
+    enumerator failure httpEnumerator httpTypes network random RSA SHA
+    tagsoup text time tls transformers unorderedContainers
+    xmlEnumerator
   ];
   meta = {
-    homepage = "http://github.com/snoyberg/authenticate/tree/master";
+    homepage = "http://github.com/yesodweb/authenticate";
     description = "Authentication methods for Haskell web applications";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
