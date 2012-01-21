@@ -2,11 +2,11 @@
 
 cabal.mkDerivation (self: {
   pname = "double-conversion";
-  version = "0.2.0.1";
-  sha256 = "146ijcv55k0lqlw8y4nz7p5kjpwry2jzbqmkan904pnlcfv4a60a";
+  version = "0.2.0.4";
+  sha256 = "00rb8n2ky20ah9ry398jagi9gb0gz40yjfalh35cpckmg30z199x";
   buildDepends = [ text ];
   meta = {
-    homepage = "https://github.com/mailrank/double-conversion";
+    homepage = "https://github.com/bos/double-conversion";
     description = "Fast conversion between double precision floating point and text";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;

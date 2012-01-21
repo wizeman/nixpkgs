@@ -1,17 +1,17 @@
-{ cabal, attoparsec, blazeBuilder, blazeTextual, deepseq, hashable
-, mtl, syb, text, time, unorderedContainers, vector
+{ cabal, attoparsec, blazeBuilder, blazeTextual, deepseq, dlist
+, hashable, mtl, syb, text, time, unorderedContainers, vector
 }:
 
 cabal.mkDerivation (self: {
   pname = "aeson";
-  version = "0.3.2.12";
-  sha256 = "12dq79bd8kvl4hc493c7ff9k9xdpibnnnfgpvpxh4ljnqcqr4hcy";
+  version = "0.4.0.1";
+  sha256 = "15aq3r36vda8v1fn3pn0k638w32kzy15kbrf97krvg3xdwrvybky";
   buildDepends = [
-    attoparsec blazeBuilder blazeTextual deepseq hashable mtl syb text
-    time unorderedContainers vector
+    attoparsec blazeBuilder blazeTextual deepseq dlist hashable mtl syb
+    text time unorderedContainers vector
   ];
   meta = {
-    homepage = "http://github.com/mailrank/aeson";
+    homepage = "https://github.com/bos/aeson";
     description = "Fast JSON parsing and encoding";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
