@@ -1,16 +1,14 @@
-{ stdenv, fetchurl, pkgconfig, gtk, intltool, libxfce4util
+{ stdenv, fetchXfce, pkgconfig, gtk, intltool, libglade, libxfce4util
 , libxfce4ui, xfconf, libwnck, libstartup_notification, xorg }:
 
 stdenv.mkDerivation rec {
   name = "xfwm4-4.8.3";
-  
-  src = fetchurl {
-    url = "http://archive.xfce.org/src/xfce/xfwm4/4.8/${name}.tar.bz2";
-    sha1 = "6d27deca383e0c2fba0cede0bbe0e9aee18e9257";
-  };
 
+  src = fetchXfce.core name "0zi2g1d2jdgw5armlk9xjh4ykmydy266gdba86nmhy951gm8n3hb";
+
+  #TODO: kde systray, docs
   buildInputs =
-    [ pkgconfig intltool gtk libxfce4util libxfce4ui xfconf
+    [ pkgconfig intltool gtk libglade libxfce4util libxfce4ui xfconf
       libwnck libstartup_notification
       xorg.libXcomposite xorg.libXfixes xorg.libXdamage
     ];
@@ -18,7 +16,7 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = true;
 
   meta = {
-    homepage = http://www.xfce.org/;
+    homepage = http://www.xfce.org/projects/xfwm4;
     description = "Window manager for Xfce";
     license = "GPLv2+";
     platforms = stdenv.lib.platforms.linux;

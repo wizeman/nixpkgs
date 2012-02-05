@@ -1,19 +1,17 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui }:
+{ stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui, dbus_glib }:
 
 stdenv.mkDerivation rec {
   name = "xfce-utils-4.8.3";
-  
-  src = fetchurl {
-    url = "http://archive.xfce.org/src/xfce/xfce-utils/4.8/${name}.tar.bz2";
-    sha1 = "159d445b689ebbf73462a4b4baf5cce4e04afaab";
-  };
+
+  src = fetchXfce.core name "09mr0amp2f632q9i3vykaa0x5nrfihfm9v5nxsx9vch8wvbp0l03";
 
   configureFlags = "--with-xsession-prefix=$(out)/share/xsessions --with-vendor-info=NixOS.org";
 
-  buildInputs = [ pkgconfig intltool gtk libxfce4util libxfce4ui ];
+  fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
+  buildInputs = [ pkgconfig intltool gtk libxfce4util libxfce4ui dbus_glib ];
 
   meta = {
-    homepage = http://www.xfce.org/;
+    homepage = http://www.xfce.org/projects/xfce-utils;
     description = "Utilities and scripts for Xfce";
     license = "GPLv2+";
     platforms = stdenv.lib.platforms.linux;

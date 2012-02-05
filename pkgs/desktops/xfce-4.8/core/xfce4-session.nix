@@ -1,21 +1,21 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui
-, libwnck, dbus_glib, xfconf, xorg, xfce4panel }:
+{ stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui, xfce4panel
+, libwnck, dbus_glib, xfconf, libglade, xorg }:
+
+#TODO: gnome stuff: gconf (assistive?), keyring
 
 stdenv.mkDerivation rec {
   name = "xfce4-session-4.8.2";
-  
-  src = fetchurl {
-    url = "http://archive.xfce.org/src/xfce/xfce4-session/4.8/${name}.tar.bz2";
-    sha1 = "636c2983552861a959225e554898675152a4d812";
-  };
 
+  src = fetchXfce.core name "1l608kik98jxbjl73waf8515hzji06lr80qmky2qlnp0b6js5g1i";
+
+  fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs =
     [ pkgconfig intltool gtk libxfce4util libxfce4ui libwnck dbus_glib
-      xfconf xorg.iceauth xfce4panel
+      xfconf xfce4panel libglade xorg.iceauth
     ];
 
   meta = {
-    homepage = http://www.xfce.org/;
+    homepage = http://www.xfce.org/projects/xfce4-session;
     description = "Session manager for Xfce";
     license = "GPLv2+";
     platforms = stdenv.lib.platforms.linux;

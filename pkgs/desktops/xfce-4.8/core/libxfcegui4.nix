@@ -1,27 +1,24 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, xfconf
-, libglade, libstartup_notification }:
+{ stdenv, fetchXfce, pkgconfig, intltool, gtk
+, libxfce4util, xfconf, libglade, libstartup_notification }:
 
 stdenv.mkDerivation rec {
   name = "libxfcegui4-4.8.1";
-  
-  src = fetchurl {
-    url = "http://archive.xfce.org/src/xfce/libxfcegui4/4.8/${name}.tar.bz2";
-    sha1 = "246fcaa71fc8cf44dae0b4c919411231eedd662f";
-  };
 
+  src = fetchXfce.core name "0hr4h6a9p6w3qw1976p8v9c9pwhd9zhrjlbaph0p7nyz7j1836ih";
+
+  #TODO: gladeui
   # By default, libxfcegui4 tries to install into libglade's prefix.
   # Install into our own prefix instead.
   preConfigure =
     ''
       configureFlags="--with-libglade-module-path=$out/lib/libglade/2.0"
     '';
+  #NOTE: missing keyboard library support is OK according to the mailing-list
 
   buildInputs =
-    [ pkgconfig intltool gtk libxfce4util libglade
+    [ pkgconfig intltool gtk libxfce4util xfconf libglade
       libstartup_notification
     ];
-
-  enableParallelBuilding = true;
 
   meta = {
     homepage = http://www.xfce.org/;

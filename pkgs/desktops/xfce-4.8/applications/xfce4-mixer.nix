@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, pkgconfig, intltool, glib, gst_all, gtk
-, libxfce4util, libxfce4ui, xfce4panel, xfconf }:
+{ stdenv, fetchXfce, pkgconfig, intltool, glib, gst_all, gtk
+, libxfce4util, libxfce4ui, xfce4panel, xfconf, makeWrapper }:
 
 let
 
@@ -13,15 +13,12 @@ in
 
 stdenv.mkDerivation rec {
   name = "xfce4-mixer-4.8.0";
-  
-  src = fetchurl {
-    url = "http://archive.xfce.org/src/apps/xfce4-mixer/4.8/${name}.tar.bz2";
-    sha1 = "24f3401a68f10d2c620e354a6de98e09fe808665";
-  };
+
+  src = fetchXfce.app name "1aqgjxvck6hx26sk3n4n5avhv02vs523mfclcvjb3xnks3yli7wz";
 
   buildInputs =
     [ pkgconfig intltool glib gst_all.gstreamer gstPluginsBase gtk
-      libxfce4util libxfce4ui xfce4panel xfconf
+      libxfce4util libxfce4ui xfce4panel xfconf makeWrapper
     ];
 
   postInstall =
@@ -34,7 +31,5 @@ stdenv.mkDerivation rec {
     homepage = http://www.xfce.org/projects/xfce4-mixer;
     description = "A volume control application for the Xfce desktop environment";
     license = "GPLv2+";
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.eelco ];
   };
 }

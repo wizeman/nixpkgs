@@ -1,19 +1,20 @@
-{ stdenv, fetchurl, pkgconfig, intltool, exo, gtk, libxfce4util, libxfce4ui
-, dbus_glib, libstartup_notification, xfconf, xfce4panel, udev, libnotify }:
+{ stdenv, fetchXfce, pkgconfig, intltool, exo, gtk, libxfce4util
+, dbus_glib, libstartup_notification, libnotify, xfconf, xfce4panel, gamin, libexif, pcre
+, hal, enableHAL ? false }:
 
 stdenv.mkDerivation rec {
-  version = "1.2.3";
-  name = "thunar-${version}";
-  
-  src = fetchurl {
-    url = "http://archive.xfce.org/src/xfce/thunar/1.2/Thunar-${version}.tar.bz2";
-    sha1 = "a05d0e14515d70c5ad94cca881822a707d366863";
-  };
+  name = "Thunar-1.3.0";
 
+  src = fetchXfce.core name "02j3dcgk65mig3jmrg740d1swc8sbn3mkkyrca1ijvv1a955345n";
+
+  fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs =
-    [ pkgconfig intltool gtk exo libxfce4util libxfce4ui
-      dbus_glib libstartup_notification xfconf xfce4panel udev libnotify
+    [ pkgconfig intltool exo gtk libxfce4util
+      dbus_glib libstartup_notification libnotify xfconf xfce4panel gamin libexif pcre
     ];
+  # TODO: gudev, optionality
+
+  propagatedBuildInputs = if enableHAL then [ hal ] else [];
 
   enableParallelBuilding = true;
 
