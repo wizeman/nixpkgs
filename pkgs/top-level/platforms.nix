@@ -83,6 +83,9 @@ rec {
         BLK_DEV_CMD640_ENHANCED n
 
         FUSE_FS m
+
+        # nixos mounts some cgroup
+        CGROUPS y
       '';
     kernelTarget = "uImage";
     uboot = "sheevaplug";
@@ -227,6 +230,15 @@ rec {
 
         # Needed for udev >= 150
         SYSFS_DEPRECATED_V2 n
+
+        VGA_CONSOLE n
+        VT_HW_CONSOLE_BINDING y
+        SERIAL_8250_CONSOLE y
+        FRAMEBUFFER_CONSOLE y
+        EXT2_FS y
+        EXT3_FS y
+        REISERFS_FS y
+        MAGIC_SYSRQ y
       '';
     kernelTarget = "vmlinux";
     uboot = null;

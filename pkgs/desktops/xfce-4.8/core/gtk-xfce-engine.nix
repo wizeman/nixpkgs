@@ -1,10 +1,11 @@
 { stdenv, fetchXfce, pkgconfig, intltool, gtk }:
 
 stdenv.mkDerivation rec {
-  name = "gtk-xfce-engine-2.8.1";
+  name = "gtk-xfce-engine-2.99.0";
 
-  src = fetchXfce.core name "05z63cbgbb4ldpdra4bpd37knwny2k9anjw9hrm5rvfdfhnsbc3w";
+  src = fetchXfce.core name "0m71rmrhl5yx1n6p5g0228s6v6ykd2xd96cvvb7i9li7hnkfbgi7";
 
+  #TODO: gtk3
   buildInputs = [ pkgconfig intltool gtk ];
 
   meta = {

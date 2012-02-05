@@ -2,17 +2,16 @@
 , libglade, libstartup_notification }:
 
 stdenv.mkDerivation rec {
-  name = "libxfce4ui-4.8.0";
+  name = "libxfce4ui-4.9.0";
 
-  src = fetchXfce.core name "0fd39f314w0w1f6hdv3q95wb81lqkkb4x1s4vfzl0d350k87zxi1";
+  src = fetchXfce.core name "1zfskfzmwzq64yavnv7gcjws0v6r192y5kkykw5qdwmhpcvg8wi4";
 
-  # By default, libxfce4ui tries to install into libglade's prefix.
+  #TODO: gladeui
   # Install into our own prefix instead.
-  #preConfigure =
-  #  ''
-  #    configureFlags="--with-libglade-module-path=$out/lib/libglade/2.0"
-  #  '';
-#TODO: glade support
+  preConfigure =
+    ''
+      configureFlags="--with-libglade-module-path=$out/lib/libglade/2.0"
+    '';
 
   buildInputs =
     [ pkgconfig intltool gtk libxfce4util xfconf libglade
@@ -22,7 +21,7 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = true;
 
   meta = {
-    homepage = http://www.xfce.org/;
+    homepage = http://www.xfce.org/projects/libxfce4;
 #TODO
     description = "Basic GUI library for Xfce";
     license = "LGPLv2+";

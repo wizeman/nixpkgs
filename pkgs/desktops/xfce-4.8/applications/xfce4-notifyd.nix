@@ -2,9 +2,9 @@
 , gtk , libxfce4util, libxfce4ui, xfconf }:
 
 stdenv.mkDerivation rec {
-  name = "xfce4-notifyd-0.2.1";
+  name = "xfce4-notifyd-0.2.2";
 
-  src = fetchXfce.app name "0w7dqfzb7h6hg9n7bdnqwybakrz2p72ffi37h4fsj7j02hyxmcma";
+  src = fetchXfce.app name "0s4ilc36sl5k5mg5727rmqims1l3dy5pwg6dk93wyjqnqbgnhvmn";
 
   buildInputs = [ pkgconfig intltool gtk libxfce4util libxfce4ui xfconf ];
 
@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
 
   meta = {
     homepage = http://goodies.xfce.org/projects/applications/xfce4-notifyd;
-    description = "";
-    #license = "GPLv2+";
+    description = "Notification daemon for Xfce";
+    license = "GPLv2+";
   };
 }

@@ -1,7 +1,5 @@
 { stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui
-, libwnck, xfconf, libglade, libxfce4menu, xfce4panel, thunar, exo }:
-
-#TODO: garcon, dbus_glib, libnotify
+, libwnck, xfconf, libglade, libxfce4menu, xfce4panel, thunar, exo, garcon, libnotify }:
 
 stdenv.mkDerivation rec {
   name = "xfdesktop-4.8.3";
@@ -10,13 +8,13 @@ stdenv.mkDerivation rec {
 
   buildInputs =
     [ pkgconfig intltool gtk libxfce4util libxfce4ui libwnck xfconf
-      libglade libxfce4menu xfce4panel thunar exo
+      libglade libxfce4menu xfce4panel thunar exo garcon libnotify
     ];
 
   enableParallelBuilding = true;
 
   meta = {
-    homepage = http://www.xfce.org/;
+    homepage = http://www.xfce.org/projects/xfdesktop;
     description = "Xfce desktop manager";
     license = "GPLv2+";
     platforms = stdenv.lib.platforms.linux;

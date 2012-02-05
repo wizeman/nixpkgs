@@ -1,17 +1,15 @@
-{ stdenv, fetchXfce, pkgconfig, intltool, libexif, gtk, thunar
+{ stdenv, fetchXfce, pkgconfig, intltool, libexif, gtk
 , exo, dbus_glib, libxfce4util, libxfce4ui, xfconf }:
 
 stdenv.mkDerivation rec {
-  name = "ristretto-0.0.93";
+  name = "ristretto-0.3.4";
 
-  src = fetchXfce.app name "1zrc4q6619nvzlqhcg1qg48cvfcxfyy3fb7f5cpps1nq58lbyk0h";
+  src = fetchXfce.app name "0chslylx6b7sylfkr5n7fgqcq1s6wn918kf588lzhv7mqdmmrvg2";
 
   buildInputs =
-    [ pkgconfig intltool libexif gtk thunar exo dbus_glib
-      libxfce4util libxfce4ui xfconf
+    [ pkgconfig intltool libexif gtk dbus_glib exo libxfce4util
+      libxfce4ui xfconf
     ];
-
-  NIX_LDFLAGS = "-lX11";
 
   meta = {
     homepage = http://goodies.xfce.org/projects/applications/ristretto;

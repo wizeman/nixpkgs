@@ -1,5 +1,5 @@
 { stdenv, fetchXfce, pkgconfig, intltool, exo, gtk, libxfce4util
-, dbus_glib, libstartup_notification, xfconf, xfce4panel, gamin
+, dbus_glib, libstartup_notification, libnotify, xfconf, xfce4panel, gamin, libexif, pcre
 , hal, enableHAL ? false }:
 
 stdenv.mkDerivation rec {
@@ -10,12 +10,12 @@ stdenv.mkDerivation rec {
   fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs =
     [ pkgconfig intltool exo gtk libxfce4util
-      dbus_glib libstartup_notification xfconf xfce4panel gamin
+      dbus_glib libstartup_notification libnotify xfconf xfce4panel gamin libexif pcre
     ];
-  # TODO: gudev, libnotify, libexif, libpcre?
+  # TODO: gudev, optionality
 
   propagatedBuildInputs = if enableHAL then [ hal ] else [];
-  
+
   enableParallelBuilding = true;
 
   meta = {

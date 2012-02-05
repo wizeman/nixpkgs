@@ -9,8 +9,7 @@ stdenv.mkDerivation rec {
 
   meta = {
     homepage = http://www.xfce.org/;
-#TODO
-    description = "";
-    license = "";
+    description = "Xfce menu support library";
+    license = "GPLv2+";
   };
 }

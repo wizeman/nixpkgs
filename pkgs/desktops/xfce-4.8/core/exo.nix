@@ -1,15 +1,11 @@
-{ stdenv, fetchXfce, pkgconfig, intltool, URI, glib, gtk, libxfce4util
-, enableHAL ? false, hal, dbus_glib }:
+{ stdenv, fetchXfce, pkgconfig, intltool, URI, glib, gtk, libxfce4ui, libxfce4util }:
 
 stdenv.mkDerivation rec {
-  name = "exo-0.6.0";
+  name = "exo-0.7.0";
 
-  src = fetchXfce.core name "04py7iw60a3kxqj2szxwbd09bws1vm0n9v9v7006g3jvvlbc0s98";
+  src = fetchXfce.core name "0w8p4qva33jgqwrxcrqqdx9r7yac0fhc41g2z70nn0mhz0jrxdbb";
 
-  buildInputs =
-    [ pkgconfig intltool URI glib gtk libxfce4util ] ++
-    stdenv.lib.optionals enableHAL [ hal dbus_glib ];
-  # TODO: python support?
+  buildInputs = [ pkgconfig intltool URI glib gtk libxfce4ui libxfce4util ];
 
   meta = {
     homepage = http://www.xfce.org/projects/exo;

@@ -1,12 +1,15 @@
-{ cabal, enumerator, transformers }:
+{ cabal, aeson, attoparsec, conduit, text, transformers
+, unorderedContainers, vector
+}:
 
 cabal.mkDerivation (self: {
   pname = "yaml";
-  version = "0.4.1.2";
-  sha256 = "1c7ffs5gkwk0l0vg7amsflra1j8ifd9cvvbqx9jzkqsay8hbr4vb";
-  isLibrary = true;
-  isExecutable = true;
-  buildDepends = [ enumerator transformers ];
+  version = "0.5.1.2";
+  sha256 = "0xmx58h47prpmgbf63bsy7ar74h0d968wyd2yg3bgvwmnd83iz7d";
+  buildDepends = [
+    aeson attoparsec conduit text transformers unorderedContainers
+    vector
+  ];
   meta = {
     homepage = "http://github.com/snoyberg/yaml/";
     description = "Low-level binding to the libyaml C library";
