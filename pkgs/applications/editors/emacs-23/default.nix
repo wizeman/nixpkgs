@@ -8,19 +8,19 @@ assert (libXft != null) -> libpng != null;	# probably a bug
 assert stdenv.isDarwin -> libXaw != null;	# fails to link otherwise
 
 stdenv.mkDerivation rec {
-  name = "emacs-23.3";
+  name = "emacs-23.3b";
 
   builder = ./builder.sh;
 
   src = fetchurl {
     url = "mirror://gnu/emacs/${name}.tar.bz2";
-    sha256 = "0kfa546qi0idkwk29gclgi13qd8q54pcqgy9qwjknlclszprdp3a";
+    sha256 = "1vp6qbbjgh5zpd87j3ggsvgf8q6cax8z3cdx3syv5v2662dapp46";
   };
 
-  buildInputs = 
+  buildInputs =
     [ ncurses x11 texinfo libXaw Xaw3d libXpm libpng libjpeg libungif
       libtiff librsvg libXft gconf
-    ] 
+    ]
     ++ stdenv.lib.optionals (gtk != null) [ gtk pkgconfig ]
     ++ stdenv.lib.optional stdenv.isLinux dbus;
 
@@ -30,6 +30,16 @@ stdenv.mkDerivation rec {
     # On NixOS, help Emacs find `crt*.o'.
     ++ stdenv.lib.optional (stdenv ? glibc)
          [ "--with-crt-dir=${stdenv.glibc}/lib" ];
+
+  postInstall = ''
+    cat >$out/share/emacs/site-lisp/site-start.el <<EOF
+;; nixos specific load-path
+(when (getenv "NIX_PROFILES") (setq load-path
+                      (append (reverse (mapcar (lambda (x) (concat x "/share/emacs/site-lisp/"))
+                                               (split-string (getenv "NIX_PROFILES"))))
+                       load-path)))
+EOF
+  '';
 
   doCheck = true;
 
@@ -56,7 +66,7 @@ stdenv.mkDerivation rec {
     homepage = http://www.gnu.org/software/emacs/;
     license = "GPLv3+";
 
-    maintainers = [ stdenv.lib.maintainers.ludo stdenv.lib.maintainers.simons ];
+    maintainers = with stdenv.lib.maintainers; [ ludo simons chaoflow ];
     platforms = stdenv.lib.platforms.all;
   };
 }

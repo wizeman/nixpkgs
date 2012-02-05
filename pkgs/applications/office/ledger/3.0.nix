@@ -2,15 +2,15 @@
 , pcre, expat, boost, mpfr, git, texinfo }:
 
 let
-  rev = "cf35984971341b8a8688";
+  rev = "d2915c66";
 in
 stdenv.mkDerivation {
-  name = "ledger3-${rev}";
+  name = "ledger3-2012.01.${rev}";
 
   src = fetchgit {
     url = "git://github.com/jwiegley/ledger.git";
     inherit rev;
-    sha256 = "4078983db9fc8d232fa71a31b47e505c531971b4515d6ef723e7d333a2352d2a";
+    sha256 = "a489c8b1c48889040d2cebaac1a0019e90acac0b51c9abf7914944dcb4b801e7";
   };
 
   buildInputs = [
@@ -18,14 +18,21 @@ stdenv.mkDerivation {
     git texinfo
   ];
 
+  CPPFLAGS = "-I${gmp}/include -I${mpfr}/include";
+
+  LDFLAGS = "-L${gmp}/lib -L${mpfr}/lib";
+
   buildPhase = ''
     sed -i acprep \
-      -e 's|search_prefixes = .*|search_prefixes = ["${boost}"]|'
+      -e 's|search_prefixes = .*|search_prefixes = ["${boost}"]|' \
+      -e 's|/usr/bin/python|${python}/bin/python|'
     export MAKEFLAGS="-j$NIX_BUILD_CORES -l$NIX_BUILD_CORES"
     python acprep update --no-pch --prefix=$out
   '';
 
-  doCheck = true;
+  doCheck = !stdenv.isDarwin;
+
+  enableParallelBuilding = true;
 
   meta = {
     homepage = "http://ledger-cli.org/";
@@ -39,7 +46,7 @@ stdenv.mkDerivation {
       their data, there really is no alternative.
     '';
 
-    platforms = stdenv.lib.platforms.linux;
+    platforms = stdenv.lib.platforms.all;
     maintainers = [ stdenv.lib.maintainers.simons ];
   };
 }

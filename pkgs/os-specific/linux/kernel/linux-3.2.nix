@@ -214,18 +214,18 @@ in
 import ./generic.nix (
 
   rec {
-    version = "3.2-rc6";
+    version = "3.2.2";
+    testing = false;
 
-    modDirVersion = "3.2.0-rc6";
+    modDirVersion = version;
 
     preConfigure = ''
       substituteInPlace scripts/depmod.sh --replace '-b "$INSTALL_MOD_PATH"' ""
     '';
   
     src = fetchurl {
-      #url = "mirror://kernel/linux/kernel/v3.x/linux-${version}.tar.bz2";
-      url = "mirror://kernel/linux/kernel/v3.0/testing/linux-${version}.tar.bz2";
-      sha256 = "18wdp3r3xvq12ddv7c7z0h0i8zsm3wrahl83s6jqbixrw4aq5zbd";
+      url = "mirror://kernel/linux/kernel/v3.0/${if testing then "testing/" else ""}linux-${version}.tar.bz2";
+      sha256 = "9f20bd2332db32e2d5b0fc346762d486faab19e0dd059c82964116421bb7cceb";
     };
 
     config = configWithPlatform stdenv.platform;

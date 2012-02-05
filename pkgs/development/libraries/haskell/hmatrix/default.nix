@@ -1,14 +1,10 @@
-{ cabal, binary, blas, gsl, HUnit, liblapack, QuickCheck, random
-, storableComplex, vector
-}:
+{ cabal, binary, blas, gsl, liblapack, storableComplex, vector }:
 
 cabal.mkDerivation (self: {
   pname = "hmatrix";
-  version = "0.12.0.2";
-  sha256 = "08i3vi0vs6wpyvjsjpqrxp8lw0f89cgzwv1j27y7i2yfp4xmrw8d";
-  buildDepends = [
-    binary HUnit QuickCheck random storableComplex vector
-  ];
+  version = "0.13.1.0";
+  sha256 = "0pl5z6zsxyvbdfdng77r2c4isq6d4wbyzx2qs9r8rbn6glaxwrmp";
+  buildDepends = [ binary storableComplex vector ];
   extraLibraries = [ blas gsl liblapack ];
   configureFlags = "-fvector";
   meta = {
