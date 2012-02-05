@@ -1,11 +1,12 @@
 { cabal }:
 
 cabal.mkDerivation (self: {
-  pname = "yap";
-  version = "0.2";
-  sha256 = "14lq549jhgnf51pgy1jv31ik8qx71yl7d53w8dpq1f9mlsn1g16i";
+  pname = "ieee754";
+  version = "0.7.3";
+  sha256 = "0gq747h15inxbxbgmzmchb9a8p57rhv3bmj69idx5arh0d3whgv0";
   meta = {
-    description = "yet another prelude - a simplistic refactoring with algebraic classes";
+    homepage = "http://github.com/patperry/hs-ieee754";
+    description = "Utilities for dealing with IEEE floating point numbers";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
     maintainers = [

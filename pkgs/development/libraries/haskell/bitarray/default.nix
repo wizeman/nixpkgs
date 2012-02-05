@@ -1,11 +1,12 @@
 { cabal }:
 
 cabal.mkDerivation (self: {
-  pname = "yap";
-  version = "0.2";
-  sha256 = "14lq549jhgnf51pgy1jv31ik8qx71yl7d53w8dpq1f9mlsn1g16i";
+  pname = "bitarray";
+  version = "0.0.1";
+  sha256 = "01ijysisw70zaw70hx851axw48agfamdqj21rzzhdqd2ww6bwchb";
   meta = {
-    description = "yet another prelude - a simplistic refactoring with algebraic classes";
+    homepage = "http://code.haskell.org/~bkomuves/";
+    description = "Mutable and immutable bit arrays";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
     maintainers = [

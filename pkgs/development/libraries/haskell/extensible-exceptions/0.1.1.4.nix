@@ -1,11 +1,11 @@
 { cabal }:
 
 cabal.mkDerivation (self: {
-  pname = "yap";
-  version = "0.2";
-  sha256 = "14lq549jhgnf51pgy1jv31ik8qx71yl7d53w8dpq1f9mlsn1g16i";
+  pname = "extensible-exceptions";
+  version = "0.1.1.4";
+  sha256 = "1273nqws9ij1rp1bsq5jc7k2jxpqa0svawdbim05lf302y0firbc";
   meta = {
-    description = "yet another prelude - a simplistic refactoring with algebraic classes";
+    description = "Extensible exceptions";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
     maintainers = [

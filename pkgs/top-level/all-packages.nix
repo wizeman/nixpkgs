@@ -363,6 +363,8 @@ let
 
   aircrackng = callPackage ../tools/networking/aircrack-ng { };
 
+  analog = callPackage ../tools/admin/analog {};
+
   archivemount = callPackage ../tools/filesystems/archivemount { };
 
   asymptote = builderDefsPackage ../tools/graphics/asymptote {
@@ -1251,7 +1253,7 @@ let
 
   pwgen = callPackage ../tools/security/pwgen { };
 
-  pydb = callPackage ../tools/pydb { };
+  pydb = callPackage ../development/tools/pydb { };
 
   pystringtemplate = callPackage ../development/python-modules/stringtemplate { };
 
@@ -2274,16 +2276,20 @@ let
       (x : x.ghc704Prefs) false false (x : x);
 
   haskellPackages_ghc721 =
-    recurseIntoAttrs
-      (haskellPackagesFun ../development/compilers/ghc/7.2.1.nix
-        (if stdenv.isDarwin then ghc704Binary else ghc6121Binary)
-        (x : x.ghc721Prefs) false false lowPrio);
+    haskellPackagesFun ../development/compilers/ghc/7.2.1.nix
+      (if stdenv.isDarwin then ghc704Binary else ghc6121Binary)
+      (x : x.ghc721Prefs) false false lowPrio;
 
   haskellPackages_ghc722 =
+    haskellPackagesFun ../development/compilers/ghc/7.2.2.nix
+      (if stdenv.isDarwin then ghc704Binary else ghc6121Binary)
+      (x : x.ghc722Prefs) false false lowPrio;
+
+  haskellPackages_ghc741 =
     recurseIntoAttrs
-      (haskellPackagesFun ../development/compilers/ghc/7.2.2.nix
+      (haskellPackagesFun ../development/compilers/ghc/7.4.1.nix
         (if stdenv.isDarwin then ghc704Binary else ghc6121Binary)
-        (x : x.ghc722Prefs) false false lowPrio);
+        (x : x.ghc741Prefs) false false lowPrio);
 
   # Reasonably current HEAD snapshot. Should *always* be lowPrio.
   haskellPackages_ghcHEAD =
@@ -3084,7 +3090,6 @@ let
 
   omake = callPackage ../development/tools/ocaml/omake { };
 
-
   openocd = callPackage ../development/tools/misc/openocd { };
 
   oprofile = import ../development/tools/profiling/oprofile {
@@ -3678,6 +3683,9 @@ let
   gnutls2 = callPackage ../development/libraries/gnutls/2.12.nix {
     guileBindings = getConfig ["gnutls" "guile"] true;
   };
+
+  gnutls_without_guile = gnutls.override { guileBindings = false; };
+  gnutls2_without_guile = gnutls2.override { guileBindings = false; };
 
   gpgme = callPackage ../development/libraries/gpgme { };
 
@@ -5180,6 +5188,8 @@ let
   rabbitmq_server = callPackage ../servers/amqp/rabbitmq-server { };
 
   radius = callPackage ../servers/radius { };
+
+  redis = callPackage ../servers/nosql/redis { };
 
   redstore = callPackage ../servers/http/redstore { };
 
@@ -6839,19 +6849,19 @@ let
 
   firefox36Wrapper = wrapFirefox { browser = firefox36Pkgs.firefox; };
 
-  firefox80Pkgs = callPackage ../applications/networking/browsers/firefox/8.0.nix {
-    inherit (gtkLibs) gtk pango;
-    inherit (gnome) libIDL;
-  };
-
-  firefox80Wrapper = wrapFirefox { browser = firefox80Pkgs.firefox; };
-
   firefox90Pkgs = callPackage ../applications/networking/browsers/firefox/9.0.nix {
     inherit (gtkLibs) gtk pango;
     inherit (gnome) libIDL;
   };
 
   firefox90Wrapper = wrapFirefox { browser = firefox90Pkgs.firefox; };
+
+  firefox100Pkgs = callPackage ../applications/networking/browsers/firefox/10.0.nix {
+    inherit (gtkLibs) gtk pango;
+    inherit (gnome) libIDL;
+  };
+
+  firefox100Wrapper = wrapFirefox { browser = firefox100Pkgs.firefox; };
 
   flac = callPackage ../applications/audio/flac { };
 
@@ -8486,7 +8496,7 @@ let
 
   ataripp = callPackage ../misc/emulators/atari++ { };
 
-  auctex = callPackage ../misc/tex/auctex { };
+  auctex = callPackage ../tools/typesetting/tex/auctex { };
 
   busybox = callPackage ../misc/busybox {
     enableStatic = true;
@@ -8504,7 +8514,7 @@ let
 
   darcnes = callPackage ../misc/emulators/darcnes { };
 
-  dblatex = callPackage ../misc/tex/dblatex { };
+  dblatex = callPackage ../tools/typesetting/tex/dblatex { };
 
   dosbox = callPackage ../misc/emulators/dosbox { };
 
@@ -8560,7 +8570,7 @@ let
 
   keynav = callPackage ../tools/X11/keynav { };
 
-  lazylist = callPackage ../misc/tex/lazylist { };
+  lazylist = callPackage ../tools/typesetting/tex/lazylist { };
 
   lilypond = callPackage ../misc/lilypond {
     inherit (gtkLibs) pango;
@@ -8619,11 +8629,11 @@ let
 
   DisnixWebService = callPackage ../tools/package-management/disnix/DisnixWebService { };
 
-  latex2html = callPackage ../misc/tex/latex2html/default.nix {
+  latex2html = callPackage ../tools/typesetting/tex/latex2html/default.nix {
     tex = tetex;
   };
 
-  lkproof = callPackage ../misc/tex/lkproof { };
+  lkproof = callPackage ../tools/typesetting/tex/lkproof { };
 
   mysqlWorkbench = newScope gnome ../applications/misc/mysql-workbench {
     lua = lua5;
@@ -8638,13 +8648,13 @@ let
 
   # Keep the old PGF since some documents don't render properly with
   # the new one.
-  pgf1 = callPackage ../misc/tex/pgf/1.x.nix { };
+  pgf1 = callPackage ../tools/typesetting/tex/pgf/1.x.nix { };
 
-  pgf2 = callPackage ../misc/tex/pgf/2.x.nix { };
+  pgf2 = callPackage ../tools/typesetting/tex/pgf/2.x.nix { };
 
   pjsip = callPackage ../applications/networking/pjsip { };
 
-  polytable = callPackage ../misc/tex/polytable { };
+  polytable = callPackage ../tools/typesetting/tex/polytable { };
 
   uae = callPackage ../misc/emulators/uae { };
 
@@ -8674,13 +8684,13 @@ let
 
   splix = callPackage ../misc/cups/drivers/splix { };
 
-  tetex = callPackage ../misc/tex/tetex { };
+  tetex = callPackage ../tools/typesetting/tex/tetex { };
 
-  tex4ht = callPackage ../misc/tex/tex4ht { };
+  tex4ht = callPackage ../tools/typesetting/tex/tex4ht { };
 
-  texFunctions = import ../misc/tex/nix pkgs;
+  texFunctions = import ../tools/typesetting/tex/nix pkgs;
 
-  texLive = builderDefsPackage (import ../misc/tex/texlive) {
+  texLive = builderDefsPackage (import ../tools/typesetting/tex/texlive) {
     inherit builderDefs zlib bzip2 ncurses libpng ed
       gd t1lib freetype icu perl expat curl
       libjpeg bison python fontconfig flex;
@@ -8693,7 +8703,6 @@ let
   texLiveFull = lib.setName "texlive-full" (texLiveAggregationFun {
     paths = [ texLive texLiveExtra lmodern texLiveCMSuper texLiveLatexXColor
               texLivePGF texLiveBeamer texLiveModerncv ];
-
   });
 
   /* Look in configurations/misc/raskin.nix for usage example (around revisions
@@ -8709,35 +8718,35 @@ let
   Just installing a few packages doesn't work.
   */
   texLiveAggregationFun =
-    (builderDefsPackage (import ../misc/tex/texlive/aggregate.nix));
+    (builderDefsPackage (import ../tools/typesetting/tex/texlive/aggregate.nix));
 
-  texDisser = callPackage ../misc/tex/disser {};
+  texDisser = callPackage ../tools/typesetting/tex/disser {};
 
-  texLiveContext = builderDefsPackage (import ../misc/tex/texlive/context.nix) {
+  texLiveContext = builderDefsPackage (import ../tools/typesetting/tex/texlive/context.nix) {
     inherit texLive;
   };
 
-  texLiveExtra = builderDefsPackage (import ../misc/tex/texlive/extra.nix) {
+  texLiveExtra = builderDefsPackage (import ../tools/typesetting/tex/texlive/extra.nix) {
     inherit texLive;
   };
 
-  texLiveCMSuper = builderDefsPackage (import ../misc/tex/texlive/cm-super.nix) {
+  texLiveCMSuper = builderDefsPackage (import ../tools/typesetting/tex/texlive/cm-super.nix) {
     inherit texLive;
   };
 
-  texLiveLatexXColor = builderDefsPackage (import ../misc/tex/texlive/xcolor.nix) {
+  texLiveLatexXColor = builderDefsPackage (import ../tools/typesetting/tex/texlive/xcolor.nix) {
     inherit texLive;
   };
 
-  texLivePGF = builderDefsPackage (import ../misc/tex/texlive/pgf.nix) {
+  texLivePGF = builderDefsPackage (import ../tools/typesetting/tex/texlive/pgf.nix) {
     inherit texLiveLatexXColor texLive;
   };
 
-  texLiveBeamer = builderDefsPackage (import ../misc/tex/texlive/beamer.nix) {
+  texLiveBeamer = builderDefsPackage (import ../tools/typesetting/tex/texlive/beamer.nix) {
     inherit texLiveLatexXColor texLivePGF texLive;
   };
 
-  texLiveModerncv = builderDefsPackage (import ../misc/tex/texlive/moderncv.nix) {
+  texLiveModerncv = builderDefsPackage (import ../tools/typesetting/tex/texlive/moderncv.nix) {
     inherit texLive unzip;
   };
 
