@@ -836,6 +836,14 @@ rec {
     };
   };
 
+  ConvertASN1 = buildPerlPackage rec {
+    name = "Convert-ASN1-0.22";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/G/GB/GBARR/Convert-ASN1-0.22.tar.gz";
+      sha256 = "1vpny8smwl23rai1kxngi5i31jhp6s6cdls19gjhcwsxf76daqxy";
+    };
+  };
+
   constant = buildPerlPackage {
     name = "constant-1.15";
     src = fetchurl {
@@ -919,6 +927,14 @@ rec {
     src = fetchurl {
       url = "mirror://cpan/authors/id/J/JD/JDPORTER/${name}.tar.gz";
       sha256 = "0r5w5i81s02x756alad9psxmpqmcxahzjpqxsb3kacsqj8s5br9b";
+    };
+  };
+
+  CryptSmbHash = buildPerlPackage rec {
+    name = "Crypt-SmbHash-0.12";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/B/BJ/BJKUIT/Crypt-SmbHash-0.12.tar.gz";
+      sha256 = "0dxivcqmabkhpz5xzph6rzl8fvq9xjy26b2ci77pv5gsmdzari38";
     };
   };
 
@@ -1085,15 +1101,7 @@ rec {
 
   DBDSQLite = import ../development/perl-modules/DBD-SQLite {
     inherit fetchurl buildPerlPackage DBI;
-
-    # sqlite-3.7.9 breaks DBDSQLite, overriding locally for now
-    sqlite = pkgs.lib.overrideDerivation pkgs.sqlite (args: {
-      name = "sqlite-3.7.7.1";
-      src = fetchurl {
-        url = http://www.sqlite.org/sqlite-autoconf-3070701.tar.gz;
-        sha256 = "1pvf72gb6yidc4zjml3k6kwhlvvhbgmbm8hfin9y5jvvbyr3dk3x";
-      };
-    });
+    inherit (pkgs) sqlite;
   };
 
   DBDmysql = import ../development/perl-modules/DBD-mysql {
@@ -2013,10 +2021,10 @@ rec {
   };
 
   JSON = buildPerlPackage rec {
-    name = "JSON-2.21";
+    name = "JSON-2.53";
     src = fetchurl {
       url = "mirror://cpan/authors/id/M/MA/MAKAMAKA/${name}.tar.gz";
-      sha256 = "1dz00922yq7pz8hb9bbk8pqkwh0brf595lklsind62lf5f247vj7";
+      sha256 = "0rfms17d0pkai26kqyzaylbr5wxcrrhyjkyshq85l41xb0g1iplh";
     };
     propagatedBuildInputs = [JSONXS];
   };
@@ -2039,10 +2047,10 @@ rec {
   };
 
   JSONXS = buildPerlPackage rec {
-    name = "JSON-XS-2.29";
+    name = "JSON-XS-2.32";
     src = fetchurl {
       url = "mirror://cpan/authors/id/M/ML/MLEHMANN/${name}.tar.gz";
-      sha256 = "1gl8x2rc3krpj6cs1dg0g28iqqfbn9zyq4nz9mbngv0lccc0y5vy";
+      sha256 = "012bf324pf5lnrf6ck2y167i1q1zzzc0w43b381qfnk7v5fcvaik";
     };
     buildInputs = [CommonSense];
   };
@@ -2537,6 +2545,15 @@ rec {
     };
   };
 
+  NetLDAP = buildPerlPackage {
+    name = "Net-LDAP-0.43";
+    propagatedBuildInputs = [ ConvertASN1 ];
+    src = fetchurl {
+      url = mirror://cpan/authors/id/G/GB/GBARR/perl-ldap-0.43.tar.gz;
+      sha256 = "0ak7393zs8ps6r6in5ilr9l1mzxxh529jr768sjzx4273p7li3m0";
+    };
+  };
+
   NetServer = buildPerlPackage rec {
     name = "Net-Server-0.99";
     src = fetchurl {
@@ -2967,6 +2984,14 @@ rec {
     src = fetchurl {
       url = mirror://cpan/authors/id/S/SA/SAMV/Set-Object-1.26.tar.gz;
       sha256 = "1hx3wrw8xkvaggacc8zyn86hfi3079ahmia1n8vsw7dglp1bbhmj";
+    };
+  };
+
+  SortVersions = buildPerlPackage rec {
+    name = "Sort-Versions-1.5";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/E/ED/EDAVIS/${name}.tar.gz";
+      sha256 = "1yhyxaakyhcffgr9lwd314badhlc2gh9f6n47013ljshbnkgzhh9";
     };
   };
 

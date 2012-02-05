@@ -11,6 +11,7 @@ let
   version = "${majorVersion}.${minorVersion}";
 in
 
+# WARNING: Do NOT upgrade cmake in trunk: it fails to build on i686-linux
 stdenv.mkDerivation rec {
   name = "cmake-${os useNcurses "cursesUI-"}${os useQt4 "qt4UI-"}${version}";
 
@@ -54,7 +55,7 @@ stdenv.mkDerivation rec {
   meta = {
     homepage = http://www.cmake.org/;
     description = "Cross-Platform Makefile Generator";
-    platforms = if useQt4 then qt4.meta.platforms else stdenv.lib.platforms.unix;
+    platforms = if useQt4 then qt4.meta.platforms else stdenv.lib.platforms.all;
     maintainers = [ stdenv.lib.maintainers.urkud ];
   };
 }

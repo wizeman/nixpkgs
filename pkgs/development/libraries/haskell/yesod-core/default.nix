@@ -1,21 +1,21 @@
 { cabal, aeson, blazeBuilder, blazeHtml, caseInsensitive, cereal
 , clientsession, cookie, dataObject, dataObjectYaml, enumerator
-, failure, hamlet, httpTypes, monadControl, parsec, pathPieces
-, random, shakespeare, shakespeareCss, shakespeareJs
-, strictConcurrency, text, time, transformers, transformersBase
-, vector, wai, waiExtra
+, failure, fastLogger, hamlet, httpTypes, monadControl, parsec
+, pathPieces, random, shakespeare, shakespeareCss, shakespeareI18n
+, shakespeareJs, text, time, transformers, transformersBase, vector
+, wai, waiExtra, waiLogger
 }:
 
 cabal.mkDerivation (self: {
   pname = "yesod-core";
-  version = "0.9.3.6";
-  sha256 = "00h1ylrr5wrid9vn3jhspibprx0175j9rcwdb1hd7ya5gwmzlhjs";
+  version = "0.9.4.1";
+  sha256 = "048xc8dshwpaxirz8wvk3ra0qs99wx1i145nfj7n3i6kw8qkfnz6";
   buildDepends = [
     aeson blazeBuilder blazeHtml caseInsensitive cereal clientsession
-    cookie dataObject dataObjectYaml enumerator failure hamlet
-    httpTypes monadControl parsec pathPieces random shakespeare
-    shakespeareCss shakespeareJs strictConcurrency text time
-    transformers transformersBase vector wai waiExtra
+    cookie dataObject dataObjectYaml enumerator failure fastLogger
+    hamlet httpTypes monadControl parsec pathPieces random shakespeare
+    shakespeareCss shakespeareI18n shakespeareJs text time transformers
+    transformersBase vector wai waiExtra waiLogger
   ];
   meta = {
     homepage = "http://www.yesodweb.com/";
