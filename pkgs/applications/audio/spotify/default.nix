@@ -1,8 +1,8 @@
-{ fetchurl, stdenv, dpkg, xlibs, qt4, alsaLib, makeWrapper }:
+{ fetchurl, stdenv, dpkg, xlibs, qt4, alsaLib, makeWrapper, openssl }:
 
 assert stdenv.system == "i686-linux" || stdenv.system == "x86_64-linux";
 
-let version = "0.4.9.302"; in
+let version = "0.6.6.10"; in
 
 stdenv.mkDerivation {
   name = "spotify-${version}";
@@ -10,13 +10,13 @@ stdenv.mkDerivation {
   src =
     if stdenv.system == "i686-linux" then 
       fetchurl {
-        url = "http://repository.spotify.com/pool/non-free/s/spotify/spotify-client-qt_${version}.g604b4fb-1_i386.deb";
-        sha256 = "1kw3jfvz8a9v6zl3yh6f51vsick35kmcf7vkbjb6wl0nk1a8q8gg";
+        url = "http://repository.spotify.com/pool/non-free/s/spotify/spotify-client-qt_${version}.gbd39032.58-1_i386.deb";
+        sha256 = "184wvw2jqihw7bbmd7pgz51nkzvk777imz9pvknv52mggai61523";
       }
     else if stdenv.system == "x86_64-linux" then 
       fetchurl {
-        url = "http://repository.spotify.com/pool/non-free/s/spotify/spotify-client-qt_${version}.g604b4fb-1_amd64.deb";
-        sha256 = "1cghs3hwmqnd7g62g1h2bf3yvxgjq8b94vzhp1w9ysb5rswyjkyv";
+        url = "http://repository.spotify.com/pool/non-free/s/spotify/spotify-client-qt_${version}.gbd39032.58-1_amd64.deb";
+        sha256 = "0qy4dgcl4y8ymqk8i9vgabik7mq0niqpbkwl3sk8z66znax4am4c";
       }
     else throw "Spotify not supported on this platform.";
 
@@ -31,9 +31,15 @@ stdenv.mkDerivation {
       mv $out/usr/* $out/
       rmdir $out/usr
 
+      # Work around Spotify referring to a specific minor version of
+      # OpenSSL.
+      mkdir $out/lib
+      ln -s ${openssl}/lib/libssl.so $out/lib/libssl.so.0.9.8
+      ln -s ${openssl}/lib/libcrypto.so $out/lib/libcrypto.so.0.9.8
+
       patchelf \
         --interpreter "$(cat $NIX_GCC/nix-support/dynamic-linker)" \
-        --set-rpath ${stdenv.lib.makeLibraryPath [ xlibs.libXScrnSaver qt4 alsaLib stdenv.gcc.gcc ]}:${stdenv.gcc.gcc}/lib64 \
+        --set-rpath ${stdenv.lib.makeLibraryPath [ xlibs.libXScrnSaver xlibs.libX11 qt4 alsaLib openssl stdenv.gcc.gcc ]}:${stdenv.gcc.gcc}/lib64:$out/lib \
         $out/bin/spotify
 
       preload=$out/libexec/spotify/libpreload.so

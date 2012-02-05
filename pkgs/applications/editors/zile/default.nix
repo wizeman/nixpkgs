@@ -1,19 +1,22 @@
-{ fetchurl, stdenv, ncurses, help2man }:
+{ fetchurl, stdenv, ncurses, boehmgc, perl, help2man }:
 
 stdenv.mkDerivation rec {
-  name = "zile-2.3.24";
+  name = "zile-2.4.3";
 
   src = fetchurl {
     url = "mirror://gnu/zile/${name}.tar.gz";
-    sha256 = "12by1f5nbk2qcq0f35aqjq5g54nsnajk2rk5060icsjc86pv52r1";
+    sha256 = "0rygkc3i9bngzn49kq9fnrbz80d8pa2yjy8iz7vjlc4ayc2akvc3";
   };
 
-  buildInputs = [ ncurses ];
-  buildNativeInputs = [ help2man ];
+  buildInputs = [ ncurses boehmgc ];
+  buildNativeInputs = [ help2man perl ];
 
   # Tests can't be run because most of them rely on the ability to
   # fiddle with the terminal.
   doCheck = false;
+
+  # XXX: Work around cross-compilation-unfriendly `gl_FUNC_FSTATAT' macro.
+  preConfigure = "export gl_cv_func_fstatat_zero_flag=yes";
 
   meta = {
     description = "GNU Zile, a lightweight Emacs clone";

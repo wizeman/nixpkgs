@@ -1,13 +1,18 @@
-{cabal}:
+{ cabal, dlist }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "smallcheck";
-  version = "0.4";
-  sha256 = "0nq13jm3akrmgk6n2clisip16v0jf1xkm0hm678v63s87hxqb1ma";
+  version = "0.6";
+  sha256 = "19b2dyjbryx2a5bq70pn2mbzlcvjjwhii78fwwx6q57r13zljb9v";
+  buildDepends = [ dlist ];
   meta = {
-    description = "Another lightweight testing library in Haskell";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    homepage = "https://github.com/feuerbach/smallcheck";
+    description = "A property-based testing library";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

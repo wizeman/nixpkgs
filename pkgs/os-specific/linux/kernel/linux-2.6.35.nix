@@ -1,8 +1,7 @@
-args @ { stdenv, fetchurl, userModeLinux ? false, extraConfig ? ""
-, ... }:
+{ stdenv, fetchurl, extraConfig ? "", ... } @ args:
 
 let
-  configWithPlatform = kernelPlatform :
+  configWithPlatform = kernelPlatform:
     ''
       # Don't include any debug features.
       DEBUG_KERNEL n
@@ -18,6 +17,11 @@ let
 
       # Enable the kernel's built-in memory tester.
       MEMTEST y
+
+      # Include the CFQ I/O scheduler in the kernel, rather than as a
+      # module, so that the initrd gets a good I/O scheduler.
+      IOSCHED_CFQ y
+      BLK_CGROUP y # required by CFQ
 
       # Disable some expensive (?) features.
       FTRACE n
@@ -182,6 +186,14 @@ let
       X86_CHECK_BIOS_CORRUPTION y
       X86_MCE y
 
+      # Allow up to 128 GiB of RAM in Xen domains.
+      XEN_MAX_DOMAIN_MEMORY 128
+
+      # PROC_EVENTS requires that the netlink connector is not built
+      # as a module.  This is required by libcgroup's cgrulesengd.
+      CONNECTOR y
+      PROC_EVENTS y
+
       ${if kernelPlatform ? kernelExtraConfig then kernelPlatform.kernelExtraConfig else ""}
       ${extraConfig}
     '';
@@ -190,11 +202,11 @@ in
 import ./generic.nix (
 
   rec {
-    version = "2.6.35.9";
+    version = "2.6.35.14";
   
     src = fetchurl {
-      url = "mirror://kernel/linux/kernel/v2.6/linux-${version}.tar.bz2";
-      sha256 = "01mzbbi013k3fbfgnphq9j3a5j7k33vdq303yaxwfy1h2qd6gggn";
+      url = "mirror://kernel/linux/kernel/v2.6/longterm/v2.6.35/linux-${version}.tar.bz2";
+      sha256 = "1wzml7s9karfbk2yi36g1r8fyaq4d4f16yizc68zgchv0xzj39zl";
     };
 
     config = configWithPlatform stdenv.platform;

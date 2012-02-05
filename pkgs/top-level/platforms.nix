@@ -24,6 +24,10 @@ rec {
       '';
   };
 
+  pc_simplekernel = pc // {
+    kernelAutoModules = false;
+  };
+
   sheevaplug = {
     name = "sheevaplug";
     kernelMajor = "2.6";
@@ -55,6 +59,13 @@ rec {
         NFSD_V3 y
         NFSD_V3_ACL y
         NFSD_V4 y
+        NETFILTER y
+        IP_NF_IPTABLES y
+        IP_NF_FILTER y
+        IP_NF_MATCH_ADDRTYPE y
+        IP_NF_TARGET_LOG y
+        IP_NF_MANGLE y
+        IPV6 m
 
         # Fail to build
         DRM n
@@ -72,6 +83,9 @@ rec {
         BLK_DEV_CMD640_ENHANCED n
 
         FUSE_FS m
+
+        # nixos mounts some cgroup
+        CGROUPS y
       '';
     kernelTarget = "uImage";
     uboot = "sheevaplug";
@@ -216,6 +230,15 @@ rec {
 
         # Needed for udev >= 150
         SYSFS_DEPRECATED_V2 n
+
+        VGA_CONSOLE n
+        VT_HW_CONSOLE_BINDING y
+        SERIAL_8250_CONSOLE y
+        FRAMEBUFFER_CONSOLE y
+        EXT2_FS y
+        EXT3_FS y
+        REISERFS_FS y
+        MAGIC_SYSRQ y
       '';
     kernelTarget = "vmlinux";
     uboot = null;

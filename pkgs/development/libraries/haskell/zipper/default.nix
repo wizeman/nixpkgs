@@ -1,12 +1,18 @@
-{cabal, multirec}:
+{ cabal, multirec }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "zipper";
-  version = "0.3";
-  sha256 = "3f6cc0ea69734d0523f1bf74d14953f88a196e728f89a7cc91f394d9e0c13c15";
-  propagatedBuildInputs = [multirec];
+  version = "0.4.1";
+  sha256 = "19xgvqznf200akzf19mp40fg75c0gzpp38wq3n671nm90r08lgvi";
+  buildDepends = [ multirec ];
   meta = {
-    description = "Generic zipper for systems of recursive datatypes";
+    homepage = "http://www.cs.uu.nl/wiki/GenericProgramming/Multirec";
+    description = "Generic zipper for families of recursive datatypes";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

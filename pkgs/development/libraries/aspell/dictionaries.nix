@@ -22,6 +22,7 @@ let
 
       meta = {
         description = "Aspell dictionary for ${fullName}";
+        platforms = stdenv.lib.platforms.all;
       };
     };
 
@@ -103,6 +104,15 @@ in {
     '';
   };
     
+  pl = buildDict {
+    shortName = "pl-6.0_20061121";
+    fullName = "Polish";
+    src = fetchurl {
+      url = mirror://gnu/aspell/dict/pl/aspell6-pl-6.0_20061121-0.tar.bz2;
+      sha256 = "0kap4kh6bqbb22ypja1m5z3krc06vv4n0hakiiqmv20anzy42xq1";
+    };
+  };
+     
   ru = buildDict {
     shortName = "ru-0.99f7-1";
     fullName = "Russian";

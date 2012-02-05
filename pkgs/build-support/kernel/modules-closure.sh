@@ -18,13 +18,16 @@ for module in $rootModules; do
         | sed 's/^insmod //') \
         || if test -z "$allowMissing"; then exit 1; fi
     #for i in $deps; do echo $i; done
-    closure="$closure $deps"
+    if [[ "$deps" != builtin* ]]
+    then
+        closure="$closure $deps"
+    fi
 done
 
 echo "closure:"
 ensureDir $out/lib/modules/"$version"
 for module in $closure; do
-    target=$(echo $module | sed "s^/nix/store/.*/lib/modules/^$out/lib/modules/^")
+    target=$(echo $module | sed "s^$NIX_STORE.*/lib/modules/^$out/lib/modules/^")
     if test -e "$target"; then continue; fi
     mkdir -p $(dirname $target)
     echo $module

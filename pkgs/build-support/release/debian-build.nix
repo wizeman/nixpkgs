@@ -11,10 +11,12 @@
   debRequires ? []
 , ... } @ args:
 
+with stdenv.lib;
+
 vmTools.runInLinuxImage (stdenv.mkDerivation (
 
   {
-    #doCheck = true;
+    doCheck = true;
 
     prefix = "/usr";
 
@@ -61,12 +63,14 @@ vmTools.runInLinuxImage (stdenv.mkDerivation (
 
       ${checkinstall}/sbin/checkinstall --nodoc -y -D \
         --fstrans=${if fsTranslation then "yes" else "no"} \
-        --requires="${toString debRequires}" \
-        --provides="${toString debProvides}" \
+        --requires="${concatStringsSep "," debRequires}" \
+        --provides="${concatStringsSep "," debProvides}" \
         make install
 
       ensureDir $out/debs
       find . -name "*.deb" -exec cp {} $out/debs \;
+
+      [ "$(echo $out/debs/*.deb)" != "" ]
 
       for i in $out/debs/*.deb; do
         header "Generated DEB package: $i"

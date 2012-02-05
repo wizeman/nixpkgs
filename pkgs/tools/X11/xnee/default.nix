@@ -2,17 +2,17 @@
 , gtk, libXi, inputproto, pkgconfig, recordproto, texinfo }:
 
 stdenv.mkDerivation rec {
-  name = "xnee-3.09";
+  name = "xnee-3.11";
 
   src = fetchurl {
     url = "mirror://gnu/xnee/${name}.tar.gz";
-    sha256 = "08171scqiqzgmbq03rwjvlsakvw9cqrr7h3b743j14z4jzbasi8i";
+    sha256 = "1x4frrf5ayslbkmr5cwll7psssxk11r4acnadp4qdvd218x50xrq";
   };
 
   patchPhase =
     '' for i in `find cnee/test -name \*.sh`
        do
-         sed -i "$i" -e's|/bin/bash|/bin/sh|g'
+         sed -i "$i" -e's|/bin/bash|/bin/sh|g ; s|/usr/bin/env bash|/bin/sh|g'
        done
     '';
 
@@ -24,7 +24,7 @@ stdenv.mkDerivation rec {
 
   configureFlags =
     # Do a static build because `libxnee' doesn't get installed anyway.
-    [ "--disable-gnome-applet" "--disable-shared" "--enable-static" ];
+    [ "--disable-gnome-applet" "--enable-static" ];
 
   # `cnee' is linked without `-lXi' and as a consequence has a RUNPATH that
   # lacks libXi.

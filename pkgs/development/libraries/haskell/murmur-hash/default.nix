@@ -1,12 +1,17 @@
-{cabal}:
+{ cabal }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "murmur-hash";
-  version = "0.1.0.2";
-  sha256 = "14amqkcz2dbjyjrsjblsnka8qymllbzjx5x3za58kwlcifnsq9jr";
+  version = "0.1.0.5";
+  sha256 = "1m7rm57bxkrl4i9fbvmx5m29axyxddrs4ss7plbd19pw3wsvgmr0";
   meta = {
+    homepage = "http://github.com/nominolo/murmur-hash";
     description = "MurmurHash2 implementation for Haskell";
-    license = "BSD3";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

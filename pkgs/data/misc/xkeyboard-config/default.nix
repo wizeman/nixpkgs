@@ -1,14 +1,16 @@
-{stdenv, fetchurl, perl, perlXMLParser, xkbcomp, gettext, intltool}:
+{ stdenv, fetchurl, perl, perlXMLParser, xkbcomp, gettext, intltool  }:
 
 stdenv.mkDerivation rec {
-  name = "xkeyboard-config-1.9";
+  name = "xkeyboard-config-2.1";
 
   src = fetchurl {
     url = "mirror://xorg/individual/data/xkeyboard-config/${name}.tar.bz2";
-    sha256 = "0df2iad598pxw3fzkx10f7irqah0fgawx262d07s04x0whn9ql9b";
+    sha256 = "0x9hkb4iqz64gcabzkdcfy4p78sdhnpjwh54g8wx5bdgy9087vpr";
   };
 
-  buildInputs = [perl perlXMLParser xkbcomp gettext intltool];
+  buildInputs = [ gettext ];
+
+  buildNativeInputs = [ perl perlXMLParser intltool xkbcomp ];
 
   patches = [ ./eo.patch ];
 

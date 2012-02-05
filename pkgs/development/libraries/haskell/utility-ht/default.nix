@@ -1,11 +1,16 @@
-{cabal}:
+{ cabal }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "utility-ht";
-  version = "0.0.5.1";
-  sha256 = "f15fd1450b31f002e6d4fe3720cff7c899f23f8a68b890ea3854e68e596c97cb";
+  version = "0.0.7.1";
+  sha256 = "0k097kyv6rxjvg1drnphv2mg882xx2lk098hs557fcsr16w658ma";
   meta = {
     description = "Various small helper functions for Lists, Maybes, Tuples, Functions";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

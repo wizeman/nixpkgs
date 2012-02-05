@@ -1,14 +1,18 @@
-{cabal, Boolean, MemoTrie}:
+{ cabal, Boolean, MemoTrie, NumInstances }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "vector-space";
-  version = "0.5.9";
-  sha256 = "39045384ee1f37f92fc8a84b75eb63091d083298f7be5f51f81112dd42a553b0";
-  propagatedBuildInputs = [Boolean MemoTrie];
+  version = "0.8.0";
+  sha256 = "1wd8psw2s98m8yfr8mam5abz2bhvxz1r78w703hgca8rr6hiaz0g";
+  buildDepends = [ Boolean MemoTrie NumInstances ];
   meta = {
+    homepage = "http://haskell.org/haskellwiki/vector-space";
     description = "Vector & affine spaces, linear maps, and derivatives";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

@@ -13,6 +13,9 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ pkgconfig icu cluceneCore curl ];
 
+  # because curl/types.h disappeared since at least curl 7.21.7
+  patches = [ ./dont_include_curl_types_h.patch ];
+
   prePatch = ''
     patchShebangs .;
   '';
@@ -24,6 +27,7 @@ stdenv.mkDerivation rec {
     homepage = http://www.crosswire.org/sword/;
     platforms = stdenv.lib.platforms.linux;
     license = "GPLv2";
+    maintainers = [ stdenv.lib.maintainers.piotr ];
   };
 
 }

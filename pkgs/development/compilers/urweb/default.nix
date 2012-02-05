@@ -2,27 +2,29 @@
 
 stdenv.mkDerivation rec {
   pname = "urweb";
-  version = "20110517";
+  version = "20120110";
   name = "${pname}-${version}";
 
   src = fetchurl {
     url = "http://www.impredicative.com/ur/${name}.tgz";
-    sha256 = "1jmaj62laf8q4f07jrg6r2gb1ky120n21qfzpia3q5j5ihjiavb1";
+    sha256 = "1f67nj2akji9dh3n2hwmcrrwd61zlrnb0xh841fpb3n20ycjzg6j";
   };
 
   buildInputs = [ stdenv.gcc file openssl mlton mysql postgresql sqlite ];
 
-  patches = [ ./remove-header-include-directory-prefix.patch ];
-
-  postPatch = ''
+  prePatch = ''
     sed -e 's@/usr/bin/file@${file}/bin/file@g' -i configure
-    sed -e 's@gcc @${stdenv.gcc}/bin/gcc @g' -i src/compiler.sml
     '';
 
   preConfigure =
     ''
-      export GCCARGS="-I$out/include -I${mysql}/include/mysql -I${postgresql}/include -I${sqlite}/include \
-                      -L${mysql}/lib/mysql -L${postgresql}/lib -L${sqlite}/lib"
+      export CC="${stdenv.gcc}/bin/gcc";
+      export CCARGS="-I$out/include \
+                      -L${mysql}/lib/mysql -L${postgresql}/lib -L${sqlite}/lib";
+
+      export PGHEADER="${postgresql}/include/libpq-fe.h";
+      export MSHEADER="${mysql}/include/mysql/mysql.h";
+      export SQHEADER="${sqlite}/include/sqlite3.h";
     '';
 
   configureFlags = "--with-openssl=${openssl}"; 

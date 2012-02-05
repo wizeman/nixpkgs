@@ -1,23 +1,28 @@
-{ stdenv, fetchurl, kdelibs, cmake, gmp, qca2, boost, gettext, qt4, automoc4,
-  perl, phonon }:
+{ stdenv, fetchurl, kdelibs, cmake, gmp, qca2, boost, gettext, qt4, automoc4
+, phonon, libgcrypt }:
 
+let
+  mp_ = "1.3";
+  version = "1.${mp_}";
+  version4 = "4.${mp_}";
+in
 stdenv.mkDerivation rec {
   name = pname + "-" + version;
   pname = "libktorrent";
-  version = "1.0.3";
 
   src = fetchurl {
-    url = "${meta.homepage}/downloads/4${builtins.substring 1
-      (builtins.stringLength version) version}/${name}.tar.bz2";
-    sha256 = "1yfayzbmi7im0pf4g7awn8lqianpr55xwbsldz7lyj9lc1a3xcgs";
+    url = "http://ktorrent.org/downloads/${version4}/${name}.tar.bz2";
+    sha256 = "0mvvx6mdfy0pyhk6lwwmmbd3pd2ai6n2rf5kdjqhpkm9wbrck85n";
   };
 
-# TODO: xfs.h
-  propagatedBuildInputs = [ kdelibs gmp boost qt4 phonon ];
-  buildInputs = [ cmake automoc4 qca2 gettext perl ];
+  buildNativeInputs = [ cmake automoc4 gettext ];
+  buildInputs = [ kdelibs phonon gmp qca2 boost libgcrypt ];
+
+  enableParallelBuilding = true;
 
   meta = {
-    description = "A bittorrent library used in ktorrent";
+    description = "A BiTtorrent library used by KTorrent";
     homepage = http://ktorrent.org;
+    inherit (kdelibs.meta) platforms;
   };
 }

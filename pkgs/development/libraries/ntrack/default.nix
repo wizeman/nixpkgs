@@ -1,7 +1,7 @@
-{ stdenv, fetchurl, glib, qt4, pkgconfig, libnl2, pygobject, python }:
+{ stdenv, fetchurl, glib, qt4, pkgconfig, libnl, pygobject, python }:
 
 let
-  version = "011";
+  version = "016";
 in
 
 stdenv.mkDerivation rec {
@@ -9,17 +9,21 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "http://launchpad.net/ntrack/main/${version}/+download/${name}.tar.gz";
-    sha256 = "0qi6nhymsv7w6hfxnz9jbxk311wb6x9jci7a3gcr4cc5nwkl7sxy";
+    sha256 = "037ig5y0mp327m0hh4pnfr3vmsk3wrxgfjy3645q4ws9vdhx807w";
   };
 
-  buildInputs = [ libnl2 qt4 ];
+  buildInputs = [ libnl qt4 ];
 
   buildNativeInputs = [ pkgconfig python ];
 
   configureFlags = "--without-gobject CFLAGS=--std=gnu99";
 
-  patches = [ ./libnl2.patch ];
-  postPatch = ''
-    sed -e "s@/usr\(/lib/ntrack/modules/\)@$out&@" -i common/ntrack.c
-    '';
+  patchPhase = ''sed -e "s@/usr\(/lib/ntrack/modules/\)@$out&@" -i common/ntrack.c'';
+
+  meta = {
+    description = "Network Connectivity Tracking library for Desktop Applications";
+    homepage = https://launchpad.net/ntrack;
+    platforms = stdenv.lib.platforms.linux;
+    maintainers = [ stdenv.lib.maintainers.urkud ];
+  };
 }

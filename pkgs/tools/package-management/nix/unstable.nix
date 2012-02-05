@@ -5,11 +5,11 @@
 }:
 
 stdenv.mkDerivation rec {
-  name = "nix-1.0pre27565";
+  name = "nix-1.0pre31851";
 
   src = fetchurl {
-    url = "http://hydra.nixos.org/build/1138550/download/4/${name}.tar.bz2";
-    sha256 = "1hvdvkl7grv1gv1mx1bad7i08ly4acs33mqxalishdhsdm4l9kmr";
+    url = "http://hydra.nixos.org/build/1937677/download/4/${name}.tar.bz2";
+    sha256 = "36f07b6b701da74f07d8c8cc43044306e570b6837555ad523701d86e5f567568";
   };
 
   buildNativeInputs = [ perl pkgconfig ];
@@ -31,9 +31,14 @@ stdenv.mkDerivation rec {
       ''
         --with-store-dir=${storeDir} --localstatedir=${stateDir}
         --with-bzip2=${bzip2.hostDrv} --with-sqlite=${sqlite.hostDrv}
+        --enable-gc
+        --with-dbi=${perlPackages.DBI}/lib/perl5/site_perl
+        --with-dbd-sqlite=${perlPackages.DBDSQLite}/lib/perl5/site_perl
         --disable-init-state
         CFLAGS=-O3 CXXFLAGS=-O3
-      '';
+      '' + stdenv.lib.optionalString (
+          stdenv.cross ? nix && stdenv.cross.nix ? system
+      ) ''--with-system=${stdenv.cross.nix.system}'';
     doCheck = false;
   };
 

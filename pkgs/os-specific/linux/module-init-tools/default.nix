@@ -1,23 +1,18 @@
-{stdenv, fetchurl}:
+{ stdenv, fetchurl, docbook2x, docbook_sgml_dtd_41 }:
 
-stdenv.mkDerivation {
-  name = "module-init-tools-3.4";
-  
-  src = [
-    (fetchurl {
-      url = mirror://kernel/linux/utils/kernel/module-init-tools/module-init-tools-3.4.tar.bz2;
-      sha256 = "11rxcdr915skc1m6dcavavw8dhcsy24wpi56sw1m4akj2frs3iwn";
-    })
+stdenv.mkDerivation rec {
+  name = "module-init-tools-3.16";
 
-    # Upstream forgot to include the generated manpages.  Thankfully
-    # the Gentoo people fixed this for us :-)
-    (fetchurl {
-      url = mirror://gentoo/distfiles/module-init-tools-3.4-manpages.tar.bz2;
-      sha256 = "0jid24girjhr30mrdckylkcz11v4in46nshhrqv18yaxm6506v6j";
-    })
-  ];
+  src = fetchurl {
+    url = "mirror://kernel/linux/utils/kernel/module-init-tools/${name}.tar.bz2";
+    sha256 = "0jxnz9ahfic79rp93l5wxcbgh4pkv85mwnjlbv1gz3jawv5cvwp1";
+  };
 
-  patches = [./module-dir.patch];
+  buildInputs = [ docbook2x ];
+
+  SGML_CATALOG_FILES = "${docbook_sgml_dtd_41}/sgml/dtd/docbook-4.1/docbook.cat";
+
+  patches = [ ./module-dir.patch ./docbook2man.patch ];
   
   postInstall = "rm $out/sbin/insmod.static"; # don't need it
 

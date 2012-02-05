@@ -1,31 +1,33 @@
 { stdenv, fetchurl, libxml2, openssl, readline, gawk }:
 
 stdenv.mkDerivation rec {
-  name = "virtuoso-opensource-6.1.1";
+  name = "virtuoso-opensource-6.1.4";
 
   src = fetchurl {
-    url = "mirror://sf/virtuoso/${name}.tar.gz";
-    sha256 = "1sd70j9i26ml16lig9r9lmrdf5q0kybq71r6vzzzc5v5jxjz0l7w";
+    url = "mirror://sourceforge/virtuoso/${name}.tar.gz";
+    sha256 = "0khm81hvjh6p4l0ca4zj00fk41ixjv998k6y9g7mvq1338hr4gqm";
   };
 
   buildInputs = [ libxml2 openssl readline gawk ];
 
-  CPP="${stdenv.gcc}/bin/gcc -E";
+  CPP = "${stdenv.gcc}/bin/gcc -E";
 
-  configureFlags="
+  configureFlags = "
     --enable-shared --disable-all-vads --with-readline=${readline}
     --disable-hslookup --disable-wbxml2 --without-iodbc
     --enable-openssl=${openssl}
     ";
 
   postInstall=''
-    echo Move documentation
-    mkdir $out/share/doc
-    mv $out/share/virtuoso/doc $out/share/doc/${name}
+    echo Moving documentation
+    mkdir -pv $out/share/doc
+    mv -v $out/share/virtuoso/doc $out/share/doc/${name}
+    echo Removing jars and empty directories
     find $out -name "*.a" -delete -o -name "*.jar" -delete -o -type d -empty -delete
     '';
   
   meta = with stdenv.lib; {
+    description = "SQL/RDF database used by, e.g., KDE-nepomuk";
     homepage = http://virtuoso.openlinksw.com/dataspace/dav/wiki/Main/;
     platforms = platforms.all;
     maintainers = [ maintainers.urkud ];

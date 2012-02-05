@@ -1,19 +1,21 @@
-{cabal, QuickCheck, HUnit, storableComplex, gsl, liblapack, blas, vector}:
+{ cabal, binary, blas, gsl, liblapack, storableComplex, vector }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "hmatrix";
-  version = "0.9.3.0";
-  sha256 = "1p2c37j29nxq1ijs78xn7293cwjzgcl6hx8ri5qz7nijifmpcrkr";
-  propagatedBuildInputs = [QuickCheck HUnit storableComplex blas gsl liblapack vector];
+  version = "0.13.1.0";
+  sha256 = "0pl5z6zsxyvbdfdng77r2c4isq6d4wbyzx2qs9r8rbn6glaxwrmp";
+  buildDepends = [ binary storableComplex vector ];
+  extraLibraries = [ blas gsl liblapack ];
   configureFlags = "-fvector";
-  /* dirty hack to find blas at link time */
-  postConfigure = ''
-    sed -i -e "/^extra-libraries/ s/: /: blas /" hmatrix.buildinfo
-    sed -i -e "/^extra-libraries/ s/$/ blas/" hmatrix.buildinfo
-  '';
-  extraLibDirs = "--extra-lib-dir=${blas}/lib --extra-lib-dir=${gsl}/lib --extra-lib-dir=${liblapack}/lib";
   meta = {
+    homepage = "http://perception.inf.um.es/hmatrix";
     description = "Linear algebra and numerical computation";
-    maintainers = [ self.stdenv.lib.maintainers.guibert ];
+    license = "GPL";
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.guibert
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })

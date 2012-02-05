@@ -1,15 +1,11 @@
 args : with args; 
 rec {
 
-  # some packages (eg ruby-debug) still require 1.8. So let's stick to that for
-  # now if nobody has different requirements
-
-  version = "1.4.1";
+  version = "1.8.15";
   src = fetchurl {
     url = "http://production.cf.rubygems.org/rubygems/${name}.tgz";
-    sha256 = "189wg1msb4sdjvdzv9ia6q3lvjlygpp67wlbkl7cjb22bpjy4w4b";
+    sha256 = "0crfdaxpcv13x40mb0ccm5n0r3dknw7w7xl87icj99kyqmfx8k51";
   };
-
 
   buildInputs = [ruby makeWrapper];
   configureFlags = [];

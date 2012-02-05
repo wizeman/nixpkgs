@@ -3,14 +3,14 @@
 */
 args: with args; with pkgs;
 let
-  inherit (pkgs) stdenv fetchurl subversion;
+  inherit (pkgs) stdenv fetchgit fetchurl subversion;
 in
 rec {
 
   git = lib.makeOverridable (import ./git) {
     inherit fetchurl stdenv curl openssl zlib expat perl python gettext gnugrep
       asciidoc texinfo xmlto docbook2x docbook_xsl docbook_xml_dtd_45 libxslt
-      cpio tcl tk makeWrapper subversion;
+      cpio tcl tk makeWrapper subversionClient;
     svnSupport = false;		# for git-svn support
     guiSupport = false;		# requires tcl/tk
     sendEmailSupport = false;	# requires plenty of perl libraries
@@ -29,11 +29,11 @@ rec {
   }));
 
   # The full-featured Git.
-  gitFull = lowPrio (appendToName "full" (git.override {
+  gitFull = appendToName "full" (git.override {
     svnSupport = true;
     guiSupport = true;
     sendEmailSupport = stdenv.isDarwin == false;
-  }));
+  });
 
   gitGit = import ./git/git-git.nix {
     inherit fetchurl sourceFromHead stdenv curl openssl zlib expat perl gettext
@@ -46,8 +46,10 @@ rec {
   };
 
   gitAnnex = lib.makeOverridable (import ./git-annex) {
-    inherit stdenv fetchurl libuuid rsync findutils curl perl;
-    inherit (haskellPackages) ghc MissingH utf8String QuickCheck2 pcreLight SHA dataenc;
+    inherit stdenv fetchurl libuuid rsync findutils curl perl git ikiwiki which coreutils;
+    inherit (haskellPackages) ghc MissingH utf8String pcreLight SHA dataenc
+      HTTP testpack hS3 mtl network hslogger hxt json liftedBase monadControl;
+    QuickCheck2 = haskellPackages.QuickCheck_2_4_0_1;
   };
 
   qgit = import ./qgit {
@@ -90,8 +92,7 @@ rec {
   };
 
   gitFastExport = import ./fast-export {
-    inherit fetchurl sourceFromHead stdenv mercurial coreutils git makeWrapper
-      subversion;
+    inherit fetchgit stdenv mercurial coreutils git makeWrapper subversion;
   };
 
   git2cl = import ./git2cl {
@@ -99,27 +100,11 @@ rec {
   };
 
   svn2git = import ./svn2git {
-    inherit stdenv fetchgit qt47 subversion apr;
+    inherit stdenv fetchgit ruby makeWrapper;
+    git = gitSVN;
   };
 
-  gitSubtree = stdenv.mkDerivation {
-    name = "git-subtree-0.3";
-    src = fetchurl {
-      url = "http://github.com/apenwarr/git-subtree/tarball/v0.3";
-#      sha256 = "0y57lpbcc2142jgrr4lflyb9xgzs9x33r7g4b919ncn3alb95vdr";
-      sha256 = "f2ccac1e9cff4c35d989dc2a5581133c96b72d96c6a5ed89e51b6446dadac03f";
-    };
-    unpackCmd = "gzip -d < $curSrc | tar xvf -";
-    buildInputs = [ git asciidoc xmlto docbook_xsl docbook_xml_dtd_45 libxslt ];
-    configurePhase = "export prefix=$out";
-    buildPhase = "true";
-    installPhase = ''
-      make install prefix=$out gitdir=$out/bin #work around to deal with a wrong makefile
-    '';
-    meta= {
-      description = "An experimental alternative to the git-submodule command";
-      homepage = http://github.com/apenwarr/git-subtree;
-      license = "GPLv2";
-    };
+  gitSubtree = import ./git-subtree {
+    inherit stdenv fetchurl git asciidoc xmlto docbook_xsl docbook_xml_dtd_45 libxslt;
   };
 }

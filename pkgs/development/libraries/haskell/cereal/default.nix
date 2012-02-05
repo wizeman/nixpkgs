@@ -1,12 +1,16 @@
-{cabal}:
+{ cabal }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "cereal";
-  version = "0.2";
-  sha256 = "aa00eb88cea5616a0eb9e4b6604cb164b8bef6e86b111cbb67d51d4d3441332b";
+  version = "0.3.5.1";
+  sha256 = "1a9ri0fs0vh75c9llpjyvqp6qkjciqri6adpyn7hbqrn2z1h0l5n";
   meta = {
     description = "A binary serialization library";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })

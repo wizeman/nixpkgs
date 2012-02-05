@@ -1,12 +1,7 @@
 { stdenv, fetchurl, pkgconfig, gtk, libXinerama, libSM, libXxf86vm, xf86vidmodeproto
+, gstreamer, gstPluginsBase, GConf
 , mesa, compat24 ? false, compat26 ? true, unicode ? true,
 }:
-
-assert pkgconfig != null && gtk != null;
-assert gtk.libtiff != null;
-assert gtk.libjpeg != null;
-assert gtk.libpng != null;
-assert gtk.libpng.zlib != null;
 
 stdenv.mkDerivation {
   name = "wxwidgets-2.9.0";
@@ -16,10 +11,9 @@ stdenv.mkDerivation {
     sha256 = "10n75mpypd9411b29gxmi0g2s7dgbfwkgiyhxwkjsyrmyvfc3xcc";
   };
 
-  buildInputs = [
-    pkgconfig gtk gtk.libtiff gtk.libjpeg gtk.libpng gtk.libpng.zlib
-    libXinerama libSM libXxf86vm xf86vidmodeproto mesa
-  ];
+  buildInputs = [ gtk libXinerama libSM libXxf86vm xf86vidmodeproto mesa gstreamer gstPluginsBase GConf ];
+
+  buildNativeInputs = [ pkgconfig ];
 
   configureFlags = [
     "--enable-gtk2"
@@ -28,6 +22,7 @@ stdenv.mkDerivation {
     "--disable-precomp-headers"
     (if unicode then "--enable-unicode" else "")
     "--with-opengl"
+    "--enable-mediactrl"
   ];
 
   SEARCH_LIB = "${mesa}/lib";
@@ -43,4 +38,6 @@ stdenv.mkDerivation {
   ";
 
   passthru = {inherit gtk compat24 compat26 unicode;};
+
+  enableParallelBuilding = true;
 }

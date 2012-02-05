@@ -1,14 +1,18 @@
-{cabal, network}:
+{ cabal, network }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "sendfile";
-  version = "0.6.2";
-  sha256 = "2d7bf7fdcae7e2ffa24bf70bc1bdc7ea4e6b1726f6cee63cd14c2eeb5545749a";
-  propagatedBuildInputs = [network];
+  version = "0.7.4";
+  sha256 = "1h02fjdivsb3divdn3wg2skmw3jcd0n4axhlpgmrrbf92c3m35rq";
+  buildDepends = [ network ];
   meta = {
+    homepage = "http://patch-tag.com/r/mae/sendfile";
     description = "A portable sendfile library";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

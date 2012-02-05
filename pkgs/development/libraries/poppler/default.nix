@@ -1,27 +1,37 @@
-{ fetchurl, stdenv, qt4Support ? false, qt4, cairo, freetype, fontconfig, zlib,
-  libjpeg, pixman, curl, libpthreadstubs, libXau, libXdmcp, openjpeg,
-  libxml2, pkgconfig, glib, gtk, cmake, lcms }:
+{ fetchurl, stdenv, cairo, freetype, fontconfig, zlib
+, libjpeg, pixman, curl, libpthreadstubs, libXau, libXdmcp, openjpeg
+, libxml2, pkgconfig, cmake, lcms
+, gtkSupport ? false, glib ? null, gtk ? null
+, qt4Support ? false, qt4 ? null
+}:
 
 stdenv.mkDerivation rec {
-  name = "poppler-0.14.5";
+  name = "poppler-0.18.2";
 
   src = fetchurl {
     url = "${meta.homepage}${name}.tar.gz";
-    sha256 = "0k41cj0yp3l7854y1hlghn2cgqmqq6hw5iz8i84q0w0s9iy321f8";
+    sha256 = "0ljvr6l1lfwbkl0v4vw9dybski7d4sx52iz6k37mkfnj3x36npxi";
   };
 
-  propagatedBuildInputs = [zlib glib cairo freetype fontconfig libjpeg gtk lcms
-    pixman curl libpthreadstubs libXau libXdmcp openjpeg libxml2 stdenv.gcc.libc]
-    ++ (if qt4Support then [qt4] else []);
+  propagatedBuildInputs =
+    [ zlib cairo freetype fontconfig libjpeg lcms pixman curl
+      libpthreadstubs libXau libXdmcp openjpeg libxml2 stdenv.gcc.libc
+    ]
+    ++ stdenv.lib.optionals gtkSupport [ glib gtk ]
+    ++ stdenv.lib.optional qt4Support qt4;
 
-  buildInputs = [ pkgconfig cmake ];
+  buildNativeInputs = [ pkgconfig cmake ];
 
   cmakeFlags = "-DENABLE_XPDF_HEADERS=ON -DENABLE_LIBCURL=ON -DENABLE_ZLIB=ON";
 
+  patches = [ ./datadir_env.patch ];
+
   # XXX: The Poppler/Qt4 test suite refers to non-existent PDF files
   # such as `../../../test/unittestcases/UseNone.pdf'.
-#doCheck = !qt4Support;
+  #doCheck = !qt4Support;
   checkTarget = "test";
+
+  enableParallelBuilding = true;
 
   meta = {
     homepage = http://poppler.freedesktop.org/;

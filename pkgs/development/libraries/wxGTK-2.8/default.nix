@@ -1,12 +1,7 @@
 { stdenv, fetchurl, pkgconfig, gtk, libXinerama, libSM, libXxf86vm, xf86vidmodeproto
+, gstreamer, gstPluginsBase, GConf
 , mesa, compat24 ? false, compat26 ? true, unicode ? true,
 }:
-
-assert pkgconfig != null && gtk != null;
-assert gtk.libtiff != null;
-assert gtk.libjpeg != null;
-assert gtk.libpng != null;
-assert gtk.libpng.zlib != null;
 
 stdenv.mkDerivation {
   name = "wxGTK-2.8.12";
@@ -16,10 +11,9 @@ stdenv.mkDerivation {
     sha256 = "1gjs9vfga60mk4j4ngiwsk9h6c7j22pw26m3asxr1jwvqbr8kkqk";
   };
 
-  buildInputs = [
-    pkgconfig gtk gtk.libtiff gtk.libjpeg gtk.libpng gtk.libpng.zlib
-    libXinerama libSM libXxf86vm xf86vidmodeproto mesa
-  ];
+  buildInputs = [ gtk libXinerama libSM libXxf86vm xf86vidmodeproto mesa gstreamer gstPluginsBase GConf ];
+
+  buildNativeInputs = [ pkgconfig ];
 
   configureFlags = [
     "--enable-gtk2"
@@ -28,6 +22,7 @@ stdenv.mkDerivation {
     "--disable-precomp-headers"
     (if unicode then "--enable-unicode" else "")
     "--with-opengl"
+    "--enable-mediactrl"
   ];
 
   # This variable is used by configure to find some dependencies.
@@ -46,11 +41,13 @@ stdenv.mkDerivation {
   ";
 
   postBuild = "(cd contrib/src && make)";
-  
+
   postInstall = "
     (cd contrib/src && make install)
     (cd $out/include && ln -s wx-*/* .)
   ";
 
   passthru = {inherit gtk compat24 compat26 unicode;};
+
+  enableParallelBuilding = true;
 }

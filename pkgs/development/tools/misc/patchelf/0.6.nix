@@ -1,11 +1,11 @@
-{stdenv, fetchurl}:
+{ stdenv, fetchurl }:
 
 stdenv.mkDerivation rec {
-  name = "patchelf-0.6pre23458";
-  
+  name = "patchelf-0.6";
+
   src = fetchurl {
-    url = "http://hydra.nixos.org/build/838169/download/2/patchelf-0.6pre23458.tar.bz2";
-    sha256 = "18d74n14s4xh8aqwisvz63gx9j4d5b9bzb8k1jnp8whvvwzasdq5";
+    url = "http://nixos.org/releases/patchelf/${name}/${name}.tar.bz2";
+    sha256 = "fc7e7fa95f282fc37a591a802629e0e1ed07bc2a8bf162228d9a69dd76127c01";
   };
 
   meta = {

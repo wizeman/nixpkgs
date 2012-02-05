@@ -1,15 +1,15 @@
-{stdenv, fetchurl, SDL, qt, pkgconfig, ffmpeg, libdv, libxml2, libsamplerate,
+{stdenv, fetchurl, SDL, qt4, pkgconfig, ffmpeg, libdv, libxml2, libsamplerate,
 libvorbis, sox}:
 
 stdenv.mkDerivation {
-  name = "mlt-0.6.2";
+  name = "mlt-0.7.6";
 
   src = fetchurl {
-    url = mirror://sourceforge/mlt/mlt-0.6.2.tar.gz;
-    sha256 = "0rvyblxyp52mdjl4aicrk16k56yb24ic4ir3n145cxdarwi98r7i";
+    url = mirror://sourceforge/mlt/mlt-0.7.6.tar.gz;
+    sha256 = "f8ea8590417ea2b5543a495f2edc30636d3931932deee7a4e0d8516e9c2b58ae";
   };
 
-  buildInputs = [ qt SDL ffmpeg libdv libxml2 libsamplerate libvorbis sox ];
+  buildInputs = [ qt4 SDL ffmpeg libdv libxml2 libsamplerate libvorbis sox ];
 
   # Mostly taken from:
   # http://www.kdenlive.org/user-manual/downloading-and-installing-kdenlive/installing-source/installing-mlt-rendering-engine

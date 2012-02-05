@@ -15,7 +15,6 @@ with (import ./release-lib.nix);
 
 } // (mapTestOn ((packagesWithMetaPlatform pkgs) // rec {
 
-  MPlayer = linux;
   abcde = linux;
   alsaUtils = linux;
   apacheHttpd = linux;
@@ -52,12 +51,10 @@ with (import ./release-lib.nix);
   chatzilla = linux;
   cksfv = all;
   classpath = linux;
-  cmake = all;
   consolekit = linux;
   coreutils = all;
   cpio = all;
   cron = linux;
-  cups = linux;
   cvs = linux;
   db4 = all;
   ddrescue = linux;
@@ -167,7 +164,6 @@ with (import ./release-lib.nix);
   kbd = linux;
   keen4 = ["i686-linux"];
 #  klibc = linux;
-  ktorrent = linux;
   kvm = linux;
   qemu = linux;
   qemu_kvm = linux;
@@ -203,9 +199,11 @@ with (import ./release-lib.nix);
   module_init_tools = linux;
   mono = linux;
   mpg321 = linux;
+  mupen64plus = linux;
   mutt = linux;
   mysql = linux;
   mysql51 = linux;
+  mysql55 = linux;
   namazu = all;
   nano = allBut "i686-cygwin";
   ncat = linux;
@@ -236,10 +234,8 @@ with (import ./release-lib.nix);
   php = linux;
   pidgin = linux;
   pinentry = linux;
-  pkgconfig = all;
   pltScheme = linux;
   pmccabe = linux;
-  policykit = linux;
   portmap = linux;
   postgresql = all;
   postfix = linux;
@@ -301,11 +297,10 @@ with (import ./release-lib.nix);
   texLiveBeamer = linux;
   texLiveExtra = linux;
   texinfo = all;
-  thunderbird2 = linux;
-  thunderbird3 = linux;
   tightvnc = linux;
   time = linux;
   tinycc = ["i686-linux"];
+  uae = linux;
   udev = linux;
   uml = ["i686-linux"];
   unrar = linux;
@@ -319,6 +314,7 @@ with (import ./release-lib.nix);
   vice = linux;
   vim = linux;
   vimHugeX = linux;
+  VisualBoyAdvance = linux;
   vlc = linux;
   vncrec = linux;
   vorbisTools = linux;
@@ -333,7 +329,6 @@ with (import ./release-lib.nix);
   wine = ["i686-linux"];
   wireshark = linux;
   wirelesstools = linux;
-  wpa_supplicant = linux;
   wxGTK = linux;
   x11_ssh_askpass = linux;
   xchm = linux;
@@ -352,20 +347,7 @@ with (import ./release-lib.nix);
   zile = linux;
   zip = all;
   zsh = linux;
-
-  aspellDicts = {
-    de = all;
-    en = all;
-    es = all;
-    fr = all;
-    nl = all;
-    ru = all;
-  };
-
-  dbus = {
-    libs = linux;
-    tools = linux;
-  };
+  zsnes = ["i686-linux"];
 
   emacs22Packages = {
     bbdb = linux;
@@ -381,8 +363,8 @@ with (import ./release-lib.nix);
   };
 
   firefox36Pkgs.firefox = linux;
-  firefox40Pkgs.firefox = linux;
-  firefox50Pkgs.firefox = linux;
+  firefox80Pkgs.firefox = linux;
+  firefox90Pkgs.firefox = linux;
 
   gnome = {
     gnome_panel = linux;
@@ -390,10 +372,7 @@ with (import ./release-lib.nix);
     gnome_vfs = linux;
   };
 
-  gtkLibs = {
-    gtk = linux;
-  };
-
+  /*
   haskellPackages_ghc6104 = {
     ghc = ghcSupported;
     haskellPlatform_2009_2_0_2 = ghcSupported;
@@ -405,14 +384,10 @@ with (import ./release-lib.nix);
   };
 
   haskellPackages_ghc6123 = {
-    darcs = ghcSupported;
     ghc = ghcSupported;
     gitit = linux;
     gtk = linux;
-    leksah = linux;
-    haskellPlatform_2010_2_0_0 = ghcSupported;
-    lhs2tex = ghcSupported;
-    xmonad = linux;
+    haskellPlatform = ghcSupported;
   };
 
   haskellPackages_ghc701 = {
@@ -420,47 +395,40 @@ with (import ./release-lib.nix);
   };
 
   haskellPackages_ghc702 = {
+    ghc = ghcSupported;
+    haskellPlatform = ghcSupported;
+  };
+
+  haskellPackages_ghc704 = {
     darcs = ghcSupported;
     ghc = ghcSupported;
     gitit = linux;
     gtk = linux;
-    haskellPlatform_2011_2_0_0 = ghcSupported;
+    haskellPlatform = ghcSupported;
     lhs2tex = ghcSupported;
     xmonad = linux;
   };
-
-  kde3 = {
-    kdebase = linux;
-    kdelibs = linux;
-    k3b = linux;
-    kcachegrind = linux;
-    kile = linux;
-  };
+  */
 
   linuxPackages_2_6_25 = {
-    aufs = linux;
     kernel = linux;
   };
 
   linuxPackages_2_6_27 = {
-    aufs = linux;
     kernel = linux;
     virtualbox = linux;
     virtualboxGuestAdditions = linux;
   };
 
   linuxPackages_2_6_28 = {
-    aufs = linux;
     kernel = linux;
   };
 
   linuxPackages_2_6_29 = {
-    aufs = linux;
     kernel = linux;
   };
 
   linuxPackages_2_6_31 = {
-    aufs = linux;
     kernel = linux;
   };
 
@@ -558,7 +526,7 @@ with (import ./release-lib.nix);
     xwininfo = linux;
   };
 
-  xfce4 = {
+  xfce = {
     gtk_xfce_engine = linux;
     mousepad = linux;
     ristretto = linux;

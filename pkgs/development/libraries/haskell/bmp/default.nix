@@ -1,14 +1,18 @@
-{cabal, binary}:
+{ cabal, binary }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "bmp";
-  version = "1.1.1.2";
-  sha256 = "1hxsl9gip5icjbmr5y48nkb10csqwzcswssqfaq6cqwnfhpi7813";
-  propagatedBuildInputs = [binary];
+  version = "1.2.0.2";
+  sha256 = "0y1fjbhk73dj260wd1jhcf12fkh4maba4iwkzdg2087s9saxvljk";
+  buildDepends = [ binary ];
   meta = {
+    homepage = "http://code.ouroborus.net/bmp";
     description = "Read and write uncompressed BMP image files";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = self.stdenv.lib.licenses.mit;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

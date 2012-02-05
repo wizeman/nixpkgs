@@ -1,13 +1,20 @@
-{cabal, Agda}:
+{ cabal, Agda }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "Agda-executable";
-  name = self.fname;
-  version = "2.2.10";
-  sha256 = "0jjlbz5vaz1pasfws1cy8wvllzdzv3sxm2lfj6bckl93kdrxlpy6";
-  propagatedBuildInputs = [Agda];
+  version = "2.3.0";
+  sha256 = "1n1ak6z2vh356k9mk0zkiv6dqp9dvx97a7r21b0xnhwkmh3f8p5p";
+  isLibrary = false;
+  isExecutable = true;
+  buildDepends = [ Agda ];
   meta = {
+    homepage = "http://wiki.portal.chalmers.se/agda/";
     description = "Command-line program for type-checking and compiling Agda programs";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = "unknown";
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })

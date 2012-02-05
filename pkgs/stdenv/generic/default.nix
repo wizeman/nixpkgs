@@ -97,8 +97,9 @@ let
                || result.system == "x86_64-linux"
                || result.system == "powerpc-linux"
                || result.system == "armv5tel-linux"
-               || result.system == "mips64-linux";
-        isSunOS = result.system == "i386-sunos";
+               || result.system == "mips64el-linux";
+        isSunOS = result.system == "i686-solaris"
+               || result.system == "x86_64-solaris";
         isCygwin = result.system == "i686-cygwin";
 	isFreeBSD = result.system == "i686-freebsd"
 	       || result.system == "x86_64-freebsd";
@@ -120,7 +121,7 @@ let
         is64bit = result.system == "x86_64-linux"
                 || result.system == "x86_64-darwin";
         isMips = result.system == "mips-linux"
-                || result.system == "mips64-linux";
+                || result.system == "mips64el-linux";
         isArm = result.system == "armv5tel-linux";
 
         # Utility function: allow stdenv to be easily regenerated with

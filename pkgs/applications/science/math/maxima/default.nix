@@ -1,22 +1,41 @@
-{ stdenv, fetchurl, clisp, texinfo, perl }:
+{ stdenv, fetchurl, sbcl, texinfo, perl, makeWrapper, rlwrap ? null, tk ? null, gnuplot ? null }:
 
 let
   name    = "maxima";
-  version = "5.24.0";
+  version = "5.26.0";
+
+  searchPath =
+    stdenv.lib.makeSearchPath "bin"
+      (stdenv.lib.filter (x: x != null) [ sbcl rlwrap tk gnuplot ]);
 in
 stdenv.mkDerivation {
   name = "${name}-${version}";
 
   src = fetchurl {
     url = "mirror://sourceforge/${name}/${name}-${version}.tar.gz";
-    sha256 = "137crv2f6hxwqrv75m8679vrlbnqgg5ww755cs4kihs1cy03bssq";
+    sha256 = "887105c99a91122f3e622472aa39bdd1ca8ed6198cf09b49917f63f8396dced9";
   };
 
-  preConfigure = ''
-    configureFlags="--infodir=$out/share/info --mandir=$out/share/man"
+  buildInputs = [sbcl texinfo perl makeWrapper];
+
+  postInstall = ''
+    # Make sure that maxima can find its runtime dependencies.
+    for prog in "$out/bin/"*; do
+      wrapProgram "$prog" --prefix PATH ":" "${searchPath}"
+    done
+    # Move emacs modules and documentation into the right place.
+    ensureDir $out/share/emacs $out/share/doc
+    ln -s ../maxima/${version}/emacs $out/share/emacs/site-lisp
+    ln -s ../maxima/${version}/doc $out/share/doc/maxima
   '';
 
-  buildInputs = [clisp texinfo perl];
+  # Failures in the regression test suite are not going to abort the
+  # build process. We run the suite mostly so that potential errors show
+  # up in the build log. See also:
+  # <http://sourceforge.net/tracker/?func=detail&aid=3365831&group_id=4933&atid=104933>.
+  doCheck = true;
+
+  enableParallelBuilding = true;
 
   meta = {
     description = "Maxima computer algebra system";

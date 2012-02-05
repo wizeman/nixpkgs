@@ -6,8 +6,10 @@
 , pythonBindings ? false
 , perlBindings ? false
 , javahlBindings ? false
+, saslSupport ? false
 , stdenv, fetchurl, apr, aprutil, neon, zlib, sqlite
 , httpd ? null, expat, swig ? null, jdk ? null, python ? null, perl ? null
+, sasl ? null
 }:
 
 assert bdbSupport -> aprutil.bdbSupport;
@@ -19,19 +21,20 @@ assert compressionSupport -> neon.compressionSupport;
 
 stdenv.mkDerivation rec {
 
-  version = "1.6.17";
+  version = "1.7.2";
 
   name = "subversion-${version}";
 
   src = fetchurl {
-    url = "http://subversion.tigris.org/downloads/${name}.tar.bz2";
-    sha1 = "6e3ed7c87d98fdf5f0a999050ab601dcec6155a1";
+    url = "mirror://apache/subversion//${name}.tar.bz2";
+    sha1 = "8c0824aeb7f42da1ff4f7cd296877af7f59812bb";
   };
 
   buildInputs = [ zlib apr aprutil sqlite ]
     ++ stdenv.lib.optional httpSupport neon
     ++ stdenv.lib.optional pythonBindings python
-    ++ stdenv.lib.optional perlBindings perl;
+    ++ stdenv.lib.optional perlBindings perl
+    ++ stdenv.lib.optional saslSupport sasl;
 
   configureFlags = ''
     ${if bdbSupport then "--with-berkeley-db" else "--without-berkeley-db"}
@@ -39,6 +42,7 @@ stdenv.mkDerivation rec {
     ${if pythonBindings || perlBindings then "--with-swig=${swig}" else "--without-swig"}
     ${if javahlBindings then "--enable-javahl --with-jdk=${jdk}" else ""}
     ${if stdenv.isDarwin then "--enable-keychain" else "--disable-keychain"}
+    ${if saslSupport then "--enable-sasl --with-sasl=${sasl}" else "--disable-sasl"}
     --with-zlib=${zlib}
     --with-sqlite=${sqlite}
   '';
@@ -48,9 +52,6 @@ stdenv.mkDerivation rec {
   '';
 
   postInstall = ''
-    ensureDir $out/share/emacs/site-lisp
-    cp contrib/client-side/emacs/[dp]svn*.el $out/share/emacs/site-lisp/
-
     if test -n "$pythonBindings"; then
         make swig-py swig_pydir=$(toPythonPath $out)/libsvn swig_pydir_extra=$(toPythonPath $out)/svn
         make install-swig-py swig_pydir=$(toPythonPath $out)/libsvn swig_pydir_extra=$(toPythonPath $out)/svn

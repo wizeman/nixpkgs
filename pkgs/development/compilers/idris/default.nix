@@ -1,15 +1,23 @@
-{cabal, mtl, parsec, readline, ivor, epic, happy}:
+{ cabal, binary, epic, happy, haskeline, mtl, parsec, transformers
+}:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "idris";
-  name = self.fname;
-  version = "0.1.5";
-  sha256 = "8acdfc22ba2e68b6c1832c2d5fcf11405df9416ba2c193f564b6f98710e9813e";
-  propagatedBuildInputs = [mtl parsec readline ivor epic];
-  extraBuildInputs = [happy];
+  version = "0.9.0";
+  sha256 = "03zbdcl3v90zv0ibzq9fa8z2qrrdsilh5m509mczwrcmlzbzsmrl";
+  isLibrary = false;
+  isExecutable = true;
+  buildDepends = [ binary epic haskeline mtl parsec transformers ];
+  buildTools = [ happy ];
+  noHaddock = true;
   meta = {
-    description = "An experimental language with full dependent types";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    homepage = "http://www.idris-lang.org/";
+    description = "Dependently Typed Functional Programming Language";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })

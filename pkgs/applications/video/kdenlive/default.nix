@@ -1,20 +1,19 @@
-{stdenv, fetchurl, lib, cmake, qt4, perl, kdelibs, automoc4, phonon, mlt, gettext,
-shared_mime_info, soprano}:
+{ stdenv, fetchurl, lib, cmake, qt4, perl, kdelibs, automoc4, phonon, mlt, gettext
+, qimageblitz, qjson, shared_mime_info, soprano, pkgconfig }:
 
-stdenv.mkDerivation {
-  name = "kdenlive-0.7.8";
+stdenv.mkDerivation rec {
+  name = "kdenlive-${version}";
+  version = "0.8.2.1";
+
   src = fetchurl {
-    url = mirror://sourceforge/kdenlive/kdenlive-0.7.8.tar.gz;
-    sha256 = "10bwmhh3kzdbq1nzq8s5ln7ydrzg41d1rihj5kdmf5hb91az8mvx";
+    url = "mirror://sourceforge/kdenlive/${name}.tar.gz";
+    sha256 = "a454a0659c9673453800df8382dfdbcb87acfb9b174712ffeb46b8304bf00717";
   };
 
-  prePatch = ''
-    # For Qt47 compatibility.
-    sed -i 's@class QImage@#include <QImage>@' src/colorcorrection/vectorscopegenerator.h
-  '';
+  patches = [ ./qtgl-header-change.patch ];
 
   buildInputs = [ cmake qt4 perl kdelibs automoc4 phonon mlt gettext
-    shared_mime_info soprano ];
+    qimageblitz qjson shared_mime_info soprano pkgconfig ];
 
   meta = {
     description = "Free and open source video editor";

@@ -1,15 +1,23 @@
-{cabal, primitive, vector, vectorAlgorithms, mwcRandom, erf}:
+{ cabal, deepseq, erf, mathFunctions, monadPar, mwcRandom
+, primitive, vector, vectorAlgorithms
+}:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "statistics";
-  version = "0.8.0.5";
-  sha256 = "0rzrx1wjil88ksqk5kmcxm4ypryiy9j1c4qa2s2bs71338hhzpxn";
-  propagatedBuildInputs =
-    [primitive vector vectorAlgorithms mwcRandom erf];
+  version = "0.10.1.0";
+  sha256 = "0fnpwnhcwxjcm81b9daqdy07cw5qgqa7m2bj6fxxwicpvawcyabc";
+  buildDepends = [
+    deepseq erf mathFunctions monadPar mwcRandom primitive vector
+    vectorAlgorithms
+  ];
   meta = {
-    description = "A library of statistical types, data and functions";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    homepage = "https://github.com/bos/statistics";
+    description = "A library of statistical types, data, and functions";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

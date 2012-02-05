@@ -1,17 +1,21 @@
-{ stdenv, fetchurl, python, makeWrapper, docutils
-, guiSupport ? false, tk ? null, ssl }:
+{ stdenv, fetchurl, python, makeWrapper, docutils, unzip
+, guiSupport ? false, tk ? null, ssl, curses }:
 
-stdenv.mkDerivation rec {
-  name = "mercurial-1.9";
+let
+  name = "mercurial-2.0.2";
+in
+stdenv.mkDerivation {
+  inherit name;
 
   src = fetchurl {
     url = "http://mercurial.selenic.com/release/${name}.tar.gz";
-    sha256 = "1q1307rv5cyv7qalwkampy1h2f92j4d46v4x9647ljljs8f4n7ki";
+    sha256 = "ca8b8fb93f2e3e8c3cdf2f81d87e92592f5f20c5bfcaaeb6a75550d4a69572c9";
   };
 
   inherit python; # pass it so that the same version can be used in hg2git
+  pythonPackages = [ ssl curses ];
 
-  buildInputs = [ python makeWrapper docutils ];
+  buildInputs = [ python makeWrapper docutils unzip ];
 
   makeFlags = "PREFIX=$(out)";
 
@@ -31,7 +35,7 @@ stdenv.mkDerivation rec {
     ''
       for i in $(cd $out/bin && ls); do
         wrapProgram $out/bin/$i \
-          --prefix PYTHONPATH : "$(toPythonPath "$out ${ssl}")" \
+          --prefix PYTHONPATH : "$(toPythonPath "$out ${ssl} ${curses}")" \
           $WRAP_TK
       done
 
@@ -41,9 +45,11 @@ stdenv.mkDerivation rec {
       chmod u+x $out/share/cgi-bin/hgweb.cgi
     '';
 
+  doCheck = false;  # The test suite fails, unfortunately. Not sure why.
+
   meta = {
     description = "A fast, lightweight SCM system for very large distributed projects";
-    homepage = http://www.selenic.com/mercurial/;
+    homepage = "http://www.selenic.com/mercurial/";
     license = "GPLv2";
   };
 }

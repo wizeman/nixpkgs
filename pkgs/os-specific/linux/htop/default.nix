@@ -1,12 +1,18 @@
 {fetchurl, stdenv, ncurses}:
 
-stdenv.mkDerivation rec {
-  name = "htop-0.8.3";
+let
+  name = "htop-1.0";
+in
+stdenv.mkDerivation {
+  inherit name;
+
   src = fetchurl {
     url = "mirror://sourceforge/htop/${name}.tar.gz";
-    sha256 = "f03bac8999c57c399cbf4332831bcce905d0393d0f97f7e32a1407b48890dd9d";
+    sha256 = "242879b86db4b97e1090e7cd391247268ccbe90834ff34b6e8242926c9664852";
   };
+
   buildInputs = [ncurses];
+
   meta = {
     description = "An interactive process viewer for Linux";
     homepage = "http://htop.sourceforge.net";

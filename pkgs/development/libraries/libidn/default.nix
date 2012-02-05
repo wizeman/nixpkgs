@@ -1,14 +1,14 @@
 { fetchurl, stdenv }:
 
 stdenv.mkDerivation rec {
-  name = "libidn-1.22";
+  name = "libidn-1.24";
 
   src = fetchurl {
     url = "mirror://gnu/libidn/${name}.tar.gz";
-    sha256 = "1vc8yni7sg5iq1ijg9l558pa4v6c1v5l57zc024lgxcmhy35wxig";
+    sha256 = "1zrmbwxvgmv7d37sdnlfn4lf3pxc7vgng3lhl18pkjry0v30h5ys";
   };
 
-  doCheck = true;
+  doCheck = ! stdenv.isDarwin;
 
   meta = {
     homepage = http://www.gnu.org/software/libidn/;

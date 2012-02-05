@@ -6,21 +6,17 @@
 assert stdenv.isLinux;
 assert stdenv.gcc.gcc != null;
 
-let
-  s = import ./src-for-default.nix;
-in
-
 stdenv.mkDerivation rec {
-  name = "wine-${s.version}";
+  name = "wine-1.3.32";
 
   src = fetchurl {
-    url = s.url;
-    sha256 = s.hash;
+    url = "mirror://sourceforge/wine/${name}.tar.bz2";
+    sha256 = "fe1691ef8e9c5c4afeb345ad0f0b364d055cfe67a7e64b0a4a44da4d85cfa8b6";
   };
 
   gecko = fetchurl {
-    url = "http://downloads.sourceforge.net/wine/wine_gecko-1.1.0-x86.cab";
-    sha256 = "0a8bpqqhx146innrdwhn4c0jqi90mkmp8kw6aqwildm073yy31hp";
+    url = "mirror://sourceforge/wine/wine_gecko-1.3-x86.msi";
+    sha256 = "1bmm826dhq82jzxdld4x9cyg8mgzg8llkki59n9fvxggi7l5jxab";
   };
 
   buildInputs = [
@@ -45,7 +41,7 @@ stdenv.mkDerivation rec {
   # elements specified above.
   dontPatchELF = true;
 
-  postInstall = "install -D ${gecko} $out/share/wine/gecko/wine_gecko-1.1.0-x86.cab";
+  postInstall = "install -D ${gecko} $out/share/wine/gecko/${gecko.name}";
 
   enableParallelBuilding = true;
 

@@ -1,22 +1,22 @@
 { fetchurl, stdenv, curl, openssl, zlib, expat, perl, python, gettext, cpio, gnugrep
 , asciidoc, texinfo, xmlto, docbook2x, docbook_xsl, docbook_xml_dtd_45
 , libxslt, tcl, tk, makeWrapper
-, svnSupport, subversion, perlLibs, smtpPerlLibs
+, svnSupport, subversionClient, perlLibs, smtpPerlLibs
 , guiSupport
 , pythonSupport ? true
 , sendEmailSupport
 }:
 
 let
-  svn = subversion.override { perlBindings = true; };
+  version = "1.7.8";
+  svn = subversionClient.override { perlBindings = true; };
 in
-
-stdenv.mkDerivation rec {
-  name = "git-1.7.5.1";
+stdenv.mkDerivation {
+  name = "git-${version}";
 
   src = fetchurl {
-    url = "mirror://kernel/software/scm/git/${name}.tar.bz2";
-    sha256 = "037q4nl17i1q9zrlp4k38dplv384ay9bwb1s96y8zrh0jg2s3m51";
+    url = "http://git-core.googlecode.com/files/git-${version}.tar.gz";
+    sha256 = "ede41a79c83e0d8673ed16c64d5c105e404d953591f9611e44c3964130da0713";
   };
 
   patches = [ ./docbook2texi.patch ];
@@ -41,16 +41,25 @@ stdenv.mkDerivation rec {
         chmod +x $1
       }
 
-      # Install Emacs mode.
-      echo "installing Emacs mode..."
+      # Install contrib stuff.
+      ensureDir $out/share/git
+      mv contrib $out/share/git/
       ensureDir $out/share/emacs/site-lisp
-      cp -p contrib/emacs/*.el $out/share/emacs/site-lisp
+      ln -s "$out/share/git/contrib/emacs/"*.el $out/share/emacs/site-lisp/
+      ensureDir $out/etc/bash_completion.d
+      ln -s $out/share/git/contrib/completion/git-completion.bash $out/etc/bash_completion.d/
 
       # grep is a runtime dependence, need to patch so that it's found
       substituteInPlace $out/libexec/git-core/git-sh-setup \
           --replace ' grep' ' ${gnugrep}/bin/grep' \
           --replace ' egrep' ' ${gnugrep}/bin/egrep'
-    '' # */
+
+      # Fix references to the perl binary. Note that the tab character
+      # in the patterns is important.
+      sed -i -e 's|	perl -ne|	${perl}/bin/perl -ne|g' \
+             -e 's|	perl -e|	${perl}/bin/perl -e|g' \
+             $out/libexec/git-core/{git-am,git-submodule}
+    ''
 
    + (if svnSupport then
 
@@ -97,10 +106,6 @@ stdenv.mkDerivation rec {
        done
      '')
 
-   + ''# install bash completion script
-      d="$out/etc/bash_completion.d"
-      ensureDir $d; cp contrib/completion/git-completion.bash "$d"
-     ''
    # Don't know why hardlinks aren't created. git installs the same executable
    # multiple times into $out so replace duplicates by symlinks because I
    # haven't tested whether the nix distribution system can handle hardlinks.
@@ -109,6 +114,7 @@ stdenv.mkDerivation rec {
       declare -A seen
       shopt -s globstar
       for f in "$out/"**; do
+        if [ -L "$f" ]; then continue; fi
         test -f "$f" || continue
         sum=$(md5sum "$f");
         sum=''\${sum/ */}

@@ -1,16 +1,23 @@
-{cabal, extensibleExceptions, filepath, ghcMtl,
- ghcPaths, haskellSrc, MonadCatchIOMtl, mtl, utf8String} :
+{ cabal, extensibleExceptions, ghcMtl, ghcPaths, haskellSrc
+, MonadCatchIOMtl, mtl, random, utf8String
+}:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "hint";
-  version = "0.3.2.3";
-  sha256 = "1cc01037cfd32eb1a299ce625487411a97ce70178778d7bbd1d5fcef7d3d40c4";
-  propagatedBuildInputs = [
-    extensibleExceptions filepath ghcMtl ghcPaths haskellSrc
-    MonadCatchIOMtl mtl utf8String
+  version = "0.3.3.3";
+  sha256 = "0i7d7c2786c13npbb5np3gaidsq4kkajvm3fn2gx8djrhhlrqw5l";
+  buildDepends = [
+    extensibleExceptions ghcMtl ghcPaths haskellSrc MonadCatchIOMtl mtl
+    random utf8String
   ];
   meta = {
-    description = "An mtl compatible version of the Ghc-Api monads and monad-transformers";
+    homepage = "http://darcsden.com/jcpetruzza/hint";
+    description = "Runtime Haskell interpreter (GHC API wrapper)";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

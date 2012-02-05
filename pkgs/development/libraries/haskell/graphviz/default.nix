@@ -1,13 +1,25 @@
-{cabal, colour, fgl, polyparse, transformers, QuickCheck}:
+{ cabal, colour, dlist, extensibleExceptions, fgl, polyparse, text
+, transformers, wlPprintText
+}:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "graphviz";
-  version = "2999.10.0.1";
-  sha256 = "5a3aebd3874303dcf554aef3bf511dd22e72053a9672c823d1d820d2b90ca076";
-  propagatedBuildInputs = [colour fgl polyparse transformers QuickCheck];
+  version = "2999.12.0.4";
+  sha256 = "02yg5c02k3sdrcq5srzpdvlzs6cnrns67576qzr8n7ynhpvard73";
+  isLibrary = true;
+  isExecutable = true;
+  buildDepends = [
+    colour dlist extensibleExceptions fgl polyparse text transformers
+    wlPprintText
+  ];
   meta = {
-    description = "Bindings for the Dot language (Graphviz)";
-    license = "BSD3";
+    homepage = "http://projects.haskell.org/graphviz/";
+    description = "Bindings to Graphviz for graph visualisation";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

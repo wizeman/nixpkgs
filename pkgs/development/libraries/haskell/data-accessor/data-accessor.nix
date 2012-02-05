@@ -1,14 +1,18 @@
-{cabal, transformers}:
+{ cabal, transformers }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "data-accessor";
-  version = "0.2.1.7";
-  sha256 = "05wi8wm4vq4j4ldx1925q7v31rnh4gj5891gqc5hdf0x8cgkxbii";
-  propagatedBuildInputs = [transformers];
+  version = "0.2.2.1";
+  sha256 = "1zb7z9fnlnxxlvjd655vadfscanzq9msvjv21cjmdric0ja24hxb";
+  buildDepends = [ transformers ];
   meta = {
-    description = "Utilities for accessing and manipulating the fields of records";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    homepage = "http://www.haskell.org/haskellwiki/Record_access";
+    description = "Utilities for accessing and manipulating fields of records";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

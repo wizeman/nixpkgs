@@ -1,38 +1,36 @@
 { stdenv, fetchurl, perl, xlibs, libdvdnav
-, zlib, a52dec, libmad, faad2, ffmpeg, alsa
-, pkgconfig, dbus, hal, fribidi, qt4, freefont_ttf
-, libvorbis, libtheora, speex, lua, libgcrypt, libupnp
+, zlib, a52dec, libmad, faad2, ffmpeg, alsaLib
+, pkgconfig, dbus, fribidi, qt4, freefont_ttf
+, libvorbis, libtheora, speex, lua5, libgcrypt, libupnp
 , libcaca, pulseaudio, flac, schroedinger, libxml2, librsvg
 , mpeg2dec, udev, gnutls, avahi, libcddb, jackaudio, SDL, SDL_image
 , libmtp, unzip, taglib, libkate, libtiger, libv4l, samba, liboggz
-, libass, libva
+, libass, libva, libdvbpsi
 }:
 
 stdenv.mkDerivation rec {
   name = "vlc-${version}";
-  version = "1.1.9";
+  version = "1.1.13";
 
   patchPhase = ''sed -e "s@/bin/echo@echo@g" -i configure'';
 
   src = fetchurl {
-    url = "mirror://sourceforge/vlc/${name}.tar.bz2";
-    sha256 = "02rdrfxh7d70yxz0qinmkw2jad2hxzfrw0r1hiyyxandrgg73ggh";
+    url = "http://download.videolan.org/pub/videolan/vlc/${version}/${name}.tar.bz2";
+    sha256 = "1h93jdx89dfgxlnw66lfcdk9kisadm689zanvgkzbfb3si2frv83";
   };
 
   buildInputs = [
-    perl zlib a52dec libmad faad2 ffmpeg alsa libdvdnav libdvdnav.libdvdread
-    pkgconfig dbus hal fribidi qt4 libvorbis libtheora speex lua libgcrypt
+    perl zlib a52dec libmad faad2 ffmpeg alsaLib libdvdnav libdvdnav.libdvdread
+    dbus fribidi qt4 libvorbis libtheora speex lua5 libgcrypt
     libupnp libcaca pulseaudio flac schroedinger libxml2 librsvg mpeg2dec
     udev gnutls avahi libcddb jackaudio SDL SDL_image libmtp unzip taglib
-    libkate libtiger libv4l samba liboggz libass
+    libkate libtiger libv4l samba liboggz libass libdvbpsi
   ]
   ++ (with xlibs; [ xlibs.xlibs libXv libXvMC libXpm xcbutil libva ]);
 
+  buildNativeInputs = [ pkgconfig ];
+
   configureFlags = [ "--enable-alsa"
-    "--disable-glx"
-    "--disable-remoteosd"
-    "--disable-dbus"
-    "--disable-dbus-control"
     "--with-kde-solid=$out/share/apps/solid/actions"
   ];
 

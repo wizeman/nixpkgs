@@ -1,11 +1,11 @@
 { fetchurl, stdenv, pth, libgpgerror }:
 
 stdenv.mkDerivation rec {
-  name = "libassuan-2.0.0";
+  name = "libassuan-2.0.3";
 
   src = fetchurl {
     url = "mirror://gnupg/libassuan/${name}.tar.bz2";
-    sha256 = "13vzs4jxscnlskwzd3wpqwnfb5f0hwqc75rbi8j9f42bs6q08apx";
+    sha256 = "06xckkvxxlx7cj77803m8x58gxksap4k8yhspc5cqsy7fhinimds";
   };
 
   propagatedBuildInputs = [ pth libgpgerror ];
@@ -24,5 +24,6 @@ stdenv.mkDerivation rec {
 
     homepage = http://gnupg.org;
     license = "LGPLv2+";
+    platforms = stdenv.lib.platforms.all;
   };
 }

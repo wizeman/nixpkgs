@@ -20,14 +20,14 @@ rec {
 
   inherit (s) name;
   inherit buildInputs;
-  configureFlags = [];
+  configureFlags = "--enable-gc=${a.boehmgc} --enable-offscreen";
 
   /* doConfigure should be removed if not needed */
-  phaseNames = ["setVars" "doUnpack" "fixPaths" "extractTexinfoTex" 
-    "doConfigure" "dumpRealVars" "doMakeInstall" "fixPathsResult"];
-      
+  phaseNames = ["setVars" "doUnpack" "fixPaths" "extractTexinfoTex"
+    "doConfigure" "dumpRealVars" "doMakeInstall" "fixPathsResult"
+    "fixInfoDir"];
+
   setVars = a.noDepEntry ''
-    export NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -I${a.boehmgc}/include/gc"
     export HOME="$PWD"
   '';
 
@@ -37,6 +37,13 @@ rec {
 
   fixPaths = a.doPatchShebangs ''.'';
   fixPathsResult = a.doPatchShebangs ''$out/bin'';
+
+  fixInfoDir = a.noDepEntry ''
+    mv -v "$out/share/info/asymptote/"*.info $out/share/info/
+    sed -i -e 's|(asymptote/asymptote)|(asymptote)|' $out/share/info/asymptote.info
+    rmdir $out/share/info/asymptote
+    rm $out/share/info/dir
+  '';
 
   extractTexinfoTex = a.fullDepEntry ''
     lzma -d < ${a.texinfo.src} | tar --wildcards -x texinfo-'*'/doc/texinfo.tex

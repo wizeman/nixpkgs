@@ -5,11 +5,11 @@ let inherit (composableDerivation) wwf; in
 
 composableDerivation.composableDerivation {} rec {
 
-  name = "xapian-bindings-1.2.5";
+  name = "xapian-bindings-1.2.8";
 
   src = fetchurl {
-    url = "http://oligarchy.co.uk/xapian/1.2.5/${name}.tar.gz";
-    sha256 = "0d723af62b8d633cd49fdf92058a4985061659454b390c0c08db05fa4f7fb09c";
+    url = "http://oligarchy.co.uk/xapian/1.2.8/${name}.tar.gz";
+    sha256 = "eb740c619c75d288e65a1c2f86faecdca53d44d3f9896bcc080085839887b124";
   };
 
   buildInputs = [ xapian pkgconfig zlib ];
@@ -68,7 +68,7 @@ composableDerivation.composableDerivation {} rec {
   meta = { 
     description = "Bindings for the Xapian library";
     homepage = xapian.meta.homepage;
-    license = "GPLv2+";
+    license = stdenv.lib.licenses.gpl2Plus;
     maintainers = [ stdenv.lib.maintainers.chaoflow ];
   };
 }

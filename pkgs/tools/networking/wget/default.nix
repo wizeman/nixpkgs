@@ -1,16 +1,14 @@
 { stdenv, fetchurl, gettext, perl, LWP, gnutls ? null }:
 
 stdenv.mkDerivation rec {
-  name = "wget-1.12";
+  name = "wget-1.13.4";
 
   src = fetchurl {
-    url = "mirror://gnu/wget/${name}.tar.bz2";
-    sha256 = "16msgly5xn0qj6ngsw34q9j7ag8jkci6020w21d30jgqw8wdj8y8";
+    url = "mirror://gnu/wget/${name}.tar.gz";
+    sha256 = "1kadjg63x1mm741dxdidwsn1rz0f7dkzbq59v0iww87jr45p3ir4";
   };
 
-  patches = [ ./gnutls-support.patch ];
-
-  preConfigure =
+  preConfigure = stdenv.lib.optionalString doCheck
     '' for i in "doc/texi2pod.pl" "tests/run-px" "util/rmold.pl"
        do
          sed -i "$i" -e 's|/usr/bin.*perl|${perl}/bin/perl|g'
@@ -23,16 +21,17 @@ stdenv.mkDerivation rec {
        done
     '';
 
-  buildInputs = [ gettext perl ]
-    ++ stdenv.lib.optional doCheck LWP
+  buildNativeInputs = [ gettext ];
+  buildInputs =
+    stdenv.lib.optionals doCheck [ perl LWP ]
     ++ stdenv.lib.optional (gnutls != null) gnutls;
 
   configureFlags =
     if gnutls != null
     then "--with-ssl=gnutls"
-    else "";
+    else "--without-ssl";
 
-  doCheck = true;
+  doCheck = (perl != null);
 
   meta = {
     description = "GNU Wget, a tool for retrieving files using HTTP, HTTPS, and FTP";

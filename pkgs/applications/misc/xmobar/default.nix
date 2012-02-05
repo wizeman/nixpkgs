@@ -1,13 +1,23 @@
-{cabal, X11, mtl, parsec, stm, utf8String, X11Xft}:
+{ cabal, libXrandr, mtl, parsec, stm, time, utf8String, X11, X11Xft
+}:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "xmobar";
-  name = "${self.fname}";
-  version = "0.12";
-  sha256 = "633b7985dbaebd58864f591ea7ff8b44f5a69b4e3d0a592df01daf8fe11a5d31";
-  extraBuildInputs = [X11 mtl parsec stm utf8String X11Xft];
-  configureFlags = "--flags=with_xft";
+  version = "0.14";
+  sha256 = "1y26b2a5v9hxv1zmjcb4m8j9qkqdn74mqc3q58vgp5cav45rphvh";
+  isLibrary = false;
+  isExecutable = true;
+  buildDepends = [ mtl parsec stm time utf8String X11 X11Xft ];
+  extraLibraries = [ libXrandr ];
+  configureFlags = "-fwith_xft";
   meta = {
-    description = "xmobar is a minimalistic text based status bar";
+    homepage = "http://projects.haskell.org/xmobar/";
+    description = "A Minimalistic Text Based Status Bar";
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })

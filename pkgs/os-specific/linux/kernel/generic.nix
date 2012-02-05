@@ -6,6 +6,9 @@
 , # The kernel version.
   version
 
+, # The version number used for the module directory
+  modDirVersion ? version
+
 , # The kernel configuration.
   config
 
@@ -35,11 +38,15 @@
 , extraMeta ? {}
 , ubootChooser ? null
 , postInstall ? ""
+
+, # After the builder did a 'make all' (kernel + modules)
+  # we force building the target asked: bzImage/zImage/uImage/...
+  postBuild ? "make $makeFlags $kernelTarget; make $makeFlags -C scripts unifdef"
 , ...
 }:
 
 assert stdenv.system == "i686-linux" || stdenv.system == "x86_64-linux"
-  || stdenv.system == "armv5tel-linux" || stdenv.system == "mips64-linux";
+  || stdenv.system == "armv5tel-linux" || stdenv.system == "mips64el-linux";
 
 assert stdenv.platform.name == "sheevaplug" -> stdenv.platform.uboot != null;
 
@@ -61,16 +68,16 @@ stdenv.mkDerivation {
   enableParallelBuilding = true;
 
   passthru = {
-    inherit version;
+    inherit version modDirVersion kernelPatches;
     # Combine the `features' attribute sets of all the kernel patches.
     features = lib.fold (x: y: (if x ? features then x.features else {}) // y) features kernelPatches;
   };
-  
+
   builder = ./builder.sh;
 
   generateConfig = ./generate-config.pl;
 
-  inherit preConfigure src module_init_tools localVersion postInstall;
+  inherit preConfigure src module_init_tools localVersion postInstall postBuild;
 
   patches = map (p: p.patch) kernelPatches;
 
@@ -87,7 +94,7 @@ stdenv.mkDerivation {
   kernelBaseConfig = stdenv.platform.kernelBaseConfig;
   kernelTarget = stdenv.platform.kernelTarget;
   autoModules = stdenv.platform.kernelAutoModules;
-  
+
   # Should we trust platform.kernelArch? We can only do
   # that once we differentiate i686/x86_64 in platforms.
   arch =
@@ -95,7 +102,7 @@ stdenv.mkDerivation {
     if stdenv.system == "i686-linux" then "i386" else
     if stdenv.system == "x86_64-linux" then "x86_64" else
     if stdenv.system == "armv5tel-linux" then "arm" else
-    if stdenv.system == "mips64-linux" then "mips" else
+    if stdenv.system == "mips64el-linux" then "mips" else
     abort "Platform ${stdenv.system} is not supported.";
 
   crossAttrs = let
@@ -132,6 +139,11 @@ stdenv.mkDerivation {
         + ")");
     license = "GPLv2";
     homepage = http://www.kernel.org/;
-    maintainers = [ lib.maintainers.eelco ];
+    maintainers = [
+      lib.maintainers.eelco
+      lib.maintainers.chaoflow
+    ];
+    platforms = lib.platforms.linux;
   } // extraMeta;
 }
+

@@ -1,23 +1,26 @@
 { stdenv, fetchurl, python, pyqt4, sip, popplerQt4, pkgconfig, libpng
-, imagemagick, libjpeg, fontconfig, podofo, qt4
-, pil, makeWrapper, unrar, chmlib, pythonPackages
+, imagemagick, libjpeg, fontconfig, podofo, qt4, icu, sqlite
+, pil, makeWrapper, unrar, chmlib, pythonPackages, xz
 }:
 
 stdenv.mkDerivation rec {
-  name = "calibre-0.7.14";
+  name = "calibre-0.8.32";
 
   src = fetchurl {
-    url = "mirror://sourceforge/calibre/${name}.tar.gz";
-    sha256 = "07vnmxxpg77pmd7fhcrlnark02bn6zj62hbsybdqz8fp1yp99wkn";
+    url = "http://calibre-ebook.googlecode.com/files/${name}.tar.xz";
+    sha256 = "0d0zq4sr0qm8jarg0ps24lfizb4hyb57pjsp81y1sb5nzjki7jml";
   };
 
   inherit python;
 
+  buildNativeInputs = [ makeWrapper xz pkgconfig ];
+
   buildInputs =
-    [ python pyqt4 sip popplerQt4 pkgconfig libpng imagemagick libjpeg
-      fontconfig podofo qt4 pil makeWrapper chmlib 
+    [ python pyqt4 sip popplerQt4 libpng imagemagick libjpeg
+      fontconfig podofo qt4 pil chmlib icu
       pythonPackages.mechanize pythonPackages.lxml pythonPackages.dateutil
-      pythonPackages.cssutils pythonPackages.beautifulsoap pythonPackages.sqlite3
+      pythonPackages.cssutils pythonPackages.beautifulsoap
+      pythonPackages.sqlite3 sqlite
     ];
 
   installPhase = ''
@@ -36,7 +39,7 @@ stdenv.mkDerivation rec {
       $out/lib/calibre/calibre/ebooks/metadata/*.py
       $out/lib/calibre/calibre/ebooks/rtf2xml/*.py"
 
-    sed -i "s/env python/python/" $PYFILES
+    sed -i "s/env python[0-9.]*/python/" $PYFILES
     for a in $out/bin/*; do
       wrapProgram $a --prefix PYTHONPATH : $PYTHONPATH --prefix LD_LIBRARY_PATH : ${unrar}/lib
     done

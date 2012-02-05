@@ -1,25 +1,38 @@
-{ stdenv, fetchurl, ghc, libuuid, rsync, findutils, curl, perl, MissingH, utf8String, QuickCheck2, pcreLight, SHA, dataenc }:
+{ stdenv, fetchurl, curl, dataenc, findutils, ghc, git, hS3, hslogger, HTTP, hxt
+, ikiwiki, json, libuuid, MissingH, monadControl, mtl, network, pcreLight, perl
+, QuickCheck2, rsync, SHA, testpack, utf8String, which, liftedBase, coreutils
+}:
 
 let
-  version = "0.20110427";
+  version = "3.20120123";
 in
 stdenv.mkDerivation {
   name = "git-annex-${version}";
 
   src = fetchurl {
     url = "http://ftp.de.debian.org/debian/pool/main/g/git-annex/git-annex_${version}.tar.gz";
-    sha256 = "1vbmkvf9hlnfcaqsyi1ay2rr835j49bxqyfdi3v3373pdfd6195z";
+    sha256 = "dad93dad08ddfd0d239ee57bbf61dd2ee3755d9a94e2946ac5d7bb4cfa565488";
   };
 
-  buildInputs = [ghc libuuid rsync findutils curl perl MissingH utf8String QuickCheck2 pcreLight SHA dataenc];
+  buildInputs = [
+    curl dataenc findutils ghc git hS3 hslogger HTTP hxt ikiwiki json
+    libuuid MissingH monadControl mtl network pcreLight perl QuickCheck2
+    rsync SHA testpack utf8String which liftedBase
+  ];
+
+  checkTarget = "test";
+  doCheck = true;
 
   preConfigure = ''
     makeFlagsArray=( PREFIX=$out )
     sed -i -e 's|#!/usr/bin/perl|#!${perl}/bin/perl|' mdwn2man
+    sed -i -e 's|"cp |"${coreutils}/bin/cp |' -e 's|"rm -f |"${coreutils}/bin/rm -f |' test.hs
   '';
 
   meta = {
-    description = "Manage files with git, without checking the file contents into git";
+    homepage = "http://git-annex.branchable.com/";
+    description = "Manage files with git without checking them into git";
+    license = stdenv.lib.licenses.gpl3Plus;
 
     longDescription = ''
       Git-annex allows managing files with git, without checking the
@@ -38,9 +51,7 @@ stdenv.mkDerivation {
       control.
     '';
 
-    license = "GPLv3+";
-    homepage = "http://git-annex.branchable.com/";
-    platforms = stdenv.lib.platforms.unix;
+    platforms = ghc.meta.platforms;
     maintainers = [ stdenv.lib.maintainers.simons ];
   };
 }

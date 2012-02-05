@@ -179,8 +179,9 @@ let
   };
 in {
   crossGNU = mapTestOnCross crossSystem {
-    hurdCross = nativePlatforms;
-    mach.hostDrv = nativePlatforms;
+    gnu.hurdCross = nativePlatforms;
+    gnu.mach.hostDrv = nativePlatforms;
+    gnu.mig = nativePlatforms;
 
     coreutils.hostDrv = nativePlatforms;
     ed.hostDrv = nativePlatforms;
@@ -189,17 +190,20 @@ in {
     boehmgc.hostDrv = nativePlatforms;
     findutils.hostDrv = nativePlatforms;
     gcc.hostDrv = nativePlatforms;
+    gcc46.hostDrv = nativePlatforms;
     gdb.hostDrv = nativePlatforms;
     gmp.hostDrv = nativePlatforms;
     gnugrep.hostDrv = nativePlatforms;
     gnumake.hostDrv = nativePlatforms;
     gnused.hostDrv = nativePlatforms;
     guile_1_8.hostDrv = nativePlatforms;
+    guile.hostDrv = nativePlatforms;
     libffi.hostDrv = nativePlatforms;
     libtool.hostDrv = nativePlatforms;
     libunistring.hostDrv = nativePlatforms;
     lsh.hostDrv = nativePlatforms;
     nixUnstable.hostDrv = nativePlatforms;
+    openssl.hostDrv = nativePlatforms;            # dependency of Nix
     patch.hostDrv = nativePlatforms;
     zile.hostDrv = nativePlatforms;
   };

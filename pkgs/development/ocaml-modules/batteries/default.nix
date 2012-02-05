@@ -5,22 +5,17 @@ let
 in
 
 stdenv.mkDerivation {
-  name = "ocaml-batteries-1.3.0";
+  name = "ocaml-batteries-1.4.1";
 
   src = fetchurl {
-    url = "http://forge.ocamlcore.org/frs/download.php/560/batteries-1.3.0.tar.gz";
-    sha256 = "1kf8dyivigavi89lpsz7hzdv48as10yck7gkmqmnsnn1dps3m7an";
+    url = http://forge.ocamlcore.org/frs/download.php/684/batteries-1.4.1.tar.gz;
+    sha256 = "bdca7deba290d83c66c0a5001da52b2d7f2af58b7b7e7d9303d4363aaafe9c30";
   };
 
   buildInputs = [ocaml findlib camomile ounit];
 
-  # This option is not correctly detected on Darwin
-  # It should be fixed in the svn
-  BATTERIES_NATIVE_SHLIB = if stdenv.isDarwin then "no" else "yes";
-
-  # Ditto
   patchPhase = ''
-    substituteInPlace Makefile --replace 'echo -n' echo
+    substituteInPlace Makefile --replace '/bin/echo -n' echo
   '';
 
   configurePhase = "true"; 	# Skip configure

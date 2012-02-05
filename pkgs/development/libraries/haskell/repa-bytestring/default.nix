@@ -1,14 +1,18 @@
-{cabal, repa, vector}:
+{ cabal, repa, vector }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "repa-bytestring";
-  version = "2.0.0.3";
-  sha256 = "05kc5d8j4m5g515syvz5jkbjvhhf3jxkak4w6pvyhx6nmzgywrk5";
-  propagatedBuildInputs = [repa vector];
+  version = "2.2.0.1";
+  sha256 = "0yc814wyiy5cb9j04515rv24mm4qd5xqyz2dxsmg1p46qb69hvsg";
+  buildDepends = [ repa vector ];
   meta = {
+    homepage = "http://repa.ouroborus.net";
     description = "Conversions between Repa Arrays and ByteStrings";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

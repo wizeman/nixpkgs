@@ -1,13 +1,18 @@
-{cabal, attoparsec, enumerator}:
+{ cabal, attoparsec, enumerator, text }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "attoparsec-enumerator";
-  version = "0.2.0.3";
-  sha256 = "02v9cwq1jbn0179zd2cky4ix6ykrkd7cpw38c1x7zgy0pal42x4v";
-  propagatedBuildInputs = [attoparsec enumerator];
+  version = "0.3";
+  sha256 = "1sfqcr1mvny9gf0zzggwvs2b20knxrbb208rzaa86ay0b5b5jw5v";
+  buildDepends = [ attoparsec enumerator text ];
   meta = {
-    description = "Converts an Attoparsec parser into an iteratee";
-    license = "BSD3";
+    homepage = "https://john-millikin.com/software/attoparsec-enumerator/";
+    description = "Pass input from an enumerator to an Attoparsec parser";
+    license = self.stdenv.lib.licenses.mit;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

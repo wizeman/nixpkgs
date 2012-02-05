@@ -1,17 +1,25 @@
-{cabal, blazeHtml, MonadCatchIOTransformers, parsec, text, transformers,
- utf8String, webRoutesQuasi}:
+{ cabal, blazeHtml, dataObject, enumerator, monadControl, mtl
+, pathPieces, pool, sqlite, text, time, transformers
+, transformersBase
+}:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "persistent";
-  version = "0.1.0";
-  sha256 = "32379f5ef937da1bf910cfaf9b6cce6326b8fba7554ef81159e6684c7ce2ca45";
-  propagatedBuildInputs = [
-    blazeHtml MonadCatchIOTransformers parsec text transformers
-    utf8String webRoutesQuasi
+  version = "0.6.4.4";
+  sha256 = "0n4zl0r8nmp3pwsgc0kiy7fgk2dfvdvagv1gvjxrs8545c5ycggv";
+  buildDepends = [
+    blazeHtml dataObject enumerator monadControl mtl pathPieces pool
+    text time transformers transformersBase
   ];
+  extraLibraries = [ sqlite ];
   meta = {
+    homepage = "http://www.yesodweb.com/book/persistent";
     description = "Type-safe, non-relational, multi-backend persistence";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })

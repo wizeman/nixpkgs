@@ -1,14 +1,14 @@
 { stdenv, fetchurl, pkgconfig, glib }:
 
 let
-  name = "nbd-2.9.22";
+  name = "nbd-2.9.24";
 in
 stdenv.mkDerivation {
   inherit name;
 
   src = fetchurl {
     url = "mirror://sourceforge/nbd/${name}.tar.bz2";
-    sha256 = "f9e1a9db1663393fd1f2de2dd70cf15cc4fa17616853b717db7ca6c539f8787d";
+    sha256 = "025cqsx6cwbr62javdvm5vx675ai0b1absbx4if1v5pp9hzrpxmq";
   };
 
   buildInputs = [pkgconfig glib];
@@ -27,6 +27,6 @@ stdenv.mkDerivation {
     description = "map arbitrary files as block devices over the network";
     license = "GPLv2";
     maintainers = [ stdenv.lib.maintainers.simons ];
-    platforms = stdenv.lib.platforms.all;
+    platforms = stdenv.lib.platforms.unix;
   };
 }

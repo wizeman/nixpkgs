@@ -2,7 +2,7 @@
 
 stdenv.mkDerivation {
 
-  name = "ts-0.6.6";
+  name = "ts-0.7.2";
 
   installPhase=''make install "PREFIX=$out"'';
 
@@ -11,8 +11,8 @@ stdenv.mkDerivation {
   };
 
   src = fetchurl {
-    url = http://vicerveza.homeunix.net/~viric/soft/ts/ts-0.6.6.tar.gz;
-    sha256 = "0mdg123ppq8ibf4315l4qi0w3n7wlj4x8dq5gx8f680v4bjvc30g";
+    url = http://vicerveza.homeunix.net/~viric/soft/ts/ts-0.7.2.tar.gz;
+    sha256 = "08f9ipg98d6ygzb4fzdm1z157llzh4akipmq14ycfd7l023vidik";
   };
 
   meta = {

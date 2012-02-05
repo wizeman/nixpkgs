@@ -1,14 +1,18 @@
-{cabal, repa, vector}:
+{ cabal, repa, vector }:
 
-cabal.mkDerivation (self : {
+cabal.mkDerivation (self: {
   pname = "repa-algorithms";
-  version = "2.0.0.3";
-  sha256 = "17h5xbn8gy0glryrv7pjdpxaw9adrk0bln683p0xxl6wrx90ngdv";
-  propagatedBuildInputs = [repa vector];
+  version = "2.2.0.1";
+  sha256 = "1ggxa2h2swgf7621nrzlqmmyi3h2v526w69zcwvms84kyd257p4p";
+  buildDepends = [ repa vector ];
   meta = {
+    homepage = "http://repa.ouroborus.net";
     description = "Algorithms using the Repa array library";
-    license = "BSD";
-    maintainers = [self.stdenv.lib.maintainers.andres];
+    license = self.stdenv.lib.licenses.bsd3;
+    platforms = self.ghc.meta.platforms;
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
-

@@ -1,34 +1,92 @@
 use strict;
 use XML::Simple;
+use List::Util qw(min);
 
-my $packagesFile = shift @ARGV;
-my $urlPrefix = shift @ARGV;
+my @packagesFiles = ();
+my @urlPrefixes = ();
+
+# rpm-closure.pl (<package-file> <url-prefix>)+ <toplevel-pkg>+
+
+while(-f $ARGV[0]) {
+    my $packagesFile = shift @ARGV;
+    my $urlPrefix = shift @ARGV;
+    push(@packagesFiles, $packagesFile);
+    push(@urlPrefixes, $urlPrefix);
+}
+
+
+sub rpmvercmp {
+    my ($version1, $version2) = @_;
+    my @vercmps1 = split /\./, $version1;
+    my @vercmps2 = split /\./, $version2;
+    my $l1 = scalar(@vercmps1);
+    my $l2 = scalar(@vercmps2);
+    my $l = min($l1, $l2);
+
+    for(my $i=0; $i<$l; $i++) {
+        my $v1 = $vercmps1[$i];
+        my $v2 = $vercmps2[$i];
+
+        if($v1 =~ /^[0-9]*$/ && $v2 =~ /^[0-9]*$/) {
+	    if ( int($v1) > int($v2) ) {
+		return 1;
+	    }
+	    elsif ( int($v1) < int($v2) ) {
+		return -1;
+	    }
+	} else {
+	    if ( $v1 gt $v2 ) {
+		return 1;
+	    }
+	    elsif ( $v1 lt $v2 ) {
+		return -1;
+	    }
+	}
+    }
+    if($l1 == $l2) {
+        return 0;
+    } elsif ($l1 > $l2) {
+        return 1;
+    } elsif ($l1 < $l2) {
+        return -1;
+    }
+}
+
 my @toplevelPkgs = @ARGV;
 
 my @archs = split ' ', ($ENV{'archs'} or "");
 
-print STDERR "parsing packages...\n";
-
-my $xml = XMLin($packagesFile, ForceArray => ['package', 'rpm:entry', 'file'], KeyAttr => []) or die;
-
-print STDERR "file contains $xml->{packages} packages\n";
-
-
 my %pkgs;
-foreach my $pkg (@{$xml->{'package'}}) {
-    if (scalar @archs > 0) {
-        my $arch = $pkg->{arch};
-        my $found = 0;
-        foreach my $a (@archs) { $found = 1 if $arch eq $a; }
-        next if !$found;
-    }
-    if (defined $pkgs{$pkg->{name}}) {
-        print STDERR "WARNING: duplicate occurrence of package $pkg->{name}\n";
-        next;
-    }
-    $pkgs{$pkg->{name}} = $pkg;
-}
+for (my $i = 0; $i < scalar(@packagesFiles); $i++) {
+    my $packagesFile = $packagesFiles[$i];
+    print STDERR "parsing packages in $packagesFile...\n";
 
+    my $xml = XMLin($packagesFile, ForceArray => ['package', 'rpm:entry', 'file'], KeyAttr => []) or die;
+
+    print STDERR "$packagesFile contains $xml->{packages} packages\n";
+
+    foreach my $pkg (@{$xml->{'package'}}) {
+        if (scalar @archs > 0) {
+            my $arch = $pkg->{arch};
+            my $found = 0;
+            foreach my $a (@archs) { $found = 1 if $arch eq $a; }
+            next if !$found;
+        }
+        if (defined $pkgs{$pkg->{name}}) {
+            my $earlierPkg = $pkgs{$pkg->{name}};
+            print STDERR "WARNING: duplicate occurrence of package $pkg->{name}\n";
+            #   <version epoch="0" ver="1.28.0" rel="2.el6"/>
+            if (rpmvercmp($pkg->{'version'}->{ver}, $earlierPkg->{'version'}->{ver}) >= 0) {
+                print STDERR "WARNING: replaced package $pkg->{name} with newer one\n";
+                $pkg->{urlPrefix} = $urlPrefixes[$i];
+                $pkgs{$pkg->{name}} = $pkg;
+            }
+            next;
+        }
+        $pkg->{urlPrefix} = $urlPrefixes[$i];
+        $pkgs{$pkg->{name}} = $pkg;
+    }
+}
 
 my %provides;
 foreach my $pkgName (keys %pkgs) {
@@ -104,7 +162,7 @@ print "[\n\n";
 foreach my $pkgName (@needed) {
     my $pkg = $pkgs{$pkgName};
     print "  (fetchurl {\n";
-    print "    url = $urlPrefix/$pkg->{location}->{href};\n";
+    print "    url = $pkg->{urlPrefix}/$pkg->{location}->{href};\n";
     if ($pkg->{checksum}->{type} eq "sha") {
         print "    sha1 = \"$pkg->{checksum}->{content}\";\n";
     } elsif ($pkg->{checksum}->{type} eq "sha256") {

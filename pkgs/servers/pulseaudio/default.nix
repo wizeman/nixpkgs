@@ -1,25 +1,32 @@
 { stdenv, fetchurl, pkgconfig, gnum4, gdbm, libtool, glib, dbus, avahi
-, gconf, liboil, gtk, libX11, libICE, libSM, libXtst, libXi, intltool, gettext
-, libcap, alsaLib, libsamplerate, libsndfile, speex, bluez, udev
-, ...}:
+, gconf, gtk, intltool, gettext
+, alsaLib, libsamplerate, libsndfile, speex, bluez, udev
+, jackaudioSupport ? false, jackaudio ? null
+, x11Support ? false, xlibs
+, xz, json_c
+}:
+
+assert jackaudioSupport -> jackaudio != null;
 
 stdenv.mkDerivation rec {
-  name = "pulseaudio-0.9.21";
+  name = "pulseaudio-1.1";
 
   src = fetchurl {
-    url = "http://0pointer.de/lennart/projects/pulseaudio/${name}.tar.gz";
-    sha256 = "0m72rrbgy9qncwhqsq9q35niicy6i06sk3g5i8w9bvkhmib27qll";
+    url = "http://freedesktop.org/software/pulseaudio/releases/pulseaudio-1.1.tar.xz";
+    sha256 = "1vpm0681zj2jvhbabvnmrmfxr3172k4x58kjb39y5g3fdw9k3rbg";
   };
 
   # Since `libpulse*.la' contain `-lgdbm', it must be propagated.
   propagatedBuildInputs = [ gdbm ];
 
-  buildInputs = [
-    pkgconfig gnum4 libtool glib dbus avahi gconf liboil
-    libsamplerate libsndfile speex alsaLib libcap
-    gtk libX11 libICE libSM libXtst libXi
-    intltool gettext bluez udev
-  ];
+  buildInputs =
+    [ pkgconfig gnum4 libtool intltool glib dbus avahi
+      libsamplerate libsndfile speex alsaLib bluez udev
+      xz json_c
+      #gtk gconf 
+    ]
+    ++ stdenv.lib.optional jackaudioSupport jackaudio
+    ++ stdenv.lib.optionals x11Support [ xlibs.xlibs xlibs.libXtst xlibs.libXi ];
 
   preConfigure = ''
     # Change the `padsp' script so that it contains the full path to
@@ -30,12 +37,23 @@ stdenv.mkDerivation rec {
     # Move the udev rules under $(prefix).
     sed -i "src/Makefile.in" \
         -e "s|udevrulesdir[[:blank:]]*=.*$|udevrulesdir = $out/lib/udev/rules.d|g"
+
+   # don't install proximity-helper as root and setuid
+   sed -i "src/Makefile.in" \
+       -e "s|chown root|true |" \
+       -e "s|chmod r+s |true |"
   '';
 
   configureFlags = ''
-    --disable-solaris --disable-hal --disable-jack --localstatedir=/var
+    --disable-solaris --disable-hal --disable-jack
     --disable-oss-output --disable-oss-wrapper
+    --localstatedir=/var --sysconfdir=/etc
+    ${if jackaudioSupport then "--enable-jack" else ""}
   '';
+
+  installFlags = "sysconfdir=$(out)/etc pulseconfdir=$(out)/etc/pulse";
+
+  enableParallelBuilding = true;
 
   meta = {
     description = "PulseAudio, a sound server for POSIX and Win32 systems";

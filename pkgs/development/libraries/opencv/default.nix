@@ -1,18 +1,21 @@
-{ stdenv, fetchurl, cmake, gtk, glib, libjpeg, libpng, libtiff, jasper, ffmpeg, pkgconfig,
-  xineLib, gstreamer }:
+{ stdenv, fetchurl, cmake, gtk, libjpeg, libpng, libtiff, jasper, ffmpeg
+, pkgconfig, gstreamer }:
+
+let v = "2.3.1a"; in
 
 stdenv.mkDerivation rec {
-  name = "opencv-2.1.0";
+  name = "opencv-${v}";
 
   src = fetchurl {
-    url = "mirror://sourceforge/opencvlibrary/OpenCV-2.1.0.tar.bz2";
-    sha256 = "0zrr24hr64gz35qb95nsvvbmdf89biglpy9z14y5kaxh5baiy1i6";
+    url = "mirror://sourceforge/opencvlibrary/OpenCV-${v}.tar.bz2";
+    sha256 = "0325s7pa2npcw2gc06pr6q5ik4xdyf08rvkfc0myn10w20lzb8m9";
   };
 
-  buildInputs = [ cmake gtk glib libjpeg libpng libtiff jasper ffmpeg pkgconfig
-    xineLib gstreamer ];
+  buildInputs = [ gtk libjpeg libpng libtiff jasper ffmpeg gstreamer ];
 
-  patches = [ ./changeset_r3190.diff ];
+  buildNativeInputs = [ cmake pkgconfig ];
+
+  enableParallelBuilding = true;
 
   meta = {
     description = "Open Computer Vision Library with more than 500 algorithms";
