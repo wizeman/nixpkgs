@@ -1,11 +1,21 @@
-{stdenv, fetchurl, openssl, qt4, inkscape, dbus_libs, pkgconfig, libnl1}:
-
+{ stdenv, fetchurl, lib, openssl, qt4, inkscape, dbus_libs, pkgconfig, libnl1
+, readlineSupport ? true, readline
+}:
+assert readlineSupport -> readline!=null;
 let
   version = "0.7.3";
   src = fetchurl {
     url = "http://hostap.epitest.fi/releases/wpa_supplicant-${version}.tar.gz";
     sha256 = "0hwlsn512q2ps8wxxjmkjfdg3vjqqb9mxnnwfv1wqijkm3551kfh";
   };
+  extraConfig = lib.concatStringsSep "\n" (
+    [ "CONFIG_DEBUG_SYSLOG=y"
+      "CONFIG_CTRL_IFACE_DBUS=y"
+      "CONFIG_CTRL_IFACE_DBUS_NEW=y"
+      "CONFIG_CTRL_IFACE_DBUS_INTRO=y"
+      "CONFIG_DRIVER_NL80211=y"
+    ] ++ lib.optional readlineSupport "CONFIG_READLINE=y"
+  );
 in
 
 (stdenv.mkDerivation rec {
@@ -15,15 +25,12 @@ in
   preBuild = ''
     cd wpa_supplicant
     cp -v defconfig .config
-    echo CONFIG_DEBUG_SYSLOG=y | tee -a .config
-    echo CONFIG_CTRL_IFACE_DBUS=y | tee -a .config
-    echo CONFIG_CTRL_IFACE_DBUS_NEW=y | tee -a .config
-    echo CONFIG_CTRL_IFACE_DBUS_INTRO=y | tee -a .config
-    echo CONFIG_DRIVER_NL80211=y | tee -a .config
+    echo ${extraConfig} | tee -a .config
     substituteInPlace Makefile --replace /usr/local $out
   '';
 
-  buildInputs = [openssl dbus_libs libnl1];
+  buildInputs = [openssl dbus_libs libnl1]
+    ++ lib.optional readlineSupport readline;
 
   buildNativeInputs = [ pkgconfig ];
 
