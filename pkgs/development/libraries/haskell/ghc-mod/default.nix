@@ -2,8 +2,8 @@
 
 cabal.mkDerivation (self: {
   pname = "ghc-mod";
-  version = "1.0.6";
-  sha256 = "c075314de03209827a0e59ee3e63a4d21bc8edb024a1e36721eea248805b38ba";
+  version = "1.10.5";
+  sha256 = "0hbimrrlasa2rkmdz9d4fcyk70fynmwx0zqyl470hrwz8d8v73rc";
   buildDepends = [
     attoparsec attoparsecEnumerator ghcPaths hlint regexPosix
   ];
