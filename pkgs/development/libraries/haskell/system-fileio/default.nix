@@ -2,12 +2,12 @@
 
 cabal.mkDerivation (self: {
   pname = "system-fileio";
-  version = "0.3.3";
-  sha256 = "0z7y99g8ij9ykpxsgdb0addyibvpv2s95i0wpx4yc7mgi8cl50bx";
+  version = "0.3.5";
+  sha256 = "0d1baliykfpg15bzknx98slr0qa5yjr3va3w8hs02wgx6sp3wsy2";
   buildDepends = [ systemFilepath text time ];
   meta = {
-    homepage = "https://john-millikin.com/software/hs-fileio/";
-    description = "High-level filesystem interaction";
+    homepage = "https://john-millikin.com/software/haskell-filesystem/";
+    description = "Consistent filesystem interaction across GHC versions";
     license = self.stdenv.lib.licenses.mit;
     platforms = self.ghc.meta.platforms;
     maintainers = [

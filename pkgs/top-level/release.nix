@@ -304,7 +304,6 @@ with (import ./release-lib.nix);
   udev = linux;
   uml = ["i686-linux"];
   unrar = linux;
-  unzip = all;
   upstart = linux;
   usbutils = linux;
   utillinux = linux;
@@ -363,8 +362,8 @@ with (import ./release-lib.nix);
   };
 
   firefox36Pkgs.firefox = linux;
-  firefox80Pkgs.firefox = linux;
   firefox90Pkgs.firefox = linux;
+  firefox100Pkgs.firefox = linux;
 
   gnome = {
     gnome_panel = linux;
