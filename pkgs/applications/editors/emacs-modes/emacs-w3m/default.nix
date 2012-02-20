@@ -1,6 +1,6 @@
 { fetchcvs, stdenv, emacs, w3m, imagemagick, texinfo, autoconf }:
 
-let date = "2009-07-09"; in
+let date = "2012-01-15"; in
 stdenv.mkDerivation rec {
   name = "emacs-w3m-cvs${date}";
 
@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
     inherit date;
     cvsRoot = ":pserver:anonymous@cvs.namazu.org:/storage/cvsroot";
     module = "emacs-w3m";
-    sha256 = "ad46592d4fe3cdaadc02ce6d3fb1ac237e200beecd2ad11a04c1395a38a70a0a";
+    sha256 = "7a6d90b9d25f137d5a204cfa29f6c6afa8edb1ee302f969110ffda11f11909cc";
   };
 
   buildInputs = [ emacs w3m texinfo autoconf ];
