@@ -1,9 +1,8 @@
 { stdenv, fetchurl, kernel }:
 
 let
-
-  version = "0.4.1";
-  name = "bbswitch-${version}-${kernel.version}";
+  baseName = "bbswitch-0.4.1";
+  name = "${baseName}-${kernel.version}";
 
 in
 
@@ -11,21 +10,20 @@ stdenv.mkDerivation {
   inherit name;
 
   src = fetchurl {
-    url = "http://github.com/downloads/Bumblebee-Project/bbswitch/${name}.tar.gz";
+    url = "http://github.com/downloads/Bumblebee-Project/bbswitch/${baseName}.tar.gz";
     sha256 = "d579c6efc5f6482f0cf0b2c1b1f1a127413218cdffdc8f2d5a946c11909bda23";
   };
 
   preBuild = ''
     kernelVersion=$(cd ${kernel}/lib/modules && ls)
     substituteInPlace Makefile \
-      --replace "\$(shell uname -r)" "$kernelVersion" \
+      --replace "\$(shell uname -r)" "${kernel.version}" \
       --replace "/lib/modules" "${kernel}/lib/modules"
   '';
  
   installPhase = ''
-    kernelVersion=$(cd ${kernel}/lib/modules && ls)
-    ensureDir $out/lib/modules/$kernelVersion/misc
-    cp bbswitch.ko $out/lib/modules/$kernelVersion/misc
+    ensureDir $out/lib/modules/${kernel.version}/misc
+    cp bbswitch.ko $out/lib/modules/${kernel.version}/misc
 
     ensureDir $out/bin
     tee $out/bin/discrete_vga_poweroff << EOF

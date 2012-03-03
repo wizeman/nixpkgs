@@ -1,9 +1,9 @@
 args: with args;
 rec {
-  name = "moderncv-2012.01.16";
+  name = "moderncv-0.19";
   src = fetchurl {
     url = "http://mirror.ctan.org/macros/latex/contrib/moderncv.zip";
-    sha256 = "1sfpj76p0z128rvxw0svh7dfrvf3zhmi3v7bkzfkll4byij34ni0";
+    sha256 = "0i6nvpkb2fqkgrl26bf431cyckklra0wlcsh0ny2smx3s9y13ljw";
   };
 
   buildInputs = [texLive unzip];
