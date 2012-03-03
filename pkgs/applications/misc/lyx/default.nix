@@ -1,5 +1,5 @@
 # I haven't put much effort into this expressions .. so some optional depencencies may be missing - Marc
-{ fetchurl, stdenv, texLive, python, makeWrapper
+{ fetchurl, stdenv, texLive, python, makeWrapper, pkgconfig
 , libX11, qt, xz
 }:
 
@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
     sha256 = "065xvkdasgrv45f9mj1b3d1clkb3h39l9qjriy004i8d436wmsp5";
   };
 
-  buildInputs = [texLive qt python makeWrapper xz ];
+  buildInputs = [texLive qt python makeWrapper xz pkgconfig ];
 
   meta = {
     description = "WYSIWYM frontend for LaTeX, DocBook, etc.";
