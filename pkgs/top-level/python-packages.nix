@@ -597,6 +597,22 @@ let pythonPackages = python.modules // rec {
   };
 
 
+  iptools = buildPythonPackage rec {
+    version = "0.4.0";
+    name = "iptools-${version}";
+
+    src = fetchurl {
+      url = "http://pypi.python.org/packages/source/i/iptools/iptools-${version}.tar.gz";
+      md5 = "de60e5fab861f29dbf5f4446f8576532";
+    };
+
+    meta = {
+      description = "Utilities for manipulating IP addresses including a class that can be used to include CIDR network blocks in Django's INTERNAL_IPS setting.";
+      homepage = http://pypi.python.org/pypi/iptools;
+    };
+  };
+
+
   ipy = buildPythonPackage rec {
     version = "0.74";
     name = "ipy-${version}";
@@ -1822,6 +1838,35 @@ let pythonPackages = python.modules // rec {
     };
   });
 
+  skype4py = buildPythonPackage (rec {
+    name = "Skype4Py-1.0.32.0";
+
+    src = fetchurl {
+      url = mirror://sourceforge/skype4py/Skype4Py-1.0.32.0.tar.gz;
+      sha256 = "0cmkrv450wa8v50bng5dflpwkl5c1p9pzysjkb2956w5kvwh6f5b";
+    };
+
+    unpackPhase = ''
+      tar xf $src
+      find . -type d -exec chmod +rx {} \;
+      sourceRoot=`pwd`/`ls -d S*`
+    '';
+
+    doCheck = false;
+
+    propagatedBuildInputs = [ pkgs.xlibs.libX11 pkgs.pythonDBus pkgs.pygobject ];
+
+    meta = {
+      description = "High-level, platform independent Skype API wrapper for Python";
+
+      # The advertisement says https://developer.skype.com/wiki/Skype4Py
+      # but that url does not work. This following web page points to the
+      # download link and has some information about the package.
+      homepage = http://pypi.python.org/pypi/Skype4Py/1.0.32.0;
+
+      license = "BSD";
+    };
+  });
 
   sphinx = buildPythonPackage (rec {
     name = "Sphinx-1.0.7";
@@ -1888,6 +1933,32 @@ let pythonPackages = python.modules // rec {
     };
   };
 
+  taskcoach = buildPythonPackage rec {
+    name = "TaskCoach-1.3.8";
+
+    src = fetchurl {
+      url = "mirror://sourceforge/taskcoach/${name}.tar.gz";
+      sha256 = "0gc277cgnw6f167lrbxlf7rmgyjxwzgkmi77qz9xwvnwcj2l94xn";
+    };
+
+    propagatedBuildInputs = [ wxPython ];
+
+    # I don't know why I need to add these libraries. Shouldn't they
+    # be part of wxPython?
+    postInstall = ''
+      libspaths=${pkgs.xlibs.libSM}/lib:${pkgs.xlibs.libXScrnSaver}/lib
+      wrapProgram $out/bin/taskcoach.py \
+        --prefix LD_LIBRARY_PATH : $libspaths
+    '';
+
+    doCheck = false;
+
+    meta = {
+      homepage = http://taskcoach.org/;
+      description = "Todo manager to keep track of personal tasks and todo lists";
+      license = "GPLv3+";
+    };
+  };
 
   tempita = buildPythonPackage rec {
     version = "0.4";
@@ -2058,6 +2129,28 @@ let pythonPackages = python.modules // rec {
     inherit pythonPackages;
     wxGTK = pkgs.wxGTK28;
   };
+
+  xlib = buildPythonPackage (rec {
+    name = "xlib-0.15rc1";
+
+    src = fetchurl {
+      url = "mirror://sourceforge/python-xlib/python-${name}.tar.bz2";
+      sha256 = "0mvzz605pxzj7lfp2w6z4qglmr4rjza9xrb7sl8yn12cklzfky0m";
+    };
+
+    # Tests require `pyutil' so disable them to avoid circular references.
+    doCheck = false;
+
+    propagatedBuildInputs = [ pkgs.xlibs.libX11 ];
+
+    meta = {
+      description = "Fully functional X client library for Python programs";
+
+      homepage = http://python-xlib.sourceforge.net/;
+
+      license = "GPLv2+";
+    };
+  });
 
   zbase32 = buildPythonPackage (rec {
     name = "zbase32-1.1.2";
