@@ -1,15 +1,15 @@
 { stdenv, fetchXfce, pkgconfig, intltool, exo, gtk, libxfce4util, libxfce4ui
-, libglade, xfconf, xorg, libwnck, libnotify, libxklavier }:
+, libglade, xfconf, xorg, libwnck, libnotify, libxklavier, garcon }:
 
 #TODO: optional packages
 stdenv.mkDerivation rec {
-  name = "xfce4-settings-4.9.1"; # dev version for 4.10
+  name = "xfce4-settings-4.9.2"; # dev version for 4.10
 
-  src = fetchXfce.core name "0zzhi657jkdgvqgwxkf2pqnf7jqid6ymyfpp6xf0s6axs7pgyzn2";
+  src = fetchXfce.core name "1yz20xj6kp5mx4gfhqqa9hxls7i85h4dcqqkfkk9mlmw9vqmgl1v";
 
   buildInputs =
     [ pkgconfig intltool exo gtk libxfce4util libxfce4ui libglade
-      xfconf xorg.libXi xorg.libXcursor libwnck libnotify libxklavier
+      xfconf xorg.libXi xorg.libXcursor libwnck libnotify libxklavier garcon
     #gtk libxfce4util libxfcegui4 libwnck dbus_glib
       #xfconf libglade xorg.iceauth
     ];

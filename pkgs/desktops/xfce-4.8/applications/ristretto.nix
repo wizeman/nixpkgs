@@ -2,9 +2,9 @@
 , exo, dbus_glib, libxfce4util, libxfce4ui, xfconf }:
 
 stdenv.mkDerivation rec {
-  name = "ristretto-0.3.4";
+  name = "ristretto-0.3.5";
 
-  src = fetchXfce.app name "0chslylx6b7sylfkr5n7fgqcq1s6wn918kf588lzhv7mqdmmrvg2";
+  src = fetchXfce.app name "1wmq3s2pr3zmk9ps2lyas1m1mc22fnxvkmr7f3wma2ck5sf53p4n";
 
   buildInputs =
     [ pkgconfig intltool libexif gtk dbus_glib exo libxfce4util

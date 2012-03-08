@@ -1,9 +1,9 @@
 { stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util }:
 
 stdenv.mkDerivation rec {
-  name = "garcon-0.1.9";
+  name = "garcon-0.1.10";
 
-  src = fetchXfce.core name "1m9irwi94s571k3yyrmvmyb2zpb7akh498is8apx7w0sxk426pj8";
+  src = fetchXfce.core name "05hkfqirnbspr4rifnjzds7j6z5s5bvjwwfw47kc27qhj4lpljf2";
 
   buildInputs = [ pkgconfig intltool gtk libxfce4util ];
 
