@@ -1,15 +1,16 @@
 { stdenv, fetchXfce, pkgconfig, intltool, gtk }:
 
 stdenv.mkDerivation rec {
-  name = "xfce4-icon-theme-4.4.3";
+  name = "gtk-xfce-engine-2.99.1";
+  src = fetchXfce.core name "1qpc1m41m026r4pdzv13x5s0kis9v5da6jidj2pp20snpdl3syh7";
 
-  src = fetchXfce.art name "1yk6rx3zr9grm4jwpjvqdkl13pisy7qn1wm5cqzmd2kbsn96cy6l";
-
+  #TODO: gtk3
   buildInputs = [ pkgconfig intltool gtk ];
 
   meta = {
     homepage = http://www.xfce.org/;
-    description = "Icons for Xfce";
+    description = "GTK+ theme engine for Xfce";
+    license = "GPLv2+";
     platforms = stdenv.lib.platforms.linux;
     maintainers = [ stdenv.lib.maintainers.eelco ];
   };

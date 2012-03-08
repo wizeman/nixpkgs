@@ -1,12 +1,11 @@
-{ stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui, xfce4panel
+{ v, h, stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui, xfce4panel
 , libwnck, dbus_glib, xfconf, libglade, xorg }:
 
 #TODO: gnome stuff: gconf (assistive?), keyring
 
 stdenv.mkDerivation rec {
-  name = "xfce4-session-4.8.2";
-
-  src = fetchXfce.core name "1l608kik98jxbjl73waf8515hzji06lr80qmky2qlnp0b6js5g1i";
+  name = "xfce4-session-${v}";
+  src = fetchXfce.core name h;
 
   fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs =

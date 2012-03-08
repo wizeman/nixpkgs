@@ -1,9 +1,8 @@
-{ stdenv, fetchXfce, pkgconfig, intltool, libxfce4util, libxfcegui4, gtk }:
+{ v, h, stdenv, fetchXfce, pkgconfig, intltool, libxfce4util, libxfcegui4, gtk }:
 
 stdenv.mkDerivation rec {
-  name = "mousepad-0.2.16";
-
-  src = fetchXfce.app name "0gp7yh8b9w3f1n2la1l8nlqm0ycf0w0qkgcyv9yd51qv9gyr7rc6";
+  name = "mousepad-${v}";
+  src = fetchXfce.app name h;
 
   buildInputs = [ pkgconfig intltool libxfce4util libxfcegui4 gtk ];
 

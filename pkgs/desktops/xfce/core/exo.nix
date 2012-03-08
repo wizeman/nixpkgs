@@ -1,9 +1,8 @@
-{ stdenv, fetchXfce, pkgconfig, intltool, URI, glib, gtk, libxfce4ui, libxfce4util }:
+{ v, h, stdenv, fetchXfce, pkgconfig, intltool, URI, glib, gtk, libxfce4ui, libxfce4util }:
 
 stdenv.mkDerivation rec {
-  name = "exo-0.7.1";
-
-  src = fetchXfce.core name "11is93g82gl0z489ifvilg5s5q34j7p4brfvz3pz0klgsgr6grz4";
+  name = "exo-${v}";
+  src = fetchXfce.core name h;
 
   buildInputs = [ pkgconfig intltool URI glib gtk libxfce4ui libxfce4util ];
 

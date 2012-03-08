@@ -1,12 +1,10 @@
-{ stdenv, fetchXfce, pkgconfig, intltool, ncurses, gtk, vte, dbus_glib
+{ v, h, stdenv, fetchXfce, pkgconfig, intltool, ncurses, gtk, vte, dbus_glib
 , exo, libxfce4util
 }:
 
-let version = "0.4.8"; in
 stdenv.mkDerivation rec {
-  name = "xfce-terminal-${version}";
-
-  src = fetchXfce.app "Terminal-${version}" "13bqrhjkwlv4dgmbzw74didh125y2n4lvx0h3vx7xs3w2avv0pgy";
+  name = "xfce-terminal-${v}";
+  src = fetchXfce.app "Terminal-${v}" h;
 
   fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs = [ pkgconfig intltool exo gtk vte libxfce4util ncurses dbus_glib ];

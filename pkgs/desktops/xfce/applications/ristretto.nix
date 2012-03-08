@@ -1,10 +1,9 @@
-{ stdenv, fetchXfce, pkgconfig, intltool, libexif, gtk
+{ v, h, stdenv, fetchXfce, pkgconfig, intltool, libexif, gtk
 , exo, dbus_glib, libxfce4util, libxfce4ui, xfconf }:
 
 stdenv.mkDerivation rec {
-  name = "ristretto-0.3.5";
-
-  src = fetchXfce.app name "1wmq3s2pr3zmk9ps2lyas1m1mc22fnxvkmr7f3wma2ck5sf53p4n";
+  name = "ristretto-${v}";
+  src = fetchXfce.app name h;
 
   buildInputs =
     [ pkgconfig intltool libexif gtk dbus_glib exo libxfce4util

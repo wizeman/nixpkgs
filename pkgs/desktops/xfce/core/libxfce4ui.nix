@@ -1,10 +1,9 @@
-{ stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util, xfconf
+{ v, h, stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util, xfconf
 , libglade, libstartup_notification }:
 
 stdenv.mkDerivation rec {
-  name = "libxfce4ui-4.9.0";
-
-  src = fetchXfce.core name "1zfskfzmwzq64yavnv7gcjws0v6r192y5kkykw5qdwmhpcvg8wi4";
+  name = "libxfce4ui-${v}";
+  src = fetchXfce.core name h;
 
   #TODO: gladeui
   # Install into our own prefix instead.
