@@ -2,8 +2,10 @@
 , readlineSupport ? true, readline
 }:
 assert readlineSupport -> readline!=null;
+
+stdenv.mkDerivation rec {
   version = "0.7.3";
-  
+
   name = "wpa_supplicant-${version}";
 
   src = fetchurl {
@@ -18,7 +20,7 @@ assert readlineSupport -> readline!=null;
       "CONFIG_DRIVER_NL80211=y"
     ] ++ lib.optional readlineSupport "CONFIG_READLINE=y"
   );
-  
+
   preBuild = ''
     cd wpa_supplicant
     cp -v defconfig .config
@@ -48,10 +50,10 @@ assert readlineSupport -> readline!=null;
     ];
 
   postInstall = ''
-    ensureDir $out/share/man/man5 $out/share/man/man8
+    mkdir -p $out/share/man/man5 $out/share/man/man8
     cp -v doc/docbook/*.5 $out/share/man/man5/
     cp -v doc/docbook/*.8 $out/share/man/man8/
-    ensureDir $out/etc/dbus-1/system.d $out/share/dbus-1/system-services
+    mkdir -p $out/etc/dbus-1/system.d $out/share/dbus-1/system-services
     cp -v dbus/*service $out/share/dbus-1/system-services
     sed -e "s@/sbin/wpa_supplicant@$out&@" -i $out/share/dbus-1/system-services/*
     cp -v dbus/dbus-wpa_supplicant.conf $out/etc/dbus-1/system.d
