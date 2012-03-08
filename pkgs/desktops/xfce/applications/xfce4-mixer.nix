@@ -1,8 +1,7 @@
-{ stdenv, fetchXfce, pkgconfig, intltool, glib, gst_all, gtk
+{ v, h, stdenv, fetchXfce, pkgconfig, intltool, glib, gst_all, gtk
 , libxfce4util, libxfce4ui, xfce4panel, xfconf, makeWrapper }:
 
 let
-
   # The usual Gstreamer plugins package has a zillion dependencies
   # that we don't need for a simple mixer, so build a minimal package.
   gstPluginsBase = gst_all.gstPluginsBase.override {
@@ -12,9 +11,8 @@ let
 in
 
 stdenv.mkDerivation rec {
-  name = "xfce4-mixer-4.8.0";
-
-  src = fetchXfce.app name "1aqgjxvck6hx26sk3n4n5avhv02vs523mfclcvjb3xnks3yli7wz";
+  name = "xfce4-mixer-${v}";
+  src = fetchXfce.app name h;
 
   buildInputs =
     [ pkgconfig intltool glib gst_all.gstreamer gstPluginsBase gtk

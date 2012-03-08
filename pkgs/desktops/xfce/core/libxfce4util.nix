@@ -1,9 +1,8 @@
-{ stdenv, fetchXfce, pkgconfig, glib, intltool }:
+{ v, h, stdenv, fetchXfce, pkgconfig, glib, intltool }:
 
 stdenv.mkDerivation rec {
-  name = "libxfce4util-4.8.2";
-
-  src = fetchXfce.core name "05n8586h2fwkibfld5fm4ygx1w66jnbqqb3li0ardjvm2n24k885";
+  name = "libxfce4util-${v}";
+  src = fetchXfce.core name h;
 
   buildInputs = [ pkgconfig glib intltool ];
 

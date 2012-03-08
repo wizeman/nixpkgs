@@ -1,10 +1,9 @@
-{ stdenv, fetchXfce, pkgconfig, intltool, gtk
+{ v, h, stdenv, fetchXfce, pkgconfig, intltool, gtk
 , libxfce4util, xfconf, libglade, libstartup_notification }:
 
 stdenv.mkDerivation rec {
-  name = "libxfcegui4-4.8.1";
-
-  src = fetchXfce.core name "0hr4h6a9p6w3qw1976p8v9c9pwhd9zhrjlbaph0p7nyz7j1836ih";
+  name = "libxfcegui4-${v}";
+  src = fetchXfce.core name h;
 
   #TODO: gladeui
   # By default, libxfcegui4 tries to install into libglade's prefix.
