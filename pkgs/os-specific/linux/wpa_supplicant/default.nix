@@ -2,8 +2,10 @@
 , readlineSupport ? true, readline
 }:
 assert readlineSupport -> readline!=null;
+
+stdenv.mkDerivation rec {
   version = "0.7.3";
-  
+
   name = "wpa_supplicant-${version}";
 
   src = fetchurl {
@@ -18,7 +20,7 @@ assert readlineSupport -> readline!=null;
       "CONFIG_DRIVER_NL80211=y"
     ] ++ lib.optional readlineSupport "CONFIG_READLINE=y"
   );
-  
+
   preBuild = ''
     cd wpa_supplicant
     cp -v defconfig .config
