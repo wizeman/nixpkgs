@@ -1,10 +1,9 @@
-{ stdenv, fetchXfce, pkgconfig, gtk, intltool, libglade, libxfce4util
+{ v, h, stdenv, fetchXfce, pkgconfig, gtk, intltool, libglade, libxfce4util
 , libxfce4ui, xfconf, libwnck, libstartup_notification, xorg }:
 
 stdenv.mkDerivation rec {
-  name = "xfwm4-4.8.3";
-
-  src = fetchXfce.core name "0zi2g1d2jdgw5armlk9xjh4ykmydy266gdba86nmhy951gm8n3hb";
+  name = "xfwm4-${v}";
+  src = fetchXfce.core name h;
 
   #TODO: kde systray, docs
   buildInputs =

@@ -1,14 +1,13 @@
-{ stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui
-, libwnck, xfconf, libglade, libxfce4menu, xfce4panel, thunar, exo, garcon, libnotify }:
+{ v, h, stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui
+, libwnck, xfconf, libglade, xfce4panel, thunar, exo, garcon, libnotify }:
 
 stdenv.mkDerivation rec {
-  name = "xfdesktop-4.8.3";
-
-  src = fetchXfce.core name "097lc9djmay0jyyl42jmvcfda75ndp265nzn0aa3hv795bsn1175";
+  name = "xfdesktop-${v}";
+  src = fetchXfce.core name h;
 
   buildInputs =
     [ pkgconfig intltool gtk libxfce4util libxfce4ui libwnck xfconf
-      libglade libxfce4menu xfce4panel thunar exo garcon libnotify
+      libglade xfce4panel thunar exo garcon libnotify
     ];
 
   enableParallelBuilding = true;
