@@ -1580,7 +1580,7 @@ let
   x11_ssh_askpass = callPackage ../tools/networking/x11-ssh-askpass { };
 
   xbursttools = assert stdenv ? glibc; import ../tools/misc/xburst-tools {
-    inherit stdenv fetchgit autoconf automake libusb confuse;
+    inherit stdenv fetchgit autoconf automake libusb confuse pkgconfig;
     # It needs a cross compiler for mipsel to build the firmware it will
     # load into the Ben Nanonote
     gccCross =
@@ -1822,7 +1822,7 @@ let
       cross = assert crossSystem != null; crossSystem;
     });
 
-  gcc_realCross = gcc45_realCross;
+  gcc_realCross = gcc46_realCross;
 
   gccCrossStageStatic = let
       isMingw = (stdenv.cross.libc == "msvcrt");
@@ -3471,9 +3471,7 @@ let
 
   gamin = callPackage ../development/libraries/gamin { };
 
-  gav = callPackage ../games/gav {
-    stdenv = overrideGCC stdenv gcc41;
-  };
+  gav = callPackage ../games/gav { };
 
   gdome2 = callPackage ../development/libraries/gdome2 {
     inherit (gnome) gtkdoc;
@@ -3594,9 +3592,9 @@ let
     installLocales = getConfig [ "glibc" "locales" ] false;
   };
 
-  glibcLocales = callPackage ../development/libraries/glibc/2.14/locales.nix { };
+  glibcLocales = callPackage ../development/libraries/glibc/2.13/locales.nix { };
 
-  glibcInfo = callPackage ../development/libraries/glibc/2.14/info.nix { };
+  glibcInfo = callPackage ../development/libraries/glibc/2.13/info.nix { };
 
   glibc_multi =
       runCommand "${glibc.name}-multi"
@@ -4728,7 +4726,9 @@ let
 
   vtk = callPackage ../development/libraries/vtk { };
 
-  vxl = callPackage ../development/libraries/vxl { };
+  vxl = callPackage ../development/libraries/vxl {
+    libpng = libpng12;
+  };
 
   webkit =
     builderDefsPackage ../development/libraries/webkit {
@@ -7125,6 +7125,8 @@ let
     inherit (gnome) GConf ORBit2;
     neon = neon029;
     libwpd = libwpd_08;
+    /* It uses Switch.pm, deprecated in perl 5.14 */
+    perl = perl510;
     zip = zip.override { enableNLS = false; };
   };
 
@@ -8580,7 +8582,9 @@ let
 
   xosd = callPackage ../misc/xosd { };
 
-  xsane = callPackage ../misc/xsane { };
+  xsane = callPackage ../misc/xsane {
+    libpng = libpng12;
+  };
 
   yafc = callPackage ../applications/networking/yafc { };
 
