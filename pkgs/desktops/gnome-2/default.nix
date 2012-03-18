@@ -11,10 +11,6 @@
 
 #### PLATFORM
 
-  audiofile = callPackage ./platform/audiofile { };
-
-  esound = callPackage ./platform/esound { };
-
   libIDL = callPackage ./platform/libIDL {
     gettext = if stdenv.isDarwin then gettext else null;
   };
@@ -50,8 +46,6 @@
 
   gnome_vfs_monikers = callPackage ./platform/gnome-vfs-monikers { };
 
-  libgnome_keyring = callPackage ./platform/libgnome-keyring { };
-
   libgnome = callPackage ./platform/libgnome { };
 
   libgnomeui = callPackage ./platform/libgnomeui { };
@@ -61,8 +55,6 @@
   libbonoboui = callPackage ./platform/libbonoboui { };
 
   at_spi = callPackage ./platform/at-spi { };
-
-  glib_networking = callPackage ./platform/glib-networking { };
 
   gtk_doc = callPackage ./platform/gtk-doc { };
 
@@ -84,11 +76,6 @@
   libsoup = callPackage ./desktop/libsoup { };
 
   libwnck = callPackage ./desktop/libwnck { };
-
-  # Not part of GNOME desktop, but provides CSS support for librsvg
-  libcroco = callPackage ./desktop/libcroco { };
-
-  librsvg = callPackage ./desktop/librsvg { };
 
   libgweather = callPackage ./desktop/libgweather { };
 
