@@ -1,10 +1,10 @@
-{ v, h, stdenv, fetchXfce, pkgconfig, intltool, glib, gst_all, gtk
-, libxfce4util, libxfce4ui, xfce4panel, xfconf, makeWrapper }:
+{ v, h, stdenv, fetchXfce, pkgconfig, intltool, glib, gstreamer, gst_plugins_base, gtk
+, libxfce4util, libxfce4ui, xfce4panel, xfconf }:
 
 let
   # The usual Gstreamer plugins package has a zillion dependencies
   # that we don't need for a simple mixer, so build a minimal package.
-  gstPluginsBase = gst_all.gstPluginsBase.override {
+  gst_plugins_minimal = gst_plugins_base.override {
     minimalDeps = true;
   };
 
@@ -15,19 +15,21 @@ stdenv.mkDerivation rec {
   src = fetchXfce.app name h;
 
   buildInputs =
-    [ pkgconfig intltool glib gst_all.gstreamer gstPluginsBase gtk
-      libxfce4util libxfce4ui xfce4panel xfconf makeWrapper
+    [ pkgconfig intltool glib gstreamer gst_plugins_minimal gtk
+      libxfce4util libxfce4ui xfce4panel xfconf
     ];
 
   postInstall =
     ''
       mkdir -p $out/nix-support
-      echo ${gstPluginsBase} > $out/nix-support/propagated-user-env-packages
+      echo ${gst_plugins_minimal} > $out/nix-support/propagated-user-env-packages
     '';
 
   meta = {
     homepage = http://www.xfce.org/projects/xfce4-mixer;
     description = "A volume control application for the Xfce desktop environment";
     license = "GPLv2+";
+    platforms = stdenv.lib.platforms.linux;
+    maintainers = [ stdenv.lib.maintainers.eelco ];
   };
 }
