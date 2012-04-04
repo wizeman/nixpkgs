@@ -1,14 +1,13 @@
 { callPackage, pkgs, isTesting }:
 let
   gnome = pkgs.gnome;
-  gtkLibs = pkgs.gtkLibs;
 in rec {
 
   #### DEPENDENCIES
 
   lib = import ../../lib;
 
-  inherit (gtkLibs) gtk glib;
+  inherit (pkgs) gtk glib;
   inherit (gnome) libglade libwnck vte;
   inherit (pkgs.perlPackages) URI;
   inherit (pkgs) pcre;
