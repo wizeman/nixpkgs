@@ -10,15 +10,11 @@ cabal.mkDerivation (self: {
     hint HList libmpd mtl network parsec random regexPosix split X11
     xmonad xmonadContrib
   ];
-  noHaddock = true;
   meta = {
     homepage = "http://projects.haskell.org/xmonad-extras";
     description = "Third party extensions for xmonad with wacky dependencies";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })
