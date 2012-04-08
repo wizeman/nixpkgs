@@ -99,7 +99,9 @@ in rec {
   #TODO: correct links; more stuff
   # move power_manager to core
 
-  xfce4_appfinder     = callPackage ./core/xfce4-appfinder.nix { };
+  xfce4_appfinder = callPackage ./core/xfce4-appfinder.nix  ( if isTesting then
+    { v= "4.9.4";   h= "12lgrbd1n50w9n8xkpai98s2aw8vmjasrgypc57sp0x0qafsqaxq"; } else
+    { v= "4.8.0";   h= "0zy7i9x4qjchmyb8nfpb7m2ply5n2aq35p9wrhb8lpz4am1ihx7x"; } );
   thunar_volman       = callPackage ./core/thunar-volman.nix { };
 
   #### ART
