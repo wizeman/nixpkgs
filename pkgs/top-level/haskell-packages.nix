@@ -153,7 +153,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
     xhtml        = self.xhtml_3000_2_0_5;       # 7.4.1 ok
     zlib         = self.zlib_0_5_3_3;           # 7.4.1 ok
     HTTP         = self.HTTP_4000_2_2;          # 7.4.1 ok
-    text         = self.text_0_11_1_13;         # 7.4.1 ok
+    text         = self.text_0_11_2_0;          # 7.4.1 ok
     transformers = self.transformers_0_2_2_0;   # 7.4.1 ok
     mtl          = self.mtl_2_0_1_0;            # 7.4.1 ok
     random       = self.random_1_0_1_1;         # 7.4.1 ok
@@ -564,10 +564,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   cprngAes = callPackage ../development/libraries/haskell/cprng-aes {};
 
-  criterion = callPackage ../development/libraries/haskell/criterion {
-    mtl = self.mtl2;
-    parsec = self.parsec3;
-  };
+  criterion = callPackage ../development/libraries/haskell/criterion {};
 
   Crypto = callPackage ../development/libraries/haskell/Crypto {};
 
@@ -858,9 +855,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   hmatrix = callPackage ../development/libraries/haskell/hmatrix {};
 
-  hoogle = callPackage ../development/libraries/haskell/hoogle {
-    haskellSrcExts = self.haskellSrcExts_1_11_1;
-  };
+  hoogle = callPackage ../development/libraries/haskell/hoogle {};
 
   hopenssl = callPackage ../development/libraries/haskell/hopenssl {};
 
@@ -972,9 +967,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   mathFunctions = callPackage ../development/libraries/haskell/math-functions {};
 
-  maude = callPackage ../development/libraries/haskell/maude {
-    parsec = self.parsec3;
-  };
+  maude = callPackage ../development/libraries/haskell/maude {};
 
   MaybeT = callPackage ../development/libraries/haskell/MaybeT {};
 
@@ -995,6 +988,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   monadControl_0_2_0_3 = callPackage ../development/libraries/haskell/monad-control/0.2.0.3.nix {};
   monadControl_0_3_1_1 = callPackage ../development/libraries/haskell/monad-control/0.3.1.1.nix {};
   monadControl = self.monadControl_0_3_1_1;
+
+  monadcryptorandom = callPackage ../development/libraries/haskell/monadcryptorandom {};
 
   monadLoops = callPackage ../development/libraries/haskell/monad-loops {};
 
@@ -1017,9 +1012,12 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   mtl_1_1_0_2 = callPackage ../development/libraries/haskell/mtl/1.1.0.2.nix {};
   mtl_1_1_1_1 = callPackage ../development/libraries/haskell/mtl/1.1.1.1.nix {};
   mtl_2_0_1_0 = callPackage ../development/libraries/haskell/mtl/2.0.1.0.nix {};
+  mtl_2_1 = callPackage ../development/libraries/haskell/mtl/2.1.nix {
+    transformers = self.transformers_0_3_0_0;
+  };
   mtl1 = self.mtl_1_1_0_2;
-  mtl2 = self.mtl_2_0_1_0;
-  mtl  = self.mtl1;
+  mtl2 = self.mtl_2_1;
+  mtl  = self.mtl2;
 
   mtlparse = callPackage ../development/libraries/haskell/mtlparse {};
 
@@ -1164,6 +1162,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   rvar = callPackage ../development/libraries/haskell/rvar {};
 
+  reactiveBanana = callPackage ../development/libraries/haskell/reactive-banana {};
+
   readline = callPackage ../development/libraries/haskell/readline {
     inherit (pkgs) readline;
   };
@@ -1206,13 +1206,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   regular = callPackage ../development/libraries/haskell/regular {};
 
   repa = callPackage ../development/libraries/haskell/repa {};
-
   repaAlgorithms = callPackage ../development/libraries/haskell/repa-algorithms {};
-
-  repaBytestring = callPackage ../development/libraries/haskell/repa-bytestring {};
-
   repaExamples = callPackage ../development/libraries/haskell/repa-examples {};
-
   repaIo = callPackage ../development/libraries/haskell/repa-io {};
 
   RepLib = callPackage ../development/libraries/haskell/RepLib {};
@@ -1360,7 +1355,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   text_0_11_0_6 = callPackage ../development/libraries/haskell/text/0.11.0.6.nix {};
   text_0_11_1_5 = callPackage ../development/libraries/haskell/text/0.11.1.5.nix {};
   text_0_11_1_13 = callPackage ../development/libraries/haskell/text/0.11.1.13.nix {};
-  text = self.text_0_11_1_13;
+  text_0_11_2_0 = callPackage ../development/libraries/haskell/text/0.11.2.0.nix {};
+  text = self.text_0_11_2_0;
 
   thespian = callPackage ../development/libraries/haskell/thespian {};
 
@@ -1431,9 +1427,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   void = callPackage ../development/libraries/haskell/void {};
 
-  vty = callPackage ../development/libraries/haskell/vty {
-    mtl = self.mtl2;
-  };
+  vty = callPackage ../development/libraries/haskell/vty {};
 
   wai = callPackage ../development/libraries/haskell/wai {};
 
@@ -1537,15 +1531,11 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   };
   zlib = self.zlib_0_5_3_3;
 
-  zlibBindings_0_0_3_2 = callPackage ../development/libraries/haskell/zlib-bindings/0.0.3.2.nix {};
-  zlibBindings_0_1_0_1 = callPackage ../development/libraries/haskell/zlib-bindings/0.1.0.1.nix {};
-  zlibBindings = self.zlibBindings_0_0_3_2;
+  zlibBindings = callPackage ../development/libraries/haskell/zlib-bindings {};
 
   zlibConduit = callPackage ../development/libraries/haskell/zlib-conduit {};
 
-  zlibEnum = callPackage ../development/libraries/haskell/zlib-enum {
-    zlibBindings = self.zlibBindings_0_0_3_2;
-  };
+  zlibEnum = callPackage ../development/libraries/haskell/zlib-enum {};
 
   Zwaluw = callPackage ../development/libraries/haskell/Zwaluw {};
 
@@ -1640,9 +1630,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
     };
   };
 
-  xmobar = callPackage ../applications/misc/xmobar {
-    parsec = self.parsec3;
-  };
+  xmobar = callPackage ../applications/misc/xmobar {};
 
   xmonad = callPackage ../applications/window-managers/xmonad {
     X11 = self.X11_1_5_0_1;
