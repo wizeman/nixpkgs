@@ -769,6 +769,10 @@ let
 
   gnupg = callPackage ../tools/security/gnupg { };
 
+  gnupg2_1 = callPackage ../tools/security/gnupg/git.nix {
+    libassuan = libassuan2_1;
+  };
+
   gnuplot = callPackage ../tools/graphics/gnuplot {
     texLive = null;
     lua = null;
@@ -939,6 +943,8 @@ let
 
   lftp = callPackage ../tools/networking/lftp { };
 
+  libconfig = callPackage ../development/libraries/libconfig { };
+
   libtirpc = callPackage ../development/libraries/ti-rpc { };
 
   libtorrent = callPackage ../tools/networking/p2p/libtorrent { };
@@ -978,6 +984,8 @@ let
   man_db = callPackage ../tools/misc/man-db { };
 
   memtest86 = callPackage ../tools/misc/memtest86 { };
+
+  memtest86plus = callPackage ../tools/misc/memtest86/plus.nix { };
 
   mc = callPackage ../tools/misc/mc { };
 
@@ -1085,6 +1093,8 @@ let
 
   nlopt = callPackage ../development/libraries/nlopt {};
 
+  npth = callPackage ../development/libraries/npth {};
+
   nmap = callPackage ../tools/security/nmap {
     inherit (pythonPackages) pysqlite;
   };
@@ -1164,17 +1174,20 @@ let
 
   hurdPartedCross =
     if crossSystem != null && crossSystem.config == "i586-pc-gnu"
-    then (callPackage ../tools/misc/parted {
-        # Needs the Hurd's libstore.
-        hurd = gnu.hurdCrossIntermediate;
+    then (makeOverridable
+            ({ hurd }:
+              (parted.override {
+                # Needs the Hurd's libstore.
+                inherit hurd;
 
-        # The Hurd wants a libparted.a.
-        enableStatic = true;
+                # The Hurd wants a libparted.a.
+                enableStatic = true;
 
-        gettext = null;
-        readline = null;
-        devicemapper = null;
-      }).hostDrv
+                gettext = null;
+                readline = null;
+                devicemapper = null;
+              }).hostDrv)
+           { hurd = gnu.hurdCrossIntermediate; })
     else null;
 
   patch = gnupatch;
@@ -2361,6 +2374,8 @@ let
 
   jikes = callPackage ../development/compilers/jikes { };
 
+  julia = callPackage ../development/compilers/julia { };
+
   lazarus = builderDefsPackage (import ../development/compilers/fpc/lazarus.nix) {
     inherit makeWrapper gtk glib pango atk gdk_pixbuf;
     inherit (xlibs) libXi inputproto libX11 xproto libXext xextproto;
@@ -2961,10 +2976,7 @@ let
 
   cmakeWithGui = cmakeCurses.override { useQt4 = true; };
 
-  coccinelle = callPackage ../development/tools/misc/coccinelle {
-    ocamlPackages = ocamlPackages_3_12_1;
-    ocaml = ocaml_3_12_1;
-  };
+  coccinelle = callPackage ../development/tools/misc/coccinelle { };
 
   cppi = callPackage ../development/tools/misc/cppi { };
 
@@ -3378,6 +3390,8 @@ let
   dbus_all = callPackage ../development/libraries/dbus {
     useX11 = true;
   };
+
+  dbus_cplusplus = callPackage ../development/libraries/dbus-cplusplus { };
 
   dbus_glib = callPackage ../development/libraries/dbus-glib { };
 
@@ -3905,6 +3919,8 @@ let
 
   libassuan = callPackage ../development/libraries/libassuan { };
 
+  libassuan2_1 = callPackage ../development/libraries/libassuan/git.nix { };
+
   libav = callPackage ../development/libraries/libav { };
 
   libavc1394 = callPackage ../development/libraries/libavc1394 { };
@@ -4082,9 +4098,11 @@ let
 
   libiconv = callPackage ../development/libraries/libiconv { };
 
+  libiconvOrEmpty = if (libiconvOrNull == null) then [] else libiconv;
+
   libiconvOrNull = if gcc ? libc then null else libiconv;
 
-  libiconvOrLibc = if gcc ? libc then gcc.libc else libiconv;
+  libiconvOrLibc = if (libiconvOrNull == null) then gcc.libc else libiconv;
 
   libid3tag = callPackage ../development/libraries/libid3tag { };
 
@@ -4759,6 +4777,8 @@ let
 
   vmime = callPackage ../development/libraries/vmime { };
 
+  vrpn = callPackage ../development/libraries/vrpn { };
+
   vtk = callPackage ../development/libraries/vtk { };
 
   vxl = callPackage ../development/libraries/vxl {
@@ -4782,7 +4802,7 @@ let
       perl = perl510;
     };
 
-  webkit_gtk2 = 
+  webkit_gtk2 =
     builderDefsPackage ../development/libraries/webkit/gtk2.nix {
       inherit (gnome) gtkdoc libsoup;
       inherit gtk atk pango glib;
@@ -5256,10 +5276,7 @@ let
     openldap = null;
   };
 
-  shishi = callPackage ../servers/shishi {
-    # GNU Shishi 1.0.0 fails to build with GnuTLS 3.x.
-    gnutls = gnutls2;
-  };
+  shishi = callPackage ../servers/shishi { };
 
   sipwitch = callPackage ../servers/sip/sipwitch { };
 
@@ -5412,6 +5429,8 @@ let
 
   eject = callPackage ../os-specific/linux/eject { };
 
+  ffado = callPackage ../os-specific/linux/ffado { };
+
   fbterm = builderDefsPackage (import ../os-specific/linux/fbterm) {
     inherit fontconfig gpm freetype pkgconfig ncurses;
   };
@@ -5442,7 +5461,6 @@ let
 
   # GNU/Hurd core packages.
   gnu = recurseIntoAttrs (callPackage ../os-specific/gnu {
-    callPackage = newScope pkgs.gnu;
     inherit platform crossSystem;
   });
 
@@ -5684,6 +5702,7 @@ let
       [ #kernelPatches.fbcondecor_2_6_38
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs3_2
+        kernelPatches.cifs_timeout_2_6_38
         #kernelPatches.mips_restart_2_6_36
       ];
   };
@@ -5695,6 +5714,7 @@ let
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs3_3
         kernelPatches.efi_bootstub_config_3_3
+        kernelPatches.btrfs_enospc
         #kernelPatches.mips_restart_2_6_36
       ];
   };
@@ -5830,7 +5850,7 @@ let
 
   # The current default kernel / kernel modules.
   linux = linuxPackages.kernel;
-  linuxPackages = linuxPackages_2_6_35;
+  linuxPackages = linuxPackages_3_2;
 
   keyutils = callPackage ../os-specific/linux/keyutils { };
 
@@ -6286,6 +6306,7 @@ let
 
   ### APPLICATIONS
 
+  a2jmidid = callPackage ../applications/audio/a2jmidid { };
 
   aangifte2005 = callPackage_i686 ../applications/taxes/aangifte-2005 { };
 
@@ -6325,10 +6346,7 @@ let
 
   audacious = callPackage ../applications/audio/audacious { };
 
-  audacity = callPackage ../applications/audio/audacity {
-    portaudio = portaudioSVN;
-    ffmpeg = ffmpeg_0_6_90;
-  };
+  audacity = callPackage ../applications/audio/audacity { };
 
   aumix = callPackage ../applications/audio/aumix {
     gtkGUI = false;
@@ -6792,7 +6810,7 @@ let
   gmu = callPackage ../applications/audio/gmu { };
 
   gnash = callPackage ../applications/video/gnash {
-    xulrunner = icecatXulrunner3;
+    xulrunner = firefoxPkgs.xulrunner;
     inherit (gnome) gtkglext;
   };
 
@@ -7099,6 +7117,8 @@ let
     inherit firefox;
     inherit (xlibs) libX11 xproto;
   };
+
+  easytag = callPackage ../applications/audio/easytag { };
 
   mp3info = callPackage ../applications/audio/mp3info { };
 
@@ -7655,7 +7675,7 @@ let
     pyrex = pyrex095;
   };
 
-  xscreensaver = callPackage ../applications/graphics/xscreensaver {
+  xscreensaver = callPackage ../misc/screensavers/xscreensaver {
     inherit (gnome) libglade;
   };
 
@@ -8043,12 +8063,8 @@ let
       kdesvn = callPackage ../applications/version-management/kdesvn { };
 
       kdevelop = callPackage ../applications/editors/kdevelop { };
-      kdevelop_4_3 = callPackage ../applications/editors/kdevelop/4.3.0.nix {
-        kdevplatform = self.kdevplatform_1_3;
-      };
 
       kdevplatform = callPackage ../development/libraries/kdevplatform { };
-      kdevplatform_1_3 = callPackage ../development/libraries/kdevplatform/1.3.0.nix { };
 
       kdiff3 = callPackage ../tools/text/kdiff3 { };
 
@@ -8608,6 +8624,7 @@ let
 
   vimprobable2 = callPackage ../applications/networking/browsers/vimprobable2 {
     inherit (gnome) libsoup;
+    webkit = webkit_gtk2;
   };
 
   vimprobable2Wrapper = wrapFirefox
