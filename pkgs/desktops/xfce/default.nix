@@ -40,39 +40,40 @@ in rec {
   #### CORE
 
   libxfce4util    = callPackage ./core/libxfce4util.nix   ( if isTesting then
-    { v= "4.9.0";   h= "12lhaqxndy1yns6qi04rdn088mifviv4gbb8npgk4m2rj8xsyf3x"; } else
+    { v= "4.9.1";   h= "0xb23lqk1fswwzlrx7i5a07a3l4rsdq3plf1ppca91hn2y32547z"; } else
     { v= "4.8.2";   h= "05n8586h2fwkibfld5fm4ygx1w66jnbqqb3li0ardjvm2n24k885"; } );
   xfconf          = callPackage ./core/xfconf.nix         ( if isTesting then
-    { v= "4.9.0";   h= "1pdcx69j83kl1rvfn77zfzcpk9v6gz318br0a0fqqgd0m2sf1pq0"; } else
+    { v= "4.9.1";   h= "024ngd2y9iybbr37fbzsccxa0wclgycjam2298w7hsi0lphhjvih"; } else
     { v= "4.8.1";   h= "1jwkb73xcgqfly449jwbn2afiyx50p150z60x19bicps75sp6q4q"; } );
   libxfce4ui      = callPackage ./core/libxfce4ui.nix     ( if isTesting then
-    { v= "4.9.1";   h= "1nmvwxccgk3yv5y3izy4h7b9il6crbg6rb2yrxw61pc43i9prga0"; } else
+    { v= "4.9.2";   h= "0glwi1nd04mdfm5yk0jpn748a9szac1242qbj4951r8fbi9qp5wm"; } else
     { v= "4.8.1";   h= "0mlrcr8rqmv047xrb2dbh7f4knsppb1anx2b05s015h6v8lyvjrr"; } );
-  libxfcegui4     = if isTesting then null else callPackage ./core/libxfcegui4.nix
-    { v= "4.8.1";   h= "0hr4h6a9p6w3qw1976p8v9c9pwhd9zhrjlbaph0p7nyz7j1836ih"; };
+  libxfcegui4     = callPackage ./core/libxfcegui4.nix    ( if isTesting then
+    { v= "4.9.0";   h= "15npp19bnn6864i9rw3lw6hl4315wb7q8fr2b68wn9cdxz9y7iqv"; } else
+    { v= "4.8.1";   h= "0hr4h6a9p6w3qw1976p8v9c9pwhd9zhrjlbaph0p7nyz7j1836ih"; } );
   exo             = callPackage ./core/exo.nix            ( if isTesting then
-    { v= "0.7.2";   h= "1pj4arfqpzzy7bx4dd4p5jjn669wq61nyza099xj5ara9ra1sf7b"; } else
+    { v= "0.7.3";   h= "12fxgmnrv25fpmpwlzbl5sj1vxr14vkzf000az5rbnnqwnvdapfz"; } else
     { v= "0.6.2";   h= "0f8zh5y057l7xffskjvky6k88hrnz6jyk35mvlfpmx26anlgd77l"; } );
   garcon          = callPackage ./core/garcon.nix
-    { v= "0.1.11";  h= "1z1dd70h235r5ci6x60a7w00bbgwd8fcdgbfm1lyk724lc3i4b17"; };
+    { v= "0.1.12";  h= "1j0236pycj32y8mhwm5hv1dvbrrc45v8v48ln46x57zhykzlaldv"; }; # testing
   xfce4panel      = callPackage ./core/xfce4-panel.nix    ( if isTesting then
-    { v= "4.9.1";   h= "1msqfx1lnp08ky6c8vr5h735z5ks4b0c40c7f6iblb59vz20v06r"; } else
+    { v= "4.9.2";   h= "1zx8670smsnis6f9arvj3zw9fvimgripb4hdpvrb7zz3qkr1b3w6"; } else
     { v= "4.8.6";   h= "00zdkg1jg4n2n109nxan8ji2m06r9mc4lnlrvb55xvj229m2dwb6"; } );
   thunar          = callPackage ./core/thunar.nix         ( if isTesting then
-    { v= "1.3.1";   h= "0fysmn24km22xa1p116pd8zlsg1jz5r8gx5q6v256jrm4vinq9sa"; } else
+    { v= "1.3.2";   h= "1b208q55x2bmnvz0vb5h8pjfp4pajlwh4p3d03y6gpkspfq5mipi"; } else
     { v= "1.2.3";   h= "19mczys6xr683r68g3s2njrrmnk1p73zypvwrhajw859c6nsjsp6"; } );
   xfce4settings   = callPackage ./core/xfce4-settings.nix ( if isTesting then
-    { v= "4.9.4";   h= "1zbywji5bpp30ni76rk7fyx3p8b3b50w97i8xzhg744d16lm692m"; } else
+    { v= "4.9.5";   h= "01spf0dw68m9xvzvfrqp5xkf140an1mp8bzm21qvf3hvgvlyxd47"; } else
     { v= "4.8.3";   h= "0bmw0s6jp2ws4n0f3387zwsyv46b0w89m6r70yb7wrqy9r3wqy6q"; } );
   xfce4session    = callPackage ./core/xfce4-session.nix  /*( if isTesting then
       #TODO: some hardcoded problem: trying to create /usr/share/xsessions when installing
-    { v= "4.9.0";   h= "1zcgvvbgamvm4s1r4pcfm1frdwyfbzg6mb77fcs6ax6mfr43sf98"; } else*/
+    { v= "4.9.1";   h= "10bycpnbnbpmww9v5j7j1jy8qy341ajj68p8wagisln4irqxp5id"; } else/**/
     { v= "4.8.2";   h= "1l608kik98jxbjl73waf8515hzji06lr80qmky2qlnp0b6js5g1i"; } /*)*/;
   xfwm4           = callPackage ./core/xfwm4.nix          ( if isTesting then
-    { v= "4.9.0";   h= "1s9clnyj5fa39rnh5wp0ra6y14mw0y9mm0db9ssrhfkjkjz6z4mm"; } else
+    { v= "4.9.1";   h= "10b3mwbkjixrlwifsmad2f11mp5crdyzar5n7rg3a44m79f7hgx9"; } else
     { v= "4.8.3";   h= "0zi2g1d2jdgw5armlk9xjh4ykmydy266gdba86nmhy951gm8n3hb"; } );
   xfdesktop       = callPackage ./core/xfdesktop.nix      ( if isTesting then
-    { v= "4.9.2";   h= "1f1p4ipm8zkynq1zqp38mvjifbn4idfa7kx7550nffqlwcpy2jhs"; } else
+    { v= "4.9.3";   h= "15pbdyxbbvkj3f6sd8abiqg667p2xkl39pphf4czzyyiicj508jl"; } else
     { v= "4.8.3";   h= "097lc9djmay0jyyl42jmvcfda75ndp265nzn0aa3hv795bsn1175"; } );
   xfceutils       = if isTesting then null else callPackage ./core/xfce-utils.nix
     { v= "4.8.3";   h= "09mr0amp2f632q9i3vykaa0x5nrfihfm9v5nxsx9vch8wvbp0l03"; };
