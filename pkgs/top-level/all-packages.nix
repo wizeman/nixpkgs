@@ -650,7 +650,7 @@ let
 
   ethtool = callPackage ../tools/misc/ethtool { };
 
-  euca2ools = callPackage ../tools/virtualization/euca2ools { };
+  euca2ools = callPackage ../tools/virtualization/euca2ools { pythonPackages = python26Packages; };
 
   exif = callPackage ../tools/graphics/exif { };
 
@@ -2148,7 +2148,8 @@ let
 
   gcl = builderDefsPackage ../development/compilers/gcl {
     inherit mpfr m4 binutils fetchcvs emacs zlib which
-      gmp texinfo;
+      texinfo;
+    gmp = gmp4;
     inherit (xlibs) libX11 xproto inputproto libXi
       libXext xextproto libXt libXaw libXmu;
     inherit stdenv;
@@ -2318,6 +2319,8 @@ let
   falcon = builderDefsPackage (import ../development/interpreters/falcon) {
     inherit cmake;
   };
+
+  fsharp = callPackage ../development/compilers/fsharp {};
 
   go = callPackage ../development/compilers/go { };
 
@@ -3423,9 +3426,10 @@ let
 
   extremetuxracer = builderDefsPackage (import ../games/extremetuxracer) {
     inherit mesa tcl freeglut SDL SDL_mixer pkgconfig
-      libpng gettext intltool;
+      gettext intltool;
     inherit (xlibs) libX11 xproto libXi inputproto
       libXmu libXext xextproto libXt libSM libICE;
+    libpng = libpng12;
   };
 
   eventlog = callPackage ../development/libraries/eventlog { };
@@ -5659,7 +5663,6 @@ let
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs2_1_2_6_38
         kernelPatches.cifs_timeout_2_6_38
-        #kernelPatches.mips_restart_2_6_36
       ];
   };
 
@@ -5671,7 +5674,6 @@ let
       [ #kernelPatches.fbcondecor_2_6_38
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs2_1_2_6_39
-        #kernelPatches.mips_restart_2_6_36
       ];
   };
 
@@ -5682,7 +5684,6 @@ let
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs3_0
         #kernelPatches.aufs2_1_3_0
-        #kernelPatches.mips_restart_2_6_36
       ];
   };
 
@@ -5692,7 +5693,6 @@ let
       [ #kernelPatches.fbcondecor_2_6_38
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs3_1
-        #kernelPatches.mips_restart_2_6_36
       ];
   };
 
@@ -5703,7 +5703,6 @@ let
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs3_2
         kernelPatches.cifs_timeout_2_6_38
-        #kernelPatches.mips_restart_2_6_36
       ];
   };
 
@@ -5715,7 +5714,6 @@ let
         kernelPatches.aufs3_3
         kernelPatches.efi_bootstub_config_3_3
         kernelPatches.btrfs_enospc
-        #kernelPatches.mips_restart_2_6_36
       ];
   };
 
