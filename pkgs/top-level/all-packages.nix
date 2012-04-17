@@ -1019,6 +1019,11 @@ let
     inherit openssl flex bison;
   };
 
+  mosh = callPackage ../tools/networking/mosh {
+    boost = boostHeaders;
+    inherit (perlPackages) IOTty;
+  };
+
   mpage = callPackage ../tools/text/mpage { };
 
   mscgen = callPackage ../tools/graphics/mscgen { };
@@ -1883,7 +1888,7 @@ let
       gettext which noSysDirs;
     # bootstrapping a profiled compiler does not work in the sheevaplug:
     # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43944
-    profiledCompiler = if stdenv.system == "armv5tel-linux" then false else true;
+    profiledCompiler = if stdenv.isArm then false else true;
 
     # When building `gcc.hostDrv' (a "Canadian cross", with host == target
     # and host != build), `cross' must be null but the cross-libc must still
@@ -1912,7 +1917,7 @@ let
 
     # bootstrapping a profiled compiler does not work in the sheevaplug:
     # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43944
-    profiledCompiler = if stdenv.system == "armv5tel-linux" then false else true;
+    profiledCompiler = if stdenv.isArm then false else true;
 
     # When building `gcc.hostDrv' (a "Canadian cross", with host == target
     # and host != build), `cross' must be null but the cross-libc must still
@@ -3273,6 +3278,9 @@ let
   boost148 = callPackage ../development/libraries/boost/1.48.nix { };
   boost149 = callPackage ../development/libraries/boost/1.49.nix { };
   boost = boost149;
+
+  boostHeaders149 = callPackage ../development/libraries/boost/1.49-headers.nix { };
+  boostHeaders = boostHeaders149;
 
   # A Boost build with all library variants enabled.  Very large (about 250 MB).
   boostFull = appendToName "full" (boost.override {
@@ -4715,6 +4723,10 @@ let
     inherit readline ncurses;
   });
 
+  sqliteFull = callPackage ../development/libraries/sqlite/full.nix {
+    inherit readline ncurses;
+  };
+
   stlport = callPackage ../development/libraries/stlport { };
 
   strigi = callPackage ../development/libraries/strigi {};
@@ -5278,6 +5290,9 @@ let
     cups = null;
     acl = null;
     openldap = null;
+
+    # libunwind 1.0.1 is not ported to GNU/Hurd.
+    libunwind = null;
   };
 
   shishi = callPackage ../servers/shishi { };
@@ -7834,6 +7849,8 @@ let
   openttd = callPackage ../games/openttd {
     zlib = zlibStatic;
   };
+
+  opentyrian = callPackage ../games/opentyrian { };
 
   pioneers = callPackage ../games/pioneers { };
 
