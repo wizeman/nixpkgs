@@ -28,10 +28,11 @@ stdenv.mkDerivation {
   #     -A 31 = Athlon K7
   #     -A 18 = Pentium II
   #     -V 192 = SSE1|SSE2 (Or it takes SSE3 somehow in my machine without SSE3)
+  #     -V 1 = No SIMD (Pentium II does not have any SSE)
   #     -t 0 = No threading
-  configureFlags = "-Fa alg -fPIC -t 0 -V 192"
-    + optionalString stdenv.isi686 " -b 32 -A 18"
-    + optionalString stdenv.isx86_64 " -A 31"
+  configureFlags = "-Fa alg -fPIC -t 0"
+    + optionalString stdenv.isi686 " -b 32 -A 18 -V 1"
+    + optionalString stdenv.isx86_64 " -A 31 -V 192"
     + optionalString tolerateCpuTimingInaccuracy " -Si cputhrchk 0"
     + optionalString shared " --shared "
     ;
