@@ -21,8 +21,12 @@
   # null, the default standard environment is used.
   bootStdenv ? null
 
+, # Darwin is an "impure" platform, with its libc outside of the store.
+  # Thus, GCC, GFortran, & co. must always look for files in standard system
+  # directories (/usr/include, etc.)
+  noSysDirs ? (system != "x86_64-darwin" && system != "i686-darwin")
+
   # More flags for the bootstrapping of stdenv.
-, noSysDirs ? true
 , gccWithCC ? true
 , gccWithProfiling ? true
 
@@ -195,7 +199,7 @@ let
 
   allStdenvs = import ../stdenv {
     inherit system stdenvType platform;
-    allPackages = args: import ./all-packages.nix ({ inherit config; } // args);
+    allPackages = args: import ./all-packages.nix ({ inherit config system; } // args);
   };
 
   defaultStdenv = allStdenvs.stdenv // { inherit platform; };
@@ -1109,6 +1113,8 @@ let
   # ntfsprogs are merged into ntfs-3g
   ntfsprogs = pkgs.ntfs3g;
 
+  ntop = callPackage ../tools/networking/ntop { };
+
   ntp = callPackage ../tools/networking/ntp { };
 
   nssmdns = callPackage ../tools/networking/nss-mdns { };
@@ -1960,8 +1966,12 @@ let
       (if stdenv.system == "i686-darwin"
        then import ../development/compilers/gcc/4.2-apple32
        else import ../development/compilers/gcc/4.2-apple64) {
-         inherit fetchurl stdenv noSysDirs;
+         inherit fetchurl noSysDirs;
          profiledCompiler = true;
+
+         # Since it fails to build with GCC 4.6, build it with the "native"
+         # Apple-GCC.
+         stdenv = allStdenvs.stdenvNative;
        });
 
   gccupc40 = wrapGCCUPC (import ../development/compilers/gcc-upc-4.0 {
@@ -1969,13 +1979,7 @@ let
     texinfo = texinfo49;
   });
 
-  gfortran =
-    if stdenv.isDarwin
-    then wrapGCC (gccApple.gcc.override {
-      langF77 = true;
-      inherit gmp mpfr bison flex;
-    })
-    else gfortran46;
+  gfortran = gfortran46;
 
   gfortran40 = wrapGCC (gcc40.gcc.override {
     langFortran = true;
@@ -2307,12 +2311,19 @@ let
         (if stdenv.isDarwin then ghc704Binary else ghc6121Binary)
         (x : x.ghc741Prefs) false false lowPrio);
 
+  # Stable branch snapshot.
+  haskellPackages_ghc742 =
+    recurseIntoAttrs
+      (haskellPackagesFun ../development/compilers/ghc/7.4.2.nix
+        (if stdenv.isDarwin then ghc704Binary else ghc6121Binary)
+        (x : x.ghcHEADPrefs) false false lowPrio);
+
   # Reasonably current HEAD snapshot. Should *always* be lowPrio.
   haskellPackages_ghcHEAD =
     recurseIntoAttrs
       (haskellPackagesFun ../development/compilers/ghc/head.nix
         # (haskellPackages_ghc704.ghcWithPackages (self : [ self.alex self.happy ]))
-        (if stdenv.isDarwin then ghc704Binary else ghc6121Binary)
+        ghc704Binary
         (x : x.ghcHEADPrefs) false false lowPrio);
 
   haxeDist = import ../development/compilers/haxe {
@@ -2746,15 +2757,7 @@ let
 
   python27 = callPackage ../development/interpreters/python/2.7 { };
 
-  python31 = callPackage ../development/interpreters/python/3.1 {
-    arch = if stdenv.isDarwin then pkgs.darwinArchUtility else null;
-    sw_vers = if stdenv.isDarwin then pkgs.darwinSwVersUtility else null;
-  };
-
-  python32 = callPackage ../development/interpreters/python/3.2 {
-    arch = if stdenv.isDarwin then pkgs.darwinArchUtility else null;
-    sw_vers = if stdenv.isDarwin then pkgs.darwinSwVersUtility else null;
-  };
+  python32 = callPackage ../development/interpreters/python/3.2 { };
 
   pythonFull = python27Full;
 
@@ -3196,7 +3199,14 @@ let
     target = crossSystem;
   };
 
-  valgrind = callPackage ../development/tools/analysis/valgrind { };
+  valgrind = callPackage ../development/tools/analysis/valgrind {
+    stdenv =
+      # On Darwin, Valgrind 3.7.0 expects Apple's GCC (for
+      # `__private_extern'.)
+      if stdenv.isDarwin
+      then overrideGCC stdenv gccApple
+      else stdenv;
+  };
 
   valkyrie = callPackage ../development/tools/analysis/valkyrie { };
 
@@ -4018,6 +4028,8 @@ let
   libgdata = (newScope gnome) ../development/libraries/libgdata {};
   libgdata_0_6 = (newScope gnome) ../development/libraries/libgdata/0.6.nix {};
 
+  libgig = callPackage ../development/libraries/libgig { };
+
   libgnome_keyring = callPackage ../development/libraries/libgnome-keyring { };
   libgnome_keyring3 = callPackage ../development/libraries/libgnome-keyring/3.x.nix { };
 
@@ -4028,6 +4040,8 @@ let
   liblo = callPackage ../development/libraries/liblo { };
 
   liblrdf = callPackage ../development/libraries/liblrdf {};
+
+  liblscp = callPackage ../development/libraries/liblscp { };
 
   libev = builderDefsPackage ../development/libraries/libev {
   };
@@ -4374,9 +4388,7 @@ let
     system == "x86_64-darwin" ||
     system == "i686-darwin";
 
-  mesa = callPackage ../development/libraries/mesa {
-    lipo = if stdenv.isDarwin then darwinLipoUtility else null;
-  };
+  mesa = callPackage ../development/libraries/mesa { };
 
   metaEnvironment = recurseIntoAttrs (let callPackage = newScope pkgs.metaEnvironment; in rec {
     sdfLibrary    = callPackage ../development/libraries/sdf-library { aterm = aterm28; };
@@ -4424,8 +4436,15 @@ let
   mysocketw = callPackage ../development/libraries/mysocketw { };
 
   ncurses = makeOverridable (import ../development/libraries/ncurses) {
-    inherit fetchurl stdenv;
+    inherit fetchurl;
     unicode = system != "i686-cygwin";
+    stdenv =
+      # On Darwin, NCurses uses `-no-cpp-precomp', which is specific to
+      # Apple-GCC.  Since NCurses is part of stdenv, always use
+      # `stdenvNative' to build it.
+      if stdenv.isDarwin
+      then allStdenvs.stdenvNative
+      else stdenv;
   };
 
   neon = neon029;
@@ -4627,7 +4646,14 @@ let
 
   readline5 = callPackage ../development/libraries/readline/readline5.nix { };
 
-  readline6 = callPackage ../development/libraries/readline/readline6.nix { };
+  readline6 = callPackage ../development/libraries/readline/readline6.nix {
+    stdenv =
+      # On Darwin, Readline uses `-arch_only', which is specific to
+      # Apple-GCC.  So give it what it expects.
+      if stdenv.isDarwin
+      then overrideGCC stdenv gccApple
+      else stdenv;
+  };
 
   librdf_raptor = callPackage ../development/libraries/librdf/raptor.nix { };
 
@@ -5388,14 +5414,6 @@ let
 
   cramfsswap = callPackage ../os-specific/linux/cramfsswap { };
 
-  darwinArchUtility = callPackage ../os-specific/darwin/arch { };
-
-  darwinSwVersUtility = callPackage ../os-specific/darwin/sw_vers { };
-
-  darwinLipoUtility = callPackage ../os-specific/darwin/lipo { };
-
-  darwinInstallNameToolUtility = callPackage ../os-specific/darwin/install_name_tool { };
-
   devicemapper = lvm2;
 
   dmidecode = callPackage ../os-specific/linux/dmidecode { };
@@ -5723,7 +5741,6 @@ let
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs3_3
         kernelPatches.efi_bootstub_config_3_3
-        kernelPatches.btrfs_enospc
       ];
   };
 
@@ -5985,7 +6002,6 @@ let
   pwdutils = callPackage ../os-specific/linux/pwdutils { };
 
   qemu_kvm = callPackage ../os-specific/linux/qemu-kvm { };
-  qemu_kvm_1_0 = callPackage ../os-specific/linux/qemu-kvm/1.0.nix { };
 
   firmwareLinuxNonfree = callPackage ../os-specific/linux/firmware/firmware-linux-nonfree { };
 
@@ -6529,20 +6545,35 @@ let
   emacs = emacs23;
 
   emacs22 = callPackage ../applications/editors/emacs-22 {
-    /* Using cpp 4.5, we get:
+    stdenv =
+      if stdenv.isDarwin
 
-         make[1]: Entering directory `/tmp/nix-build-dhbj8qqmqxwp3iw6sjcgafsrwlwrix1f-emacs-22.3.drv-0/emacs-22.3/lib-src'
-         Makefile:148: *** recipe commences before first target.  Stop.
+      /* On Darwin, use Apple-GCC, otherwise:
+           configure: error: C preprocessor "cc -E -no-cpp-precomp" fails sanity check */
+      then overrideGCC stdenv gccApple
 
-       Apparently, this is because `lib-src/Makefile' is generated by
-       processing `lib-src/Makefile.in' with cpp, and the escaping rules for
-       literal backslashes have changed.  */
-    stdenv = overrideGCC stdenv gcc44;
+      /* Using cpp 4.5, we get:
+
+           make[1]: Entering directory `/tmp/nix-build-dhbj8qqmqxwp3iw6sjcgafsrwlwrix1f-emacs-22.3.drv-0/emacs-22.3/lib-src'
+           Makefile:148: *** recipe commences before first target.  Stop.
+
+         Apparently, this is because `lib-src/Makefile' is generated by
+         processing `lib-src/Makefile.in' with cpp, and the escaping rules for
+         literal backslashes have changed.  */
+      else overrideGCC stdenv gcc44;
+
     xaw3dSupport = getConfig [ "emacs" "xaw3dSupport" ] false;
     gtkGUI = getConfig [ "emacs" "gtkSupport" ] true;
   };
 
   emacs23 = callPackage ../applications/editors/emacs-23 {
+    stdenv =
+      if stdenv.isDarwin
+      /* On Darwin, use Apple-GCC, otherwise:
+           configure: error: C preprocessor "cc -E -no-cpp-precomp" fails sanity check */
+      then overrideGCC stdenv gccApple
+      else stdenv;
+
     # use override to select the appropriate gui toolkit
     libXaw = if stdenv.isDarwin then xlibs.libXaw else null;
     Xaw3d = null;
@@ -6719,12 +6750,6 @@ let
 
   firefox36Wrapper = wrapFirefox { browser = firefox36Pkgs.firefox; };
 
-  firefox9Pkgs = callPackage ../applications/networking/browsers/firefox/9.0.nix {
-    inherit (gnome) libIDL;
-  };
-
-  firefox9Wrapper = wrapFirefox { browser = firefox9Pkgs.firefox; };
-
   firefox10Pkgs = callPackage ../applications/networking/browsers/firefox/10.0.nix {
     inherit (gnome) libIDL;
   };
@@ -6736,6 +6761,12 @@ let
   };
 
   firefox11Wrapper = wrapFirefox { browser = firefox11Pkgs.firefox; };
+
+  firefox12Pkgs = callPackage ../applications/networking/browsers/firefox/12.0.nix {
+    inherit (gnome) libIDL;
+  };
+
+  firefox12Wrapper = wrapFirefox { browser = firefox12Pkgs.firefox; };
 
   flac = callPackage ../applications/audio/flac { };
 
@@ -6871,6 +6902,8 @@ let
   };
 
   geeqie = callPackage ../applications/graphics/geeqie { };
+
+  gigedit = callPackage ../applications/audio/gigedit { };
 
   gqview = callPackage ../applications/graphics/gqview { };
 
@@ -7041,6 +7074,8 @@ let
   linphone = callPackage ../applications/networking/instant-messengers/linphone {
     inherit (gnome) libglade;
   };
+
+  linuxsampler = callPackage ../applications/audio/linuxsampler { };
 
   lmms = callPackage ../applications/audio/lmms { };
 
@@ -7241,6 +7276,8 @@ let
 
   pdftk = callPackage ../tools/typesetting/pdftk { };
 
+  pianobooster = callPackage ../applications/audio/pianobooster { };
+
   pidgin = callPackage ../applications/networking/instant-messengers/pidgin {
     openssl = if (getConfig ["pidgin" "openssl"] true) then openssl else null;
     gnutls = if (getConfig ["pidgin" "gnutls"] false) then gnutls else null;
@@ -7295,6 +7332,8 @@ let
   qemuSVN = callPackage ../applications/virtualization/qemu/svn-6642.nix { };
 
   qemuImage = callPackage ../applications/virtualization/qemu/linux-img { };
+
+  qsampler = callPackage ../applications/audio/qsampler { };
 
   qsynth = callPackage ../applications/audio/qsynth { };
 
@@ -8471,6 +8510,11 @@ let
   nixUnstable = callPackage ../tools/package-management/nix/unstable.nix {
     storeDir = getConfig [ "nix" "storeDir" ] "/nix/store";
     stateDir = getConfig [ "nix" "stateDir" ] "/nix/var";
+    stdenv =
+      if stdenv.isDarwin
+      # When building the Perl bindings, `-no-cpp-precomp' is used.
+      then overrideGCC stdenv gccApple
+      else stdenv;
   };
 
   nixSqlite = nixUnstable;

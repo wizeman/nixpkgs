@@ -140,16 +140,16 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
     haskellSrc   = self.haskellSrc_1_0_1_5;     # 7.4.1 ok
     html         = self.html_1_0_1_2;           # 7.4.1 ok
     HUnit        = self.HUnit_1_2_4_2;          # 7.4.1 ok
-    network      = self.network_2_3_0_11;       # 7.4.1 ok
+    network      = self.network_2_3_0_13;       # 7.4.1 ok
     OpenGL       = self.OpenGL_2_5_0_0;         # 7.4.1 ok
     parallel     = self.parallel_3_2_0_2;       # 7.4.1 ok
     parsec       = self.parsec_3_1_2;           # 7.4.1 ok
     QuickCheck   = self.QuickCheck_2_4_2;       # 7.4.1 ok
     regexBase    = self.regexBase_0_93_2;       # 7.4.1 ok
-    regexCompat  = self.regexCompat_0_93_1;     # 7.4.1 ok
+    regexCompat  = self.regexCompat_0_95_1;     # 7.4.1 ok
     regexPosix   = self.regexPosix_0_95_1;      # 7.4.1 ok
     stm          = self.stm_2_3;		# 7.4.1 ok
-    syb          = self.syb_0_3_6;              # 7.4.1 ok
+    syb          = self.syb_0_3_6_1;            # 7.4.1 ok
     xhtml        = self.xhtml_3000_2_0_5;       # 7.4.1 ok
     zlib         = self.zlib_0_5_3_3;           # 7.4.1 ok
     HTTP         = self.HTTP_4000_2_3;          # 7.4.1 ok
@@ -210,6 +210,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
       haskellPlatform = self.haskellPlatform_2011_4_0_0;
       mtl1 = self.mtl_1_1_1_1;
       repaExamples = null;      # don't pick this version of 'repa-examples' during nix-env -u
+      cabalInstall_0_14_0 = self.cabalInstall_0_14_0.override { Cabal = self.Cabal_1_14_0; };
     };
 
   haskellPlatform_2011_4_0_0 =
@@ -252,6 +253,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
       haskellPlatform = self.haskellPlatform_2011_2_0_1;
       mtl1 = self.mtl_1_1_1_1;
       repaExamples = null;      # don't pick this version of 'repa-examples' during nix-env -u
+      cabalInstall_0_14_0 = self.cabalInstall_0_14_0.override { Cabal = self.Cabal_1_14_0; zlib = self.zlib_0_5_3_3; };
     };
 
   haskellPlatform_2011_2_0_1 =
@@ -294,6 +296,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
       haskellPlatform = self.haskellPlatform_2011_2_0_0;
       mtl1 = self.mtl_1_1_1_1;
       repaExamples = null;      # don't pick this version of 'repa-examples' during nix-env -u
+      cabalInstall_0_14_0 = self.cabalInstall_0_14_0.override { Cabal = self.Cabal_1_14_0; zlib = self.zlib_0_5_3_3; };
     };
 
   haskellPlatform_2011_2_0_0 =
@@ -332,6 +335,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
     self : self.haskellPlatformArgs_2010_2_0_0 self // {
       haskellPlatform = self.haskellPlatform_2010_2_0_0;
       repaExamples = null;      # don't pick this version of 'repa-examples' during nix-env -u
+      cabalInstall_0_14_0 = self.cabalInstall_0_14_0.override { Cabal = self.Cabal_1_14_0; zlib = self.zlib_0_5_3_3; };
       deepseq = self.deepseq_1_1_0_2;
       # deviating from Haskell platform here, to make some packages (notably statistics) compile
     };
@@ -412,6 +416,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
       extensibleExceptions = self.extensibleExceptions_0_1_1_0;
       text = self.text_0_11_0_6;
       repaExamples = null;      # don't pick this version of 'repa-examples' during nix-env -u
+      cabalInstall_0_14_0 = self.cabalInstall_0_14_0.override { Cabal = self.Cabal_1_14_0; zlib = self.zlib_0_5_3_3; };
       deepseq = self.deepseq_1_1_0_2;
       # deviating from Haskell platform here, to make some packages (notably statistics) compile
     };
@@ -486,6 +491,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   blazeBuilderEnumerator = callPackage ../development/libraries/haskell/blaze-builder-enumerator {};
 
   blazeHtml = callPackage ../development/libraries/haskell/blaze-html {};
+
+  blazeMarkup = callPackage ../development/libraries/haskell/blaze-markup {};
 
   blazeTextual = callPackage ../development/libraries/haskell/blaze-textual {};
 
@@ -633,6 +640,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   DSH = callPackage ../development/libraries/haskell/DSH {};
 
   dstring = callPackage ../development/libraries/haskell/dstring {};
+
+  editDistance = callPackage ../development/libraries/haskell/edit-distance {};
 
   editline = callPackage ../development/libraries/haskell/editline {};
 
@@ -797,8 +806,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   haskellSrc = self.haskellSrc_1_0_1_5;
 
   haskellSrcExts_1_11_1 = callPackage ../development/libraries/haskell/haskell-src-exts/1.11.1.nix {};
-  haskellSrcExts_1_13_0 = callPackage ../development/libraries/haskell/haskell-src-exts/1.13.0.nix {};
-  haskellSrcExts = self.haskellSrcExts_1_13_0;
+  haskellSrcExts_1_13_2 = callPackage ../development/libraries/haskell/haskell-src-exts/1.13.2.nix {};
+  haskellSrcExts = self.haskellSrcExts_1_13_2;
 
   haskellSrcMeta = callPackage ../development/libraries/haskell/haskell-src-meta {};
 
@@ -899,8 +908,6 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   httpDate = callPackage ../development/libraries/haskell/http-date {};
 
-  httpEnumerator = callPackage ../development/libraries/haskell/http-enumerator {};
-
   httpTypes = callPackage ../development/libraries/haskell/http-types {};
 
   HUnit_1_2_0_3 = callPackage ../development/libraries/haskell/HUnit/1.2.0.3.nix {};
@@ -988,9 +995,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   MonadCatchIOTransformers = callPackage ../development/libraries/haskell/MonadCatchIO-transformers {};
 
-  monadControl_0_2_0_3 = callPackage ../development/libraries/haskell/monad-control/0.2.0.3.nix {};
-  monadControl_0_3_1_1 = callPackage ../development/libraries/haskell/monad-control/0.3.1.1.nix {};
-  monadControl = self.monadControl_0_3_1_1;
+  monadControl = callPackage ../development/libraries/haskell/monad-control {};
 
   monadcryptorandom = callPackage ../development/libraries/haskell/monadcryptorandom {};
 
@@ -1006,20 +1011,18 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   monadsTf = callPackage ../development/libraries/haskell/monads-tf {};
 
-  mongoDB = callPackage ../development/libraries/haskell/mongoDB {
-    monadControl = self.monadControl_0_2_0_3;
-  };
+  mongoDB = callPackage ../development/libraries/haskell/mongoDB {};
 
   mpppc = callPackage ../development/libraries/haskell/mpppc {};
 
   mtl_1_1_0_2 = callPackage ../development/libraries/haskell/mtl/1.1.0.2.nix {};
   mtl_1_1_1_1 = callPackage ../development/libraries/haskell/mtl/1.1.1.1.nix {};
   mtl_2_0_1_0 = callPackage ../development/libraries/haskell/mtl/2.0.1.0.nix {};
-  mtl_2_1 = callPackage ../development/libraries/haskell/mtl/2.1.nix {
+  mtl_2_1_1 = callPackage ../development/libraries/haskell/mtl/2.1.1.nix {
     transformers = self.transformers_0_3_0_0;
   };
   mtl1 = self.mtl_1_1_0_2;
-  mtl2 = self.mtl_2_1;
+  mtl2 = self.mtl_2_1_1;
   mtl  = self.mtl2;
 
   mtlparse = callPackage ../development/libraries/haskell/mtlparse {};
@@ -1042,8 +1045,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   network_2_2_1_7 = callPackage ../development/libraries/haskell/network/2.2.1.7.nix {};
   network_2_3_0_2 = callPackage ../development/libraries/haskell/network/2.3.0.2.nix {};
   network_2_3_0_5 = callPackage ../development/libraries/haskell/network/2.3.0.5.nix {};
-  network_2_3_0_11 = callPackage ../development/libraries/haskell/network/2.3.0.11.nix {};
-  network = self.network_2_3_0_11;
+  network_2_3_0_13 = callPackage ../development/libraries/haskell/network/2.3.0.13.nix {};
+  network = self.network_2_3_0_13;
 
   networkConduit = callPackage ../development/libraries/haskell/network-conduit {};
 
@@ -1256,11 +1259,11 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   stringCombinators = callPackage ../development/libraries/haskell/string-combinators {};
 
   syb_0_2_2 = callPackage ../development/libraries/haskell/syb/0.2.2.nix {};
-  syb_0_3   = callPackage ../development/libraries/haskell/syb/0.3.nix {};
+  syb_0_3 = callPackage ../development/libraries/haskell/syb/0.3.nix {};
   syb_0_3_3 = callPackage ../development/libraries/haskell/syb/0.3.3.nix {};
-  syb_0_3_6 = callPackage ../development/libraries/haskell/syb/0.3.6.nix {};
-  syb       = null; # by default, we assume that syb ships with GHC, which is
-                    # true for the older GHC versions
+  syb_0_3_6_1 = callPackage ../development/libraries/haskell/syb/0.3.6.1.nix {};
+  syb = null;  # by default, we assume that syb ships with GHC, which is
+               # true for the older GHC versions
 
   sybWithClass = callPackage ../development/libraries/haskell/syb/syb-with-class.nix {};
 
@@ -1626,7 +1629,6 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   # Applications.
 
   darcs = callPackage ../applications/version-management/darcs {
-    regexCompat = self.regexCompat93;
     tar = self.tar_0_3_2_0;
   };
 
