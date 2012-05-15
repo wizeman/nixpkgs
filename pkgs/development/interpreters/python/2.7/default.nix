@@ -1,22 +1,19 @@
 { stdenv, fetchurl, zlib ? null, zlibSupport ? true, bzip2
 , sqlite, tcl, tk, x11, openssl, readline, db4, ncurses, gdbm
-, darwinArchUtility ? null, darwinSwVersUtility ? null
 }:
 
 assert zlibSupport -> zlib != null;
-assert stdenv.isDarwin -> darwinArchUtility != null;
-assert stdenv.isDarwin -> darwinSwVersUtility != null;
 
 with stdenv.lib;
 
 let
 
   majorVersion = "2.7";
-  version = "${majorVersion}.2";
+  version = "${majorVersion}.3";
 
   src = fetchurl {
     url = "http://www.python.org/ftp/python/${version}/Python-${version}.tar.bz2";
-    sha256 = "1axx9h1r157fanldmnj1q2gdw2sm0sg8h3mx1l2adddmgq3fnmsh";
+    sha256 = "0g3672il41rcfjk7sphfqdsa6qf53y8g3ai8yk1sslxi3khmfr3j";
   };
 
   patches =
@@ -39,8 +36,7 @@ let
   buildInputs =
     optional (stdenv ? gcc && stdenv.gcc.libc != null) stdenv.gcc.libc ++
     [ bzip2 openssl ]
-    ++ optional zlibSupport zlib
-    ++ optionals stdenv.isDarwin [ darwinArchUtility darwinSwVersUtility ];
+    ++ optional zlibSupport zlib;
 
   ensurePurity =
     ''

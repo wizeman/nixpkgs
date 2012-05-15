@@ -16,7 +16,8 @@ let
 
   needsPortsNative = stdenv.isMips || stdenv.isArm;
   needsPortsCross = cross.arch == "mips" || cross.arch == "arm";
-  needsPorts = if (stdenv ? cross) && stdenv.cross != null then true
+  needsPorts =
+    if (stdenv ? cross) && stdenv.cross != null && hurdHeaders == null then true
     else if cross == null then needsPortsNative
     else needsPortsCross;
 
@@ -74,7 +75,15 @@ stdenv.mkDerivation ({
 
     /* Allow nixos and nix handle the locale-archive. */
     ./nix-locale-archive.patch
+  ]
 
+  ++ (stdenv.lib.optional (hurdHeaders == null)
+
+      /* Don't use /etc/ld.so.cache, for non-NixOS systems.  Currently
+         disabled on GNU/Hurd, which uses a more recent libc snapshot. */
+         ./dont_use_system_ld_so_cache.patch )
+
+  ++ [
     /* Without this patch many KDE binaries crash. */
     ./glibc-elf-localscope.patch
   ] ++ stdenv.lib.optional installLocales ./catalan-firstdays.patch;
@@ -181,7 +190,8 @@ stdenv.mkDerivation ({
 
   meta = {
     homepage = http://www.gnu.org/software/libc/;
-    description = "The GNU C Library";
+    description = "The GNU C Library"
+      + stdenv.lib.optionalString (hurdHeaders != null) ", for GNU/Hurd";
 
     longDescription =
       '' Any Unix-like operating system needs a C library: the library which

@@ -94,7 +94,7 @@ with (import ./release-lib.nix);
   fuse = linux;
   gajim = linux;
   gawk = all;
-  gcc = all;
+  gcc = linux;
   gcc33 = linux;
   gcc34 = linux;
   gcc41 = linux;
@@ -183,11 +183,12 @@ with (import ./release-lib.nix);
   man = linux;
   manpages = linux;
   maxima = linux;
-  mc = all;
+  mc = linux;
   mcabber = linux;
   mcron = linux;
   mdadm = linux;
   mercurial = allBut "i686-cygwin";
+  mercurialFull = allBut "i686-cygwin";
   mesa = mesaPlatforms;
   midori = linux;
   mingetty = linux;
@@ -240,12 +241,12 @@ with (import ./release-lib.nix);
   ppl = all;
   procps = linux;
   pwdutils = linux;
-  pthreadmanpages = all;
+  pthreadmanpages = linux;
   pygtk = linux;
   pyqt4 = linux;
   python = allBut "i686-cygwin";
   pythonFull = linux;
-  sbcl = all;
+  sbcl = linux;
   qt3 = linux;
   quake3demo = linux;
   readline = all;
@@ -256,7 +257,7 @@ with (import ./release-lib.nix);
   rsync = linux;
   rubber = allBut "i686-cygwin";
   ruby = all;
-  rxvt_unicode = all;
+  rxvt_unicode = linux;
   samba = linux;
   screen = linux ++ darwin;
   scrot = linux;
@@ -266,7 +267,7 @@ with (import ./release-lib.nix);
   sharutils = all;
   slim = linux;
   sloccount = allBut "i686-cygwin";
-  smartmontools = all;
+  smartmontools = linux;
   socat = linux;
   spidermonkey = linux;
   splashutils = linux;
@@ -362,6 +363,7 @@ with (import ./release-lib.nix);
   firefox36Pkgs.firefox = linux;
   firefox10Pkgs.firefox = linux;
   firefox11Pkgs.firefox = linux;
+  firefox12Pkgs.firefox = linux;
 
   gnome = {
     gnome_panel = linux;
@@ -408,20 +410,10 @@ with (import ./release-lib.nix);
   */
 
   strategoPackages = {
-    sdf = all;
-    strategoxt = all;
-    javafront = all;
+    sdf = linux;
+    strategoxt = linux;
+    javafront = linux;
     strategoShell = linux ++ darwin;
-    dryad = linux;
-  };
-
-  strategoPackages018 = {
-    sdfStatic = all;
-    sdf = all;
-    strategoxt = all;
-    javafront = all;
-    aspectjfront = all;
-    strategoShell = all;
     dryad = linux;
   };
 
