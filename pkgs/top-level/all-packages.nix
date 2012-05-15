@@ -674,6 +674,7 @@ let
   figlet = callPackage ../tools/misc/figlet { };
 
   file = callPackage ../tools/misc/file { };
+  file511 = callPackage ../tools/misc/file/511.nix { };
 
   fileschanged = callPackage ../tools/misc/fileschanged { };
 
@@ -1002,6 +1003,8 @@ let
   mdbtools = callPackage ../tools/misc/mdbtools { };
 
   mdbtools_git = callPackage ../tools/misc/mdbtools/git.nix { };
+
+  minecraft = callPackage ../games/minecraft { };
 
   miniupnpc = callPackage ../tools/networking/miniupnpc { };
 
@@ -2211,47 +2214,61 @@ let
   # So we enable it for selected versions only.
 
   # Helper functions to abstract away from repetitive instantiations.
-  haskellPackagesFun =
-    ghcPath : ghcBinary : prefFun : profExplicit : profDefault : modifyPrio :
+  haskellPackagesFun = makeOverridable
+   ({ ghcPath
+    , ghcBinary ? ghc6101Binary
+    , prefFun
+    , extraPrefs ? (x : {})
+    , profExplicit ? false, profDefault ? false
+    , modifyPrio ? lowPrio
+    } :
       import ./haskell-packages.nix {
-        inherit pkgs newScope modifyPrio prefFun;
+        inherit pkgs newScope modifyPrio;
+        prefFun = self : super : prefFun self super // extraPrefs super;
         enableLibraryProfiling =
           if profExplicit then profDefault
                           else getConfig [ "cabal" "libraryProfiling" ] profDefault;
         ghc = callPackage ghcPath { ghc = ghcBinary; };
-      };
+      });
 
   # Currently active GHC versions.
   haskellPackages_ghc6104 =
     recurseIntoAttrs
-      (haskellPackagesFun ../development/compilers/ghc/6.10.4.nix
-        ghc6101Binary (x : x.ghc6104Prefs) false false lowPrio);
+      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/6.10.4.nix;
+                            prefFun = x : x.ghc6104Prefs;
+                          });
 
   haskellPackages_ghc6121 =
-    haskellPackagesFun ../development/compilers/ghc/6.12.1.nix
-      ghc6101Binary (x : x.ghc6121Prefs) false false lowPrio;
+    haskellPackagesFun { ghcPath =  ../development/compilers/ghc/6.12.1.nix;
+                         prefFun = x : x.ghc6121Prefs;
+                       };
 
   haskellPackages_ghc6122 =
-    haskellPackagesFun ../development/compilers/ghc/6.12.2.nix
-      ghc6101Binary (x : x.ghc6122Prefs) false false lowPrio;
+    haskellPackagesFun { ghcPath = ../development/compilers/ghc/6.12.2.nix;
+                         prefFun = x : x.ghc6122Prefs;
+                       };
 
   haskellPackages_ghc6123 =
     recurseIntoAttrs
-      (haskellPackagesFun ../development/compilers/ghc/6.12.3.nix
-        ghc6101Binary (x : x.ghc6123Prefs) false false lowPrio);
+      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/6.12.3.nix;
+                            prefFun = x : x.ghc6123Prefs;
+                          });
 
   # Will never make it into a platform release, severe bugs; leave at lowPrio.
   haskellPackages_ghc701 =
-    haskellPackagesFun ../development/compilers/ghc/7.0.1.nix
-      ghc6101Binary (x : x.ghc701Prefs) false false lowPrio;
+    haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.0.1.nix;
+                         prefFun = x : x.ghc701Prefs;
+                       };
 
   haskellPackages_ghc702 =
-    haskellPackagesFun ../development/compilers/ghc/7.0.2.nix
-      ghc6101Binary (x : x.ghc702Prefs) false false lowPrio;
+    haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.0.2.nix;
+                         prefFun = x : x.ghc702Prefs;
+                       };
 
   haskellPackages_ghc703 =
-    haskellPackagesFun ../development/compilers/ghc/7.0.3.nix
-      ghc6101Binary (x : x.ghc703Prefs) false false lowPrio;
+    haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.0.3.nix;
+                         prefFun = x : x.ghc703Prefs;
+                       };
 
   # Current default version: 7.0.4.
   #
@@ -2278,53 +2295,65 @@ let
 
   haskellPackages_ghc704_no_profiling =
     recurseIntoAttrs
-      (haskellPackagesFun ../development/compilers/ghc/7.0.4.nix
-        (if stdenv.isDarwin then ghc704Binary else ghc6101Binary)
-        (x : x.ghc704Prefs) true false
-        (haskellDefaultVersionPrioFun false));
+      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.0.4.nix;
+                            ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6101Binary;
+                            prefFun = x : x.ghc704Prefs;
+                            profExplicit = true;
+                            modifyPrio = haskellDefaultVersionPrioFun false;
+                          });
 
   haskellPackages_ghc704_profiling =
     recurseIntoAttrs
-      (haskellPackagesFun ../development/compilers/ghc/7.0.4.nix
-        (if stdenv.isDarwin then ghc704Binary else ghc6101Binary)
-        (x : x.ghc704Prefs) true true
-        (haskellDefaultVersionPrioFun true));
+      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.0.4.nix;
+                            ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6101Binary;
+                            prefFun = x : x.ghc704Prefs;
+                            profExplicit = true;
+                            profDefault = true;
+                            modifyPrio = haskellDefaultVersionPrioFun true;
+                          });
 
   haskellPackages_ghc704 =
-    haskellPackagesFun ../development/compilers/ghc/7.0.4.nix
-      (if stdenv.isDarwin then ghc704Binary else ghc6101Binary)
-      (x : x.ghc704Prefs) false false (x : x);
+    haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.0.4.nix;
+                         ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6101Binary;
+                         prefFun = x : x.ghc704Prefs;
+                         modifyPrio = x : x;
+                       };
 
   haskellPackages_ghc721 =
-    haskellPackagesFun ../development/compilers/ghc/7.2.1.nix
-      (if stdenv.isDarwin then ghc704Binary else ghc6121Binary)
-      (x : x.ghc721Prefs) false false lowPrio;
+    haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.2.1.nix;
+                         ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6121Binary;
+                         prefFun = x : x.ghc721Prefs;
+                       };
 
   haskellPackages_ghc722 =
-    haskellPackagesFun ../development/compilers/ghc/7.2.2.nix
-      (if stdenv.isDarwin then ghc704Binary else ghc6121Binary)
-      (x : x.ghc722Prefs) false false lowPrio;
+    haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.2.2.nix;
+                         ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6121Binary;
+                         prefFun = x : x.ghc722Prefs;
+                       };
 
   haskellPackages_ghc741 =
     recurseIntoAttrs
-      (haskellPackagesFun ../development/compilers/ghc/7.4.1.nix
-        (if stdenv.isDarwin then ghc704Binary else ghc6121Binary)
-        (x : x.ghc741Prefs) false false lowPrio);
+      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.4.1.nix;
+                            ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6121Binary;
+                            prefFun = x : x.ghc741Prefs;
+                          });
 
   # Stable branch snapshot.
   haskellPackages_ghc742 =
     recurseIntoAttrs
-      (haskellPackagesFun ../development/compilers/ghc/7.4.2.nix
-        (if stdenv.isDarwin then ghc704Binary else ghc6121Binary)
-        (x : x.ghcHEADPrefs) false false lowPrio);
+      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.4.2.nix;
+                            ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6121Binary;
+                            prefFun = x : x.ghcHEADPrefs;
+                          });
 
   # Reasonably current HEAD snapshot. Should *always* be lowPrio.
   haskellPackages_ghcHEAD =
     recurseIntoAttrs
-      (haskellPackagesFun ../development/compilers/ghc/head.nix
-        # (haskellPackages_ghc704.ghcWithPackages (self : [ self.alex self.happy ]))
-        ghc704Binary
-        (x : x.ghcHEADPrefs) false false lowPrio);
+      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/head.nix;
+                            ghcBinary = # (haskellPackages_ghc704.ghcWithPackages (self : [ self.alex self.happy ]))
+                                        ghc704Binary;
+                            prefFun = x : x.ghcHEADPrefs;
+                          });
 
   haxeDist = import ../development/compilers/haxe {
     inherit fetchurl sourceFromHead stdenv lib ocaml zlib makeWrapper neko;
@@ -2813,7 +2842,7 @@ let
   spidermonkey_1_8_0rc1 = callPackage ../development/interpreters/spidermonkey/1.8.0-rc1.nix { };
   spidermonkey_185 = callPackage ../development/interpreters/spidermonkey/185-1.0.0.nix { };
 
-  sysPerl = callPackage ../development/interpreters/sys-perl { };
+  sysPerl = callPackage ../development/interpreters/perl/sys-perl { };
 
   tcl = callPackage ../development/interpreters/tcl { };
 
@@ -3676,7 +3705,7 @@ let
       # GMP 4.3.2 is broken on Darwin, so use 4.3.1.
       callPackage ../development/libraries/gmp/4.3.1.nix { }
     else
-      callPackage ../development/libraries/gmp/5.0.3.nix { };
+      callPackage ../development/libraries/gmp/5.0.5.nix { };
 
   gmpxx = appendToName "with-cxx" (gmp.override { cxx = true; });
 
@@ -3991,6 +4020,10 @@ let
   };
 
   libdbusmenu_qt = callPackage ../development/libraries/libdbusmenu-qt { };
+
+  libdc1394 = callPackage ../development/libraries/libdc1394 { };
+
+  libdc1394avt = callPackage ../development/libraries/libdc1394avt { };
 
   libdevil = callPackage ../development/libraries/libdevil { };
 
@@ -5532,6 +5565,10 @@ let
 
   iwlwifi6000g2bucode = callPackage ../os-specific/linux/firmware/iwlwifi-6000g2b-ucode { };
 
+  jujuutils = callPackage ../os-specific/linux/jujuutils {
+    linuxHeaders = linuxHeaders33;
+  };
+
   kbd = callPackage ../os-specific/linux/kbd { };
 
   latencytop = callPackage ../os-specific/linux/latencytop { };
@@ -5549,6 +5586,8 @@ let
   libnl1 = callPackage ../os-specific/linux/libnl/v1.nix { };
 
   linuxHeaders = callPackage ../os-specific/linux/kernel-headers { };
+
+  linuxHeaders33 = callPackage ../os-specific/linux/kernel-headers/3.3.5.nix { };
 
   linuxHeaders26Cross = forceBuildDrv (import ../os-specific/linux/kernel-headers/2.6.32.nix {
     inherit stdenv fetchurl perl;
@@ -5740,7 +5779,6 @@ let
       [ #kernelPatches.fbcondecor_2_6_38
         kernelPatches.sec_perm_2_6_24
         kernelPatches.aufs3_3
-        kernelPatches.efi_bootstub_config_3_3
       ];
   };
 
@@ -6432,6 +6470,8 @@ let
   };
   funpidgin = carrier;
 
+  cc1394 = callPackage ../applications/video/cc1394 { };
+
   cddiscid = callPackage ../applications/audio/cd-discid { };
 
   cdparanoia = cdparanoiaIII;
@@ -6465,6 +6505,10 @@ let
   compiz_ccsm = callPackage ../applications/window-managers/compiz/ccsm.nix { };
 
   compizconfig_python = callPackage ../applications/window-managers/compiz/config-python.nix { };
+
+  coriander = callPackage ../applications/video/coriander {
+    inherit (gnome) libgnomeui GConf;
+  };
 
   libcompizconfig = callPackage ../applications/window-managers/compiz/libcompizconfig.nix { };
 
@@ -6742,7 +6786,7 @@ let
 
   firefoxWrapper = wrapFirefox { browser = pkgs.firefox; };
 
-  firefoxPkgs = pkgs.firefox11Pkgs;
+  firefoxPkgs = pkgs.firefox12Pkgs;
 
   firefox36Pkgs = callPackage ../applications/networking/browsers/firefox/3.6.nix {
     inherit (gnome) libIDL;
@@ -6941,6 +6985,14 @@ let
 
   hydrogen = callPackage ../applications/audio/hydrogen { };
 
+  i3 = callPackage ../applications/window-managers/i3 { };
+
+  i3lock = callPackage ../applications/window-managers/i3/lock.nix {
+    cairo = cairo.override { xcbSupport = true; };
+  };
+
+  i3status = callPackage ../applications/window-managers/i3/status.nix { };
+
   i810switch = callPackage ../os-specific/linux/i810switch { };
 
   icecat3 = lowPrio (callPackage ../applications/networking/browsers/icecat-3 {
@@ -7043,6 +7095,8 @@ let
     fftw = fftwSinglePrec;
   };
 
+  lci = callPackage ../applications/science/logic/lci {};
+
   ldcpp = callPackage ../applications/networking/p2p/ldcpp {
     inherit (gnome) libglade;
   };
@@ -7101,7 +7155,7 @@ let
     guiSupport = false;		# use mercurialFull to get hgk GUI
   };
 
-  mercurialFull = appendToName "full" (pkgs.mercurial.override { guiSupport = true; });
+  mercurialFull = lowPrio (appendToName "full" (pkgs.mercurial.override { guiSupport = true; }));
 
   merkaartor = callPackage ../applications/misc/merkaartor { };
 
@@ -7595,6 +7649,8 @@ let
   };
 
   virtviewer = callPackage ../applications/virtualization/virt-viewer {};
+  virtmanager = callPackage ../applications/virtualization/virt-manager {};
+  virtinst = callPackage ../applications/virtualization/virtinst {};
 
   virtualgl = callPackage ../tools/X11/virtualgl { };
 
@@ -8422,6 +8478,8 @@ let
   cupsBjnp = callPackage ../misc/cups/drivers/cups-bjnp { };
 
   darcnes = callPackage ../misc/emulators/darcnes { };
+
+  dbacl = callPackage ../tools/misc/dbacl { };
 
   dblatex = callPackage ../tools/typesetting/tex/dblatex { };
 
