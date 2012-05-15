@@ -8197,11 +8197,6 @@ let
 
   oxygen_gtk = callPackage ../misc/themes/gtk2/oxygen-gtk { };
 
-
-  xfce46 = recurseIntoAttrs
-    (let callPackage = newScope pkgs.xfce46; in
-     import ../desktops/xfce-4.6 { inherit callPackage pkgs; });
-
   xfce = recurseIntoAttrs
     (let callPackage = newScope pkgs.xfce; in
      import ../desktops/xfce { isTesting= false; inherit callPackage pkgs; });
