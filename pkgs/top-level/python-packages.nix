@@ -174,7 +174,7 @@ let pythonPackages = python.modules // rec {
     name = "logilab-astng-0.21.1";
 
     src = fetchurl {
-      url = "http://ftp.logilab.org/pub/astng/${name}.tar.gz";
+      url = "ftp://ftp.logilab.org/pub/astng/${name}.tar.gz";
       sha256 = "0rqp2vwrnv6gkzdd96j078h1sz26plh49cmnyswy2wb6l4wans67";
     };
     propagatedBuildInputs = [logilabCommon];
@@ -821,7 +821,7 @@ let pythonPackages = python.modules // rec {
     name = "logilab-common-0.56.0";
 
     src = fetchurl {
-      url = "http://ftp.logilab.org/pub/common/${name}.tar.gz";
+      url = "ftp://ftp.logilab.org/pub/common/${name}.tar.gz";
       sha256 = "14p557nqypbd10d8k7qs6jlm58pksiwh86wvvl0axyki00hj6971";
     };
     propagatedBuildInputs = [unittest2];
@@ -1475,36 +1475,27 @@ let pythonPackages = python.modules // rec {
   });
 
 
-  pycurl =
-    let libcurl = pkgs.stdenv.lib.overrideDerivation pkgs.curl
-      (oldAttrs: {
-        configureFlags =
-          (if oldAttrs ? configureFlags then oldAttrs.configureFlags else "" )
-          + " --enable-static";
-      });
-    in
-  buildPythonPackage (rec {
+  pycurl = buildPythonPackage (rec {
     name = "pycurl-7.19.0";
 
     src = fetchurl {
-      url = "http://pypi.python.org/packages/source/p/pycryptopp/${name}.tar.gz";
+      url = "http://pycurl.sourceforge.net/download/${name}.tar.gz";
       sha256 = "0hh6icdbp7svcq0p57zf520ifzhn7jw64x07k99j7h57qpy2sy7b";
     };
 
-    buildInputs = [ libcurl ];
+    buildInputs = [ pkgs.curl ];
 
     doCheck = false;
 
-    postInstall = ''
-      find $out -name easy-install.pth | xargs rm -v
-      find $out -name 'site.py*' | xargs rm -v
+    preConfigure = ''
+      substituteInPlace setup.py --replace '--static-libs' '--libs'
     '';
+
+    installCommand = "python setup.py install --prefix=$out";
 
     meta = {
       homepage = http://pycurl.sourceforge.net/;
-
       description = "Python wrapper for libcurl";
-
       platforms = stdenv.lib.platforms.linux;
     };
   });
@@ -1568,7 +1559,7 @@ let pythonPackages = python.modules // rec {
     name = "pylint-0.23.0";
 
     src = fetchurl {
-      url = "http://ftp.logilab.org/pub/pylint/${name}.tar.gz";
+      url = "ftp://ftp.logilab.org/pub/pylint/${name}.tar.gz";
       sha256 = "07091avcc2b374i5f3blszmawjcin8xssjfryz91qbxybb8r7c6d";
     };
     propagatedBuildInputs = [astng];
@@ -2274,6 +2265,8 @@ let pythonPackages = python.modules // rec {
       url = "http://pypi.python.org/packages/source/v/virtualenv/${name}.tar.gz";
       md5 = "1072b66d53c24e019a8f1304ac9d9fc5";
     };
+
+    patches = [ ../development/python-modules/virtualenv-change-prefix.patch ];
 
     doCheck = false;
 

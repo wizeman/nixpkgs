@@ -4,14 +4,14 @@
 }:
 
 stdenv.mkDerivation rec {
-  name = "calibre-0.8.50";
+  name = "calibre-0.8.51";
 
   src = fetchurl {
     urls = [ 
       "http://calibre-ebook.googlecode.com/files/${name}.tar.xz"
       "mirror://sourceforge/calibre/${name}.tar.xz"
     ];
-    sha256 = "0x6yazqjilh31rbd5knns1hag2visvp03jw5wm99lsyn9vz4qcbi";
+    sha256 = "1grcc0k9qpfpwp863x52rl9wj4wz61hcz67l8h2jmli0wxiq44z1";
   };
 
   inherit python;
@@ -44,7 +44,7 @@ stdenv.mkDerivation rec {
 
     sed -i "s/env python[0-9.]*/python/" $PYFILES
     for a in $out/bin/*; do
-      wrapProgram $a --prefix PYTHONPATH : $PYTHONPATH --prefix LD_LIBRARY_PATH : ${unrar}/lib
+      wrapProgram $a --prefix PYTHONPATH : $PYTHONPATH --prefix LD_LIBRARY_PATH : ${unrar}/lib --prefix PATH : ${popplerQt4}/bin
     done
   '';
 

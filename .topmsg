@@ -1,6 +1,6 @@
 From: Vladimír Čunát <vcunat@gmail.com>
-Subject: [PATCH] vlada/xfce
+Subject: [PATCH] vlada/vim
 
-Updating xfce to 4.8.*
+Adding the breakindent patch
 
 Signed-off-by: Vladimír Čunát <vcunat@gmail.com>
