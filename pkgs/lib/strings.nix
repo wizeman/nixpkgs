@@ -108,11 +108,6 @@ rec {
     in
       stringAsChars subst s;
 
-  # Case conversion utilities
-  lowerChars = stringToCharacters "abcdefghijklmnopqrstuvwxyz";
-  upperChars = stringToCharacters "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  toLower = replaceChars upperChars lowerChars;
-  toUpper = replaceChars lowerChars upperChars;
 
   # Compares strings not requiring context equality
   # Obviously, a workaround but works on all Nix versions
