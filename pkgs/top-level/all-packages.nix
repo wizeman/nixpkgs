@@ -544,6 +544,10 @@ let
   cron = callPackage ../tools/system/cron {  # see also fcron
   };
 
+  cudatoolkit = callPackage ../development/compilers/cudatoolkit {
+    python = python26;
+  };
+
   curl = makeOverridable (import ../tools/networking/curl) rec {
     fetchurl = fetchurlBoot;
     inherit stdenv zlib openssl libssh2;
@@ -662,10 +666,11 @@ let
 
   expect = callPackage ../tools/misc/expect { };
 
+  fail2ban = callPackage ../tools/security/fail2ban { };
+
   fakeroot = callPackage ../tools/system/fakeroot { };
 
-  fcron = callPackage ../tools/system/fcron {  # see also cron
-  };
+  fcron = callPackage ../tools/system/fcron { };
 
   fdisk = callPackage ../tools/system/fdisk { };
 
@@ -774,9 +779,9 @@ let
 
   gnupg = callPackage ../tools/security/gnupg { };
 
-  gnupg2_1 = callPackage ../tools/security/gnupg/git.nix {
+  gnupg2_1 = lowPrio (callPackage ../tools/security/gnupg/git.nix {
     libassuan = libassuan2_1;
-  };
+  });
 
   gnuplot = callPackage ../tools/graphics/gnuplot {
     texLive = null;
@@ -844,6 +849,8 @@ let
   gzip = callPackage ../tools/compression/gzip { };
 
   pigz = callPackage ../tools/compression/pigz { };
+
+  haproxy = callPackage ../tools/networking/haproxy { };
 
   hardlink = callPackage ../tools/system/hardlink { };
 
@@ -1239,7 +1246,9 @@ let
 
   plan9port = callPackage ../tools/system/plan9port { };
 
-  ploticus = callPackage ../tools/graphics/ploticus { };
+  ploticus = callPackage ../tools/graphics/ploticus {
+    libpng = libpng12;
+  };
 
   plotutils = callPackage ../tools/graphics/plotutils { };
 
@@ -2172,188 +2181,47 @@ let
     };
   };
 
-  # GHC
+  # Haskell and GHC
 
-  # GHC binaries are around for bootstrapping purposes
+  # Import Haskell infrastructure.
 
-  # If we'd want to reactivate the 6.6 and 6.8 series of ghc, we'd
-  # need to reenable an old binary such as this.
-  /*
-  ghc642Binary = lowPrio (import ../development/compilers/ghc/6.4.2-binary.nix {
-    inherit fetchurl stdenv ncurses gmp;
-    readline = if stdenv.system == "i686-linux" then readline4 else readline5;
-    perl = perl58;
-  });
-  */
+  haskell = callPackage ./haskell-defaults.nix { inherit pkgs; };
 
-  ghc6101Binary = lowPrio (callPackage ../development/compilers/ghc/6.10.1-binary.nix {
-    gmp = gmp4;
-  });
-
-  ghc6102Binary = lowPrio (callPackage ../development/compilers/ghc/6.10.2-binary.nix {
-    gmp = gmp4;
-  });
-
-  ghc6121Binary = lowPrio (callPackage ../development/compilers/ghc/6.12.1-binary.nix {
-    gmp = gmp4;
-  });
-
-  ghc704Binary = lowPrio (callPackage ../development/compilers/ghc/7.0.4-binary.nix {
-    gmp = gmp4;
-  });
+  # Available GHC versions.
 
   # For several compiler versions, we export a large set of Haskell-related
   # packages.
-
-  # This should point to the current default version.
-  haskellPackages = haskellPackages_ghc704;
 
   # NOTE (recurseIntoAttrs): After discussion, we originally decided to
   # enable it for all GHC versions. However, this is getting too much,
   # particularly in connection with Hydra builds for all these packages.
   # So we enable it for selected versions only.
 
-  # Helper functions to abstract away from repetitive instantiations.
-  haskellPackagesFun = makeOverridable
-   ({ ghcPath
-    , ghcBinary ? ghc6101Binary
-    , prefFun
-    , extraPrefs ? (x : {})
-    , profExplicit ? false, profDefault ? false
-    , modifyPrio ? lowPrio
-    } :
-      import ./haskell-packages.nix {
-        inherit pkgs newScope modifyPrio;
-        prefFun = self : super : prefFun self super // extraPrefs super;
-        enableLibraryProfiling =
-          if profExplicit then profDefault
-                          else getConfig [ "cabal" "libraryProfiling" ] profDefault;
-        ghc = callPackage ghcPath { ghc = ghcBinary; };
-      });
-
-  # Currently active GHC versions.
-  haskellPackages_ghc6104 =
-    recurseIntoAttrs
-      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/6.10.4.nix;
-                            prefFun = x : x.ghc6104Prefs;
-                          });
-
-  haskellPackages_ghc6121 =
-    haskellPackagesFun { ghcPath =  ../development/compilers/ghc/6.12.1.nix;
-                         prefFun = x : x.ghc6121Prefs;
-                       };
-
-  haskellPackages_ghc6122 =
-    haskellPackagesFun { ghcPath = ../development/compilers/ghc/6.12.2.nix;
-                         prefFun = x : x.ghc6122Prefs;
-                       };
-
-  haskellPackages_ghc6123 =
-    recurseIntoAttrs
-      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/6.12.3.nix;
-                            prefFun = x : x.ghc6123Prefs;
-                          });
-
-  # Will never make it into a platform release, severe bugs; leave at lowPrio.
-  haskellPackages_ghc701 =
-    haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.0.1.nix;
-                         prefFun = x : x.ghc701Prefs;
-                       };
-
-  haskellPackages_ghc702 =
-    haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.0.2.nix;
-                         prefFun = x : x.ghc702Prefs;
-                       };
-
-  haskellPackages_ghc703 =
-    haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.0.3.nix;
-                         prefFun = x : x.ghc703Prefs;
-                       };
-
   # Current default version: 7.0.4.
-  #
-  # The following items are a bit convoluted, but they serve the
-  # following purpose:
-  #   - for the default version of GHC, both profiling and
-  #     non-profiling versions should be built by Hydra --
-  #     therefore, the _no_profiling and _profiling calls;
-  #   - however, if a user just upgrades a profile, then the
-  #     cabal/libraryProfiling setting should be respected; i.e.,
-  #     the versions not matching the profiling config setting
-  #     should have low priority -- therefore, the use of
-  #     haskellDefaultVersionPrioFun;
-  #   - it should be possible to select library versions that
-  #     respect the config setting using the standard
-  #     haskellPackages_ghc704 path -- therefore, the additional
-  #     call in haskellPackages_ghc704, without recurseIntoAttrs,
-  #     so that Hydra doesn't build these.
-  haskellDefaultVersionPrioFun =
-    profDefault :
-    if getConfig [ "cabal" "libraryProfiling" ] false == profDefault
-      then (x : x)
-      else lowPrio;
+  haskellPackages = haskellPackages_ghc704;
 
-  haskellPackages_ghc704_no_profiling =
-    recurseIntoAttrs
-      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.0.4.nix;
-                            ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6101Binary;
-                            prefFun = x : x.ghc704Prefs;
-                            profExplicit = true;
-                            modifyPrio = haskellDefaultVersionPrioFun false;
-                          });
-
-  haskellPackages_ghc704_profiling =
-    recurseIntoAttrs
-      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.0.4.nix;
-                            ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6101Binary;
-                            prefFun = x : x.ghc704Prefs;
-                            profExplicit = true;
-                            profDefault = true;
-                            modifyPrio = haskellDefaultVersionPrioFun true;
-                          });
-
-  haskellPackages_ghc704 =
-    haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.0.4.nix;
-                         ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6101Binary;
-                         prefFun = x : x.ghc704Prefs;
-                         modifyPrio = x : x;
-                       };
-
-  haskellPackages_ghc721 =
-    haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.2.1.nix;
-                         ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6121Binary;
-                         prefFun = x : x.ghc721Prefs;
-                       };
-
-  haskellPackages_ghc722 =
-    haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.2.2.nix;
-                         ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6121Binary;
-                         prefFun = x : x.ghc722Prefs;
-                       };
-
-  haskellPackages_ghc741 =
-    recurseIntoAttrs
-      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.4.1.nix;
-                            ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6121Binary;
-                            prefFun = x : x.ghc741Prefs;
-                          });
-
+  haskellPackages_ghc6104             = recurseIntoAttrs (haskell.packages_ghc6104);
+  haskellPackages_ghc6121             =                   haskell.packages_ghc6121;
+  haskellPackages_ghc6122             =                   haskell.packages_ghc6122;
+  haskellPackages_ghc6123             = recurseIntoAttrs (haskell.packages_ghc6123);
+  haskellPackages_ghc701              =                   haskell.packages_ghc701;
+  haskellPackages_ghc702              =                   haskell.packages_ghc702;
+  haskellPackages_ghc703              =                   haskell.packages_ghc703;
+  # For the default version, we build profiling versions of the libraries, too.
+  # The following three lines achieve that: the first two make Hydra build explicit
+  # profiling and non-profiling versions; the final respects the user-configured
+  # default setting.
+  haskellPackages_ghc704_no_profiling = recurseIntoAttrs (haskell.packages_ghc704.noProfiling);
+  haskellPackages_ghc704_profiling    = recurseIntoAttrs (haskell.packages_ghc704.profiling);
+  haskellPackages_ghc704              =                   haskell.packages_ghc704.highPrio;
+  haskellPackages_ghc721              =                   haskell.packages_ghc721;
+  haskellPackages_ghc722              =                   haskell.packages_ghc722;
+  haskellPackages_ghc741              = recurseIntoAttrs (haskell.packages_ghc741);
+  haskellPackages_ghc741_pedantic     =                   haskell.packages_ghc741_pedantic;
   # Stable branch snapshot.
-  haskellPackages_ghc742 =
-    recurseIntoAttrs
-      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/7.4.2.nix;
-                            ghcBinary = if stdenv.isDarwin then ghc704Binary else ghc6121Binary;
-                            prefFun = x : x.ghcHEADPrefs;
-                          });
-
-  # Reasonably current HEAD snapshot. Should *always* be lowPrio.
-  haskellPackages_ghcHEAD =
-    recurseIntoAttrs
-      (haskellPackagesFun { ghcPath = ../development/compilers/ghc/head.nix;
-                            ghcBinary = # (haskellPackages_ghc704.ghcWithPackages (self : [ self.alex self.happy ]))
-                                        ghc704Binary;
-                            prefFun = x : x.ghcHEADPrefs;
-                          });
+  haskellPackages_ghc742              = recurseIntoAttrs (haskell.packages_ghc742);
+  # Reasonably current HEAD snapshot.
+  haskellPackages_ghcHEAD             =                   haskell.packages_ghcHEAD;
 
   haxeDist = import ../development/compilers/haxe {
     inherit fetchurl sourceFromHead stdenv lib ocaml zlib makeWrapper neko;
@@ -2696,7 +2564,7 @@ let
 
   erlang = callPackage ../development/interpreters/erlang { };
 
-  erlangR13B = callPackage ../development/interpreters/erlang/R13B.nix { };
+  erlangR14B04 = callPackage ../development/interpreters/erlang/R14B04.nix { };
 
   groovy = callPackage ../development/interpreters/groovy { };
 
@@ -4318,7 +4186,9 @@ let
 
   libunwind = callPackage ../development/libraries/libunwind { };
 
-  libv4l = callPackage ../development/libraries/libv4l { };
+  libv4l = v4l_utils.override {
+    withQt4 = false;
+  };
 
   libva = callPackage ../development/libraries/libva { };
 
@@ -4768,10 +4638,10 @@ let
 
   srtp = callPackage ../development/libraries/srtp {};
 
-  sqlite = callPackage ../development/libraries/sqlite {
+  sqlite = lowPrio (callPackage ../development/libraries/sqlite {
     readline = null;
     ncurses = null;
-  };
+  });
 
   sqlite36 = callPackage ../development/libraries/sqlite/3.6.x.nix {
     readline = null;
@@ -4782,9 +4652,9 @@ let
     inherit readline ncurses;
   });
 
-  sqliteFull = callPackage ../development/libraries/sqlite/full.nix {
+  sqliteFull = lowPrio (callPackage ../development/libraries/sqlite/full.nix {
     inherit readline ncurses;
-  };
+  });
 
   stlport = callPackage ../development/libraries/stlport { };
 
@@ -5782,6 +5652,14 @@ let
       ];
   };
 
+  linux_3_4 = makeOverridable (import ../os-specific/linux/kernel/linux-3.4.nix) {
+    inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
+    kernelPatches =
+      [ #kernelPatches.fbcondecor_2_6_38
+        kernelPatches.sec_perm_2_6_24
+      ];
+  };
+
   /* Linux kernel modules are inherently tied to a specific kernel.  So
      rather than provide specific instances of those packages for a
      specific kernel, we have a function that builds those packages
@@ -5816,9 +5694,7 @@ let
         callPackage ../os-specific/linux/aufs-util/3.nix { }
       else null;
 
-    blcr = callPackage ../os-specific/linux/blcr {
-      #libtool = libtool_1_5; # libtool 2 causes a fork bomb
-    };
+    blcr = callPackage ../os-specific/linux/blcr { };
 
     e1000e = callPackage ../os-specific/linux/e1000e {};
 
@@ -5910,6 +5786,7 @@ let
   linuxPackages_nanonote_jz_2_6_36 = linuxPackagesFor linux_nanonote_jz_2_6_36 pkgs.linuxPackages_nanonote_jz_2_6_36;
   linuxPackages_3_2 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_2 pkgs.linuxPackages_3_2);
   linuxPackages_3_3 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_3 pkgs.linuxPackages_3_3);
+  linuxPackages_3_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_4 pkgs.linuxPackages_3_4);
 
   # The current default kernel / kernel modules.
   linux = linuxPackages.kernel;
@@ -6089,6 +5966,8 @@ let
 
   sysstat = callPackage ../os-specific/linux/sysstat { };
 
+  systemd = callPackage ../os-specific/linux/systemd { };
+
   sysvinit = callPackage ../os-specific/linux/sysvinit { };
 
   sysvtools = callPackage ../os-specific/linux/sysvinit {
@@ -6159,7 +6038,9 @@ let
     inherit ncurses perl;
   };
 
-  v4l_utils = callPackage ../os-specific/linux/v4l-utils {};
+  v4l_utils = callPackage ../os-specific/linux/v4l-utils {
+    withQt4 = true;
+  };
 
   windows = rec {
     w32api = callPackage ../os-specific/windows/w32api {
@@ -6953,6 +6834,10 @@ let
 
   gmtk = callPackage ../applications/networking/browsers/mozilla-plugins/gmtk {
     inherit (gnome) GConf;
+  };
+
+  gnome_terminator = callPackage ../applications/misc/gnome_terminator {
+    vte = gnome.vte.override { pythonSupport = true; };
   };
 
   googleearth = callPackage_i686 ../applications/misc/googleearth { };
@@ -7813,6 +7698,8 @@ let
 
   zathura = callPackage ../applications/misc/zathura { };
 
+  zgrviewer = callPackage ../applications/graphics/zgrviewer {};
+
   zynaddsubfx = callPackage ../applications/audio/zynaddsubfx { };
 
   ### GAMES
@@ -8466,9 +8353,7 @@ let
 
   auctex = callPackage ../tools/typesetting/tex/auctex { };
 
-  busybox = callPackage ../misc/busybox {
-    enableStatic = true;
-  };
+  busybox = callPackage ../misc/busybox { };
 
   cups = callPackage ../misc/cups { };
 
@@ -8565,17 +8450,14 @@ let
     stateDir = getConfig [ "nix" "stateDir" ] "/nix/var";
   };
 
+  /*
   nixUnstable = callPackage ../tools/package-management/nix/unstable.nix {
     storeDir = getConfig [ "nix" "storeDir" ] "/nix/store";
     stateDir = getConfig [ "nix" "stateDir" ] "/nix/var";
-    stdenv =
-      if stdenv.isDarwin
-      # When building the Perl bindings, `-no-cpp-precomp' is used.
-      then overrideGCC stdenv gccApple
-      else stdenv;
   };
+  */
 
-  nixSqlite = nixUnstable;
+  nixUnstable = nixStable;
 
   nixCustomFun = src: preConfigure: enableScripts: configureFlags:
     import ../tools/package-management/nix/custom.nix {
