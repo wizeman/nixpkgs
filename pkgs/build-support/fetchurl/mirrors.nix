@@ -226,10 +226,6 @@ rec {
     ftp://ftp.nara.wide.ad.jp/pub/X11/GNOME/
   ];
 
-  xfce = [
-    http://archive.xfce.org/src/
-  ];
-
   # X.org.
   xorg = [
     http://xorg.freedesktop.org/releases/

@@ -48,6 +48,7 @@ rec {
         USB_STORAGE_CYPRESS_ATACB m
 
         IP_PNP y
+        IP_PNP_DHCP y
         NFS_FS y
         ROOT_NFS y
         TUN m
@@ -72,6 +73,8 @@ rec {
         CIFS_POSIX y
         CIFS_FSCACHE y
         CIFS_ACL y
+
+        ZRAM m
 
         # Fail to build
         DRM n
