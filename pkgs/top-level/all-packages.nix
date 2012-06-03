@@ -692,6 +692,8 @@ let
 
   finger_bsd = callPackage ../tools/networking/bsd-finger { };
 
+  fio = callPackage ../tools/system/fio { };
+
   flvstreamer = callPackage ../tools/networking/flvstreamer { };
 
   libbsd = callPackage ../development/libraries/libbsd { };
@@ -1852,7 +1854,9 @@ let
 
   gccCrossStageStatic = let
       isMingw = (stdenv.cross.libc == "msvcrt");
-      libcCross1 = if isMingw then windows.mingw_headers1 else null;
+      isMingw64 = isMingw && stdenv.cross.config == "x86_64-w64-mingw32";
+      libcCross1 = if isMingw64 then windows.mingw_w64_headers else
+                   if isMingw then windows.mingw_headers1 else null;
     in
       wrapGCCCross {
       gcc = forceBuildDrv (lib.addMetaAttrs { platforms = []; } (
@@ -2199,6 +2203,8 @@ let
 
   # Current default version: 7.0.4.
   haskellPackages = haskellPackages_ghc704;
+  # Current Haskell platform.
+  haskellPlatform = haskellPackages.haskellPlatform;
 
   haskellPackages_ghc6104             = recurseIntoAttrs (haskell.packages_ghc6104);
   haskellPackages_ghc6121             =                   haskell.packages_ghc6121;
@@ -2217,7 +2223,6 @@ let
   haskellPackages_ghc721              =                   haskell.packages_ghc721;
   haskellPackages_ghc722              =                   haskell.packages_ghc722;
   haskellPackages_ghc741              = recurseIntoAttrs (haskell.packages_ghc741);
-  haskellPackages_ghc741_pedantic     =                   haskell.packages_ghc741_pedantic;
   # Stable branch snapshot.
   haskellPackages_ghc742              = recurseIntoAttrs (haskell.packages_ghc742);
   # Reasonably current HEAD snapshot.
@@ -2273,8 +2278,8 @@ let
   jdk       = if stdenv.isDarwin then openjdkDarwin else jdkdistro true  false;
   jre       = jdkdistro false false;
 
-  jdkPlugin = jdkdistro true true;
-  jrePlugin = jdkdistro false true;
+  jdkPlugin = lowPrio (jdkdistro true true);
+  jrePlugin = lowPrio (jdkdistro false true);
 
   supportsJDK =
     system == "i686-linux" ||
@@ -2299,6 +2304,7 @@ let
   };
 
   llvm = callPackage ../development/compilers/llvm { };
+  llvm_3_1 = callPackage ../development/compilers/llvm/3.1.nix { };
 
   mitscheme = callPackage ../development/compilers/mit-scheme { };
 
@@ -3526,6 +3532,8 @@ let
   # We can choose:
   libcCrossChooser = name : if (name == "glibc") then glibcCross
     else if (name == "uclibc") then uclibcCross
+    else if (name == "msvcrt" && stdenv.cross.config == "x86_64-w64-mingw32") then
+      windows.mingw_w64
     else if (name == "msvcrt") then windows.mingw_headers3
     else throw "Unknown libc";
 
@@ -3591,6 +3599,13 @@ let
     inherit (gnome) libglade libgnomeui;
     gconf = gnome.GConf;
     libart = gnome.libart_lgpl;
+  };
+
+  goffice_0_9 = callPackage ../development/libraries/goffice/0.9.nix {
+    inherit (gnome) libglade libgnomeui;
+    gconf = gnome.GConf;
+    libart = gnome.libart_lgpl;
+    gtk = gtk3;
   };
 
   goocanvas = callPackage ../development/libraries/goocanvas { };
@@ -6076,6 +6091,15 @@ let
       paths = [ w32api mingw_runtime ];
     };
 
+    mingw_w64 = callPackage ../os-specific/windows/mingw-w64 {
+      gccCross = gccCrossStageStatic;
+      binutilsCross = binutilsCross;
+    };
+
+    mingw_w64_headers = callPackage ../os-specific/windows/mingw-w64 {
+      onlyHeaders = true;
+    };
+
     pthreads = callPackage ../os-specific/windows/pthread-w32 {
       mingw_headers = mingw_headers2;
     };
@@ -6780,6 +6804,11 @@ let
 
   gnome_mplayer = callPackage ../applications/video/gnome-mplayer {
     inherit (gnome) GConf;
+  };
+
+  gnumeric = callPackage ../applications/office/gnumeric {
+    goffice = goffice_0_9;
+    inherit (gnome) libglade scrollkeeper;
   };
 
   gnunet08 = callPackage ../applications/networking/p2p/gnunet/0.8.nix {
@@ -8231,7 +8260,7 @@ let
 
   coq = callPackage ../applications/science/logic/coq {
     inherit (ocamlPackages) findlib lablgtk;
-    camlp5 = ocamlPackages.camlp5_5_transitional;
+    camlp5 = ocamlPackages.camlp5_transitional;
   };
 
   cvc3 = callPackage ../applications/science/logic/cvc3 {};
@@ -8285,7 +8314,7 @@ let
   spass = callPackage ../applications/science/logic/spass {};
 
   ssreflect = callPackage ../applications/science/logic/ssreflect {
-    camlp5 = ocamlPackages.camlp5_5_transitional;
+    camlp5 = ocamlPackages.camlp5_transitional;
   };
 
   tptp = callPackage ../applications/science/logic/tptp {};
