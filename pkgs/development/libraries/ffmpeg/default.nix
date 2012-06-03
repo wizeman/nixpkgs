@@ -7,6 +7,7 @@
 , x264Support ? true, x264 ? null
 , xvidSupport ? true, xvidcore ? null
 , faacSupport ? false, faac ? null
+, vdpauSupport ? false, libvdpau ? null
 }:
 
 assert speexSupport -> speex != null;
@@ -18,13 +19,13 @@ assert xvidSupport -> xvidcore != null;
 assert faacSupport -> faac != null;
 
 stdenv.mkDerivation rec {
-  name = "ffmpeg-0.10";
-  
+  name = "ffmpeg-0.11";
+
   src = fetchurl {
     url = "http://www.ffmpeg.org/releases/${name}.tar.bz2";
-    sha256 = "1ybzw6d5axr807141izvm2yf4pa0hc1zcywj89nsn3qsdnknlna3";
+    sha256 = "0bq4198d969b063p3sjb1mw4ywifj4y4r434ih6hghv11mpjyrmi";
   };
-  
+
   # `--enable-gpl' (as well as the `postproc' and `swscale') mean that
   # the resulting library is GPL'ed, so it can only be used in GPL'ed
   # applications.
@@ -44,7 +45,8 @@ stdenv.mkDerivation rec {
     ++ stdenv.lib.optional vpxSupport "--enable-libvpx"
     ++ stdenv.lib.optional x264Support "--enable-libx264"
     ++ stdenv.lib.optional xvidSupport "--enable-libxvid"
-    ++ stdenv.lib.optional faacSupport "--enable-libfaac --enable-nonfree";
+    ++ stdenv.lib.optional faacSupport "--enable-libfaac --enable-nonfree"
+    ++ stdenv.lib.optional vdpauSupport "--enable-vdpau";
 
   buildInputs = [ pkgconfig lame yasm zlib bzip2 ]
     ++ stdenv.lib.optional mp3Support lame
@@ -54,14 +56,15 @@ stdenv.mkDerivation rec {
     ++ stdenv.lib.optional vpxSupport libvpx
     ++ stdenv.lib.optional x264Support x264
     ++ stdenv.lib.optional xvidSupport xvidcore
-    ++ stdenv.lib.optional faacSupport faac;
+    ++ stdenv.lib.optional faacSupport faac
+    ++ stdenv.lib.optional vdpauSupport libvdpau;
 
   enableParallelBuilding = true;
-    
+
   crossAttrs = {
     dontSetConfigureCross = true;
     configureFlags = configureFlags ++ [
-      "--cross-prefix=${stdenv.cross.config}-"
+      "--cross-prefix=${stdenv.cross.config}"
       "--enable-cross-compile"
       "--target_os=linux"
       "--arch=${stdenv.cross.arch}"

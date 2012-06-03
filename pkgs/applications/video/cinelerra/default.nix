@@ -3,8 +3,8 @@
 , libiec61883, libraw1394, libsndfile, libvorbis, libogg, libjpeg
 , libtiff, freetype, mjpegtools, x264, gettext, openexr
 , libXext, libXxf86vm, libXv, libXi, libX11, xextproto, libtheora, libpng
-, libdv, libuuid, file, nasm, perl }:
-        
+, libdv, libuuid, file, nasm, perl, mesa }:
+
 stdenv.mkDerivation {
   name = "cinelerra-git";
 
@@ -38,9 +38,17 @@ stdenv.mkDerivation {
       libtheora libpng libdv libuuid
       nasm
       perl
+      mesa
     ];
 
-  meta = { 
+  configureFlags = "--enable-opengl";
+
+  #configureFlags = ''
+  #  --enable-x86 --enable-mmx32 --enable-freetype2 --with-buildinfo=svn/recompile
+  #'';
+  #makeFlags = ''CFLAGS="-O3 -pipe -fomit-frame-pointer -funroll-all-loops -falign-loops=2 -falign-jumps=2 -falign-functions=2 -ffast-math -march=pentium-m -mfpmath=sse,387 -mmmx -msse"'';
+
+  meta = {
     description = "Cinelerra - Video Editor";
     homepage = http://www.cinelerra.org;
     maintainers = [ stdenv.lib.maintainers.marcweber ];
