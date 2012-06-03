@@ -3365,6 +3365,7 @@ let
 
   ffmpeg = callPackage ../development/libraries/ffmpeg {
     vpxSupport = if !stdenv.isMips then true else false;
+    vdpauSupport = true;
   };
 
   ffmpeg_0_6_90 = callPackage ../development/libraries/ffmpeg/0.6.90.nix {
@@ -7114,7 +7115,8 @@ let
 
   ncmpcpp = callPackage ../applications/audio/ncmpcpp { };
 
-  MPlayer = callPackage ../applications/video/MPlayer { };
+  MPlayer = callPackage ../applications/video/MPlayer
+    { vdpauSupport = true; };
 
   MPlayerPlugin = browser:
     import ../applications/networking/browsers/mozilla-plugins/mplayerplug-in {
