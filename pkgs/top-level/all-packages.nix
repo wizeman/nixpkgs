@@ -3319,6 +3319,8 @@ let
 
   directfb = callPackage ../development/libraries/directfb { };
 
+  djbfft = callPackage ../development/libraries/djbfft { };
+
   dotconf = callPackage ../development/libraries/dotconf { };
 
   dssi = callPackage ../development/libraries/dssi {};
