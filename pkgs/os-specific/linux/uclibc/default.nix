@@ -36,6 +36,7 @@ let
   archMakeFlag = if (cross != null) then "ARCH=${cross.arch}" else "";
   crossMakeFlag = if (cross != null) then "CROSS=${cross.config}-" else "";
 
+  # UCLIBC_SUSV4_LEGACY defines 'tmpnam', needed for gcc libstdc++ builds.
   nixConfig = ''
     RUNTIME_PREFIX "/"
     DEVEL_PREFIX "/"
@@ -44,6 +45,8 @@ let
     UCLIBC_HAS_RPC y
     DO_C99_MATH y
     UCLIBC_HAS_PROGRAM_INVOCATION_NAME y
+    UCLIBC_SUSV4_LEGACY y
+    UCLIBC_HAS_THREADS_NATIVE y
     KERNEL_HEADERS "${linuxHeaders}/include"
   '';
 
@@ -81,7 +84,8 @@ stdenv.mkDerivation {
     mkdir -p $out
     make PREFIX=$out VERBOSE=1 install ${crossMakeFlag}
     (cd $out/include && ln -s $(ls -d ${linuxHeaders}/include/* | grep -v "scsi$") .)
-    sed -i s@/lib/@$out/lib/@g $out/lib/libc.so
+    # libpthread.so may not exist, so I do || true
+    sed -i s@/lib/@$out/lib/@g $out/lib/libc.so $out/lib/libpthread.so || true
   '';
 
   passthru = {
