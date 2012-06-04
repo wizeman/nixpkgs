@@ -3,11 +3,11 @@
 
 stdenv.mkDerivation rec {
   name = "kdenlive-${version}";
-  version = "0.8.2.1";
+  version = "0.9.2";
 
   src = fetchurl {
-    url = "mirror://sourceforge/kdenlive/${name}.tar.gz";
-    sha256 = "a454a0659c9673453800df8382dfdbcb87acfb9b174712ffeb46b8304bf00717";
+    url = "mirror://kde/stable/kdenlive/${version}/src/${name}.tar.bz2";
+    sha256 = "1h240s0c10z8sgvwmrfzam33qlx7j2a5b12lw1mk02ihs9hl43j1";
   };
 
   patches = [ ./qtgl-header-change.patch ];
