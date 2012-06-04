@@ -1,12 +1,12 @@
 {stdenv, fetchurl, SDL, qt4, pkgconfig, ffmpeg, libdv, libxml2, libsamplerate,
 libvorbis, sox}:
 
-stdenv.mkDerivation {
-  name = "mlt-0.7.8";
+stdenv.mkDerivation rec {
+  name = "mlt-0.8.0";
 
   src = fetchurl {
-    url = mirror://sourceforge/mlt/mlt-0.7.8.tar.gz;
-    sha256 = "0hvfjk0hspamym0ahi635ivx9iv3v2jy2qv15za1vmz28qkkp0wm";
+    url = "mirror://sourceforge/mlt/${name}.tar.gz";
+    sha256 = "1pf61imb5xzgzf65g54kybjr67235rxi20691023mcv34qwppl3v";
   };
 
   buildInputs = [ qt4 SDL ffmpeg libdv libxml2 libsamplerate libvorbis sox pkgconfig ];
