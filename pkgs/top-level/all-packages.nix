@@ -1143,6 +1143,8 @@ let
 
   obexftp = callPackage ../tools/bluetooth/obexftp { };
 
+  obnam = callPackage ../tools/backup/obnam { };
+
   odt2txt = callPackage ../tools/text/odt2txt { };
 
   offlineimap = callPackage ../tools/networking/offlineimap { };
@@ -2201,8 +2203,8 @@ let
   # particularly in connection with Hydra builds for all these packages.
   # So we enable it for selected versions only.
 
-  # Current default version: 7.0.4.
-  haskellPackages = haskellPackages_ghc704;
+  # Current default version: 7.4.1.
+  haskellPackages = haskellPackages_ghc741;
   # Current Haskell platform.
   haskellPlatform = haskellPackages.haskellPlatform;
 
@@ -2213,16 +2215,16 @@ let
   haskellPackages_ghc701              =                   haskell.packages_ghc701;
   haskellPackages_ghc702              =                   haskell.packages_ghc702;
   haskellPackages_ghc703              =                   haskell.packages_ghc703;
+  haskellPackages_ghc704              = recurseIntoAttrs (haskell.packages_ghc704);
+  haskellPackages_ghc721              =                   haskell.packages_ghc721;
+  haskellPackages_ghc722              =                   haskell.packages_ghc722;
   # For the default version, we build profiling versions of the libraries, too.
   # The following three lines achieve that: the first two make Hydra build explicit
   # profiling and non-profiling versions; the final respects the user-configured
   # default setting.
-  haskellPackages_ghc704_no_profiling = recurseIntoAttrs (haskell.packages_ghc704.noProfiling);
-  haskellPackages_ghc704_profiling    = recurseIntoAttrs (haskell.packages_ghc704.profiling);
-  haskellPackages_ghc704              =                   haskell.packages_ghc704.highPrio;
-  haskellPackages_ghc721              =                   haskell.packages_ghc721;
-  haskellPackages_ghc722              =                   haskell.packages_ghc722;
-  haskellPackages_ghc741              = recurseIntoAttrs (haskell.packages_ghc741);
+  haskellPackages_ghc741_no_profiling = recurseIntoAttrs (haskell.packages_ghc741.noProfiling);
+  haskellPackages_ghc741_profiling    = recurseIntoAttrs (haskell.packages_ghc741.profiling);
+  haskellPackages_ghc741              = recurseIntoAttrs (haskell.packages_ghc741.highPrio);
   # Stable branch snapshot.
   haskellPackages_ghc742              = recurseIntoAttrs (haskell.packages_ghc742);
   # Reasonably current HEAD snapshot.
@@ -3178,6 +3180,8 @@ let
 
   babl = callPackage ../development/libraries/babl { };
 
+  babl_0_1_10 = callPackage ../development/libraries/babl/0.1.10.nix {};
+
   beecrypt = callPackage ../development/libraries/beecrypt { };
 
   boehmgc = callPackage ../development/libraries/boehm-gc { };
@@ -3435,6 +3439,10 @@ let
 
   gegl = callPackage ../development/libraries/gegl {
     #  avocodec avformat librsvg
+  };
+
+  gegl_0_2_0 = callPackage ../development/libraries/gegl/0.2.0.nix {
+    babl = babl_0_1_10;
   };
 
   geoclue = callPackage ../development/libraries/geoclue {};
@@ -6061,6 +6069,8 @@ let
   };
 
   windows = rec {
+    jom = callPackage ../os-specific/windows/jom { };
+
     w32api = callPackage ../os-specific/windows/w32api {
       gccCross = gccCrossStageStatic;
       binutilsCross = binutilsCross;
@@ -6702,23 +6712,17 @@ let
 
   firefox36Wrapper = wrapFirefox { browser = firefox36Pkgs.firefox; };
 
-  firefox10Pkgs = callPackage ../applications/networking/browsers/firefox/10.0.nix {
-    inherit (gnome) libIDL;
-  };
-
-  firefox10Wrapper = wrapFirefox { browser = firefox10Pkgs.firefox; };
-
-  firefox11Pkgs = callPackage ../applications/networking/browsers/firefox/11.0.nix {
-    inherit (gnome) libIDL;
-  };
-
-  firefox11Wrapper = wrapFirefox { browser = firefox11Pkgs.firefox; };
-
   firefox12Pkgs = callPackage ../applications/networking/browsers/firefox/12.0.nix {
     inherit (gnome) libIDL;
   };
 
   firefox12Wrapper = wrapFirefox { browser = firefox12Pkgs.firefox; };
+
+  firefox13Pkgs = callPackage ../applications/networking/browsers/firefox/13.0.nix {
+    inherit (gnome) libIDL;
+  };
+
+  firefox13Wrapper = lowPrio (wrapFirefox { browser = firefox13Pkgs.firefox; });
 
   flac = callPackage ../applications/audio/flac { };
 
@@ -6762,6 +6766,12 @@ let
 
   gimp = callPackage ../applications/graphics/gimp {
     inherit (gnome) libart_lgpl;
+  };
+
+  gimp_2_8_0 = callPackage ../applications/graphics/gimp/2.8.0.nix {
+    inherit (gnome) libart_lgpl;
+    babl = babl_0_1_10;
+    gegl = gegl_0_2_0;
   };
 
   gimpPlugins = recurseIntoAttrs (import ../applications/graphics/gimp/plugins {
