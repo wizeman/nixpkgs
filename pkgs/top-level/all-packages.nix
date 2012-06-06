@@ -671,6 +671,9 @@ let
 
   fdm = callPackage ../tools/networking/fdm {};
 
+  ffmpeg2theora = callPackage ../tools/video/ffmpeg2theora
+    { ffmpeg = ffmpeg_0_6_90; };
+
   figlet = callPackage ../tools/misc/figlet { };
 
   file = callPackage ../tools/misc/file { };
