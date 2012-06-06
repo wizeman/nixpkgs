@@ -10,6 +10,11 @@ stdenv.mkDerivation rec {
     sha256 = "1k8i5zvgik7cad7znd8358grzwh62frpqww1a5rwkldrlws3q5ii";
   };
 
+  patches = [
+    ./gcc46.patch ./gcc47.patch ./libav7.patch
+    ./libmp4v2.patch ./mozjs185.patch
+  ];
+
   buildInputs = [ sqlite expat spidermonkey taglib libexif curl ffmpeg file ];
 
   configureFlags = [ "--enable-inotify" ];
