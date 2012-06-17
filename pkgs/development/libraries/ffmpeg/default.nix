@@ -1,4 +1,5 @@
 { stdenv, fetchurl, pkgconfig, yasm, zlib, bzip2
+, branch ? "0.11"
 , mp3Support ? true, lame ? null
 , speexSupport ? true, speex ? null
 , theoraSupport ? true, libtheora ? null
@@ -13,17 +14,27 @@
 assert speexSupport -> speex != null;
 assert theoraSupport -> libtheora != null;
 assert vorbisSupport -> libvorbis != null;
-assert vpxSupport -> libvpx != null;
+assert vpxSupport -> libvpx != null && builtins.compareVersions branch "0.5" == 1;
 assert x264Support -> x264 != null;
 assert xvidSupport -> xvidcore != null;
 assert faacSupport -> faac != null;
+assert vdpauSupport -> libvdpau != null;
 
 stdenv.mkDerivation rec {
-  name = "ffmpeg-0.11";
+  name = "ffmpeg-${version}";
+  version = if branch == "0.5" then "0.5.9"
+    else    if branch == "0.7" then "0.7.12"
+    else    if branch == "0.9" then "0.9.2"
+    else    branch;
 
   src = fetchurl {
     url = "http://www.ffmpeg.org/releases/${name}.tar.bz2";
-    sha256 = "0bq4198d969b063p3sjb1mw4ywifj4y4r434ih6hghv11mpjyrmi";
+    sha256 =
+      if branch == "0.5"  then "05avwmfxhqy32zip1rgdcdn74538a7xgs70f7jykg1qb52hvnsj5" else
+      if branch == "0.7"  then "0030ydgx7lpcm7gwrwmq6khlbwa97x50p7zd2vn9a7ssbvbi2rbq" else
+      if branch == "0.9"  then "0jcywsgl2vwfff0xqwyz8zw2sarxm3kd6hhjpa175ajhv2gql4gr" else
+      if branch == "0.11" then "0bq4198d969b063p3sjb1mw4ywifj4y4r434ih6hghv11mpjyrmi" else
+      throw "unsupported ffmpeg branch `${branch}'";
   };
 
   # `--enable-gpl' (as well as the `postproc' and `swscale') mean that
@@ -46,7 +57,7 @@ stdenv.mkDerivation rec {
     ++ stdenv.lib.optional x264Support "--enable-libx264"
     ++ stdenv.lib.optional xvidSupport "--enable-libxvid"
     ++ stdenv.lib.optional faacSupport "--enable-libfaac --enable-nonfree"
-    ++ stdenv.lib.optional vdpauSupport "--enable-vdpau";
+    ++ stdenv.lib.optional vdpauSupport "--enable-vdpau"; # not detected anyway, don't know why
 
   buildInputs = [ pkgconfig lame yasm zlib bzip2 ]
     ++ stdenv.lib.optional mp3Support lame

@@ -11,7 +11,9 @@ stdenv.mkDerivation rec {
     url = "http://audacity.googlecode.com/files/audacity-minsrc-${version}.tar.bz2";
     sha256 = "0spbib3f86b4qri0g13idyxvysg28hkpsglmjza681zrln62hjfq";
   };
-  buildInputs = [ pkgconfig wxGTK libsndfile expat alsaLib libsamplerate
+
+  #TODO: the reference to ffmpeg disappears and it then can't find it when importing audio
+  buildInputs = [ pkgconfig wxGTK gtk libsndfile expat alsaLib libsamplerate
                   libvorbis libmad flac id3lib ffmpeg gettext ];
 
   dontDisableStatic = true;

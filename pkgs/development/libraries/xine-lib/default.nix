@@ -1,36 +1,31 @@
-{ stdenv, fetchurl, pkgconfig, xorg, alsaLib, mesa, aalib
+{ stdenv, fetchurl, lib, pkgconfig, xorg, alsaLib, mesa, aalib
 , libvorbis, libtheora, speex, zlib, libdvdcss, perl, ffmpeg
 , flac, libcaca, pulseaudio, libmng, libcdio, libv4l, vcdimager
-, libmpcdec
+, libmpcdec, a52dec, faad2, libmad
+, vdpauSupport ? false, libvdpau
 }:
+# TODO:
+#   - missing libdts (using internal)
+#   - missing mpeg encoder (fame or rte)
 
 stdenv.mkDerivation rec {
-  name = "xine-lib-1.2.0";
-  
+  name = "xine-lib-1.2.1";
+
   src = fetchurl {
-    url = "mirror://sourceforge/xine/${name}.tar.bz2";
-    sha256 = "1yss9cxxkcb6dzrv78xvi845ls6lhhbv6g8yfm6zjjl07v7jbm6c";
+    url = "mirror://sourceforge/xine/${name}.tar.xz";
+    sha256 = "0kixw2l4g3dvxzsy3xl3nf44rpg9akqxwkwid9y1jsmlfp9g0krd";
   };
 
-  patches = [ ./zlib126.patch ];
-#  patches =
-#    [ (fetchurl {
-#        url = "http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/media-libs/xine-lib/files/xine-lib-1.1.19-ffmpeg.patch?revision=1.1";
-#        sha256 = "0dqr0kc829djfn0wvk4jg84v61pxynqbp4s4phvywd7x9caf092b";
-#      })
-#    ];
-  
+  patches = [ ./ffmpeg.patch ]; # from Gentoo, to build with ffmpeg-11
+
   buildNativeInputs = [ pkgconfig perl ];
 
   buildInputs = [
     xorg.libX11 xorg.libXv xorg.libXinerama xorg.libxcb xorg.libXext
     alsaLib mesa aalib libvorbis libtheora speex perl ffmpeg flac
-    libcaca pulseaudio libmng libcdio libv4l vcdimager libmpcdec
-  ];
-
-  NIX_LDFLAGS = "-rpath ${libdvdcss}/lib -L${libdvdcss}/lib -ldvdcss";
-  
-  propagatedBuildInputs = [zlib];
+    libcaca pulseaudio libmng libcdio libv4l vcdimager libmpcdec zlib
+    a52dec faad2 libmad
+  ] ++ lib.optional vdpauSupport libvdpau;
 
   enableParallelBuilding = true;
 
