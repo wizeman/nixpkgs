@@ -17,6 +17,9 @@ stdenv.mkDerivation rec {
   # multiple copies of ffmpeg).
   configureFlags = stdenv.lib.optionalString (!useInternalFfmpeg) "--with-system-ffmpeg";
 
+  #configure: *** Orc acceleration disabled.  Requires Orc >= 0.4.6, which was
+  #             not found.  Slower code paths will be used.
+
   buildInputs =
     [ pkgconfig bzip2 gst_plugins_base ]
     ++ (if useInternalFfmpeg then [ yasm ] else [ ffmpeg ]);
