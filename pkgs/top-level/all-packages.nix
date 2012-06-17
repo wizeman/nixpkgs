@@ -4834,6 +4834,8 @@ let
     withMesa = lib.elem system lib.platforms.mesaPlatforms;
   };
 
+  wxsvg = callPackage ../development/libraries/wxsvg {};
+
   wtk = callPackage ../development/libraries/wtk { };
 
   x264 = callPackage ../development/libraries/x264 { };
@@ -6504,6 +6506,9 @@ let
   dvb_apps  = callPackage ../applications/video/dvb-apps { };
 
   dvdauthor = callPackage ../applications/video/dvdauthor { };
+
+  dvdstyler = callPackage ../applications/video/dvdstyler
+    { inherit (gnome) libgnomeui; };
 
   dvswitch = callPackage ../applications/video/dvswitch { };
 
