@@ -1,18 +1,18 @@
 { fetchurl, stdenv, pkgconfig, gst_plugins_base, aalib, cairo
 , flac, libjpeg, zlib, speex, libpng, libdv, libcaca
 , libiec61883, libavc1394, taglib, pulseaudio
-, glib, gstreamer, bzip2
+, glib, gstreamer, bzip2, orc
 }:
 
 stdenv.mkDerivation rec {
-  name = "gst-plugins-good-0.10.30";
+  name = "gst-plugins-good-0.10.31";
 
   src = fetchurl {
     urls = [
-      "${meta.homepage}/src/gst-plugins-good/${name}.tar.bz2"
-      "mirror://gentoo/distfiles/${name}.tar.bz2"
+      "${meta.homepage}/src/gst-plugins-good/${name}.tar.xz"
+      "mirror://gentoo/distfiles/${name}.tar.xz"
       ];
-    sha256 = "1xlmw211fcn60y2m5gxrryb3knqril4kk2c01b6j713xna8blb5i";
+    sha256 = "0r1b54yixn8v2l1dlwmgpkr0v2a6a21id5njp9vgh58agim47a3p";
   };
 
   configureFlags = "--disable-oss";
@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
   buildInputs =
     [ pkgconfig glib gstreamer gst_plugins_base libavc1394 libiec61883
       aalib libcaca cairo libdv flac libjpeg libpng pulseaudio speex
-      taglib bzip2
+      taglib bzip2 orc
     ];
 
   enableParallelBuilding = true;

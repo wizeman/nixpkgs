@@ -1,8 +1,5 @@
 { stdenv, fetchurl, pkgconfig, wxGTK, cairo, pango, ffmpeg }:
 
-#, SDL, ffmpeg, libdv, libsamplerate, libvorbis
-#, libxml2 , pkgconfig, qt4, sox }:
-
 stdenv.mkDerivation rec {
   name = "wxsvg-${version}";
   version = "1.1.8";
@@ -15,8 +12,8 @@ stdenv.mkDerivation rec {
   buildInputs = [ pkgconfig wxGTK cairo pango ffmpeg ];
 
   meta = {
-    homepage = http://www.mltframework.org/;
-    description = "Open source multimedia framework, designed for television broadcasting";
-    license = "GPLv2+";
+    homepage = http://wxsvg.sourceforge.net;
+    description = "A C++ library to create, manipulate and render Scalable Vector Graphics (SVG) files with the wxWidgets toolkit.";
+    license = "wxWindows";
   };
 }
