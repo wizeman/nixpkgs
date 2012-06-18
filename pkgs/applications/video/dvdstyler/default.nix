@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
 
   meta = {
     homepage = http://www.dvdstyler.org/;
-    #description = "";
-    #license = "GPLv2+";
+    description = "A cross-platform free DVD authoring application for the creation of professional-looking DVDs.";
+    license = "GPLv2+";
   };
 }
