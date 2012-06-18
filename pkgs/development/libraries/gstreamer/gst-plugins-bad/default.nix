@@ -1,19 +1,19 @@
 { fetchurl, stdenv, pkgconfig, glib, gstreamer, gst_plugins_base
-, libdvdnav, libdvdread }:
+, libdvdnav, libdvdread, orc }:
 
 stdenv.mkDerivation rec {
-  name = "gst-plugins-bad-0.10.22";
+  name = "gst-plugins-bad-0.10.23";
 
   src = fetchurl {
     urls = [
-      "${meta.homepage}/src/gst-plugins-bad/${name}.tar.bz2"
-      "mirror://gentoo/distfiles/${name}.tar.bz2"
+      "${meta.homepage}/src/gst-plugins-bad/${name}.tar.xz"
+      "mirror://gentoo/distfiles/${name}.tar.xz"
       ];
-    sha256 = "030728gf0zjg62yng4qy9yapaffbvkziawa28rk0gspz8cpi1xyq";
+    sha256 = "1y8vv0k3zbcdiqplpmk3bbq63250h9090bh7d5an4r0w7630gkq3";
   };
 
   buildInputs =
-    [ pkgconfig glib gstreamer gst_plugins_base libdvdnav libdvdread ];
+    [ pkgconfig glib gstreamer gst_plugins_base libdvdnav libdvdread orc ];
 
   enableParallelBuilding = true;
 

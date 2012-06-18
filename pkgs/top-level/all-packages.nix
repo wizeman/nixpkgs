@@ -4595,6 +4595,8 @@ let
 
   ortp = callPackage ../development/libraries/ortp { };
 
+  orc = callPackage ../development/libraries/orc { };
+
   p11_kit = callPackage ../development/libraries/p11-kit { };
 
   pangoxsl = callPackage ../development/libraries/pangoxsl { };

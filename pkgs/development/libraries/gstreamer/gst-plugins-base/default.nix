@@ -1,21 +1,21 @@
 { fetchurl, stdenv, pkgconfig, python, gstreamer
 , xlibs, alsaLib, cdparanoia, libogg
 , libtheora, libvorbis, freetype, pango
-, liboil, glib
+, glib, orc
 , # Whether to build no plugins that have external dependencies
   # (except the ALSA plugin).
   minimalDeps ? false
 }:
 
 stdenv.mkDerivation rec {
-  name = "gst-plugins-base-0.10.35";
+  name = "gst-plugins-base-0.10.36";
 
   src = fetchurl {
     urls = [
-      "${meta.homepage}/src/gst-plugins-base/${name}.tar.bz2"
-      "mirror://gentoo/distfiles/${name}.tar.bz2"
+      "${meta.homepage}/src/gst-plugins-base/${name}.tar.xz"
+      "mirror://gentoo/distfiles/${name}.tar.xz"
       ];
-    sha256 = "00vis5kg6km26zaq1ywz7ki9xvkwpc9c5wn41d01z2i5nldz096d";
+    sha256 = "0jp6hjlra98cnkal4n6bdmr577q8mcyp3c08s3a02c4hjhw5rr0z";
   };
 
   patchPhase = ''
@@ -28,13 +28,13 @@ stdenv.mkDerivation rec {
     [ pkgconfig glib alsaLib ]
     ++ stdenv.lib.optionals (!minimalDeps)
       [ xlibs.xlibs xlibs.libXv cdparanoia libogg libtheora libvorbis
-        freetype pango liboil
+        freetype pango orc
       ];
 
   propagatedBuildInputs = [ gstreamer ];
- 
+
   postInstall = "rm -rf $out/share/gtk-doc";
-  
+
   meta = {
     homepage = http://gstreamer.freedesktop.org;
 
