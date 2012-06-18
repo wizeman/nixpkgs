@@ -4861,7 +4861,9 @@ let
 
   xbase = callPackage ../development/libraries/xbase { };
 
-  xineLib = callPackage ../development/libraries/xine-lib { };
+  xineLib = callPackage ../development/libraries/xine-lib {
+    vdpauSupport = true;
+  };
 
   xautolock = callPackage ../misc/screensavers/xautolock { };
 
