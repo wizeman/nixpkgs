@@ -1,19 +1,19 @@
 { fetchurl, stdenv, pkgconfig, glib, gstreamer, gst_plugins_base
-, libmad, libdvdread, libmpeg2, libcdio, a52dec }:
+, libmad, libdvdread, libmpeg2, libcdio, a52dec, orc }:
 
 stdenv.mkDerivation rec {
-  name = "gst-plugins-ugly-0.10.18";
+  name = "gst-plugins-ugly-0.10.19";
 
   src = fetchurl {
     urls = [
-      "${meta.homepage}/src/gst-plugins-ugly/${name}.tar.bz2"
-      "mirror://gentoo/distfiles/${name}.tar.bz2"
+      "${meta.homepage}/src/gst-plugins-ugly/${name}.tar.xz"
+      "mirror://gentoo/distfiles/${name}.tar.xz"
       ];
-    sha256 = "054fdkb2riy5knda39cp6w3xp9lzax52bn12cklglscjrm46ghgr";
+    sha256 = "0wx8dr3sqfkar106yw6h57jdv2cifwsydkziz9z7wqwjz1gzcd29";
   };
 
   buildInputs =
-    [ pkgconfig glib gstreamer gst_plugins_base libmad libdvdread a52dec ];
+    [ pkgconfig glib gstreamer gst_plugins_base libmad libdvdread a52dec orc ];
 
   enableParallelBuilding = true;
 
