@@ -132,14 +132,14 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
     OpenGL       = self.OpenGL_2_2_3_1;         # 7.4.2 ok
     parallel     = self.parallel_3_2_0_2;       # 7.4.2 ok
     parsec       = self.parsec_3_1_3;           # 7.4.2 ok
-    QuickCheck   = self.QuickCheck_2_4_2;       # 7.4.2 ok
+    QuickCheck   = self.QuickCheck_2_5;         # 7.4.2 ok
     random       = self.random_1_0_1_1;         # 7.4.2 ok
     regexBase    = self.regexBase_0_93_2;       # 7.4.2 ok
     regexCompat  = self.regexCompat_0_95_1;     # 7.4.2 ok
     regexPosix   = self.regexPosix_0_95_1;      # 7.4.2 ok
     stm          = self.stm_2_3;                # 7.4.2 ok
     syb          = self.syb_0_3_6_1;            # 7.4.2 ok
-    text         = self.text_0_11_2_0;          # 7.4.2 ok
+    text         = self.text_0_11_2_2;          # 7.4.2 ok
     transformers = self.transformers_0_3_0_0;   # 7.4.2 ok
     xhtml        = self.xhtml_3000_2_1;         # 7.4.2 ok
     zlib         = self.zlib_0_5_3_3;           # 7.4.2 ok
@@ -847,10 +847,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   hledger = callPackage ../development/libraries/haskell/hledger {};
   hledgerLib = callPackage ../development/libraries/haskell/hledger-lib {};
-  #hledgerVty = callPackage ../development/libraries/haskell/hledger-vty {};
-  #hledgerChart = callPackage ../development/libraries/haskell/hledger-chart {};
   hledgerInterest = callPackage ../applications/office/hledger-interest {};
-  #hledgerWeb = callPackage ../development/libraries/haskell/hledger-web {};
+  hledgerWeb = callPackage ../development/libraries/haskell/hledger-web {};
 
   HList = callPackage ../development/libraries/haskell/HList {};
 
@@ -1164,8 +1162,9 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   QuickCheck_2_4_0_1 = callPackage ../development/libraries/haskell/QuickCheck/2.4.0.1.nix {};
   QuickCheck_2_4_1_1 = callPackage ../development/libraries/haskell/QuickCheck/2.4.1.1.nix {};
   QuickCheck_2_4_2 = callPackage ../development/libraries/haskell/QuickCheck/2.4.2.nix {};
+  QuickCheck_2_5 = callPackage ../development/libraries/haskell/QuickCheck/2.5.nix {};
   QuickCheck1 = self.QuickCheck_1_2_0_1;
-  QuickCheck2 = self.QuickCheck_2_4_2;
+  QuickCheck2 = self.QuickCheck_2_5;
   QuickCheck  = self.QuickCheck2;
 
   RangedSets = callPackage ../development/libraries/haskell/Ranged-sets {};
@@ -1388,8 +1387,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   text_0_11_1_5 = callPackage ../development/libraries/haskell/text/0.11.1.5.nix {};
   text_0_11_1_13 = callPackage ../development/libraries/haskell/text/0.11.1.13.nix {};
   text_0_11_2_0 = callPackage ../development/libraries/haskell/text/0.11.2.0.nix {};
-  text_0_11_2_1 = callPackage ../development/libraries/haskell/text/0.11.2.1.nix {};
-  text = self.text_0_11_2_1;
+  text_0_11_2_2 = callPackage ../development/libraries/haskell/text/0.11.2.2.nix {};
+  text = self.text_0_11_2_2;
 
   thespian = callPackage ../development/libraries/haskell/thespian {};
 
