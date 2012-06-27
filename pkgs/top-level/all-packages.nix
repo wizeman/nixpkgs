@@ -437,6 +437,8 @@ let
 
   bootchart = callPackage ../tools/system/bootchart { };
 
+  bsod = callPackage ../misc/emulators/bsod { };
+
   btrfsProgs = builderDefsPackage (import ../tools/filesystems/btrfsprogs) {
     inherit (pkgs) libuuid zlib acl attr fetchgit e2fsprogs;
   };
@@ -950,6 +952,8 @@ let
 
   less = callPackage ../tools/misc/less { };
 
+  minidlna = callPackage ../tools/networking/minidlna { };
+
   most = callPackage ../tools/misc/most { };
 
   netperf = callPackage ../applications/networking/netperf { };
@@ -1096,8 +1100,6 @@ let
   ncompress = callPackage ../tools/compression/ncompress { };
 
   ndisc6 = callPackage ../tools/networking/ndisc6 { };
-
-  net_snmp = callPackage ../tools/networking/net-snmp { };
 
   netboot = callPackage ../tools/networking/netboot {};
 
@@ -1559,6 +1561,10 @@ let
   };
 
   time = callPackage ../tools/misc/time { };
+
+  tkabber = callPackage ../applications/networking/instant-messengers/tkabber { };
+
+  tkabber_plugins = callPackage ../applications/networking/instant-messengers/tkabber-plugins { };
 
   tm = callPackage ../tools/system/tm { };
 
@@ -2499,7 +2505,13 @@ let
 
   urweb = callPackage ../development/compilers/urweb { };
 
-  vala = callPackage ../development/compilers/vala { };
+  vala = vala17;
+
+  vala15 = callPackage ../development/compilers/vala/15.2.nix { };
+
+  vala16 = callPackage ../development/compilers/vala/16.1.nix { };
+
+  vala17 = callPackage ../development/compilers/vala/default.nix { };
 
   visualcpp = callPackage ../development/compilers/visual-c++ { };
 
@@ -2889,6 +2901,8 @@ let
      wrapGCC (ccache.links extraConfig)) {};
   ccacheStdenv = overrideGCC stdenv ccacheWrapper;
 
+  cgdb = callPackage ../development/tools/misc/cgdb { };
+
   complexity = callPackage ../development/tools/misc/complexity { };
 
   ctags = callPackage ../development/tools/misc/ctags { };
@@ -3224,6 +3238,8 @@ let
   box2d_2_0_1 = callPackage ../development/libraries/box2d/2.0.1.nix { };
 
   buddy = callPackage ../development/libraries/buddy { };
+
+  bwidget = callPackage ../development/libraries/bwidget { };
 
   caelum = callPackage ../development/libraries/caelum { };
 
@@ -4724,6 +4740,10 @@ let
 
   tclap = callPackage ../development/libraries/tclap {};
 
+  tcllib = callPackage ../development/libraries/tcllib { };
+
+  tcltls = callPackage ../development/libraries/tcltls { };
+
   tcp_wrappers = callPackage ../development/libraries/tcp-wrappers {};
 
   tdb = callPackage ../development/libraries/tdb { };
@@ -5223,6 +5243,8 @@ let
   };
 
   nagiosPluginsOfficial = callPackage ../servers/monitoring/nagios/plugins/official { };
+
+  net_snmp = callPackage ../servers/monitoring/net-snmp { };
 
   oidentd = callPackage ../servers/identd/oidentd { };
 
@@ -6153,6 +6175,8 @@ let
 
   docbook_xsl_ns = callPackage ../data/sgml+xml/stylesheets/xslt/docbook-xsl-ns { };
 
+  dosemu_fonts = callPackage ../data/fonts/dosemu-fonts { };
+
   freefont_ttf = callPackage ../data/fonts/freefont-ttf { };
 
   gentium = callPackage ../data/fonts/gentium {};
@@ -6216,6 +6240,8 @@ let
   terminus_font = callPackage ../data/fonts/terminus-font { };
 
   ttf_bitstream_vera = callPackage ../data/fonts/ttf-bitstream-vera { };
+
+  ubuntu_font_family = callPackage ../data/fonts/ubuntu-font-family { };
 
   ucsFonts = callPackage ../data/fonts/ucs-fonts { };
 
@@ -6351,14 +6377,13 @@ let
     xulrunner = firefox36Pkgs.xulrunner;
   };
 
-  chrome = lowPrio (callPackage ../applications/networking/browsers/chromium {
-    inherit (gnome) GConf;
-    libpng = libpng12;
+  chromium = lowPrio (callPackage ../applications/networking/browsers/chromium {
+    gconf = gnome.GConf;
   });
 
   chromeWrapper = wrapFirefox
-    { browser = chrome; browserName = "chrome"; desktopName = "Chrome";
-      icon = "${chrome}/libexec/chrome/product_logo_48.png";
+    { browser = chromium; browserName = chromium.packageName; desktopName = "Chromium";
+      icon = "${chromium}/share/icons/hicolor/48x48/apps/${chromium.packageName}.png";
     };
 
   cinelerra = callPackage ../applications/video/cinelerra { };
@@ -7426,8 +7451,6 @@ let
 
   taskwarrior = callPackage ../applications/misc/taskwarrior { };
 
-  taskwarrior_unstable = callPackage ../applications/misc/taskwarrior/unstable.nix { };
-
   telepathy_gabble = callPackage ../applications/networking/instant-messengers/telepathy/gabble {
     inherit (pkgs.gnome) libsoup;
   };
@@ -8443,14 +8466,10 @@ let
     stateDir = getConfig [ "nix" "stateDir" ] "/nix/var";
   };
 
-  /*
   nixUnstable = callPackage ../tools/package-management/nix/unstable.nix {
     storeDir = getConfig [ "nix" "storeDir" ] "/nix/store";
     stateDir = getConfig [ "nix" "stateDir" ] "/nix/var";
   };
-  */
-
-  nixUnstable = nixStable;
 
   nixCustomFun = src: preConfigure: enableScripts: configureFlags:
     import ../tools/package-management/nix/custom.nix {
