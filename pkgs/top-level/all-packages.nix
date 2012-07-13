@@ -419,6 +419,8 @@ let
     qt4Support = getConfig [ "avahi" "qt4Support" ] false;
   };
 
+  aws = callPackage ../tools/virtualization/aws { };
+
   aws_mturk_clt = callPackage ../tools/misc/aws-mturk-clt { };
 
   axel = callPackage ../tools/networking/axel { };
@@ -654,7 +656,9 @@ let
 
   efibootmgr = callPackage ../tools/system/efibootmgr { };
 
-  enblendenfuse = callPackage ../tools/graphics/enblend-enfuse { };
+  enblendenfuse = callPackage ../tools/graphics/enblend-enfuse {
+    boost = boost149;
+  };
 
   encfs = callPackage ../tools/filesystems/encfs { };
 
@@ -812,6 +816,8 @@ let
    */
   graphviz_2_0 = callPackage ../tools/graphics/graphviz/2.0.nix { };
 
+  grive = callPackage ../tools/filesystems/grive { };
+
   groff = callPackage ../tools/text/groff {
     ghostscript = null;
   };
@@ -831,6 +837,8 @@ let
   };
 
   gt5 = callPackage ../tools/system/gt5 { };
+
+  gtkdatabox = callPackage ../development/libraries/gtkdatabox {};
 
   gtkgnutella = callPackage ../tools/networking/p2p/gtk-gnutella { };
 
@@ -949,6 +957,10 @@ let
 
   less = callPackage ../tools/misc/less { };
 
+  logstash = callPackage ../tools/misc/logstash { };
+
+  klavaro = callPackage ../games/klavaro {};
+
   minidlna = callPackage ../tools/networking/minidlna { };
 
   most = callPackage ../tools/misc/most { };
@@ -1047,6 +1059,8 @@ let
   };
 
   mpage = callPackage ../tools/text/mpage { };
+
+  mr = callPackage ../applications/version-management/mr { };
 
   mscgen = callPackage ../tools/graphics/mscgen { };
 
@@ -1187,6 +1201,8 @@ let
   openvpn = callPackage ../tools/networking/openvpn { };
 
   optipng = callPackage ../tools/graphics/optipng { };
+
+  ossec = callPackage ../tools/security/ossec {};
 
   p7zip = callPackage ../tools/archivers/p7zip { };
 
@@ -1339,6 +1355,8 @@ let
   };
 
   remind = callPackage ../tools/misc/remind { };
+
+  remmina = callPackage ../applications/networking/remote/remmina {};
 
   replace = callPackage ../tools/text/replace { };
 
@@ -1523,7 +1541,9 @@ let
 
   vifm = callPackage ../applications/misc/vifm {};
 
-  viking = callPackage ../applications/misc/viking { };
+  viking = callPackage ../applications/misc/viking {
+    inherit (gnome) scrollkeeper;
+  };
 
   vncrec = builderDefsPackage ../tools/video/vncrec {
     inherit (xlibs) imake libX11 xproto gccmakedep libXt
@@ -2822,11 +2842,7 @@ let
 
   autoconf213 = callPackage ../development/tools/misc/autoconf/2.13.nix { };
 
-  automake = automake111x;
-
-  automake17x = callPackage ../development/tools/misc/automake/automake-1.7.x.nix { };
-
-  automake19x = callPackage ../development/tools/misc/automake/automake-1.9.x.nix { };
+  automake = automake112x;
 
   automake110x = callPackage ../development/tools/misc/automake/automake-1.10.x.nix { };
 
@@ -2837,6 +2853,12 @@ let
 
       # One test fails to terminate on FreeBSD: <http://bugs.gnu.org/8788>.
       && !stdenv.isFreeBSD;
+  };
+
+  automake112x = callPackage ../development/tools/misc/automake/automake-1.12.x.nix {
+    doCheck = !stdenv.isArm && !stdenv.isCygwin
+      # Some of the parallel tests seem to hang on `i386-pc-solaris2.11'.
+      && stdenv.system != "i686-solaris";
   };
 
   automoc4 = callPackage ../development/tools/misc/automoc4 { };
@@ -3211,23 +3233,16 @@ let
 
   boolstuff = callPackage ../development/libraries/boolstuff { };
 
-  boost142 = callPackage ../development/libraries/boost/1.42.nix { };
   boost144 = callPackage ../development/libraries/boost/1.44.nix { };
   boost146 = callPackage ../development/libraries/boost/1.46.nix { };
   boost147 = callPackage ../development/libraries/boost/1.47.nix { };
-  boost148 = callPackage ../development/libraries/boost/1.48.nix { };
   boost149 = callPackage ../development/libraries/boost/1.49.nix { };
-  boost = boost149;
+  boost150 = callPackage ../development/libraries/boost/1.50.nix { };
+  boost = boost150;
 
   boostHeaders149 = callPackage ../development/libraries/boost/1.49-headers.nix { };
-  boostHeaders = boostHeaders149;
-
-  # A Boost build with all library variants enabled.  Very large (about 250 MB).
-  boostFull = appendToName "full" (boost.override {
-    enableDebug = true;
-    enableSingleThreaded = true;
-    enableStatic = true;
-  });
+  boostHeaders150 = callPackage ../development/libraries/boost/1.50-headers.nix { };
+  boostHeaders = boostHeaders150;
 
   botan = callPackage ../development/libraries/botan { };
 
@@ -3313,7 +3328,7 @@ let
   cppunit = callPackage ../development/libraries/cppunit { };
 
   cppnetlib = callPackage ../development/libraries/cppnetlib {
-    boost = boostFull;
+    boost = boostHeaders;
   };
 
   cracklib = callPackage ../development/libraries/cracklib { };
@@ -3941,6 +3956,8 @@ let
 
   libdiscid = callPackage ../development/libraries/libdiscid { };
 
+  libdivsufsort = callPackage ../development/libraries/libdivsufsort { };
+
   libdmtx = callPackage ../development/libraries/libdmtx { };
 
   libdnet = callPackage ../development/libraries/libdnet { };
@@ -4236,7 +4253,7 @@ let
 
   libva = callPackage ../development/libraries/libva { };
 
-  libvdpau = callPackage ../development/libraries/libvdpau { };
+  libvdpau = callPackage ../development/libraries/libvdpau { inherit (xlibs) libX11; };
 
   libvirt = callPackage ../development/libraries/libvirt { };
 
@@ -4612,6 +4629,10 @@ let
 
   librdf = callPackage ../development/libraries/librdf { };
 
+  lilv = callPackage ../development/libraries/audio/lilv { };
+
+  lv2 = callPackage ../development/libraries/audio/lv2 { };
+
   qrupdate = callPackage ../development/libraries/qrupdate { };
 
   redland = pkgs.librdf_redland;
@@ -4650,6 +4671,8 @@ let
 
   SDL_ttf = callPackage ../development/libraries/SDL_ttf { };
 
+  serd = callPackage ../development/libraries/serd {};
+
   simgear = callPackage ../development/libraries/simgear {};
 
   sfml_git = callPackage ../development/libraries/sfml { };
@@ -4672,6 +4695,8 @@ let
 
   soqt = callPackage ../development/libraries/soqt { };
 
+  sord = callPackage ../development/libraries/sord {};
+
   speechd = callPackage ../development/libraries/speechd { };
 
   speech_tools = callPackage ../development/libraries/speech-tools {};
@@ -4679,6 +4704,8 @@ let
   speex = callPackage ../development/libraries/speex { };
 
   sphinxbase = callPackage ../development/libraries/sphinxbase { };
+
+  sratom = callPackage ../development/libraries/audio/sratom { };
 
   srtp = callPackage ../development/libraries/srtp {};
 
@@ -4703,6 +4730,8 @@ let
   stlport = callPackage ../development/libraries/stlport { };
 
   strigi = callPackage ../development/libraries/strigi {};
+
+  suil = callPackage ../development/libraries/audio/suil { };
 
   suitesparse = callPackage ../development/libraries/suitesparse { };
 
@@ -5088,14 +5117,24 @@ let
 
   rdf4store = callPackage ../servers/http/4store { };
 
-  apacheHttpd = callPackage ../servers/http/apache-httpd {
+  apacheHttpd = pkgs.apacheHttpd_2_2;
+
+  apacheHttpd_2_2 = callPackage ../servers/http/apache-httpd/2.2.nix {
     sslSupport = true;
   };
+
+  apacheHttpd_2_4 = lowPrio (callPackage ../servers/http/apache-httpd/2.4.nix {
+    sslSupport = true;
+  });
 
   sabnzbd = callPackage ../servers/sabnzbd { };
 
   bind = callPackage ../servers/dns/bind {
     inherit openssl libtool perl;
+  };
+
+  couchdb = callPackage ../servers/http/couchdb {
+    spidermonkey = spidermonkey_185;
   };
 
   dico = callPackage ../servers/dico { };
@@ -5117,9 +5156,7 @@ let
 
   ejabberd = callPackage ../servers/xmpp/ejabberd { };
 
-  couchdb = callPackage ../servers/http/couchdb {
-    spidermonkey = spidermonkey_185;
-  };
+  elasticmq = callPackage ../servers/elasticmq { };
 
   felix = callPackage ../servers/felix { };
 
@@ -5134,7 +5171,7 @@ let
   freeswitch = callPackage ../servers/sip/freeswitch { };
 
   ghostOne = callPackage ../servers/games/ghost-one {
-    boost = boostFull;
+    boost = boost144.override { taggedLayout = true; };
   };
 
   ircdHybrid = callPackage ../servers/irc/ircd-hybrid { };
@@ -5193,7 +5230,10 @@ let
 
   monetdb = callPackage ../servers/sql/monetdb { };
 
-  mongodb = callPackage ../servers/nosql/mongodb { useV8 = (getConfig ["mongodb" "useV8"] false); };
+  mongodb = callPackage ../servers/nosql/mongodb {
+    boost = boost149;
+    useV8 = (getConfig ["mongodb" "useV8"] false);
+  };
 
   mysql4 = import ../servers/sql/mysql {
     inherit fetchurl stdenv ncurses zlib perl;
@@ -5258,6 +5298,11 @@ let
 
   redstore = callPackage ../servers/http/redstore { };
 
+  spamassassin = callPackage ../servers/mail/spamassassin {
+    inherit (perlPackages) HTMLParser NetDNS NetAddrIP DBFile
+      HTTPDate MailDKIM;
+  };
+
   samba = callPackage ../servers/samba { };
 
   # A lightweight Samba, useful for non-Linux-based OSes.
@@ -5318,6 +5363,8 @@ let
 
   afuse = callPackage ../os-specific/linux/afuse { };
 
+  amdUcode = callPackage ../os-specific/linux/firmware/amd-ucode { };
+
   autofs5 = callPackage ../os-specific/linux/autofs/autofs-v5.nix { };
 
   _915resolution = callPackage ../os-specific/linux/915resolution { };
@@ -5355,6 +5402,8 @@ let
   beret = callPackage ../games/beret { };
 
   bridge_utils = callPackage ../os-specific/linux/bridge-utils { };
+
+  busybox = callPackage ../os-specific/linux/busybox { };
 
   checkpolicy = callPackage ../os-specific/linux/checkpolicy { };
 
@@ -6270,6 +6319,7 @@ let
 
   ardour3 =  lowPrio (callPackage ../applications/audio/ardour/ardour3.nix {
     inherit (gnome) libgnomecanvas libgnomecanvasmm;
+    boost = boost149;
   });
 
   arora = callPackage ../applications/networking/browsers/arora { };
@@ -6310,7 +6360,6 @@ let
   bibletime = callPackage ../applications/misc/bibletime { };
 
   bitcoin = callPackage ../applications/misc/bitcoin {
-    boost = boost144;
     db4 = db48;
   };
 
@@ -6325,6 +6374,10 @@ let
   };
 
   bvi = callPackage ../applications/editors/bvi { };
+
+  calf = callPackage ../applications/audio/calf {
+      inherit (gnome) libglade;
+  };
 
   calibre = callPackage ../applications/misc/calibre { };
 
@@ -6385,7 +6438,10 @@ let
 
   compiz_plugins_extra = callPackage ../applications/window-managers/compiz/plugins-extra.nix { };
 
-  cinepaint = callPackage ../applications/graphics/cinepaint { };
+  cinepaint = callPackage ../applications/graphics/cinepaint {
+    fltk = fltk13;
+    libpng = libpng12;
+  };
 
   codeville = builderDefsPackage (import ../applications/version-management/codeville/0.8.0.nix) {
     inherit makeWrapper;
@@ -6979,6 +7035,7 @@ let
     inherit (perlPackages) ArchiveZip CompressZlib;
     inherit (gnome) GConf ORBit2 gnome_vfs;
     zip = zip.override { enableNLS = false; };
+    boost = boost149;
     fontsConf = makeFontsConf {
       fontDirectories = [
         freefont_ttf xorg.fontmiscmisc xorg.fontbhttf
@@ -6993,7 +7050,9 @@ let
   links = callPackage ../applications/networking/browsers/links { };
 
   ledger = callPackage ../applications/office/ledger/2.6.3.nix { };
-  ledger3 = callPackage ../applications/office/ledger/3.0.nix { };
+  ledger3 = callPackage ../applications/office/ledger/3.0.nix {
+    boost = boost149;
+  };
 
   links2 = callPackage ../applications/networking/browsers/links2 { };
 
@@ -7021,6 +7080,8 @@ let
     inherit (gnome) scrollkeeper;
     pygtk = pyGtkGlade;
   };
+
+  mcomix = callPackage ../applications/graphics/mcomix { };
 
   mercurial = callPackage ../applications/version-management/mercurial {
     inherit (pythonPackages) curses;
@@ -7052,9 +7113,13 @@ let
       icon = "${midori}/share/icons/hicolor/22x22/apps/midori.png";
     };
 
+  mikmod = callPackage ../applications/audio/mikmod { };
+
   minicom = callPackage ../tools/misc/minicom { };
 
   minidjvu = callPackage ../applications/graphics/minidjvu { };
+
+  mirage = callPackage ../applications/graphics/mirage {};
 
   mmex = callPackage ../applications/office/mmex { };
 
@@ -7163,6 +7228,8 @@ let
   ocrad = callPackage ../applications/graphics/ocrad { };
 
   offrss = callPackage ../applications/networking/offrss { };
+
+  ogmtools = callPackage ../applications/video/ogmtools { };
 
   oneteam = callPackage ../applications/networking/instant-messengers/oneteam {};
 
@@ -7459,6 +7526,8 @@ let
 
   transmission = callPackage ../applications/networking/p2p/transmission { };
 
+  transmission_remote_gtk = callPackage ../applications/networking/p2p/transmission-remote-gtk {};
+
   trayer = callPackage ../applications/window-managers/trayer { };
 
   tree = callPackage ../tools/system/tree { };
@@ -7466,7 +7535,6 @@ let
   tribler = callPackage ../applications/networking/p2p/tribler { };
 
   twinkle = callPackage ../applications/networking/instant-messengers/twinkle {
-    boost = boostFull;
     ccrtp = ccrtp_1_8;
     libzrtpcpp = libzrtpcpp_1_6;
   };
@@ -7901,6 +7969,7 @@ let
     # Torcs wants to make shared libraries linked with plib libraries (it provides static).
     # i686 is the only platform I know than can do that linking without plib built with -fPIC
     plib = plib.override { enablePIC = if stdenv.isi686 then false else true; };
+    libpng = libpng12;
   };
 
   torcs = callPackage ../games/torcs {
@@ -7913,6 +7982,7 @@ let
 
   ufoai = callPackage ../games/ufoai {
     inherit (gnome) gtksourceview gtkglext;
+    libpng = libpng12;
   };
 
   ultimatestunts = callPackage ../games/ultimatestunts { };
@@ -8346,8 +8416,6 @@ let
 
   auctex = callPackage ../tools/typesetting/tex/auctex { };
 
-  busybox = callPackage ../misc/busybox { };
-
   cups = callPackage ../misc/cups { };
 
   cups_pdf_filter = callPackage ../misc/cups/pdf-filter.nix { };
@@ -8599,10 +8667,6 @@ let
 
   texLiveModerncv = builderDefsPackage (import ../tools/typesetting/tex/texlive/moderncv.nix) {
     inherit texLive unzip;
-  };
-
-  trac = callPackage ../misc/trac {
-    inherit (pythonPackages) pysqlite;
   };
 
   vice = callPackage ../misc/emulators/vice { };
