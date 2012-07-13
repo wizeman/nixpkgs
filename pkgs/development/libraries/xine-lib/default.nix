@@ -9,11 +9,11 @@
 #   - missing mpeg encoder (fame or rte)
 
 stdenv.mkDerivation rec {
-  name = "xine-lib-1.2.1";
+  name = "xine-lib-1.2.2";
 
   src = fetchurl {
     url = "mirror://sourceforge/xine/${name}.tar.xz";
-    sha256 = "0kixw2l4g3dvxzsy3xl3nf44rpg9akqxwkwid9y1jsmlfp9g0krd";
+    sha256 = "1mjk686h1qzqj51h4xs4xvagfgnnhm8czbzzjvr5w034pr8n8rg1";
   };
 
   patches = [ ./ffmpeg.patch ]; # from Gentoo, to build with ffmpeg-11
