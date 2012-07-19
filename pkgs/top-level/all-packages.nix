@@ -441,9 +441,7 @@ let
 
   bsod = callPackage ../misc/emulators/bsod { };
 
-  btrfsProgs = builderDefsPackage (import ../tools/filesystems/btrfsprogs) {
-    inherit (pkgs) libuuid zlib acl attr fetchgit e2fsprogs;
-  };
+  btrfsProgs = callPackage ../tools/filesystems/btrfsprogs { };
 
   catdoc = callPackage ../tools/text/catdoc { };
 
@@ -1511,6 +1509,8 @@ let
 
   torsocks = callPackage ../tools/security/tor/torsocks.nix { };
 
+  trickle = callPackage ../tools/networking/trickle {};
+
   ttf2pt1 = callPackage ../tools/misc/ttf2pt1 { };
   ttf2pt1_cl_pdf = callPackage ../tools/misc/ttf2pt1 { };
 
@@ -1787,6 +1787,8 @@ let
   clean = callPackage ../development/compilers/clean { };
 
   cmucl_binary = callPackage ../development/compilers/cmucl/binary.nix { };
+
+  cython = callPackage ../development/interpreters/cython { };
 
   dylan = callPackage ../development/compilers/gwydion-dylan {
     dylan = callPackage ../development/compilers/gwydion-dylan/binary.nix {  };
@@ -2520,6 +2522,8 @@ let
   metaBuildEnv = callPackage ../development/compilers/meta-environment/meta-build-env { };
 
   swiProlog = callPackage ../development/compilers/swi-prolog { };
+
+  tbb = callPackage ../development/libraries/tbb { };
 
   tinycc = callPackage ../development/compilers/tinycc { };
 
@@ -4693,6 +4697,8 @@ let
 
   serd = callPackage ../development/libraries/serd {};
 
+  silgraphite = callPackage ../development/libraries/silgraphite {};
+
   simgear = callPackage ../development/libraries/simgear {};
 
   sfml_git = callPackage ../development/libraries/sfml { };
@@ -5417,6 +5423,10 @@ let
     inherit (perlPackages) LocaleGettext TermReadKey RpcXML;
   };
 
+  b43Firmware_5_1_138 = callPackage ../os-specific/linux/firmware/b43-firmware/5.1.138.nix { };
+
+  b43FirmwareCutter = callPackage ../os-specific/linux/firmware/b43-firmware-cutter { };
+
   bcm43xx = callPackage ../os-specific/linux/firmware/bcm43xx { };
 
   bluez = callPackage ../os-specific/linux/bluez { };
@@ -5457,9 +5467,7 @@ let
     inherit (xlibs) xproto;
   };
 
-  dmraid = builderDefsPackage ../os-specific/linux/dmraid {
-    inherit devicemapper;
-  };
+  dmraid = callPackage ../os-specific/linux/dmraid { };
 
   drbd = callPackage ../os-specific/linux/drbd { };
 
@@ -5688,6 +5696,12 @@ let
       ];
   };
 
+  linux_3_2_xen = linux_3_2.override {
+    extraConfig = ''
+      XEN_DOM0 y
+    '';
+  };
+
   linux_3_3 = makeOverridable (import ../os-specific/linux/kernel/linux-3.3.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
     kernelPatches =
@@ -5826,6 +5840,7 @@ let
   linuxPackages_3_0 = recurseIntoAttrs (linuxPackagesFor linux_3_0 pkgs.linuxPackages_3_0);
   linuxPackages_3_1 = recurseIntoAttrs (linuxPackagesFor linux_3_1 pkgs.linuxPackages_3_1);
   linuxPackages_3_2 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_2 pkgs.linuxPackages_3_2);
+  linuxPackages_3_2_xen = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_2_xen pkgs.linuxPackages_3_2_xen);
   linuxPackages_3_3 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_3 pkgs.linuxPackages_3_3);
   linuxPackages_3_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_4 pkgs.linuxPackages_3_4);
 
@@ -6157,6 +6172,10 @@ let
 
   xf86_input_wacom = callPackage ../os-specific/linux/xf86-input-wacom { };
 
+  xf86_video_nested = callPackage ../os-specific/linux/xf86-video-nested {
+    inherit (xorg) fontsproto renderproto utilmacros xorgserver;
+  };
+
   xf86_video_nouveau = callPackage ../os-specific/linux/xf86-video-nouveau {
     inherit (xorg) xorgserver xproto fontsproto xf86driproto renderproto
       videoproto utilmacros;
@@ -6246,6 +6265,8 @@ let
     inherit fontforge;
   };
 
+  lmmath = callPackage ../data/fonts/lmodern/lmmath.nix {};
+
   lmodern = callPackage ../data/fonts/lmodern { };
 
   manpages = callPackage ../data/documentation/man-pages { };
@@ -6287,6 +6308,8 @@ let
   tempora_lgc = callPackage ../data/fonts/tempora-lgc { };
 
   terminus_font = callPackage ../data/fonts/terminus-font { };
+
+  tipa = callPackage ../data/fonts/tipa { };
 
   ttf_bitstream_vera = callPackage ../data/fonts/ttf-bitstream-vera { };
 
@@ -6976,10 +6999,7 @@ let
   ikiwiki = callPackage ../applications/misc/ikiwiki {
     inherit (perlPackages) TextMarkdown URI HTMLParser HTMLScrubber
       HTMLTemplate TimeDate CGISession DBFile CGIFormBuilder LocaleGettext
-      RpcXML XMLSimple PerlMagick YAML YAMLLibYAML;
-    gitSupport = false;
-    monotoneSupport = false;
-    extraUtils = [];
+      RpcXML XMLSimple PerlMagick YAML YAMLLibYAML HTMLTree Filechdir;
   };
 
   imagemagick = callPackage ../applications/graphics/ImageMagick {
@@ -7110,7 +7130,7 @@ let
   mcomix = callPackage ../applications/graphics/mcomix { };
 
   mercurial = callPackage ../applications/version-management/mercurial {
-    inherit (pythonPackages) curses;
+    inherit (pythonPackages) curses docutils;
     guiSupport = false;		# use mercurialFull to get hgk GUI
   };
 
@@ -7743,7 +7763,7 @@ let
   };
 
   xpra = callPackage ../tools/X11/xpra {
-    pyrex = pyrex095;
+    inherit (pythonPackages) notify;
   };
 
   xscreensaver = callPackage ../misc/screensavers/xscreensaver {
@@ -8534,10 +8554,14 @@ let
     stateDir = getConfig [ "nix" "stateDir" ] "/nix/var";
   };
 
+  nixUnstable = nix;
+
+  /*
   nixUnstable = callPackage ../tools/package-management/nix/unstable.nix {
     storeDir = getConfig [ "nix" "storeDir" ] "/nix/store";
     stateDir = getConfig [ "nix" "stateDir" ] "/nix/var";
   };
+  */
 
   nixCustomFun = src: preConfigure: enableScripts: configureFlags:
     import ../tools/package-management/nix/custom.nix {
@@ -8633,9 +8657,9 @@ let
   texFunctions = import ../tools/typesetting/tex/nix pkgs;
 
   texLive = builderDefsPackage (import ../tools/typesetting/tex/texlive) {
-    inherit builderDefs zlib bzip2 ncurses libpng ed
-      gd t1lib freetype icu perl expat curl
-      libjpeg bison python fontconfig flex;
+    inherit builderDefs zlib bzip2 ncurses libpng ed lesstif
+      gd t1lib freetype icu perl expat curl xz pkgconfig zziplib
+      libjpeg bison python fontconfig flex poppler silgraphite;
     inherit (xlibs) libXaw libX11 xproto libXt libXpm
       libXmu libXext xextproto libSM libICE;
     ghostscript = ghostscriptX;
@@ -8644,7 +8668,7 @@ let
 
   texLiveFull = lib.setName "texlive-full" (texLiveAggregationFun {
     paths = [ texLive texLiveExtra lmodern texLiveCMSuper texLiveLatexXColor
-              texLivePGF texLiveBeamer texLiveModerncv ];
+              texLivePGF texLiveBeamer texLiveModerncv tipa ];
   });
 
   /* Look in configurations/misc/raskin.nix for usage example (around revisions
@@ -8669,7 +8693,7 @@ let
   };
 
   texLiveExtra = builderDefsPackage (import ../tools/typesetting/tex/texlive/extra.nix) {
-    inherit texLive;
+    inherit texLive xz;
   };
 
   texLiveCMSuper = builderDefsPackage (import ../tools/typesetting/tex/texlive/cm-super.nix) {
