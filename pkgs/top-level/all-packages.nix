@@ -131,7 +131,7 @@ let
   # `__overrides' is a magic attribute that causes the attributes in
   # its value to be added to the surrounding `rec'.  We'll remove this
   # eventually.
-  inherit __overrides;
+  inherit __overrides pkgs;
 
 
   # We use `callPackage' to be able to omit function arguments that
@@ -7399,7 +7399,7 @@ let
 
   rdesktop = callPackage ../applications/networking/remote/rdesktop { };
 
-  RealPlayer = callPackage ../applications/video/RealPlayer {
+  RealPlayer = callPackage_i686 ../applications/video/RealPlayer {
     libstdcpp5 = gcc33.gcc;
   };
 
@@ -7639,7 +7639,10 @@ let
   };
 
   virtviewer = callPackage ../applications/virtualization/virt-viewer {};
-  virtmanager = callPackage ../applications/virtualization/virt-manager {};
+  virtmanager = callPackage ../applications/virtualization/virt-manager {
+    inherit (gnome) gnome_python; 
+  };
+
   virtinst = callPackage ../applications/virtualization/virtinst {};
 
   virtualgl = callPackage ../tools/X11/virtualgl { };
