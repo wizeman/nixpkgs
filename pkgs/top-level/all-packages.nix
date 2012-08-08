@@ -3500,6 +3500,9 @@ let
 
   ffmpeg = callPackage ../development/libraries/ffmpeg {
     vpxSupport = !stdenv.isMips;
+
+    faacSupport = true;
+    vdpauSupport = true;
   };
   # the highest version using libav 0.7.*
   ffmpeg_0_9 = callPackage ../development/libraries/ffmpeg {
