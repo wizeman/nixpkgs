@@ -1,7 +1,7 @@
 { fetchurl, stdenv, pkgconfig, python, gstreamer
 , xlibs, alsaLib, cdparanoia, libogg
 , libtheora, libvorbis, freetype, pango
-, glib, orc
+, liboil, glib
 , # Whether to build no plugins that have external dependencies
   # (except the ALSA plugin).
   minimalDeps ? false
@@ -28,13 +28,13 @@ stdenv.mkDerivation rec {
     [ pkgconfig glib alsaLib ]
     ++ stdenv.lib.optionals (!minimalDeps)
       [ xlibs.xlibs xlibs.libXv cdparanoia libogg libtheora libvorbis
-        freetype pango orc
+        freetype pango liboil
       ];
 
   propagatedBuildInputs = [ gstreamer ];
-
+ 
   postInstall = "rm -rf $out/share/gtk-doc";
-
+  
   meta = {
     homepage = http://gstreamer.freedesktop.org;
 

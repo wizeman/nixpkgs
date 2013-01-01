@@ -7,7 +7,7 @@ stdenv.mkDerivation rec {
   version = "0.9.2";
 
   src = fetchurl {
-    url = "mirror://kde/stable/kdenlive/${version}/src/${name}.tar.bz2";
+    url = "mirror://kde/stable/kdenlive/0.9.2/src/${name}.tar.bz2";
     sha256 = "1h240s0c10z8sgvwmrfzam33qlx7j2a5b12lw1mk02ihs9hl43j1";
   };
 

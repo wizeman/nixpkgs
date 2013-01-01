@@ -718,9 +718,6 @@ let
 
   fdm = callPackage ../tools/networking/fdm {};
 
-  ffmpeg2theora = callPackage ../tools/video/ffmpeg2theora
-    { ffmpeg = ffmpeg_0_6_90; };
-
   figlet = callPackage ../tools/misc/figlet { };
 
   file = callPackage ../tools/misc/file { };
@@ -3537,8 +3534,6 @@ let
 
   directfb = callPackage ../development/libraries/directfb { };
 
-  djbfft = callPackage ../development/libraries/djbfft { };
-
   dotconf = callPackage ../development/libraries/dotconf { };
 
   dssi = callPackage ../development/libraries/dssi {};
@@ -3586,14 +3581,15 @@ let
   fcgi = callPackage ../development/libraries/fcgi { };
 
   ffmpeg = callPackage ../development/libraries/ffmpeg {
-    vpxSupport = if !stdenv.isMips then true else false;
-    vdpauSupport = true;
-
-  ffmpeg_1_0 = callPackage ../development/libraries/ffmpeg/1.0.nix {
+    vpxSupport = !stdenv.isMips;
   };
 
   ffmpeg_0_6_90 = callPackage ../development/libraries/ffmpeg/0.6.90.nix {
-    vpxSupport = if !stdenv.isMips then true else false;
+    vpxSupport = !stdenv.isMips;
+  };
+
+  ffmpeg_1_0 = callPackage ../development/libraries/ffmpeg/1.0.nix {
+    vpxSupport = !stdenv.isMips;
   };
 
   fftw = callPackage ../development/libraries/fftw {
@@ -4727,8 +4723,6 @@ let
 
   ortp = callPackage ../development/libraries/ortp { };
 
-  orc = callPackage ../development/libraries/orc { };
-
   p11_kit = callPackage ../development/libraries/p11-kit { };
 
   pangoxsl = callPackage ../development/libraries/pangoxsl { };
@@ -5126,9 +5120,7 @@ let
 
   xbase = callPackage ../development/libraries/xbase { };
 
-  xineLib = callPackage ../development/libraries/xine-lib {
-    vdpauSupport = true;
-  };
+  xineLib = callPackage ../development/libraries/xine-lib { };
 
   xautolock = callPackage ../misc/screensavers/xautolock { };
 

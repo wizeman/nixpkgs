@@ -1,15 +1,15 @@
-{ fetchurl, stdenv, pkgconfig, gst_plugins_base, bzip2, yasm, orc
+{ fetchurl, stdenv, pkgconfig, gst_plugins_base, bzip2, yasm
 , useInternalFfmpeg ? false, ffmpeg ? null }:
 
 stdenv.mkDerivation rec {
-  name = "gst-ffmpeg-0.10.13";
+  name = "gst-ffmpeg-0.10.12";
 
   src = fetchurl {
     urls = [
       "http://gstreamer.freedesktop.org/src/gst-ffmpeg/${name}.tar.bz2"
       "mirror://gentoo/distfiles/${name}.tar.bz2"
       ];
-    sha256 = "0qmvgwcfybci78sd73mhvm4bsb7l0xsk9yljrgik80g011ds1z3n";
+    sha256 = "0fyppl8q18g71jd2r0mbiqk8hhrdxq43dglma06mxyjb5c80fxxi";
   };
 
   # Upstream strongly recommends against using --with-system-ffmpeg,
@@ -18,7 +18,7 @@ stdenv.mkDerivation rec {
   configureFlags = stdenv.lib.optionalString (!useInternalFfmpeg) "--with-system-ffmpeg";
 
   buildInputs =
-    [ pkgconfig bzip2 gst_plugins_base orc ]
+    [ pkgconfig bzip2 gst_plugins_base ]
     ++ (if useInternalFfmpeg then [ yasm ] else [ ffmpeg ]);
 
   meta = {
