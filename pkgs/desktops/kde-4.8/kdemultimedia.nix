@@ -1,12 +1,10 @@
-{ kde, alsaLib, libvorbis, taglib, flac, cdparanoia, lame, kdelibs, ffmpeg_0_9,
+{ kde, alsaLib, libvorbis, taglib, flac, cdparanoia, lame, kdelibs, ffmpeg,
   libmusicbrainz3, libtunepimp, pulseaudio }:
-
-  # doesn't build with ffmpeg 0.11
 
 kde {
 
   buildInputs =
-    [ kdelibs cdparanoia taglib libvorbis libmusicbrainz3 libtunepimp ffmpeg_0_9
+    [ kdelibs cdparanoia taglib libvorbis libmusicbrainz3 libtunepimp ffmpeg
       flac lame pulseaudio
     ];
 

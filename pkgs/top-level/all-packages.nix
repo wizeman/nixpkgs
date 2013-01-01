@@ -719,7 +719,7 @@ let
   fdm = callPackage ../tools/networking/fdm {};
 
   ffmpeg2theora = callPackage ../tools/video/ffmpeg2theora
-    { ffmpeg = ffmpeg_0_9; };
+    { ffmpeg = ffmpeg_0_6_90; };
 
   figlet = callPackage ../tools/misc/figlet { };
 
@@ -766,7 +766,7 @@ let
   ftgl212 = callPackage ../development/libraries/ftgl/2.1.2.nix { };
 
   fuppes = callPackage ../tools/networking/fuppes {
-    ffmpeg = ffmpeg_0_5; # doesn't build with 0.7 or 0.11
+    ffmpeg = ffmpeg_0_6_90;
   };
 
   fsfs = callPackage ../tools/filesystems/fsfs { };
@@ -3586,21 +3586,14 @@ let
   fcgi = callPackage ../development/libraries/fcgi { };
 
   ffmpeg = callPackage ../development/libraries/ffmpeg {
-    vpxSupport = !stdenv.isMips;
+    vpxSupport = if !stdenv.isMips then true else false;
     vdpauSupport = true;
-  };
-  # the highest version using libav 0.7.*
-  ffmpeg_0_9 = callPackage ../development/libraries/ffmpeg {
-    vpxSupport = !stdenv.isMips;
-  };
 
   ffmpeg_1_0 = callPackage ../development/libraries/ffmpeg/1.0.nix {
-    vpxSupport = !stdenv.isMips;
   };
-  # the oldest maintained version
-  ffmpeg_0_5 = callPackage ../development/libraries/ffmpeg {
-    branch = "0.5";
-    vpxSupport = false; # not known in this branch
+
+  ffmpeg_0_6_90 = callPackage ../development/libraries/ffmpeg/0.6.90.nix {
+    vpxSupport = if !stdenv.isMips then true else false;
   };
 
   fftw = callPackage ../development/libraries/fftw {
@@ -3857,8 +3850,7 @@ let
 
   gst_plugins_ugly = callPackage ../development/libraries/gstreamer/gst-plugins-ugly {};
 
-  gst_ffmpeg = callPackage ../development/libraries/gstreamer/gst-ffmpeg
-    { ffmpeg = ffmpeg_0_9; };
+  gst_ffmpeg = callPackage ../development/libraries/gstreamer/gst-ffmpeg {};
 
   gst_python = callPackage ../development/libraries/gstreamer/gst-python {};
 
@@ -4565,8 +4557,7 @@ let
   mdds = callPackage ../development/libraries/mdds { };
 
   # failed to build
-  mediastreamer = callPackage ../development/libraries/mediastreamer
-    { ffmpeg = ffmpeg_0_9; };
+  mediastreamer = callPackage ../development/libraries/mediastreamer { };
 
   mesaSupported = lib.elem system lib.platforms.mesaPlatforms;
 
@@ -4693,11 +4684,11 @@ let
   openct = callPackage ../development/libraries/openct { };
 
   opencv = callPackage ../development/libraries/opencv {
-    ffmpeg = ffmpeg_0_7;
+    ffmpeg = ffmpeg_0_6_90;
   };
 
   opencv_2_1 = callPackage ../development/libraries/opencv/2.1.nix {
-    ffmpeg = ffmpeg_0_5; # opencv_2_1 doesn't build because of some c++ issues anyway
+    ffmpeg = ffmpeg_0_6_90;
     libpng = libpng12;
   };
 
@@ -5427,7 +5418,7 @@ let
   lighttpd = callPackage ../servers/http/lighttpd { };
 
   mediatomb = callPackage ../servers/mediatomb {
-    ffmpeg = ffmpeg_0_7;
+    ffmpeg = ffmpeg_0_6_90;
   };
 
   memcached = callPackage ../servers/memcached {};
@@ -6635,8 +6626,7 @@ let
 
   audacious = callPackage ../applications/audio/audacious { };
 
-  audacity = callPackage ../applications/audio/audacity
-    { ffmpeg = ffmpeg_0_9; };
+  audacity = callPackage ../applications/audio/audacity { };
 
   aumix = callPackage ../applications/audio/aumix {
     gtkGUI = false;

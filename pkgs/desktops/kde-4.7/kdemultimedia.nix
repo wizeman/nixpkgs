@@ -1,14 +1,12 @@
-{ kde, alsaLib, libvorbis, taglib, flac, cdparanoia, lame, kdelibs, ffmpeg_0_9,
+{ kde, alsaLib, libvorbis, taglib, flac, cdparanoia, lame, kdelibs, ffmpeg,
   libmusicbrainz3, libtunepimp, pulseaudio }:
-
-  # doesn't build with ffmpeg 0.11
 
 kde {
 
   buildInputs =
     # Note: kdemultimedia can use xine-lib, but it doesn't seem useful
     # without the Phonon Xine backend.
-    [ kdelibs cdparanoia taglib libvorbis libmusicbrainz3 libtunepimp ffmpeg_0_9
+    [ kdelibs cdparanoia taglib libvorbis libmusicbrainz3 libtunepimp ffmpeg
       flac lame pulseaudio
     ];
 
