@@ -1,7 +1,8 @@
 { stdenv, fetchurl, perl, gettext, makeWrapper, PerlMagick, YAML
 , TextMarkdown, URI, HTMLParser, HTMLScrubber, HTMLTemplate, TimeDate
 , CGISession, CGIFormBuilder, DBFile, LocaleGettext, RpcXML, XMLSimple
-, YAMLLibYAML, which, HTMLTree
+, YAMLLibYAML, which, HTMLTree, AuthenPassphrase, NetOpenIDConsumer
+, LWPxParanoidAgent, CryptSSLeay
 , gitSupport ? false, git ? null
 , docutilsSupport ? false, python ? null, docutils ? null
 , monotoneSupport ? false, monotone ? null
@@ -22,7 +23,7 @@ assert mercurialSupport -> (mercurial != null);
 
 let
   name = "ikiwiki";
-  version = "3.20120629";
+  version = "3.20121212";
 
   lib = stdenv.lib;
 in
@@ -31,12 +32,13 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "http://ftp.de.debian.org/debian/pool/main/i/ikiwiki/${name}_${version}.tar.gz";
-    sha256 = "7e39cdb727f261ce20fde5f0b05966680589a3d028c569780addd4b530382f07";
+    sha256 = "1frsr2sqzsnagbxvyjsgk4nrl1p1048vybsd1zw1ln1mqik31ydz";
   };
 
   buildInputs = [ perl TextMarkdown URI HTMLParser HTMLScrubber HTMLTemplate
     TimeDate gettext makeWrapper DBFile CGISession CGIFormBuilder LocaleGettext
-    RpcXML XMLSimple PerlMagick YAML YAMLLibYAML which HTMLTree ]
+    RpcXML XMLSimple PerlMagick YAML YAMLLibYAML which HTMLTree AuthenPassphrase
+    NetOpenIDConsumer LWPxParanoidAgent CryptSSLeay ]
     ++ lib.optionals docutilsSupport [python docutils]
     ++ lib.optionals gitSupport [git]
     ++ lib.optionals monotoneSupport [monotone]
@@ -68,6 +70,11 @@ stdenv.mkDerivation {
       ${lib.optionalString mercurialSupport ''--prefix PATH : ${mercurial}/bin \''}
       ${lib.concatMapStrings (x: "--prefix PATH : ${x}/bin ") extraUtils}
     done
+  '';
+
+  preCheck = ''
+    # Git needs some help figuring this out during test suite run.
+    export EMAIL="nobody@example.org"
   '';
 
   checkTarget = "test";
