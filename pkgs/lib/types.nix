@@ -157,7 +157,7 @@ rec {
     uniq = elemType: mkOptionType {
       inherit (elemType) name check iter fold docPath hasOptions;
       merge = list:
-        if tail list == [] then
+        if length list == 1 then
           head list
         else
           throw "Multiple definitions. Only one is allowed for this option.";
@@ -174,6 +174,20 @@ rec {
       check = x: builtins.isNull x || elemType.check x;
       iter = f: path: v: if v == null then v else elemType.iter f path v;
       fold = op: nul: v: if v == null then nul else elemType.fold op nul v;
+    };
+
+    functionTo = elemType: mkOptionType {
+      name = "function that evaluates to a(n) ${elemType.name}";
+      check = lib.traceValIfNot builtins.isFunction;
+      merge = fns:
+        args: elemType.merge (map (fn: fn args) fns);
+      # These are guesses, I don't fully understand iter, fold, delayOnGlobalEval
+      iter = f: path: v:
+        args: elemType.iter f path (v args);
+      fold = op: nul: v:
+        args: elemType.fold op nul (v args);
+      inherit (elemType) delayOnGlobalEval;
+      hasOptions = false;
     };
 
     # !!! this should be a type constructor that takes the options as

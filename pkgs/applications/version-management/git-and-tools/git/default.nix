@@ -9,10 +9,10 @@
 
 let
 
-  version = "1.7.11";
-  
+  version = "1.8.0.1";
+
   svn = subversionClient.override { perlBindings = true; };
-  
+
 in
 
 stdenv.mkDerivation {
@@ -20,7 +20,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "http://git-core.googlecode.com/files/git-${version}.tar.gz";
-    sha256 = "0qgi1cj19dnn0sl3n38dbz68nllvyppdvs2jb77ksiar4jb9lsc3";
+    sha1 = "4e7492f7558f3ba2a450c43efa7de3b0b1adc6c1";
   };
 
   patches = [ ./docbook2texi.patch ];
@@ -100,7 +100,7 @@ stdenv.mkDerivation {
        for prog in bin/gitk libexec/git-core/{git-gui,git-citool,git-gui--askpass}; do
          sed -i -e "s|exec 'wish'|exec '${tk}/bin/wish'|g" \
                 -e "s|exec wish|exec '${tk}/bin/wish'|g" \
-		"$out/$prog"
+                "$out/$prog"
        done
      '' else ''
        # Don't wrap Tcl/Tk, replace them by notification scripts
