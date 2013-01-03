@@ -12,11 +12,11 @@ assert postscriptSupport -> zlib != null;
 assert pngSupport -> libpng != null;
 
 stdenv.mkDerivation rec {
-  name = "cairo-1.12.4";
+  name = "cairo-1.12.8";
 
   src = fetchurl {
     url = "http://cairographics.org/releases/${name}.tar.xz";
-    sha1 = "f4158981ed01e73c94fb8072074b17feee61a68b";
+    sha256 = "1ndx9rariln80nzrijzsyg356zj9g52cnc6qp8043aqpc736zfwg";
   };
 
   buildInputs = with xlibs;
@@ -39,15 +39,9 @@ stdenv.mkDerivation rec {
     ++ stdenv.lib.optional xcbSupport "--enable-xcb"
     ++ stdenv.lib.optional pdfSupport "--enable-pdf";
 
-  preConfigure = ''
-    # Work around broken `Requires.private' that prevents Freetype
-    # `-I' flags to be propagated.
-    sed -i "src/cairo.pc.in" \
-        -es'|^Cflags:\(.*\)$|Cflags: \1 -I${freetype}/include/freetype2 -I${freetype}/include|g'
-  ''
-
+  preConfigure =
   # On FreeBSD, `-ldl' doesn't exist.
-  + (stdenv.lib.optionalString stdenv.isFreeBSD
+    (stdenv.lib.optionalString stdenv.isFreeBSD
        '' for i in "util/"*"/Makefile.in" boilerplate/Makefile.in
           do
             cat "$i" | sed -es/-ldl//g > t

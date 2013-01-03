@@ -1,11 +1,11 @@
 { stdenv, fetchurl, pkgconfig, glib, freetype }:
 
 stdenv.mkDerivation rec {
-  name = "harfbuzz-0.9.4";
+  name = "harfbuzz-0.9.10";
 
   src = fetchurl {
     url = "http://www.freedesktop.org/software/harfbuzz/release/${name}.tar.bz2";
-    sha256 = "2572f9a810d17a735ef565115463827d075af2371ee5b68e6d77231381f4bddc";
+    sha256 = "08rfkkcm4113ilm15j6h6cxp21z6pni123jcjv8hya85xlfji30z";
   };
 
   buildInputs = [ pkgconfig glib freetype ];

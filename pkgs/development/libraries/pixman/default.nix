@@ -1,11 +1,11 @@
 { fetchurl, stdenv, pkgconfig, perl }:
 
 stdenv.mkDerivation rec {
-  name = "pixman-0.26.2";
+  name = "pixman-0.28.2";
 
   src = fetchurl {
     url = "http://cairographics.org/releases/${name}.tar.gz";
-    sha256 = "1qiwn7qa9vll2cx9cp3lqi9ixpbfkv5m65zsifarsrv0a55mbay9";
+    sha256 = "0mcvxd5gx3w1wzgph91l2vaiic91jmx7s01hi2igphyvd80ckyia";
   };
 
   buildInputs = [ pkgconfig perl ];
