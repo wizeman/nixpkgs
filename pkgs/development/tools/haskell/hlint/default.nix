@@ -4,8 +4,8 @@
 
 cabal.mkDerivation (self: {
   pname = "hlint";
-  version = "1.8.30";
-  sha256 = "1c52h7pi759dnqzfq46nyckp75aswpqkf2n7aag2np955ky7rd05";
+  version = "1.8.39";
+  sha256 = "009qf441nri8pxzz22xvpz44dhspr9bkh5diaz29abimj10fm375";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [
@@ -14,7 +14,7 @@ cabal.mkDerivation (self: {
   meta = {
     homepage = "http://community.haskell.org/~ndm/hlint/";
     description = "Source code suggestions";
-    license = "GPL";
+    license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
     maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
