@@ -1,6 +1,5 @@
 { v, h, stdenv, fetchXfce, pkgconfig, intltool, exo, gtk, libxfce4util
-, dbus_glib, libstartup_notification, libnotify, xfconf, xfce4panel, gamin, libexif, pcre
-, hal, enableHAL ? false }:
+, dbus_glib, libstartup_notification, libnotify, xfconf, xfce4panel, gamin, libexif, pcre }:
 
 stdenv.mkDerivation rec {
   name = "Thunar-${v}";
@@ -12,7 +11,6 @@ stdenv.mkDerivation rec {
       dbus_glib libstartup_notification libnotify xfconf xfce4panel gamin libexif pcre
     ];
   # TODO: gudev, optionality
-  propagatedBuildInputs = if enableHAL then [ hal ] else [];
 
   enableParallelBuilding = true;
 

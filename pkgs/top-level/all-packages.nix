@@ -4450,6 +4450,8 @@ let
 
   libungif = callPackage ../development/libraries/giflib/libungif.nix { };
 
+  libunique = callPackage ../development/libraries/libunique/default.nix { };
+
   libusb = callPackage ../development/libraries/libusb { };
 
   libusb1 = callPackage ../development/libraries/libusb1 { };
