@@ -1054,6 +1054,8 @@ let
 
   lzop = callPackage ../tools/compression/lzop { };
 
+  maildrop = callPackage ../tools/networking/maildrop { };
+
   mailutils = callPackage ../tools/networking/mailutils {
     guile = guile_1_8;
   };
@@ -2971,6 +2973,8 @@ let
       # Some of the parallel tests seem to hang on `i386-pc-solaris2.11'.
       && stdenv.system != "i686-solaris";
   };
+
+  automake113x = callPackage ../development/tools/misc/automake/automake-1.13.x.nix { };
 
   automoc4 = callPackage ../development/tools/misc/automoc4 { };
 
@@ -4997,7 +5001,7 @@ let
   telepathy_qt = callPackage ../development/libraries/telepathy/qt { };
 
   tinyxml = tinyxml2;
-  
+
   tinyxml2 = callPackage ../development/libraries/tinyxml/2.6.2.nix { };
 
   tk = callPackage ../development/libraries/tk { };
@@ -8163,6 +8167,8 @@ let
   alienarena = callPackage ../games/alienarena { };
 
   andyetitmoves = if stdenv.isLinux then callPackage ../games/andyetitmoves {} else null;
+
+  anki = callPackage ../games/anki { };
 
   asc = callPackage ../games/asc {
     lua = lua5;
