@@ -1,0 +1,24 @@
+diff --git a/src/Makefile.am b/src/Makefile.am
+index cec36c1..d60e2af 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -59,7 +59,7 @@ source_c = \
+ 	$(source_x11_c)
+ 
+ vdpau_drv_video_la_LTLIBRARIES	= vdpau_drv_video.la
+-vdpau_drv_video_ladir		= @LIBVA_DRIVERS_PATH@
++vdpau_drv_video_ladir		= $(out)/lib/xorg/modules/drivers
+ vdpau_drv_video_la_SOURCES	= $(source_c)
+ vdpau_drv_video_la_LIBADD	= $(VDPAU_VIDEO_LIBS) -lX11
+ vdpau_drv_video_la_LDFLAGS	= $(LDADD)
+@@ -73,10 +73,6 @@ EXTRA_DIST = \
+ 	$(source_x11_h)
+ 
+ install-data-hook:
+-	cd $(DESTDIR)$(LIBVA_DRIVERS_PATH) ;			\
+-	for drv in $(DRIVERS); do				\
+-	    ln -s vdpau_drv_video.so $${drv}_drv_video.so;	\
+-	done
+ 
+ # Extra clean files so that maintainer-clean removes *everything*
+ MAINTAINERCLEANFILES = Makefile.in config.h.in

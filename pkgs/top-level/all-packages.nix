@@ -4472,6 +4472,8 @@ let
 
   libva_intel = callPackage ../development/libraries/libva/intel-default.nix { };
 
+  libva_vdpau = callPackage ../development/libraries/libva/nvidia-default.nix { };
+
   libvdpau = callPackage ../development/libraries/libvdpau { inherit (xlibs) libX11; };
 
   libvirt = callPackage ../development/libraries/libvirt { };
