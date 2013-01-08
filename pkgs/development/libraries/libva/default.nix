@@ -1,19 +1,17 @@
-{ stdenv, fetchurl, autoconf, automake, libtool, libX11, pkgconfig, libXext, mesa, libdrm, libXfixes, intelgen4asm }:
+{ stdenv, fetchurl, pkgconfig, libtool, libX11, libXext
+, mesa, libdrm, libXfixes }:
 
 stdenv.mkDerivation rec {
-  name = "libva-1.0.12";
-  
+  name = "libva-1.1.0";
   src = fetchurl {
-    url = "http://cgit.freedesktop.org/libva/snapshot/${name}.tar.bz2";
-    sha256 = "1xg8zvmh75w63sc8ykagzrbzswph6g9jardy8v83glkqzilaw2p8";
+    url = "http://www.freedesktop.org/software/vaapi/releases/libva/${name}.tar.bz2";
+    sha256 = "1a7g7i96ww8hmim2pq2a3xc89073lzacxn1xh9526bzhlqjdqsnv";
   };
 
-  buildInputs = [ autoconf automake libtool libX11 libXext pkgconfig mesa libdrm
-    libXfixes intelgen4asm ];
+  # don't seem to propagate anyway :-(
+  propagatedBuildInputs = [ pkgconfig libtool libX11 libXext mesa libdrm libXfixes ];
 
-  configureFlags = [ "--enable-i965-driver" "--enable-glx" ];
-
-  preConfigure = "sh autogen.sh";
+  fixupPhase = ''find "$out" -name "*.la" -delete'';
 
   meta = {
     homepage = http://www.freedesktop.org/wiki/Software/vaapi;
