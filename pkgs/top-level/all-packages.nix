@@ -4470,6 +4470,8 @@ let
 
   libva = callPackage ../development/libraries/libva { };
 
+  libva_intel = callPackage ../development/libraries/libva/intel-default.nix { };
+
   libvdpau = callPackage ../development/libraries/libvdpau { inherit (xlibs) libX11; };
 
   libvirt = callPackage ../development/libraries/libvirt { };
