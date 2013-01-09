@@ -8,6 +8,11 @@ stdenv.mkDerivation rec {
     sha256 = "1a7g7i96ww8hmim2pq2a3xc89073lzacxn1xh9526bzhlqjdqsnv";
   };
 
+  configureFlags = [
+    "--with-drivers-path=/var/run/current-system/sw/lib/xorg/modules/drivers"
+    "--enable-dummy-driver=no" # was trying to write to /var/run/...
+  ];
+
   # don't seem to propagate anyway :-(
   propagatedBuildInputs = [ pkgconfig libtool libX11 libXext mesa libdrm libXfixes ];
 

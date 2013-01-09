@@ -8,14 +8,14 @@ stdenv.mkDerivation rec {
     sha256 = "14m7krah3ajkwj190q431lqqa84hdljcdmrcrqkbgaffyjlqvdid";
   };
 
-  patches = [ ./paths-common.patch ./intel-paths.patch ];
+  patches = [ ./intel-paths.patch ];
 
   preConfigure = "./autogen.sh -V";
 
   # TODO: test on an intel GFX
   configureFlags = [
     "--sharedstatedir=/var/run/" # modifiable architecture-independent data [PREFIX/com]
-    "--localstatedir=/var/run"   # modifiable single-machine data [PREFIX/var]
+    "--localstatedir=/var/run/"   # modifiable single-machine data [PREFIX/var]
   ];
 
   buildInputs = [ autoconf automake libtool pkgconfig libva intelgen4asm libdrm libX11 libXfixes libXext ];

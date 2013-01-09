@@ -8,13 +8,16 @@ stdenv.mkDerivation rec {
     sha256 = "1fcvgshzyc50yb8qqm6v6wn23ghimay23ci0p8sm8gxcy211jp0m";
   };
 
-  patches = [ ./paths-common.patch ./nvidia-paths.patch ];
+  patches = [ ./nvidia-paths.patch ];
 
   preConfigure = "autoreconf --verbose --install"; # to use the *.am patches
 
   buildInputs = [ automake autoconf libtool pkgconfig libva libvdpau libdrm libX11 libXfixes libXext mesa ];
 
-  fixupPhase = ''find "$out" -name "*.la" -delete'';
+  fixupPhase = ''
+    find "$out" -name "*.la" -delete
+    ln -s "$out/lib/xorg/modules/drivers/vdpau_drv_video.so" "$out/lib/xorg/modules/drivers/nvidia_drv_video.so"
+  '';
 
   meta = {
     homepage = http://www.freedesktop.org/wiki/Software/vaapi;
