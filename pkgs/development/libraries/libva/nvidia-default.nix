@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
   fixupPhase = ''
     find "$out" -name "*.la" -delete
     ln -s "$out/lib/xorg/modules/drivers/vdpau_drv_video.so" "$out/lib/xorg/modules/drivers/nvidia_drv_video.so"
-  '';
+  ''; # somehow, vlc is looking for nvidia_drv_video.so
 
   meta = {
     homepage = http://www.freedesktop.org/wiki/Software/vaapi;
