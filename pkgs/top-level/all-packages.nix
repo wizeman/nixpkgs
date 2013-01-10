@@ -411,7 +411,14 @@ let
     client = true;
   });
 
-  androidenv = import ../development/androidenv {
+  androidenv = import ../development/mobile/androidenv {
+    inherit pkgs;
+    pkgs_i686 = pkgsi686Linux;
+  };
+  
+  xcodeenv = callPackage ../development/mobile/xcodeenv { };
+  
+  titaniumenv = import ../development/mobile/titaniumenv {
     inherit pkgs;
     pkgs_i686 = pkgsi686Linux;
   };
@@ -513,6 +520,7 @@ let
   bup = callPackage ../tools/backup/bup {
     inherit (pythonPackages) pyxattr pylibacl setuptools fuse;
     inherit (haskellPackages) pandoc;
+    par2Support = (config.bup.par2Support or false);
   };
 
   atool = callPackage ../tools/archivers/atool { };
@@ -916,6 +924,8 @@ let
 
   hping = callPackage ../tools/networking/hping { };
 
+  httpie = callPackage ../tools/networking/httpie { };
+
   httpfs2 = callPackage ../tools/filesystems/httpfs { };
 
   # FIXME: This Hydra snapshot is outdated and depends on the `nixPerl',
@@ -1051,6 +1061,8 @@ let
   xz = callPackage ../tools/compression/xz { };
 
   lzop = callPackage ../tools/compression/lzop { };
+
+  maildrop = callPackage ../tools/networking/maildrop { };
 
   mailutils = callPackage ../tools/networking/mailutils {
     guile = guile_1_8;
@@ -1804,7 +1816,7 @@ let
 
   xvfb_run = callPackage ../tools/misc/xvfb-run { inherit (texFunctions) fontsConf; };
 
-  youtubeDL = callPackage ../tools/misc/youtube-dl { };
+  youtubeDL = callPackage ../tools/misc/youtube-dl { inherit (haskellPackages) pandoc; };
 
   zbar = callPackage ../tools/graphics/zbar {};
 
@@ -2969,6 +2981,8 @@ let
       # Some of the parallel tests seem to hang on `i386-pc-solaris2.11'.
       && stdenv.system != "i686-solaris";
   };
+
+  automake113x = callPackage ../development/tools/misc/automake/automake-1.13.x.nix { };
 
   automoc4 = callPackage ../development/tools/misc/automoc4 { };
 
@@ -4998,6 +5012,10 @@ let
 
   telepathy_qt = callPackage ../development/libraries/telepathy/qt { };
 
+  tinyxml = tinyxml2;
+
+  tinyxml2 = callPackage ../development/libraries/tinyxml/2.6.2.nix { };
+
   tk = callPackage ../development/libraries/tk { };
 
   tnt = callPackage ../development/libraries/tnt { };
@@ -6751,7 +6769,7 @@ let
 
   cuneiform = builderDefsPackage (import ../tools/graphics/cuneiform) {
     inherit cmake patchelf;
-    imagemagick=imagemagick;
+    imagemagick = imagemagick;
   };
 
   cvs = callPackage ../applications/version-management/cvs { };
@@ -7036,6 +7054,8 @@ let
 
   feh = callPackage ../applications/graphics/feh { };
 
+  filezilla = callPackage ../applications/networking/ftp/filezilla { };
+
   firefox = pkgs.firefoxPkgs.firefox;
 
   firefoxWrapper = wrapFirefox { browser = pkgs.firefox; };
@@ -7085,6 +7105,10 @@ let
   freerdp = callPackage ../applications/networking/remote/freerdp { };
 
   freerdpUnstable = callPackage ../applications/networking/remote/freerdp/unstable.nix { };
+
+  freicoin = callPackage ../applications/misc/freicoin {
+    db4 = db48;
+  };
 
   fspot = callPackage ../applications/graphics/f-spot {
     inherit (gnome) libgnome libgnomeui;
@@ -7308,6 +7332,8 @@ let
   ion3 = callPackage ../applications/window-managers/ion-3 {
     lua = lua5;
   };
+
+  ipe = callPackage ../applications/graphics/ipe { };
 
   iptraf = callPackage ../applications/networking/iptraf { };
 
@@ -7946,7 +7972,7 @@ let
     inherit (pkgs) python perl tcl ruby /*x11*/;
     lua = pkgs.lua5;
     # optional features by flags
-    flags = [ "X11" ]; # only flag "X11" by now
+    flags = [ "python" "X11" ]; # only flag "X11" by now
   };
 
   virtviewer = callPackage ../applications/virtualization/virt-viewer {};
@@ -8099,6 +8125,8 @@ let
     base14Fonts = "${ghostscript}/share/ghostscript/fonts";
   };
 
+  xkb_switch = callPackage ../tools/X11/xkb-switch { };
+
   libxpdf = callPackage ../applications/misc/xpdf/libxpdf.nix { };
 
   xpra = callPackage ../tools/X11/xpra {
@@ -8155,6 +8183,8 @@ let
   alienarena = callPackage ../games/alienarena { };
 
   andyetitmoves = if stdenv.isLinux then callPackage ../games/andyetitmoves {} else null;
+
+  anki = callPackage ../games/anki { };
 
   asc = callPackage ../games/asc {
     lua = lua5;
@@ -8748,6 +8778,8 @@ let
   iprover = callPackage ../applications/science/logic/iprover {};
 
   leo2 = callPackage ../applications/science/logic/leo2 {};
+
+  logisim = callPackage ../applications/science/logic/logisim {};
 
   matita = callPackage ../applications/science/logic/matita {
     ocaml = ocaml_3_11_2;
