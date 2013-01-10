@@ -1,6 +1,6 @@
 From: Vladimír Čunát <vcunat@gmail.com>
-Subject: [PATCH] vlada/libpng
+Subject: [PATCH] vlada/xulrunner
 
-Trying system-wide libpng with apng support.
+Quest for *sharing* xulrunner and other libs.
 
 Signed-off-by: Vladimír Čunát <vcunat@gmail.com>
