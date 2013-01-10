@@ -7057,6 +7057,7 @@ let
   firefox17Pkgs = callPackage ../applications/networking/browsers/firefox/17.0.nix {
     inherit (gnome) libIDL;
     inherit (pythonPackages) pysqlite;
+    pixman = pixman_new;
   };
 
   firefox17Wrapper = lowPrio (wrapFirefox { browser = firefox17Pkgs.firefox; });

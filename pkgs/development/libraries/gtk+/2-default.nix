@@ -15,6 +15,7 @@ stdenv.mkDerivation rec {
     sha256 = "35e1a01e46b02970b02ee9f299390d0aa57c1215ad2667bcd584b72f4ea6513d";
   };
 
+      #./old-icons.patch
   enableParallelBuilding = true;
 
   buildNativeInputs = [ perl pkgconfig ];

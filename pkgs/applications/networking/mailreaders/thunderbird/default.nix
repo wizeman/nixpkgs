@@ -1,9 +1,10 @@
 { stdenv, fetchurl, pkgconfig, gtk, perl, python, zip, unzip
 , libIDL, dbus_glib, bzip2, alsaLib, nspr, yasm, mesa, nss
-, libnotify, cairo, pixman, fontconfig
-, libjpeg
+, libnotify, cairo, pixman, fontconfig, hunspell, sqlite
+, libjpeg, libpng, curl
 , pythonPackages
 
+, firefoxPkgs
 , # If you want the resulting program to call itself "Thunderbird"
   # instead of "Shredder", enable this option.  However, those
   # binaries may not be distributed without permission from the
@@ -13,6 +14,7 @@
 }:
 
 let version = "17.0"; in
+
 
 stdenv.mkDerivation {
   name = "thunderbird-${version}";
@@ -26,33 +28,45 @@ stdenv.mkDerivation {
 
   buildInputs =
     [ pkgconfig perl python zip unzip bzip2 gtk dbus_glib alsaLib libIDL nspr
+      libnotify cairo pixman fontconfig yasm mesa nss hunspell sqlite
+      libjpeg libpng curl /*crash-reporter*/
       libnotify cairo pixman fontconfig yasm mesa nss
       libjpeg pythonPackages.sqlite3
     ];
 
+    ./xpidl-build.patch # https://bugzil.la/736961
+    ./system-cairo.patch # https://bugzil.la/722975
   configureFlags =
-    [ "--enable-application=mail"
-      "--enable-optimize"
-      "--with-pthreads"
-      "--disable-debug"
-      "--enable-strip"
-      "--with-pthreads"
+    [ "--with-pthreads"
+      #"--with-system-libxul" #just now
+      "--with-system-nspr"
+      "--with-system-nss"
       "--with-system-jpeg"
-      #"--with-system-png"
       "--with-system-zlib"
       "--with-system-bz2"
-      "--with-system-nspr"
+      "--with-system-png"  # png 1.5.x already merged in nixpkgs
+      "--enable-system-hunspell"
+      "--enable-application=mail"
+      # "--enable-default-toolkit=TODO?"
       "--with-system-nss"
       # Broken: https://bugzilla.mozilla.org/show_bug.cgi?id=722975
       #"--enable-system-cairo"
-      "--disable-crashreporter"
-      "--disable-necko-wifi"
-      "--disable-webm"
-      "--disable-tests"
+      # "--enable-startup-notification" # disabled
       "--enable-calendar"
+    ] ++ stdenv.lib.optional enableOfficialBranding "--enable-official-branding" ++ [
+      #"--disable-crashreporter"
+      # "--enable-tree-freetype" #TODO:what?
+      "--disable-updater"
+      "--disable-tests"
+      # "--enable-storage" #TODO:what?
+      "--enable-system-sqlite"
+      #"--enable-safe-browsing" "--enable-url-classifier" #TODO:what?
+      "--enable-optimize=-O2"
+      "--enable-strip"
+      # "--enable-shared-js" #TODO:what?
+      "--disable-necko-wifi"
+    ];
       "--disable-ogg"
-    ]
-    ++ stdenv.lib.optional enableOfficialBranding "--enable-official-branding";
 
   # The Thunderbird Makefiles refer to the variables LIBXUL_DIST,
   # prefix, and PREFIX in some places where they are not set.  In
