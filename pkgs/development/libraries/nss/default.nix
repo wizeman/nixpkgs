@@ -22,11 +22,11 @@ let
 
 in stdenv.mkDerivation rec {
   name = "nss-${version}";
-  version = "3.14";
+  version = "3.14.1";
 
   src = fetchurl {
-    url = "http://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_14_RTM/src/${name}.tar.gz";
-    sha1 = "ace3642fb2ca67854ea7075d053ca01a6d81e616";
+    url = "http://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_14_1_RTM/src/${name}.tar.gz";
+    sha1 = "764773e869aaee314e6f3ca675e04c55075d88a8";
   };
 
   buildInputs = [ nspr perl zlib sqlite ];
@@ -38,7 +38,7 @@ in stdenv.mkDerivation rec {
   '';
 
   patches = [
-    ./nss-3.12.5-gentoo-fixups.diff
+    ./nss-3.14.1-gentoo-fixups.patch
     secLoadPatch
     ./nix_secload_fixup.patch
   ];
