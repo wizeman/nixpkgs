@@ -1,13 +1,14 @@
 { stdenv, fetchurl }: 
 
-stdenv.mkDerivation {
-  name = "libjpeg-8d";
-  
+stdenv.mkDerivation rec {
+  version = "9";
+  name = "libjpeg-${version}";
+
   src = fetchurl {
-    url = http://www.ijg.org/files/jpegsrc.v8d.tar.gz;
-    sha256 = "1cz0dy05mgxqdgjf52p54yxpyy95rgl30cnazdrfmw7hfca9n0h0";
+    url = "http://www.ijg.org/files/jpegsrc.v${version}.tar.gz";
+    sha256 = "0dg5wxcx3cw0hal9gvivj97vid9z0s5sb1yvg55hpxmafn9rxqn4";
   };
-  
+
   meta = {
     homepage = http://www.ijg.org/;
     description = "A library that implements the JPEG image file format";
