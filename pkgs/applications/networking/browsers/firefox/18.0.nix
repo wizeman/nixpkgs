@@ -1,7 +1,7 @@
 { stdenv, fetchurl, pkgconfig, gtk, pango, perl, python, zip, libIDL
 , libjpeg, libpng, zlib, cairo, dbus, dbus_glib, bzip2, xlibs
-, freetype, fontconfig, file, alsaLib, nspr, nss, libnotify
-, yasm, mesa, sqlite, unzip, makeWrapper, pysqlite
+, freetype, fontconfig, file, alsaLib, nspr, /*nss,*/ libnotify
+, yasm, mesa, sqlite, unzip, makeWrapper, pysqlite, pixman, hunspell, libffi, curl
 
 , # If you want the resulting program to call itself "Firefox" instead
   # of "Shiretoko" or whatever, enable this option.  However, those
@@ -31,24 +31,47 @@ rec {
   };
 
   commonConfigureFlags =
-    [ "--enable-optimize"
+    [ "--enable-optimize=-O2"
       #"--enable-profiling"
       "--disable-debug"
       "--enable-strip"
-      # "--with-system-jpeg" # Too old in nixpkgs
+      "--with-system-jpeg" # was too old in nixpkgs
       "--with-system-zlib"
       "--with-system-bz2"
       "--with-system-nspr"
-      # "--with-system-nss" # Too old in nixpkgs
-      # "--with-system-png" # <-- "--with-system-png won't work because the system's libpng doesn't have APNG support"
-      # "--enable-system-cairo" # disabled for the moment because our Cairo is too old
+      #"--with-system-nss" # was too old in nixpkgs
+      "--enable-system-ffi" # only xul and ff option?
+      "--with-system-png" # <-- " we have APNG support now
+      "--enable-system-hunspell"
+      "--enable-system-cairo" # was disabled for the moment because our Cairo was too old
+
+     "--enable-system-ffi" # only xul and ff option?
+      # "--enable-default-toolkit=TODO?"
+      # "--enable-startup-notification" # disabled
+      #"--enable-safe-browsing" "--enable-url-classifier" #TODO:what?
+      # "--enable-shared-js" #TODO:what?
+
       "--enable-system-sqlite"
       "--disable-crashreporter"
+      # "--enable-tree-freetype" #TODO:what?
       "--disable-tests"
       "--disable-necko-wifi" # maybe we want to enable this at some point
       "--disable-installer"
       "--disable-updater"
     ];
+
+    ffXulConfigureFlags =
+      [ #"--enable-egl-xrender-composite" # what?
+        "--disable-elf-hack"
+        #"--enable-skia" # what?
+        "--enable-system-pixman"
+      ];
+    /*
+        "--enable-application=mail"
+        "--enable-calendar"
+        # "--enable-storage" #TODO:what?
+
+      ];*/
 
 
   xulrunner = stdenv.mkDerivation rec {
@@ -60,17 +83,22 @@ rec {
       [ pkgconfig gtk perl zip libIDL libjpeg libpng zlib cairo bzip2
         python dbus dbus_glib pango freetype fontconfig xlibs.libXi
         xlibs.libX11 xlibs.libXrender xlibs.libXft xlibs.libXt file
-        alsaLib nspr nss libnotify xlibs.pixman yasm mesa
+        alsaLib nspr /*nss*/ libnotify pixman yasm mesa
         xlibs.libXScrnSaver xlibs.scrnsaverproto pysqlite
         xlibs.libXext xlibs.xextproto sqlite unzip makeWrapper
+        hunspell libffi curl/*crash-reporter*/
       ];
 
     configureFlags =
       [ "--enable-application=xulrunner"
         "--disable-javaxpcom"
-      ] ++ commonConfigureFlags;
+      ] ++ commonConfigureFlags ++ ffXulConfigureFlags;
 
     enableParallelBuilding = true;
+
+    patches = [
+      ./system-cairo.patch # https://bugzil.la/722975
+    ];
 
     preConfigure =
       ''
@@ -125,7 +153,7 @@ rec {
 
     buildInputs =
       [ pkgconfig gtk perl zip libIDL libjpeg zlib cairo bzip2 python
-        dbus dbus_glib pango freetype fontconfig alsaLib nspr nss libnotify
+        dbus dbus_glib pango freetype fontconfig alsaLib nspr /*nss*/ libnotify
         xlibs.pixman yasm mesa sqlite file unzip pysqlite
       ];
 
@@ -139,10 +167,6 @@ rec {
       ]
       ++ commonConfigureFlags
       ++ stdenv.lib.optional enableOfficialBranding "--enable-official-branding";
-
-    makeFlags = [
-      "SYSTEM_LIBXUL=1"
-    ];
 
     # Hack to work around make's idea of -lbz2 dependency
     preConfigure =

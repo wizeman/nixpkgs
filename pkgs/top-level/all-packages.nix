@@ -7098,6 +7098,7 @@ let
   firefox18Pkgs = callPackage ../applications/networking/browsers/firefox/18.0.nix {
     inherit (gnome) libIDL;
     inherit (pythonPackages) pysqlite;
+    pixman = pixman_new;
   };
 
   firefox18Wrapper = lowPrio (wrapFirefox { browser = firefox18Pkgs.firefox; });
