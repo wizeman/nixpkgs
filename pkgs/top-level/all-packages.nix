@@ -8008,7 +8008,7 @@ let
   };
 
   vlc = callPackage ../applications/video/vlc {
-    ffmpeg = ffmpeg_1_1;
+    ffmpeg = ffmpeg_1_0;
   };
 
   vnstat = callPackage ../applications/networking/vnstat { };
