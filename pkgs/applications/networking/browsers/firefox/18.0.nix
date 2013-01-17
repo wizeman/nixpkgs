@@ -40,12 +40,11 @@ rec {
       "--with-system-bz2"
       "--with-system-nspr"
       #"--with-system-nss" # was too old in nixpkgs
-      "--enable-system-ffi" # only xul and ff option?
-      "--with-system-png" # <-- " we have APNG support now
+      "--with-system-png" # we have system-wide APNG support now
       "--enable-system-hunspell"
       "--enable-system-cairo" # was disabled for the moment because our Cairo was too old
 
-     "--enable-system-ffi" # only xul and ff option?
+      "--enable-system-ffi" # only xul and ff option?
       # "--enable-default-toolkit=TODO?"
       # "--enable-startup-notification" # disabled
       #"--enable-safe-browsing" "--enable-url-classifier" #TODO:what?
@@ -86,7 +85,7 @@ rec {
         alsaLib nspr /*nss*/ libnotify pixman yasm mesa
         xlibs.libXScrnSaver xlibs.scrnsaverproto pysqlite
         xlibs.libXext xlibs.xextproto sqlite unzip makeWrapper
-        hunspell libffi curl/*crash-reporter*/
+        hunspell/*?needed?*/ libffi curl/*crash-reporter*/
       ];
 
     configureFlags =
@@ -154,7 +153,7 @@ rec {
     buildInputs =
       [ pkgconfig gtk perl zip libIDL libjpeg zlib cairo bzip2 python
         dbus dbus_glib pango freetype fontconfig alsaLib nspr /*nss*/ libnotify
-        xlibs.pixman yasm mesa sqlite file unzip pysqlite
+        pixman yasm mesa sqlite file unzip pysqlite hunspell
       ];
 
     propagatedBuildInputs = [xulrunner];

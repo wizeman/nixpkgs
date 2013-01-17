@@ -15,9 +15,10 @@ let
     urls = [
       # "http://patch-tracker.debian.org/patch/series/dl/nss/2:3.13.6-1/85_security_load.patch"
       # "http://anonscm.debian.org/gitweb/?p=pkg-mozilla/nss.git;a=blob_plain;f=debian/patches/85_security_load.patch;hb=HEAD"
-      "http://www.parsix.org/export/7797/pkg/security/raul/main/nss/trunk/debian/patches/85_security_load.patch"
+      #"http://www.parsix.org/export/7797/pkg/security/raul/main/nss/trunk/debian/patches/85_security_load.patch"
+      "http://patch-tracker.debian.org/patch/series/dl/nss/2:3.14.1.with.ckbi.1.93-1/85_security_load.patch"
     ];
-    sha256 = "8a8d0ae4ebbd7c389973fa5d26d8bc5f473046c6cb1d8283cb9a3c1f4c565c47";
+    sha256 = "1lj2qbqh6bvdsrgfzlhjqqq4fgprl4yd1l4lm11q6k7sc21fd47c";
   };
 
 in stdenv.mkDerivation rec {
@@ -46,6 +47,7 @@ in stdenv.mkDerivation rec {
   postPatch = ''
     sed -i -e 's/^DIRS.*$/& pem/' mozilla/security/nss/lib/ckfw/manifest.mn
     sed -i -e "/^PREFIX =/s:= /usr:= $out:" mozilla/security/nss/config/Makefile
+    echo '\ninstall:\n' >> mozilla/security/nss/config/Makefile
   '';
 
   preConfigure = "cd mozilla/security/nss";
