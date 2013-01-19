@@ -47,8 +47,8 @@ in stdenv.mkDerivation rec {
   postPatch = ''
     sed -i -e 's/^DIRS.*$/& pem/' mozilla/security/nss/lib/ckfw/manifest.mn
     sed -i -e "/^PREFIX =/s:= /usr:= $out:" mozilla/security/nss/config/Makefile
-    echo '\ninstall:\n' >> mozilla/security/nss/config/Makefile
-  '';
+  '' # this was a very strange error set, hopefully correct now
+    + "echo '\ninstall:\n\trm $(out)/*.OBJ/bin/nss-config\n' >> mozilla/security/nss/config/Makefile";
 
   preConfigure = "cd mozilla/security/nss";
 
