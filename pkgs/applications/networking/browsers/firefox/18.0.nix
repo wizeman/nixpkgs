@@ -1,21 +1,22 @@
 { stdenv, fetchurl, pkgconfig, gtk, pango, perl, python, zip, libIDL
-, libjpeg, libpng, zlib, cairo, dbus, dbus_glib, bzip2, xlibs
-, freetype, fontconfig, file, alsaLib, nspr, /*nss,*/ libnotify
-, yasm, mesa, sqlite, unzip, makeWrapper, pysqlite, pixman, hunspell, libffi, curl
-
+, libjpeg_turbo, libpng, zlib, cairo, dbus, dbus_glib, bzip2, xlibs
+, freetype, fontconfig, file, alsaLib, nspr, nss, libnotify
+, yasm, mesa, sqlite, unzip, makeWrapper, pysqlite, ply
+, pixman, hunspell, libffi, curl, libvpx, gstreamer, gst_plugins_base, libevent
 , # If you want the resulting program to call itself "Firefox" instead
   # of "Shiretoko" or whatever, enable this option.  However, those
   # binaries may not be distributed without permission from the
   # Mozilla Foundation, see
   # http://www.mozilla.org/foundation/trademarks/.
   enableOfficialBranding ? false
+  , libproxy
 }:
 
 assert stdenv.gcc ? libc && stdenv.gcc.libc != null;
 
 rec {
 
-  firefoxVersion = "18.0";
+  firefoxVersion = "18.0.1";
 
   xulVersion = "18.0"; # this attribute is used by other packages
 
@@ -27,50 +28,70 @@ rec {
         # Fall back to this url for versions not available at releases.mozilla.org.
         "ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/${firefoxVersion}/source/firefox-${firefoxVersion}.source.tar.bz2"
     ];
-    sha1 = "3356562e69d699e5901df5a4da4e2e59dd1e7f57";
+    sha256 = "0zvbml0mas6h9hd1zr6khfgnygh7a19qj66yck1m1f9x2pakj074";
   };
 
-  commonConfigureFlags =
-    [ "--enable-optimize=-O2"
-      #"--enable-profiling"
-      "--disable-debug"
-      "--enable-strip"
-      "--with-system-jpeg" # was too old in nixpkgs
-      "--with-system-zlib"
-      "--with-system-bz2"
-      "--with-system-nspr"
-      #"--with-system-nss" # was too old in nixpkgs
-      "--with-system-png" # we have system-wide APNG support now
-      "--enable-system-hunspell"
-      "--enable-system-cairo" # was disabled for the moment because our Cairo was too old
+  commonConfigureFlags = [ # ordered as in ./configure --help
+    "--with-system-ply"
+    #"--with-pthreads" caused to pass -lpthread instead of -pthread
+    "--with-system-nspr"
+    "--with-system-libevent"
+    #"--with-system-nss" # build of xulrunner fails with a -fPIC error
+    "--with-system-jpeg" # was too old in nixpkgs
+    "--with-system-zlib"
+    "--with-system-bz2"
+    "--with-system-png" # we have system-wide APNG support now
 
-      "--enable-system-ffi" # only xul and ff option?
-      # "--enable-default-toolkit=TODO?"
-      # "--enable-startup-notification" # disabled
-      #"--enable-safe-browsing" "--enable-url-classifier" #TODO:what?
-      # "--enable-shared-js" #TODO:what?
+    "--enable-system-hunspell"
+    "--enable-system-ffi" # only xul and ff option?
+    #"--enable-startup-notification" # disabled
+    #"--enable-gnomevfs" # +gconf, gnomeui?
+    "--enable-libproxy"
 
-      "--enable-system-sqlite"
-      "--disable-crashreporter"
-      # "--enable-tree-freetype" #TODO:what?
-      "--disable-tests"
-      "--disable-necko-wifi" # maybe we want to enable this at some point
-      "--disable-installer"
-      "--disable-updater"
+    # more media stuff
+    "--with-system-libvpx"
+    #"--enable-pulsaudio" # experimental
+    "--enable-gstreamer" # ToTest, mainly for HTML5 videos
+
+    "--disable-crashreporter" # why?
+    # "--enable-tree-freetype" #TODO:what?
+    "--disable-updater"
+    "--disable-tests"
+    "--enable-system-sqlite"
+    #"--enable-safe-browsing" "--enable-url-classifier" #TODO:what?
+
+    #"--enable-egl-xrender-composite" # problems with bad c++ calls in gfx/gl/GLContextProviderEGL.cpp
+    # moreover it's said to work bad with many Linux GPU drivers
+
+    "--enable-optimize=-O2"
+    "--enable-strip" # minimal diagnostics
+    "--disable-elf-hack" # why?
+
+    #"--enable-shared-js" #TODO:what?
+    #"--enable-skia" # what?
+    "--enable-system-cairo" # was disabled because our Cairo was too old
+    "--enable-system-pixman"
+    "--disable-necko-wifi" # maybe we want to enable this at some point
+  ];
+
+  commonBuildInputs = [
+    pkgconfig gtk perl unzip zip
+    dbus dbus_glib alsaLib
+    # checking for doxygen and autoconf
+    python ply
+    nspr libevent #nss
+    libjpeg_turbo zlib bzip2 libpng
+    hunspell libffi libproxy
+    libvpx gstreamer gst_plugins_base
+    sqlite cairo pixman
+    pango freetype mesa
+    file
     ];
 
-    ffXulConfigureFlags =
-      [ #"--enable-egl-xrender-composite" # what?
-        "--disable-elf-hack"
-        #"--enable-skia" # what?
-        "--enable-system-pixman"
-      ];
-    /*
-        "--enable-application=mail"
-        "--enable-calendar"
-        # "--enable-storage" #TODO:what?
 
-      ];*/
+    ffXulConfigureFlags =
+      [
+      ];
 
 
   xulrunner = stdenv.mkDerivation rec {
@@ -78,35 +99,43 @@ rec {
 
     inherit src;
 
-    buildInputs =
-      [ pkgconfig gtk perl zip libIDL libjpeg libpng zlib cairo bzip2
+    buildInputs = commonBuildInputs ++ [ makeWrapper ];
+
+/*
+    xxxx =  [ pkgconfig gtk perl zip libIDL libjpeg_turbo libpng zlib cairo bzip2
         python dbus dbus_glib pango freetype fontconfig xlibs.libXi
         xlibs.libX11 xlibs.libXrender xlibs.libXft xlibs.libXt file
-        alsaLib nspr /*nss*/ libnotify pixman yasm mesa
+        nspr nss libnotify pixman yasm mesa
         xlibs.libXScrnSaver xlibs.scrnsaverproto pysqlite
         xlibs.libXext xlibs.xextproto sqlite unzip makeWrapper
         hunspell/*?needed?*/ libffi curl/*crash-reporter*/
       ];
-
+*/
     configureFlags =
       [ "--enable-application=xulrunner"
-        "--disable-javaxpcom"
       ] ++ commonConfigureFlags ++ ffXulConfigureFlags;
 
     enableParallelBuilding = true;
 
     patches = [
       ./system-cairo.patch # https://bugzil.la/722975
+      #./fpermissive.patch # degrade some bad-style c++ errors to warnings (>=gcc-4.6)
     ];
 
     preConfigure =
       ''
-        export NIX_LDFLAGS="$NIX_LDFLAGS -L$out/lib/xulrunner-${xulVersion}"
+        #export NIX_LDFLAGS="$NIX_LDFLAGS -L$out/lib/xulrunner-${xulVersion}"
+
+        for f in `find .  -name Makefile.in -o -name configure`; do
+          substituteInPlace "$f" --replace -lpthread -pthread
+        done
 
         mkdir ../objdir
         cd ../objdir
         configureScript=../mozilla-release/configure
       ''; # */
+
+        #echo '\nCXXFLAGS += -fPIC\n' >> memory/mozalloc/Makefile.in
 
     #installFlags = "SKIP_GRE_REGISTRATION=1";
 
@@ -151,8 +180,8 @@ rec {
     enableParallelBuilding = true;
 
     buildInputs =
-      [ pkgconfig gtk perl zip libIDL libjpeg zlib cairo bzip2 python
-        dbus dbus_glib pango freetype fontconfig alsaLib nspr /*nss*/ libnotify
+      [ pkgconfig gtk perl zip libIDL libjpeg_turbo zlib cairo bzip2 python
+        dbus dbus_glib pango freetype fontconfig alsaLib nspr nss libnotify
         pixman yasm mesa sqlite file unzip pysqlite hunspell
       ];
 
@@ -162,7 +191,6 @@ rec {
       [ "--enable-application=browser"
         "--with-libxul-sdk=${xulrunner}/lib/xulrunner-devel-${xulrunner.version}"
         "--enable-chrome-format=jar"
-        "--disable-elf-hack"
       ]
       ++ commonConfigureFlags
       ++ stdenv.lib.optional enableOfficialBranding "--enable-official-branding";
