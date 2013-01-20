@@ -12,11 +12,11 @@ assert postscriptSupport -> zlib != null;
 assert pngSupport -> libpng != null;
 
 stdenv.mkDerivation rec {
-  name = "cairo-1.12.8";
+  name = "cairo-1.12.10";
 
   src = fetchurl {
     url = "http://cairographics.org/releases/${name}.tar.xz";
-    sha256 = "1ndx9rariln80nzrijzsyg356zj9g52cnc6qp8043aqpc736zfwg";
+    sha256 = "0fxh6i8bv6rvj6lxyss3p4ns6irvmdkgnx98yjfalv0g47piln7i";
   };
 
   buildInputs = with xlibs;
