@@ -196,7 +196,7 @@ let
 
 
   allStdenvs = import ../stdenv {
-    inherit system stdenvType platform;
+    inherit system stdenvType platform config;
     allPackages = args: import ./all-packages.nix ({ inherit config system; } // args);
   };
 
@@ -344,6 +344,10 @@ let
     inherit stdenv;
   };
 
+  replaceDependency = import ../build-support/replace-dependency.nix {
+    inherit runCommand nix lib;
+  };
+
   nukeReferences = callPackage ../build-support/nuke-references/default.nix { };
 
   vmTools = import ../build-support/vm/default.nix {
@@ -415,9 +419,9 @@ let
     inherit pkgs;
     pkgs_i686 = pkgsi686Linux;
   };
-  
+
   xcodeenv = callPackage ../development/mobile/xcodeenv { };
-  
+
   titaniumenv = import ../development/mobile/titaniumenv {
     inherit pkgs;
     pkgs_i686 = pkgsi686Linux;
@@ -541,7 +545,7 @@ let
 
   cfdg = builderDefsPackage ../tools/graphics/cfdg {
     inherit libpng bison flex;
-    ffmpeg = ffmpeg_1_0;
+    ffmpeg = ffmpeg_1_1;
   };
 
   checkinstall = callPackage ../tools/package-management/checkinstall { };
@@ -1314,6 +1318,8 @@ let
 
   pdfjam = callPackage ../tools/typesetting/pdfjam { };
 
+  jbig2enc = callPackage ../tools/graphics/jbig2enc { };
+
   pdfread = callPackage ../tools/graphics/pdfread { };
 
   briss = callPackage ../tools/graphics/briss { };
@@ -1748,6 +1754,8 @@ let
   wv = callPackage ../tools/misc/wv { };
 
   wv2 = callPackage ../tools/misc/wv2 { };
+
+  x86info = callPackage ../os-specific/linux/x86info { };
 
   x11_ssh_askpass = callPackage ../tools/networking/x11-ssh-askpass { };
 
@@ -2828,25 +2836,23 @@ let
 
   pure = callPackage ../development/interpreters/pure {};
 
-  python = python27;
   python3 = python32;
-
-  python26 = callPackage ../development/interpreters/python/2.6 { };
-
-  python27 = callPackage ../development/interpreters/python/2.7 { };
-
   python32 = callPackage ../development/interpreters/python/3.2 { };
 
-  pythonFull = python27Full;
+  python = python27;
+  python26 = callPackage ../development/interpreters/python/2.6 { };
+  python27 = callPackage ../development/interpreters/python/2.7 { };
 
+  pythonFull = python27Full;
   python26Full = callPackage ../development/interpreters/python/wrapper.nix {
     extraLibs = lib.attrValues python26.modules;
     python = python26;
+    inherit (python26Packages) recursivePthLoader;
   };
-
   python27Full = callPackage ../development/interpreters/python/wrapper.nix {
     extraLibs = lib.attrValues python27.modules;
     python = python27;
+    inherit (python27Packages) recursivePthLoader;
   };
 
   pythonhomeWrapper = callPackage ../development/interpreters/python/pythonhome-wrapper.nix { };
@@ -3603,6 +3609,10 @@ let
   };
 
   ffmpeg_1_0 = callPackage ../development/libraries/ffmpeg/1.0.nix {
+    vpxSupport = !stdenv.isMips;
+  };
+
+  ffmpeg_1_1 = callPackage ../development/libraries/ffmpeg/1.1.nix {
     vpxSupport = !stdenv.isMips;
   };
 
@@ -5025,6 +5035,8 @@ let
 
   unicap = callPackage ../development/libraries/unicap {};
 
+  tsocks = callPackage ../development/libraries/tsocks { };
+
   unixODBC = callPackage ../development/libraries/unixODBC { };
 
   unixODBCDrivers = recurseIntoAttrs (import ../development/libraries/unixODBCDrivers {
@@ -5283,6 +5295,10 @@ let
 
   pythonPackages = python27Packages;
 
+  # `nix-env -i python-nose` installs for 2.7, the default python.
+  # Therefore we do not recurse into attributes here, in contrast to
+  # python27Packages. `nix-env -iA python26Packages.nose` works
+  # regardless.
   python26Packages = import ./python-packages.nix {
     inherit pkgs;
     python = python26;
@@ -5299,13 +5315,13 @@ let
 
   numeric = callPackage ../development/python-modules/numeric { };
 
-  pil = python27Packages.pil;
+  pil = pythonPackages.pil;
 
   psyco = callPackage ../development/python-modules/psyco { };
 
-  pycairo = callPackage ../development/python-modules/pycairo { };
+  pycairo = pythonPackages.pycairo;
 
-  pycrypto = python27Packages.pycrypto;
+  pycrypto = pythonPackages.pycrypto;
 
   pycups = callPackage ../development/python-modules/pycups { };
 
@@ -5313,13 +5329,11 @@ let
 
   pygame = callPackage ../development/python-modules/pygame { };
 
-  pygobject = callPackage ../development/python-modules/pygobject { };
+  pygobject = pythonPackages.pygobject;
 
-  pygtk = callPackage ../development/python-modules/pygtk { };
+  pygtk = pythonPackages.pygtk;
 
-  pyGtkGlade = callPackage ../development/python-modules/pygtk {
-    inherit (gnome) libglade;
-  };
+  pyGtkGlade = pythonPackages.pyGtkGlade;
 
   pyopenssl = builderDefsPackage (import ../development/python-modules/pyopenssl) {
     inherit python openssl;
@@ -6521,7 +6535,7 @@ let
   liberation_ttf = callPackage ../data/fonts/redhat-liberation-fonts { };
 
   libertine = builderDefsPackage (import ../data/fonts/libertine) {
-    inherit fontforge;
+    inherit fetchurl fontforge lib;
   };
 
   lmmath = callPackage ../data/fonts/lmodern/lmmath.nix {};
@@ -6783,6 +6797,8 @@ let
   darktable = callPackage ../applications/graphics/darktable {
     inherit (gnome) GConf libglade;
   };
+
+  "dd-agent" = callPackage ../tools/networking/dd-agent { };
 
   dia = callPackage ../applications/graphics/dia {
     inherit (pkgs.gnome) libart_lgpl libgnomeui;
@@ -7079,6 +7095,13 @@ let
 
   firefox17Wrapper = lowPrio (wrapFirefox { browser = firefox17Pkgs.firefox; });
 
+  firefox18Pkgs = callPackage ../applications/networking/browsers/firefox/18.0.nix {
+    inherit (gnome) libIDL;
+    inherit (pythonPackages) pysqlite;
+  };
+
+  firefox18Wrapper = lowPrio (wrapFirefox { browser = firefox18Pkgs.firefox; });
+
   flac = callPackage ../applications/audio/flac { };
 
   flashplayer = callPackage ../applications/networking/browsers/mozilla-plugins/flashplayer-11 {
@@ -7330,6 +7353,8 @@ let
     lua = lua5;
   };
 
+  ipe = callPackage ../applications/graphics/ipe { };
+
   iptraf = callPackage ../applications/networking/iptraf { };
 
   irssi = callPackage ../applications/networking/irc/irssi { };
@@ -7524,7 +7549,7 @@ let
 
   ncmpcpp = callPackage ../applications/audio/ncmpcpp { };
 
-  MPlayer = callPackage ../applications/video/MPlayer {
+  mplayer = callPackage ../applications/video/mplayer {
     pulseSupport = config.pulseaudio or false;
   };
 
@@ -7677,6 +7702,8 @@ let
   };
 
   pqiv = callPackage ../applications/graphics/pqiv { };
+
+  qiv = callPackage ../applications/graphics/qiv { };
 
   # perhaps there are better apps for this task? It's how I had configured my preivous system.
   # And I don't want to rewrite all rules
@@ -7985,7 +8012,7 @@ let
   };
 
   vlc = callPackage ../applications/video/vlc {
-    ffmpeg = ffmpeg_1_0;
+    ffmpeg = ffmpeg_1_1;
   };
 
   vnstat = callPackage ../applications/networking/vnstat { };
@@ -8365,12 +8392,7 @@ let
 
   superTux = callPackage ../games/super-tux { };
 
-  superTuxKart = callPackage ../games/super-tux-kart {
-    /* With GNU Make 3.82, the build process is stuck in the `data'
-       directory, after displaying "Making all in tracks", and `pstree'
-       indicates that `make' doesn't launch any new process.  */
-    stdenv = overrideInStdenv stdenv [ gnumake381 ];
-  };
+  superTuxKart = callPackage ../games/super-tux-kart { };
 
   tbe = callPackage ../games/the-butterfly-effect {};
 
@@ -9139,8 +9161,6 @@ let
 
   # Wine cannot be built in 64-bit; use a 32-bit build instead.
   wine = callPackage_i686 ../misc/emulators/wine { };
-
-  wineWarcraft = callPackage_i686 ../misc/emulators/wine/wine-warcraft.nix { };
 
   x2x = callPackage ../tools/X11/x2x { };
 
