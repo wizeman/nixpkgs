@@ -23,13 +23,13 @@ assert faacSupport -> faac != null;
 assert x11grabSupport -> libXext != null && libXfixes != null;
 
 stdenv.mkDerivation rec {
-  name = "ffmpeg-1.1";
-  
+  name = "ffmpeg-1.1.1";
+
   src = fetchurl {
     url = "http://www.ffmpeg.org/releases/${name}.tar.bz2";
-    sha256 = "03s1zsprz5p6gjgwwqcf7b6cvzwwid6l8k7bamx9i0f1iwkgdm0j";
+    sha256 = "1bbzlnhmda1gf9nq4jfi9jf6c5fl03i60xncbv573118bb3kdkij";
   };
-  
+
   # `--enable-gpl' (as well as the `postproc' and `swscale') mean that
   # the resulting library is GPL'ed, so it can only be used in GPL'ed
   # applications.
