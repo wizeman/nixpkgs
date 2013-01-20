@@ -108,8 +108,8 @@ rec {
         nspr nss libnotify pixman yasm mesa
         xlibs.libXScrnSaver xlibs.scrnsaverproto pysqlite
         xlibs.libXext xlibs.xextproto sqlite unzip makeWrapper
-        hunspell/*?needed?*/ libffi curl/*crash-reporter*/
-      ];
+        hunspell/*?needed?*#/ libffi curl/*crash-reporter*#/
+     ];
 */
     configureFlags =
       [ "--enable-application=xulrunner"
