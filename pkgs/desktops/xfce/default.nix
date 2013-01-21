@@ -28,7 +28,7 @@ in rec {
           ver_maj = lib.concatStrings (lib.intersperse "." (lib.take 2 versions));
           name_low = lib.toLower p.name;
       in pkgs.fetchurl {
-        url = "mirror://xfce/${prepend}/${name_low}/${ver_maj}/${name}.tar.bz2";
+        url = "mirror://xfce/src/${prepend}/${name_low}/${ver_maj}/${name}.tar.bz2";
         sha256 = hash;
       };
     core = generic "xfce";
