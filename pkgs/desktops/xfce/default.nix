@@ -100,6 +100,8 @@ in rec {
 
   gigolo              = callPackage ./applications/gigolo.nix
     { v= "0.4.1";   h= "1y8p9bbv1a4qgbxl4vn6zbag3gb7gl8qj75cmhgrrw9zrvqbbww2"; };
+  xfce4taskmanager    = callPackage ./applications/xfce4-taskmanager.nix
+    { v= "1.0.0";   h= "1vm9gw7j4ngjlpdhnwdf7ifx6xrrn21011almx2vwidhk2f9zvy0"; };
 
   #TODO: correct links; more stuff
   # move power_manager to core
