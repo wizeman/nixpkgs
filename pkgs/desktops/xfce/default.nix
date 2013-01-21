@@ -87,10 +87,8 @@ in rec {
 
   terminal            = callPackage ./applications/terminal.nix   # doesn't build with 4.8
     { v= "0.6.1";   h= "1j6lpkq952mrl5p24y88f89wn9g0namvywhma639xxsswlkn8d31"; };
-  mousepad            = callPackage ./applications/mousepad.nix     ( if isTesting then
-    { v= "0.3.0";   h= "0v84zwhjv2xynvisn5vmp7dbxfj4l4258m82ks7hn3adk437bwhh"; }   else
-      #TODO: broken in testing ATM
-    { v= "0.2.16";  h= "0gp7yh8b9w3f1n2la1l8nlqm0ycf0w0qkgcyv9yd51qv9gyr7rc6"; }   );
+  mousepad            = callPackage ./applications/mousepad.nix
+    { v= "0.3.0";   h= "0v84zwhjv2xynvisn5vmp7dbxfj4l4258m82ks7hn3adk437bwhh"; };
   ristretto           = callPackage ./applications/ristretto.nix  # doesn't build with 4.8
     { v= "0.6.3";   h= "0y9d8w1plwp4vmxs44y8k8x15i0k0xln89k6jndhv6lf57g1cs1b"; };
   xfce4mixer          = callPackage ./applications/xfce4-mixer.nix  ( if isTesting then
