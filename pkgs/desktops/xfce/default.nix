@@ -100,6 +100,9 @@ in rec {
   xfce4notifyd        = callPackage ./applications/xfce4-notifyd.nix
     { v= "0.2.2";   h= "0s4ilc36sl5k5mg5727rmqims1l3dy5pwg6dk93wyjqnqbgnhvmn"; };
 
+  gigolo              = callPackage ./applications/gigolo.nix
+    { v= "0.4.1";   h= "1y8p9bbv1a4qgbxl4vn6zbag3gb7gl8qj75cmhgrrw9zrvqbbww2"; };
+
   #TODO: correct links; more stuff
   # move power_manager to core
 
