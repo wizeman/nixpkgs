@@ -61,7 +61,7 @@ in rec {
     { v= "4.8.6";   h= "00zdkg1jg4n2n109nxan8ji2m06r9mc4lnlrvb55xvj229m2dwb6"; } );
   thunar          = callPackage ./core/thunar.nix         ( if isTesting then
     { v= "1.6.2";   h= "11dx38rvkfbp91pxrprymxhimsm90gvizp277x9s5rwnwcm1ggbx"; } else
-    { v= "1.4.0";   h= "1fn8wjzkfvnx2giv3rrg2cyrr2c96f9mskgvcji0ixyfcjga249c"; } );
+    { v= "1.2.3";   h= "19mczys6xr683r68g3s2njrrmnk1p73zypvwrhajw859c6nsjsp6"; } );
   xfce4settings   = callPackage ./core/xfce4-settings.nix ( if isTesting then
     { v= "4.10.0";  h= "0zppq747z9lrxyv5zrrvpalq7hb3gfhy9p7qbldisgv7m6dz0hq8"; } else
     { v= "4.8.3";   h= "0bmw0s6jp2ws4n0f3387zwsyv46b0w89m6r70yb7wrqy9r3wqy6q"; } );
@@ -85,13 +85,13 @@ in rec {
 
   #### APPLICATIONS
 
-  terminal            = callPackage ./applications/terminal.nix
+  terminal            = callPackage ./applications/terminal.nix   # doesn't build with 4.8
     { v= "0.6.1";   h= "1j6lpkq952mrl5p24y88f89wn9g0namvywhma639xxsswlkn8d31"; };
   mousepad            = callPackage ./applications/mousepad.nix     ( if isTesting then
     { v= "0.3.0";   h= "0v84zwhjv2xynvisn5vmp7dbxfj4l4258m82ks7hn3adk437bwhh"; }   else
       #TODO: broken in testing ATM
     { v= "0.2.16";  h= "0gp7yh8b9w3f1n2la1l8nlqm0ycf0w0qkgcyv9yd51qv9gyr7rc6"; }   );
-  ristretto           = callPackage ./applications/ristretto.nix
+  ristretto           = callPackage ./applications/ristretto.nix  # doesn't build with 4.8
     { v= "0.6.3";   h= "0y9d8w1plwp4vmxs44y8k8x15i0k0xln89k6jndhv6lf57g1cs1b"; };
   xfce4mixer          = callPackage ./applications/xfce4-mixer.nix  ( if isTesting then
     { v= "4.10.0";  h= "1pnsd00583l7p5d80rxbh58brzy3jnccwikbbbm730a33c08kid8";
