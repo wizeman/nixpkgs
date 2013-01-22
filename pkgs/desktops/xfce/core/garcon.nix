@@ -1,10 +1,10 @@
-{ v, h, stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util }:
+{ v, h, stdenv, fetchXfce, pkgconfig, intltool, glib, libxfce4util }:
 
 stdenv.mkDerivation rec {
   name = "garcon-${v}";
   src = fetchXfce.core name h;
 
-  buildInputs = [ pkgconfig intltool gtk libxfce4util ];
+  buildInputs = [ pkgconfig intltool glib libxfce4util ];
 
   meta = {
     homepage = http://www.xfce.org/;
