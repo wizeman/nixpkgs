@@ -5,6 +5,9 @@ stdenv.mkDerivation rec {
   name = "xfce4-panel-${v}";
   src = fetchXfce.core name h;
 
+  patches = [ ./xfce4-panel-datadir.patch ];
+  patchFlags = "-p1";
+
   buildInputs =
     [ pkgconfig intltool gtk libxfce4util exo libwnck
       garcon xfconf libstartup_notification
