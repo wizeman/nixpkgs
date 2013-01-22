@@ -116,4 +116,9 @@ in rec {
   xfce4icontheme = callPackage ./art/xfce4-icon-theme.nix
     { v= "4.4.3";   h= "1yk6rx3zr9grm4jwpjvqdkl13pisy7qn1wm5cqzmd2kbsn96cy6l"; };
 
+  #### PANEL PLUGINS
+
+  xfce4_systemload_plugin = callPackage ./panel-plugins/xfce4-systemload-plugin.nix {};
+  xfce4_cpufreq_plugin = callPackage ./panel-plugins/xfce4-cpufreq-plugin.nix {};
+
 }
