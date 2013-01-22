@@ -28,7 +28,7 @@ in rec {
           ver_maj = lib.concatStrings (lib.intersperse "." (lib.take 2 versions));
           name_low = lib.toLower p.name;
       in pkgs.fetchurl {
-        url = "mirror://xfce/${prepend}/${name_low}/${ver_maj}/${name}.tar.bz2";
+        url = "mirror://xfce/src/${prepend}/${name_low}/${ver_maj}/${name}.tar.bz2";
         sha256 = hash;
       };
     core = generic "xfce";
@@ -61,7 +61,7 @@ in rec {
     { v= "4.8.6";   h= "00zdkg1jg4n2n109nxan8ji2m06r9mc4lnlrvb55xvj229m2dwb6"; } );
   thunar          = callPackage ./core/thunar.nix         ( if isTesting then
     { v= "1.6.2";   h= "11dx38rvkfbp91pxrprymxhimsm90gvizp277x9s5rwnwcm1ggbx"; } else
-    { v= "1.4.0";   h= "1fn8wjzkfvnx2giv3rrg2cyrr2c96f9mskgvcji0ixyfcjga249c"; } );
+    { v= "1.2.3";   h= "19mczys6xr683r68g3s2njrrmnk1p73zypvwrhajw859c6nsjsp6"; } );
   xfce4settings   = callPackage ./core/xfce4-settings.nix ( if isTesting then
     { v= "4.10.0";  h= "0zppq747z9lrxyv5zrrvpalq7hb3gfhy9p7qbldisgv7m6dz0hq8"; } else
     { v= "4.8.3";   h= "0bmw0s6jp2ws4n0f3387zwsyv46b0w89m6r70yb7wrqy9r3wqy6q"; } );
@@ -85,13 +85,11 @@ in rec {
 
   #### APPLICATIONS
 
-  terminal            = callPackage ./applications/terminal.nix
+  terminal            = callPackage ./applications/terminal.nix   # doesn't build with 4.8
     { v= "0.6.1";   h= "1j6lpkq952mrl5p24y88f89wn9g0namvywhma639xxsswlkn8d31"; };
-  mousepad            = callPackage ./applications/mousepad.nix     ( if isTesting then
-    { v= "0.3.0";   h= "0v84zwhjv2xynvisn5vmp7dbxfj4l4258m82ks7hn3adk437bwhh"; }   else
-      #TODO: broken in testing ATM
-    { v= "0.2.16";  h= "0gp7yh8b9w3f1n2la1l8nlqm0ycf0w0qkgcyv9yd51qv9gyr7rc6"; }   );
-  ristretto           = callPackage ./applications/ristretto.nix
+  mousepad            = callPackage ./applications/mousepad.nix
+    { v= "0.3.0";   h= "0v84zwhjv2xynvisn5vmp7dbxfj4l4258m82ks7hn3adk437bwhh"; };
+  ristretto           = callPackage ./applications/ristretto.nix  # doesn't build with 4.8
     { v= "0.6.3";   h= "0y9d8w1plwp4vmxs44y8k8x15i0k0xln89k6jndhv6lf57g1cs1b"; };
   xfce4mixer          = callPackage ./applications/xfce4-mixer.nix  ( if isTesting then
     { v= "4.10.0";  h= "1pnsd00583l7p5d80rxbh58brzy3jnccwikbbbm730a33c08kid8";
@@ -99,6 +97,11 @@ in rec {
     { v= "4.8.0";   h= "1aqgjxvck6hx26sk3n4n5avhv02vs523mfclcvjb3xnks3yli7wz"; }   );
   xfce4notifyd        = callPackage ./applications/xfce4-notifyd.nix
     { v= "0.2.2";   h= "0s4ilc36sl5k5mg5727rmqims1l3dy5pwg6dk93wyjqnqbgnhvmn"; };
+
+  gigolo              = callPackage ./applications/gigolo.nix
+    { v= "0.4.1";   h= "1y8p9bbv1a4qgbxl4vn6zbag3gb7gl8qj75cmhgrrw9zrvqbbww2"; };
+  xfce4taskmanager    = callPackage ./applications/xfce4-taskmanager.nix
+    { v= "1.0.0";   h= "1vm9gw7j4ngjlpdhnwdf7ifx6xrrn21011almx2vwidhk2f9zvy0"; };
 
   #TODO: correct links; more stuff
   # move power_manager to core
@@ -112,5 +115,10 @@ in rec {
 
   xfce4icontheme = callPackage ./art/xfce4-icon-theme.nix
     { v= "4.4.3";   h= "1yk6rx3zr9grm4jwpjvqdkl13pisy7qn1wm5cqzmd2kbsn96cy6l"; };
+
+  #### PANEL PLUGINS
+
+  xfce4_systemload_plugin = callPackage ./panel-plugins/xfce4-systemload-plugin.nix {};
+  xfce4_cpufreq_plugin = callPackage ./panel-plugins/xfce4-cpufreq-plugin.nix {};
 
 }
