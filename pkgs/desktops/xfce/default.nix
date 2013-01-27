@@ -83,6 +83,8 @@ xfce_self = rec {
     { v= "4.8.3";   h= "09mr0amp2f632q9i3vykaa0x5nrfihfm9v5nxsx9vch8wvbp0l03"; };
   xfce4_power_manager = callPackage ./core/xfce4-power-manager.nix
     { v= "1.0.10";  h= "1w120k1sl4s459ijaxkqkba6g1p2sqrf9paljv05wj0wz12bpr40"; };
+  tumbler         = callPackage ./core/tumbler.nix # ToDo: segfaults after some work
+    { v= "0.1.27";  h= "0s9qj99b81asmlqa823nzykq8g6p9azcp2niak67y9bp52wv6q2c"; };
 
   # not used anymore TODO: really? Update to 2.99.2?
   gtk_xfce_engine = callPackage ./core/gtk-xfce-engine.nix { };
