@@ -13,6 +13,8 @@ stdenv.mkDerivation rec {
       xfconf xfce4panel libglade xorg.iceauth
     ];
 
+  configureFlags = [ "--with-xsession-prefix=$$out" ];
+
   meta = {
     homepage = http://www.xfce.org/projects/xfce4-session;
     description = "Session manager for Xfce";

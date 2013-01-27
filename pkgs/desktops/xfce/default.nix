@@ -65,10 +65,9 @@ in rec {
   xfce4settings   = callPackage ./core/xfce4-settings.nix ( if isTesting then
     { v= "4.10.0";  h= "0zppq747z9lrxyv5zrrvpalq7hb3gfhy9p7qbldisgv7m6dz0hq8"; } else
     { v= "4.8.3";   h= "0bmw0s6jp2ws4n0f3387zwsyv46b0w89m6r70yb7wrqy9r3wqy6q"; } );
-  xfce4session    = callPackage ./core/xfce4-session.nix  /*/( if isTesting then
-      #TODO: some hardcoded problem: trying to create /usr/share/xsessions when installing
-    { v= "4.10.0";  h= "1kj65jkjhd0ysf0yxsf88wzpyv6n8i8qgd3gb502hf1x9jksk2mv"; } else # /**/
-    { v= "4.8.2";   h= "1l608kik98jxbjl73waf8515hzji06lr80qmky2qlnp0b6js5g1i"; } /*)*/;
+  xfce4session    = callPackage ./core/xfce4-session.nix  ( if isTesting then
+    { v= "4.10.0";  h= "1kj65jkjhd0ysf0yxsf88wzpyv6n8i8qgd3gb502hf1x9jksk2mv"; } else
+    { v= "4.8.2";   h= "1l608kik98jxbjl73waf8515hzji06lr80qmky2qlnp0b6js5g1i"; } );
   xfwm4           = callPackage ./core/xfwm4.nix          ( if isTesting then
     { v= "4.10.0";  h= "170zzs7adj47srsi2cl723w9pl8k8awd7w1bpzxby7hj92zmf8s9"; } else
     { v= "4.8.3";   h= "0zi2g1d2jdgw5armlk9xjh4ykmydy266gdba86nmhy951gm8n3hb"; } );
