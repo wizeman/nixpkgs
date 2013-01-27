@@ -1,15 +1,14 @@
-{ callPackage, pkgs, isTesting }:
-let
-  gnome = pkgs.gnome;
-in rec {
+{ pkgs, isTesting }: let
 
-  #### DEPENDENCIES
+callPackage = pkgs.newScope (deps // xfce_self);
 
+deps = rec {
   lib = import ../../lib;
 
-  inherit (pkgs) gtk glib;
-  inherit (gnome) libglade libwnck vte gtksourceview;
+  inherit (pkgs.gnome) libglade libwnck vte gtksourceview;
   inherit (pkgs.perlPackages) URI;
+
+  inherit (pkgs) gtk glib;
   inherit (pkgs) pcre;
 
   # The useful bits from ‘gnome-disk-utility’.
@@ -35,6 +34,11 @@ in rec {
     app = generic "apps";
     art = generic "art";
   };
+};
+
+xfce_self = rec {
+
+  #### DEPENDENCIES
 
 
   #### CORE
@@ -122,4 +126,6 @@ in rec {
   xfce4_systemload_plugin = callPackage ./panel-plugins/xfce4-systemload-plugin.nix {};
   xfce4_cpufreq_plugin = callPackage ./panel-plugins/xfce4-cpufreq-plugin.nix {};
 
-}
+};
+
+in xfce_self

@@ -8659,12 +8659,10 @@ let
   oxygen_gtk = callPackage ../misc/themes/gtk2/oxygen-gtk { };
 
   xfce = recurseIntoAttrs
-    (let callPackage = newScope pkgs.xfce; in
-     import ../desktops/xfce { isTesting= false; inherit callPackage pkgs; });
+    (import ../desktops/xfce { isTesting= false; inherit pkgs; });
 
   xfceDev = recurseIntoAttrs
-    (let callPackage = newScope pkgs.xfceDev; in
-     import ../desktops/xfce { isTesting= true; inherit callPackage pkgs; });
+    (import ../desktops/xfce { isTesting= true; inherit pkgs; });
 
   ### SCIENCE
 
