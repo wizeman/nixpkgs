@@ -84,11 +84,13 @@ in rec {
 
   #### APPLICATIONS
 
-  terminal            = callPackage ./applications/terminal.nix   # doesn't build with 4.8
+  terminal            = if !isTesting then null else # doesn't build with 4.8
+    callPackage ./applications/terminal.nix
     { v= "0.6.1";   h= "1j6lpkq952mrl5p24y88f89wn9g0namvywhma639xxsswlkn8d31"; };
   mousepad            = callPackage ./applications/mousepad.nix
     { v= "0.3.0";   h= "0v84zwhjv2xynvisn5vmp7dbxfj4l4258m82ks7hn3adk437bwhh"; };
-  ristretto           = callPackage ./applications/ristretto.nix  # doesn't build with 4.8
+  ristretto           = if !isTesting then null else # doesn't build with 4.8
+    callPackage ./applications/ristretto.nix
     { v= "0.6.3";   h= "0y9d8w1plwp4vmxs44y8k8x15i0k0xln89k6jndhv6lf57g1cs1b"; };
   xfce4mixer          = callPackage ./applications/xfce4-mixer.nix  ( if isTesting then
     { v= "4.10.0";  h= "1pnsd00583l7p5d80rxbh58brzy3jnccwikbbbm730a33c08kid8";
