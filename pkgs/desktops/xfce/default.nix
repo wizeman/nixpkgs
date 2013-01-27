@@ -78,7 +78,8 @@ xfce_self = rec {
   xfdesktop       = callPackage ./core/xfdesktop.nix      ( if isTesting then
     { v= "4.10.0";  h= "0yrddj1lgk3xn4w340y89z7x2isks72ia36pka08kk2x8gpfcyl9"; } else
     { v= "4.8.3";   h= "097lc9djmay0jyyl42jmvcfda75ndp265nzn0aa3hv795bsn1175"; } );
-  xfceutils       = if isTesting then null else callPackage ./core/xfce-utils.nix
+  xfceutils       = if isTesting then null # removed in 4.10
+    else callPackage ./core/xfce-utils.nix
     { v= "4.8.3";   h= "09mr0amp2f632q9i3vykaa0x5nrfihfm9v5nxsx9vch8wvbp0l03"; };
   xfce4_power_manager = callPackage ./core/xfce4-power-manager.nix
     { v= "1.0.10";  h= "1w120k1sl4s459ijaxkqkba6g1p2sqrf9paljv05wj0wz12bpr40"; };
