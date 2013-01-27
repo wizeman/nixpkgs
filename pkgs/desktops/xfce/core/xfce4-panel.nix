@@ -14,6 +14,8 @@ stdenv.mkDerivation rec {
     ];
   propagatedBuildInputs = [ libxfce4ui ];
 
+  preFixup = "rm $out/share/icons/hicolor/icon-theme.cache";
+
   enableParallelBuilding = true;
 
   meta = {

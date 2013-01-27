@@ -18,6 +18,7 @@ stdenv.mkDerivation rec {
     [ pkgconfig intltool gtk libxfce4util xfconf libglade
       libstartup_notification
     ];
+  preFixup = "rm $out/share/icons/hicolor/icon-theme.cache";
 
   meta = {
     homepage = http://www.xfce.org/;

@@ -9,6 +9,7 @@ stdenv.mkDerivation rec {
     [ pkgconfig intltool gtk libxfce4util libxfce4ui libwnck xfconf
       libglade xfce4panel thunar exo garcon libnotify
     ];
+  preFixup = "rm $out/share/icons/hicolor/icon-theme.cache";
 
   enableParallelBuilding = true;
 
