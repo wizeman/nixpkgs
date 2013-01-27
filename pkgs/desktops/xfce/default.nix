@@ -2,14 +2,9 @@
 
 callPackage = pkgs.newScope (deps // xfce_self);
 
-deps = rec {
-  lib = import ../../lib;
-
+deps = rec { # xfce-global dependency overrides should be here
   inherit (pkgs.gnome) libglade libwnck vte gtksourceview;
   inherit (pkgs.perlPackages) URI;
-
-  inherit (pkgs) gtk glib;
-  inherit (pkgs) pcre;
 
   # The useful bits from ‘gnome-disk-utility’.
   libgdu = callPackage ./support/libgdu.nix { };
@@ -22,7 +17,8 @@ deps = rec {
   # intelligent fetcher for Xfce
   fetchXfce = rec {
     generic = prepend : name : hash :
-      let p = builtins.parseDrvName name;
+      let lib = pkgs.lib;
+          p = builtins.parseDrvName name;
           versions = lib.splitString "." p.version;
           ver_maj = lib.concatStrings (lib.intersperse "." (lib.take 2 versions));
           name_low = lib.toLower p.name;
@@ -37,9 +33,6 @@ deps = rec {
 };
 
 xfce_self = rec {
-
-  #### DEPENDENCIES
-
 
   #### CORE
 
@@ -100,9 +93,8 @@ xfce_self = rec {
     callPackage ./applications/ristretto.nix
     { v= "0.6.3";   h= "0y9d8w1plwp4vmxs44y8k8x15i0k0xln89k6jndhv6lf57g1cs1b"; };
   xfce4mixer          = callPackage ./applications/xfce4-mixer.nix  ( if isTesting then
-    { v= "4.10.0";  h= "1pnsd00583l7p5d80rxbh58brzy3jnccwikbbbm730a33c08kid8";
-      inherit (pkgs) libunique; }                                                         else
-    { v= "4.8.0";   h= "1aqgjxvck6hx26sk3n4n5avhv02vs523mfclcvjb3xnks3yli7wz"; }   );
+    { v= "4.10.0";  h= "1pnsd00583l7p5d80rxbh58brzy3jnccwikbbbm730a33c08kid8"; } else
+    { v= "4.8.0";   h= "1aqgjxvck6hx26sk3n4n5avhv02vs523mfclcvjb3xnks3yli7wz"; } );
   xfce4notifyd        = callPackage ./applications/xfce4-notifyd.nix
     { v= "0.2.2";   h= "0s4ilc36sl5k5mg5727rmqims1l3dy5pwg6dk93wyjqnqbgnhvmn"; };
 
@@ -112,7 +104,6 @@ xfce_self = rec {
     { v= "1.0.0";   h= "1vm9gw7j4ngjlpdhnwdf7ifx6xrrn21011almx2vwidhk2f9zvy0"; };
 
   #TODO: correct links; more stuff
-  # move power_manager to core
 
   xfce4_appfinder = callPackage ./core/xfce4-appfinder.nix  ( if isTesting then
     { v= "4.9.4";   h= "12lgrbd1n50w9n8xkpai98s2aw8vmjasrgypc57sp0x0qafsqaxq"; } else
@@ -132,3 +123,4 @@ xfce_self = rec {
 };
 
 in xfce_self
+
