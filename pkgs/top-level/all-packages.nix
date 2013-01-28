@@ -4429,6 +4429,8 @@ let
 
   libpng = libpng_apng;
 
+  libpaper = callPackage ../development/libraries/libpaper { };
+
   libproxy = callPackage ../development/libraries/libproxy { };
 
   libpseudo = callPackage ../development/libraries/libpseudo { };
