@@ -1,7 +1,7 @@
 { stdenv, fetchurl, pkgconfig, gettext, x11, glib, cairo, libpng, harfbuzz }:
 
 stdenv.mkDerivation rec {
-  name = "pango-1.32.5";
+  name = "pango-1.32.5"; #.6 needs a not-yet-stable fontconfig
 
   src = fetchurl {
     url = "mirror://gnome/sources/pango/1.30/${name}.tar.xz";
