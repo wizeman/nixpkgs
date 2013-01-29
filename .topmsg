@@ -1,6 +1,6 @@
 From: Vladimír Čunát <vcunat@gmail.com>
-Subject: [PATCH] vlada/libpng
+Subject: [PATCH] vlada/gtk3
 
-Trying system-wide libpng with apng support.
+Some gtk3-related updates.
 
 Signed-off-by: Vladimír Čunát <vcunat@gmail.com>
