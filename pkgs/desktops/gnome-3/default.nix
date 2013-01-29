@@ -1,16 +1,12 @@
-{ callPackage, lib, self, stdenv, gettext, overrides ? {}, pkgs }:
+{ callPackage, self, pkgs }:
 
 rec {
   gtk = pkgs.gtk3;
   orbit = pkgs.gnome2.ORBit2;
 
-  inherit (lib) lowPrio hiPrio appendToName makeOverridable;
-
-  __overrides = overrides;
-
 #### Core (http://ftp.acc.umu.se/pub/GNOME/core/)
 
-  at_spi2_atk = lib.lowPrio (callPackage ./core/at-spi2-atk { });
+  at_spi2_atk = callPackage ./core/at-spi2-atk { };
 
   at_spi2_core = callPackage ./core/at-spi2-core { };
 
@@ -27,7 +23,7 @@ rec {
 
   gnome_terminal = callPackage ./core/gnome-terminal { };
 
-  gsettings_desktop_schemas = lib.lowPrio (callPackage ./core/gsettings-desktop-schemas { });
+  gsettings_desktop_schemas = callPackage ./core/gsettings-desktop-schemas { };
 
   gvfs = callPackage ./core/gvfs { };
 
