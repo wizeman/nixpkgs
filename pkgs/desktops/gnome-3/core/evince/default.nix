@@ -1,35 +1,32 @@
-{ fetchurl, stdenv, perl, perlXMLParser, gettext, intltool
-, pkgconfig, glib, gtk, gnomedocutils, gnomeicontheme
-, libgnome, libgnomeui, scrollkeeper, libxslt
-, libglade, libgnome_keyring, dbus, dbus_glib
-, poppler, libspectre, djvulibre, shared_mime_info
-, makeWrapper, which, ghostscript
+{ fetchurl, stdenv, pkgconfig, intltool, perl, perlXMLParser, libxml2
+, glib, gtk3, pango, atk, gdk_pixbuf
+, itstool, gnome_icon_theme, libgnome_keyring, gsettings_desktop_schemas
+, poppler, ghostscriptX, djvulibre, libspectre
+, makeWrapper
+, shared_mime_info
 , recentListSize ? null # 5 is not enough, allow passing a different number
 }:
 
 stdenv.mkDerivation rec {
-  name = "evince-2.32.0";
+  name = "evince-3.6.1";
 
   src = fetchurl {
-    url = "http://ftp.gnome.org/pub/GNOME/sources/evince/2.32/${name}.tar.bz2";
-    sha256 = "2a4c91ae38f8b5028cebb91b9da9ddc50ea8ae3f3d429df89ba351da2d787ff7";
+    url = "http://ftp.gnome.org/pub/GNOME/sources/evince/3.6/${name}.tar.xz";
+    sha256 = "1da1pij030dh8mb0pr0jnyszgsbjnh8lc17rj5ii52j3kmbv51qv";
   };
 
   buildInputs = [
-    perl perlXMLParser gettext intltool pkgconfig glib gtk
-    gnomedocutils gnomeicontheme libgnome libgnomeui libglade
-    scrollkeeper libgnome_keyring
-    libxslt  # for `xsltproc'
-    dbus dbus_glib poppler libspectre djvulibre makeWrapper which
-    ghostscript
+    pkgconfig intltool perl perlXMLParser libxml2
+    glib gtk3 pango atk gdk_pixbuf
+    itstool gnome_icon_theme libgnome_keyring gsettings_desktop_schemas
+    poppler ghostscriptX djvulibre libspectre
+    makeWrapper
   ];
 
-  configureFlags = "--with-libgnome --enable-dbus --enable-pixbuf "
-
-    # Do not use nautilus
-    + " --disable-nautilus "
-    # Do not update Scrollkeeper's database (GNOME's help system).
-    + "--disable-scrollkeeper";
+  configureFlags = [
+    "--disable-nautilus" # Do not use nautilus
+    "--disable-dbus" # strange compilation error
+  ];
 
   postUnpack = if recentListSize != null then ''
     sed -i 's/\(gtk_recent_chooser_set_limit .*\)5)/\1${builtins.toString recentListSize})/' */shell/ev-open-recent-action.c
@@ -41,6 +38,11 @@ stdenv.mkDerivation rec {
     # by `g_file_info_get_content_type ()'.
     wrapProgram "$out/bin/evince" \
       --prefix XDG_DATA_DIRS : "${shared_mime_info}/share:$out/share"
+
+    for pkg in "${gsettings_desktop_schemas}" "${gtk3}"; do
+      cp -s $pkg/share/glib-2.0/schemas/*.gschema.xml $out/share/glib-2.0/schemas/
+    done
+    ${glib}/bin/glib-compile-schemas $out/share/glib-2.0/schemas/
   '';
 
   meta = {

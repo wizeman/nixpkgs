@@ -15,6 +15,8 @@ rec {
 
   at_spi2_core = callPackage ./core/at-spi2-core { };
 
+  evince = callPackage ./core/evince { };
+
   gconf = callPackage ./core/gconf { };
 
   gcr = callPackage ./core/gcr { };
