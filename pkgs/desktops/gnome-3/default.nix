@@ -17,6 +17,9 @@ rec {
 
   gconf = callPackage ./core/gconf { };
 
+  gnome_keyring = callPackage ./core/gnome-keyring { };
+  libgnome_keyring = callPackage ./core/libgnome-keyring { };
+
   gnome_terminal = callPackage ./core/gnome-terminal { };
 
   gsettings_desktop_schemas = lib.lowPrio (callPackage ./core/gsettings-desktop-schemas { });
