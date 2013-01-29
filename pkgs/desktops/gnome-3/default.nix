@@ -1,8 +1,7 @@
 { callPackage, lib, self, stdenv, gettext, overrides ? {}, pkgs }:
 
 rec {
-  inherit (pkgs) fetchurl_gnome glib gtk3 atk pango;
-  gtk = gtk3;
+  gtk = pkgs.gtk3;
   orbit = pkgs.gnome2.ORBit2;
 
   inherit (lib) lowPrio hiPrio appendToName makeOverridable;
@@ -38,9 +37,11 @@ rec {
 
 #### Apps (http://ftp.acc.umu.se/pub/GNOME/apps/)
 
+
   gnome_dictionary = callPackage ./desktop/gnome-dictionary { };
 
   gnome_desktop = callPackage ./desktop/gnome-desktop { };
+
 
   # Removed from recent GNOME releases, but still required
   scrollkeeper = callPackage ./desktop/scrollkeeper { };
