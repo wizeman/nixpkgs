@@ -17,6 +17,8 @@ rec {
 
   gconf = callPackage ./core/gconf { };
 
+  gcr = callPackage ./core/gcr { };
+
   gnome_keyring = callPackage ./core/gnome-keyring { };
   libgnome_keyring = callPackage ./core/libgnome-keyring { };
 
