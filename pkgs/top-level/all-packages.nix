@@ -3959,7 +3959,9 @@ let
   gtkmm = callPackage ../development/libraries/gtkmm/2.24.x.nix { };
   gtkmm3 = callPackage ../development/libraries/gtkmm/3.2.x.nix { };
 
-  gtk3 = lowPrio (callPackage ../development/libraries/gtk+/3-default.nix { });
+  gtk3 = lowPrio (callPackage ../development/libraries/gtk+/3-default.nix {
+    inherit (gnome3) at_spi2_atk;
+  });
 
   gtkmozembedsharp = callPackage ../development/libraries/gtkmozembed-sharp {
     gtksharp = gtksharp2;
@@ -8512,6 +8514,7 @@ let
   gnome3 = callPackage ../desktops/gnome-3 {
     callPackage = pkgs.newScope pkgs.gnome3;
     self = pkgs.gnome3;
+    inherit pkgs;
   };
 
   gnome = recurseIntoAttrs gnome2;
