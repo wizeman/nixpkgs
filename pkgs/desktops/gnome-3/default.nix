@@ -4,6 +4,9 @@ rec {
   gtk = pkgs.gtk3;
   orbit = pkgs.gnome2.ORBit2;
 
+#### Overrides of libraries
+  poppler = pkgs.poppler.override { gtk = pkgs.gtk3; };
+
 #### Core (http://ftp.acc.umu.se/pub/GNOME/core/)
 
   at_spi2_atk = callPackage ./core/at-spi2-atk { };
