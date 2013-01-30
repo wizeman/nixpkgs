@@ -1,29 +1,27 @@
 {stdenv, fetchurl, alsaLib, gettext, ncurses, libsamplerate}:
 
 stdenv.mkDerivation rec {
-  name = "alsa-utils-1.0.26";
+  name = "alsa-oss-1.0.25";
 
   src = fetchurl {
-    # url = "ftp://ftp.alsa-project.org/pub/utils/${name}.tar.bz2";
-    url = "http://alsa.cybermirror.org/utils/${name}.tar.bz2";
-    sha256 = "1rw1n3w8syqky9i7kwy5xd2rzfdbihxas32vwfxpb177lqx2lpzq";
+    url = "ftp://ftp.alsa-project.org/pub/oss-lib/${name}.tar.bz2";
+    # url = "http://alsa.cybermirror.org/oss-lib/${name}.tar.bz2";
+    sha256 = "ed823b8e42599951d896c1709615d4cf7cb1cb3a7c55c75ccee82e24ccaf28e3";
   };
 
   buildInputs = [ alsaLib ncurses libsamplerate ];
   buildNativeInputs = [ gettext ];
 
-  configureFlags = "--disable-xmlto --with-udev-rules-dir=$(out)/lib/udev/rules.d";
+  configureFlags = "--disable-xmlto";
 
   installFlags = "ASOUND_STATE_DIR=$(TMPDIR)/dummy";
 
   preConfigure =
     ''
-      # Ensure that ‘90-alsa-restore.rules.in’ gets rebuilt.
-      rm alsactl/90-alsa-restore.rules
     '';
 
   meta = {
-    description = "ALSA, the Advanced Linux Sound Architecture utils";
+    description = "ALSA, the Advanced Linux Sound Architecture alsa-oss emulation";
 
     longDescription = ''
       The Advanced Linux Sound Architecture (ALSA) provides audio and

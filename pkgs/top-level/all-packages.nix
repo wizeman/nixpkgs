@@ -161,8 +161,7 @@ let
 
   ### Symbolic names.
 
-
-  x11 = xlibsWrapper;
+  x11 = if stdenv.isDarwin then darwinX11AndOpenGL else xlibsWrapper;
 
   # `xlibs' is the set of X library components.  This used to be the
   # old modular X llibraries project (called `xlibs') but now it's just
@@ -724,6 +723,8 @@ let
 
   fakeroot = callPackage ../tools/system/fakeroot { };
 
+  fcitx = callPackage ../tools/inputmethods/fcitx { };
+
   fcron = callPackage ../tools/system/fcron { };
 
   fdisk = callPackage ../tools/system/fdisk { };
@@ -1240,10 +1241,7 @@ let
 
   opendkim = callPackage ../development/libraries/opendkim { };
 
-  openjade = callPackage ../tools/text/sgml/openjade {
-    stdenv = overrideGCC stdenv gcc33;
-    opensp = opensp.override { stdenv = overrideGCC stdenv gcc33; };
-  };
+  openjade = callPackage ../tools/text/sgml/openjade { };
 
   openobex = callPackage ../tools/bluetooth/openobex { };
 
@@ -2426,9 +2424,6 @@ let
 
   gprolog = callPackage ../development/compilers/gprolog { };
 
-  gwt = callPackage ../development/compilers/gwt {
-    libstdcpp5 = gcc33.gcc;
-  };
   gwt240 = callPackage ../development/compilers/gwt/2.4.0.nix { };
 
   ikarus = callPackage ../development/compilers/ikarus { };
@@ -2761,6 +2756,8 @@ let
   };
 
   clojure = callPackage ../development/interpreters/clojure { };
+
+  clojureUnstable = callPackage ../development/interpreters/clojure { version = "1.5.0-RC1"; };
 
   clojure_binary = callPackage ../development/interpreters/clojure/binary.nix { };
 
@@ -3657,7 +3654,8 @@ let
 
   freealut = callPackage ../development/libraries/freealut { };
 
-  freeglut = callPackage ../development/libraries/freeglut { };
+  freeglut = if stdenv.isDarwin then darwinX11AndOpenGL else
+    callPackage ../development/libraries/freeglut { };
 
   freetype = callPackage ../development/libraries/freetype { };
 
@@ -4591,7 +4589,10 @@ let
 
   mesaSupported = lib.elem system lib.platforms.mesaPlatforms;
 
-  mesa = callPackage ../development/libraries/mesa { };
+  darwinX11AndOpenGL = callPackage ../build-support/native-darwin-x11-and-opengl { };
+
+  mesa = if stdenv.isDarwin then darwinX11AndOpenGL else
+    callPackage ../development/libraries/mesa { };
 
   metaEnvironment = recurseIntoAttrs (let callPackage = newScope pkgs.metaEnvironment; in rec {
     sdfLibrary    = callPackage ../development/libraries/sdf-library { aterm = aterm28; };
@@ -5057,6 +5058,10 @@ let
   ustr = callPackage ../development/libraries/ustr { };
 
   ucommon = callPackage ../development/libraries/ucommon { };
+
+  vaapiIntel = callPackage ../development/libraries/vaapi-intel { };
+
+  vaapiVdpau = callPackage ../development/libraries/vaapi-vdpau { };
 
   vamp = callPackage ../development/libraries/audio/vamp { };
 
@@ -5666,6 +5671,7 @@ let
   alsaPluginWrapper = callPackage ../os-specific/linux/alsa-plugins/wrapper.nix { };
 
   alsaUtils = callPackage ../os-specific/linux/alsa-utils { };
+  alsaOss = callPackage ../os-specific/linux/alsa-oss { };
 
   microcode2ucode = callPackage ../os-specific/linux/microcode/converter.nix { };
 
@@ -6090,10 +6096,6 @@ let
     */
     ndiswrapper = callPackage ../os-specific/linux/ndiswrapper { };
 
-    ov511 = callPackage ../os-specific/linux/ov511 {
-      stdenv = overrideGCC stdenv gcc34;
-    };
-
     perf = callPackage ../os-specific/linux/kernel/perf.nix { };
 
     spl = callPackage ../os-specific/linux/spl/default.nix { };
@@ -6202,10 +6204,6 @@ let
     import ../os-specific/linux/module-init-tools/aggregator.nix {
       inherit stdenv module_init_tools modules buildEnv;
     };
-
-  modutils = callPackage ../os-specific/linux/modutils {
-    stdenv = overrideGCC stdenv gcc34;
-  };
 
   multipath_tools = callPackage ../os-specific/linux/multipath-tools { };
 
@@ -7750,10 +7748,6 @@ let
 
   rdesktop = callPackage ../applications/networking/remote/rdesktop { };
 
-  RealPlayer = callPackage_i686 ../applications/video/RealPlayer {
-    libstdcpp5 = gcc33.gcc;
-  };
-
   recode = callPackage ../tools/text/recode { };
 
   retroshare = callPackage ../applications/networking/p2p/retroshare {
@@ -7795,7 +7789,7 @@ let
   siproxd = callPackage ../applications/networking/siproxd { };
 
   skype = callPackage_i686 ../applications/networking/instant-messengers/skype {
-    usePulseAudio = config.pulseaudio or false; # disabled by default (the 100% cpu bug)
+    usePulseAudio = config.pulseaudio or true;
   };
 
   st = callPackage ../applications/misc/st { };
@@ -8077,8 +8071,6 @@ let
          ([ ]
           ++ lib.optional enableGnash gnash
           ++ lib.optional enableAdobeFlash flashplayer
-          # RealPlayer is disabled by default for legal reasons.
-          ++ lib.optional (system != "i686-linux" && cfg.enableRealPlayer or false) RealPlayer
           ++ lib.optional (cfg.enableDjvu or false) (djview4)
           ++ lib.optional (cfg.enableMPlayer or false) (MPlayerPlugin browser)
           ++ lib.optional (cfg.enableGeckoMediaPlayer or false) gecko_mediaplayer
@@ -8127,9 +8119,7 @@ let
 
   xfe = callPackage ../applications/misc/xfe { };
 
-  xfig = callPackage ../applications/graphics/xfig {
-    stdenv = overrideGCC stdenv gcc34;
-  };
+  xfig = callPackage ../applications/graphics/xfig { };
 
   xineUI = callPackage ../applications/video/xine-ui { };
 
@@ -8427,10 +8417,7 @@ let
 
   trigger = callPackage ../games/trigger { };
 
-  ufoai = callPackage ../games/ufoai {
-    inherit (gnome) gtksourceview gtkglext;
-    libpng = libpng12;
-  };
+  ufoai = callPackage ../games/ufoai { };
 
   ultimatestunts = callPackage ../games/ultimatestunts { };
 
@@ -8447,6 +8434,8 @@ let
   vdrift = callPackage ../games/vdrift { };
 
   vectoroids = callPackage ../games/vectoroids { };
+
+  vessel = callPackage_i686 ../games/vessel { };
 
   warmux = callPackage ../games/warmux { };
 
