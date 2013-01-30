@@ -161,8 +161,7 @@ let
 
   ### Symbolic names.
 
-
-  x11 = xlibsWrapper;
+  x11 = if stdenv.isDarwin then darwinX11AndOpenGL else xlibsWrapper;
 
   # `xlibs' is the set of X library components.  This used to be the
   # old modular X llibraries project (called `xlibs') but now it's just
@@ -1242,10 +1241,7 @@ let
 
   opendkim = callPackage ../development/libraries/opendkim { };
 
-  openjade = callPackage ../tools/text/sgml/openjade {
-    stdenv = overrideGCC stdenv gcc33;
-    opensp = opensp.override { stdenv = overrideGCC stdenv gcc33; };
-  };
+  openjade = callPackage ../tools/text/sgml/openjade { };
 
   openobex = callPackage ../tools/bluetooth/openobex { };
 
@@ -2428,9 +2424,6 @@ let
 
   gprolog = callPackage ../development/compilers/gprolog { };
 
-  gwt = callPackage ../development/compilers/gwt {
-    libstdcpp5 = gcc33.gcc;
-  };
   gwt240 = callPackage ../development/compilers/gwt/2.4.0.nix { };
 
   ikarus = callPackage ../development/compilers/ikarus { };
@@ -3661,7 +3654,8 @@ let
 
   freealut = callPackage ../development/libraries/freealut { };
 
-  freeglut = callPackage ../development/libraries/freeglut { };
+  freeglut = if stdenv.isDarwin then darwinX11AndOpenGL else
+    callPackage ../development/libraries/freeglut { };
 
   freetype = callPackage ../development/libraries/freetype { };
 
@@ -4593,7 +4587,10 @@ let
 
   mesaSupported = lib.elem system lib.platforms.mesaPlatforms;
 
-  mesa = callPackage ../development/libraries/mesa { };
+  darwinX11AndOpenGL = callPackage ../build-support/native-darwin-x11-and-opengl { };
+
+  mesa = if stdenv.isDarwin then darwinX11AndOpenGL else
+    callPackage ../development/libraries/mesa { };
 
   metaEnvironment = recurseIntoAttrs (let callPackage = newScope pkgs.metaEnvironment; in rec {
     sdfLibrary    = callPackage ../development/libraries/sdf-library { aterm = aterm28; };
@@ -5059,6 +5056,10 @@ let
   ustr = callPackage ../development/libraries/ustr { };
 
   ucommon = callPackage ../development/libraries/ucommon { };
+
+  vaapiIntel = callPackage ../development/libraries/vaapi-intel { };
+
+  vaapiVdpau = callPackage ../development/libraries/vaapi-vdpau { };
 
   vamp = callPackage ../development/libraries/audio/vamp { };
 
@@ -6093,10 +6094,6 @@ let
     */
     ndiswrapper = callPackage ../os-specific/linux/ndiswrapper { };
 
-    ov511 = callPackage ../os-specific/linux/ov511 {
-      stdenv = overrideGCC stdenv gcc34;
-    };
-
     perf = callPackage ../os-specific/linux/kernel/perf.nix { };
 
     spl = callPackage ../os-specific/linux/spl/default.nix { };
@@ -6205,10 +6202,6 @@ let
     import ../os-specific/linux/module-init-tools/aggregator.nix {
       inherit stdenv module_init_tools modules buildEnv;
     };
-
-  modutils = callPackage ../os-specific/linux/modutils {
-    stdenv = overrideGCC stdenv gcc34;
-  };
 
   multipath_tools = callPackage ../os-specific/linux/multipath-tools { };
 
@@ -8124,9 +8117,7 @@ let
 
   xfe = callPackage ../applications/misc/xfe { };
 
-  xfig = callPackage ../applications/graphics/xfig {
-    stdenv = overrideGCC stdenv gcc34;
-  };
+  xfig = callPackage ../applications/graphics/xfig { };
 
   xineUI = callPackage ../applications/video/xine-ui { };
 
