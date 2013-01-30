@@ -5,7 +5,6 @@ stdenv.mkDerivation rec {
   name = "Thunar-${v}";
   src = fetchXfce.core name h;
 
-  fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs =
     [ pkgconfig intltool exo gtk libxfce4util
       dbus_glib libstartup_notification libnotify xfconf xfce4panel gamin libexif pcre
@@ -13,6 +12,8 @@ stdenv.mkDerivation rec {
   # TODO: gudev, optionality
 
   enableParallelBuilding = true;
+
+  preFixup = "rm $out/share/icons/hicolor/icon-theme.cache";
 
   meta = {
     homepage = http://thunar.xfce.org/;

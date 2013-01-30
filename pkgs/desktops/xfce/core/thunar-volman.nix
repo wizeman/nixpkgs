@@ -3,7 +3,7 @@
 
 stdenv.mkDerivation rec {
   name = "thunar-volman-0.6.0";
-  
+
   src = fetchurl {
     url = "http://archive.xfce.org/src/xfce/thunar-volman/0.6/${name}.tar.bz2";
     sha1 = "dcda936948623b342b290a78c294f71c038e832e";
@@ -13,6 +13,7 @@ stdenv.mkDerivation rec {
     [ pkgconfig intltool exo gtk udev libxfce4ui libxfce4util
       xfconf libnotify
     ];
+  preFixup = "rm $out/share/icons/hicolor/icon-theme.cache";
 
   enableParallelBuilding = true;
 

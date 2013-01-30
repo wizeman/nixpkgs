@@ -7,11 +7,14 @@ stdenv.mkDerivation rec {
   name = "xfce4-session-${v}";
   src = fetchXfce.core name h;
 
-  fixupPhase = "rm $out/share/icons/hicolor/icon-theme.cache";
   buildInputs =
     [ pkgconfig intltool gtk libxfce4util libxfce4ui libwnck dbus_glib
       xfconf xfce4panel libglade xorg.iceauth
     ];
+
+  configureFlags = [ "--with-xsession-prefix=$$out" ];
+
+  preFixup = "rm $out/share/icons/hicolor/icon-theme.cache";
 
   meta = {
     homepage = http://www.xfce.org/projects/xfce4-session;

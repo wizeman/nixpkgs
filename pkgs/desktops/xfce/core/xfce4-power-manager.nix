@@ -9,6 +9,7 @@ stdenv.mkDerivation rec {
     [ pkgconfig intltool gtk dbus_glib xfconf libxfce4ui libxfce4util
       libnotify xfce4panel
     ];
+  preFixup = "rm $out/share/icons/hicolor/icon-theme.cache";
 
   meta = {
     homepage = http://goodies.xfce.org/projects/applications/xfce4-power-manager;

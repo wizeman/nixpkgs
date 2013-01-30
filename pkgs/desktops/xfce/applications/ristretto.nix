@@ -9,6 +9,7 @@ stdenv.mkDerivation rec {
     [ pkgconfig intltool libexif gtk dbus_glib exo libxfce4util
       libxfce4ui xfconf
     ];
+  preFixup = "rm $out/share/icons/hicolor/icon-theme.cache";
 
   meta = {
     homepage = http://goodies.xfce.org/projects/applications/ristretto;
