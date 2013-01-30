@@ -1,16 +1,10 @@
-{ callPackage, pkgs, isTesting }:
-let
-  gnome = pkgs.gnome;
-in rec {
+{ pkgs, isTesting }: let
 
-  #### DEPENDENCIES
+callPackage = pkgs.newScope (deps // xfce_self);
 
-  lib = import ../../lib;
-
-  inherit (pkgs) gtk glib;
-  inherit (gnome) libglade libwnck vte gtksourceview;
+deps = rec { # xfce-global dependency overrides should be here
+  inherit (pkgs.gnome) libglade libwnck vte gtksourceview;
   inherit (pkgs.perlPackages) URI;
-  inherit (pkgs) pcre;
 
   # The useful bits from ‘gnome-disk-utility’.
   libgdu = callPackage ./support/libgdu.nix { };
@@ -23,7 +17,8 @@ in rec {
   # intelligent fetcher for Xfce
   fetchXfce = rec {
     generic = prepend : name : hash :
-      let p = builtins.parseDrvName name;
+      let lib = pkgs.lib;
+          p = builtins.parseDrvName name;
           versions = lib.splitString "." p.version;
           ver_maj = lib.concatStrings (lib.intersperse "." (lib.take 2 versions));
           name_low = lib.toLower p.name;
@@ -35,7 +30,9 @@ in rec {
     app = generic "apps";
     art = generic "art";
   };
+};
 
+xfce_self = rec {
 
   #### CORE
 
@@ -65,36 +62,39 @@ in rec {
   xfce4settings   = callPackage ./core/xfce4-settings.nix ( if isTesting then
     { v= "4.10.0";  h= "0zppq747z9lrxyv5zrrvpalq7hb3gfhy9p7qbldisgv7m6dz0hq8"; } else
     { v= "4.8.3";   h= "0bmw0s6jp2ws4n0f3387zwsyv46b0w89m6r70yb7wrqy9r3wqy6q"; } );
-  xfce4session    = callPackage ./core/xfce4-session.nix  /*/( if isTesting then
-      #TODO: some hardcoded problem: trying to create /usr/share/xsessions when installing
-    { v= "4.10.0";  h= "1kj65jkjhd0ysf0yxsf88wzpyv6n8i8qgd3gb502hf1x9jksk2mv"; } else # /**/
-    { v= "4.8.2";   h= "1l608kik98jxbjl73waf8515hzji06lr80qmky2qlnp0b6js5g1i"; } /*)*/;
+  xfce4session    = callPackage ./core/xfce4-session.nix  ( if isTesting then
+    { v= "4.10.0";  h= "1kj65jkjhd0ysf0yxsf88wzpyv6n8i8qgd3gb502hf1x9jksk2mv"; } else
+    { v= "4.8.2";   h= "1l608kik98jxbjl73waf8515hzji06lr80qmky2qlnp0b6js5g1i"; } );
   xfwm4           = callPackage ./core/xfwm4.nix          ( if isTesting then
     { v= "4.10.0";  h= "170zzs7adj47srsi2cl723w9pl8k8awd7w1bpzxby7hj92zmf8s9"; } else
     { v= "4.8.3";   h= "0zi2g1d2jdgw5armlk9xjh4ykmydy266gdba86nmhy951gm8n3hb"; } );
   xfdesktop       = callPackage ./core/xfdesktop.nix      ( if isTesting then
     { v= "4.10.0";  h= "0yrddj1lgk3xn4w340y89z7x2isks72ia36pka08kk2x8gpfcyl9"; } else
     { v= "4.8.3";   h= "097lc9djmay0jyyl42jmvcfda75ndp265nzn0aa3hv795bsn1175"; } );
-  xfceutils       = if isTesting then null else callPackage ./core/xfce-utils.nix
+  xfceutils       = if isTesting then null # removed in 4.10
+    else callPackage ./core/xfce-utils.nix
     { v= "4.8.3";   h= "09mr0amp2f632q9i3vykaa0x5nrfihfm9v5nxsx9vch8wvbp0l03"; };
   xfce4_power_manager = callPackage ./core/xfce4-power-manager.nix
     { v= "1.0.10";  h= "1w120k1sl4s459ijaxkqkba6g1p2sqrf9paljv05wj0wz12bpr40"; };
+  tumbler         = callPackage ./core/tumbler.nix # ToDo: segfaults after some work
+    { v= "0.1.27";  h= "0s9qj99b81asmlqa823nzykq8g6p9azcp2niak67y9bp52wv6q2c"; };
 
   # not used anymore TODO: really? Update to 2.99.2?
   gtk_xfce_engine = callPackage ./core/gtk-xfce-engine.nix { };
 
   #### APPLICATIONS
 
-  terminal            = callPackage ./applications/terminal.nix   # doesn't build with 4.8
+  terminal            = if !isTesting then null else # doesn't build with 4.8
+    callPackage ./applications/terminal.nix
     { v= "0.6.1";   h= "1j6lpkq952mrl5p24y88f89wn9g0namvywhma639xxsswlkn8d31"; };
   mousepad            = callPackage ./applications/mousepad.nix
     { v= "0.3.0";   h= "0v84zwhjv2xynvisn5vmp7dbxfj4l4258m82ks7hn3adk437bwhh"; };
-  ristretto           = callPackage ./applications/ristretto.nix  # doesn't build with 4.8
+  ristretto           = if !isTesting then null else # doesn't build with 4.8
+    callPackage ./applications/ristretto.nix
     { v= "0.6.3";   h= "0y9d8w1plwp4vmxs44y8k8x15i0k0xln89k6jndhv6lf57g1cs1b"; };
   xfce4mixer          = callPackage ./applications/xfce4-mixer.nix  ( if isTesting then
-    { v= "4.10.0";  h= "1pnsd00583l7p5d80rxbh58brzy3jnccwikbbbm730a33c08kid8";
-      inherit (pkgs) libunique; }                                                         else
-    { v= "4.8.0";   h= "1aqgjxvck6hx26sk3n4n5avhv02vs523mfclcvjb3xnks3yli7wz"; }   );
+    { v= "4.10.0";  h= "1pnsd00583l7p5d80rxbh58brzy3jnccwikbbbm730a33c08kid8"; } else
+    { v= "4.8.0";   h= "1aqgjxvck6hx26sk3n4n5avhv02vs523mfclcvjb3xnks3yli7wz"; } );
   xfce4notifyd        = callPackage ./applications/xfce4-notifyd.nix
     { v= "0.2.2";   h= "0s4ilc36sl5k5mg5727rmqims1l3dy5pwg6dk93wyjqnqbgnhvmn"; };
 
@@ -104,7 +104,6 @@ in rec {
     { v= "1.0.0";   h= "1vm9gw7j4ngjlpdhnwdf7ifx6xrrn21011almx2vwidhk2f9zvy0"; };
 
   #TODO: correct links; more stuff
-  # move power_manager to core
 
   xfce4_appfinder = callPackage ./core/xfce4-appfinder.nix  ( if isTesting then
     { v= "4.9.4";   h= "12lgrbd1n50w9n8xkpai98s2aw8vmjasrgypc57sp0x0qafsqaxq"; } else
@@ -121,4 +120,7 @@ in rec {
   xfce4_systemload_plugin = callPackage ./panel-plugins/xfce4-systemload-plugin.nix {};
   xfce4_cpufreq_plugin = callPackage ./panel-plugins/xfce4-cpufreq-plugin.nix {};
 
-}
+};
+
+in xfce_self
+
