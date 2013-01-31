@@ -1,6 +1,6 @@
 { stdenv, fetchurl, libjpeg, libpng, libtiff, zlib, pkgconfig, fontconfig, openssl
 , lcms2, freetype, libpaper, jbig2dec, expat
-,0 x11Support, x11 ? null
+, x11Support, x11 ? null
 , cupsSupport ? false, cups ? null
 , gnuFork ? true
 }:
@@ -29,8 +29,7 @@ let
   };
 
   gnuForkSrc = rec {
-    version = "9.04.1";
-    name = "ghostscript-${version}";
+    name = "ghostscript-9.04.1";
     src = fetchurl {
       url = "mirror://gnu/ghostscript/gnu-${name}.tar.bz2";
       sha256 = "0zqa6ggbkdqiszsywgrra4ij0sddlmrfa50bx2mh568qid4ga0a2";
@@ -42,7 +41,6 @@ let
 
   mainlineSrc = rec {
     name = "ghostscript-9.06";
-    name = "ghostscript-${version}";
     src = fetchurl {
       url = "http://downloads.ghostscript.com/public/${name}.tar.bz2";
       sha256 = "014f10rxn4ihvcr1frby4szd1jvkrwvmdhnbivpp55c9fssx3b05";
@@ -66,7 +64,7 @@ let
 in
 
 stdenv.mkDerivation rec {
-  inherit (variant) name src meta version;
+  inherit (variant) name src meta;
 
   fonts = [
     (fetchurl {
