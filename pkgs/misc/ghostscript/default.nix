@@ -1,6 +1,6 @@
 { stdenv, fetchurl, libjpeg, libpng, libtiff, zlib, pkgconfig, fontconfig, openssl
-, lcms2, freetype, libpaper, jbig2dec, expat, poppler_data
-, x11Support, x11 ? null
+, lcms2, freetype, libpaper, jbig2dec, expat
+,0 x11Support, x11 ? null
 , cupsSupport ? false, cups ? null
 , gnuFork ? true
 }:
@@ -9,7 +9,7 @@ assert x11Support -> x11 != null;
 assert cupsSupport -> cups != null;
 
 let
-  meta = {
+  meta_common = {
     homepage = "http://www.gnu.org/software/ghostscript/";
     description = "GNU Ghostscript, a PostScript interpreter";
 
@@ -36,18 +36,18 @@ let
       sha256 = "0zqa6ggbkdqiszsywgrra4ij0sddlmrfa50bx2mh568qid4ga0a2";
     };
 
-    inherit meta;
+    meta = meta_common;
     patches = [ ./purity.patch ];
   };
 
   mainlineSrc = rec {
-    version = "9.06";
+    name = "ghostscript-9.06";
     name = "ghostscript-${version}";
     src = fetchurl {
       url = "http://downloads.ghostscript.com/public/${name}.tar.bz2";
       sha256 = "014f10rxn4ihvcr1frby4szd1jvkrwvmdhnbivpp55c9fssx3b05";
     };
-    meta = meta // {
+    meta = meta_common // {
       homepage = "http://www.ghostscript.com/";
       description = "GPL Ghostscript, a PostScript interpreter";
     };
