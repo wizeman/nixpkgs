@@ -11,8 +11,8 @@ stdenv.mkDerivation rec {
   buildInputs = [ pkgconfig perl ];
 
   meta = {
-    #homepage = http://poppler.freedesktop.org/;
-    #description = "Poppler, a PDF rendering library";
-    #license = "GPLv2";
+    homepage = http://pixman.org;
+    description = "A low-level library for pixel manipulation";
+    license = "MIT";
   };
 }
