@@ -3944,7 +3944,7 @@ let
 
   atkmm = callPackage ../development/libraries/atkmm/2.22.x.nix { };
 
-  cairo = callPackage ../development/libraries/cairo { pixman = pixman_new; };
+  cairo = callPackage ../development/libraries/cairo { };
 
   pango = callPackage ../development/libraries/pango { };
 
@@ -7926,7 +7926,6 @@ let
 
   thunderbird = callPackage ../applications/networking/mailreaders/thunderbird {
     inherit (gnome) libIDL;
-    pixman = pixman_new;
   };
 
   tig = gitAndTools.tig;
