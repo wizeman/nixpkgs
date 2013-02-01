@@ -15,7 +15,7 @@ assert pngSupport -> libpng != null;
 
 with { inherit (stdenv.lib) optional optionals; };
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (rec {
   name = "cairo-1.12.12";
 
   src = fetchurl {
@@ -50,20 +50,20 @@ stdenv.mkDerivation rec {
 
   preConfigure =
     stdenv.lib.optionalString doCheck
-    "substituteInPlace src/check-doc-syntax.awk --replace /usr/bin/awk ${gawk}/bin/awk"
-    +
+      ''substituteInPlace src/check-doc-syntax.awk --replace /usr/bin/awk ${gawk}/bin/awk
+      '' +
   # On FreeBSD, `-ldl' doesn't exist.
-    (stdenv.lib.optionalString stdenv.isFreeBSD
+     stdenv.lib.optionalString stdenv.isFreeBSD
        '' for i in "util/"*"/Makefile.in" boilerplate/Makefile.in
           do
             cat "$i" | sed -es/-ldl//g > t
             mv t "$i"
           done
-       '');
+       '';
 
   enableParallelBuilding = true;
 
-  inherit doCheck;
+  #inherit doCheck; #ToDo: clean later
 
   # The default `--disable-gtk-doc' is ignored.
   postInstall = "rm -rf $out/share/gtk-doc";
@@ -89,6 +89,6 @@ stdenv.mkDerivation rec {
 
     platforms = stdenv.lib.platforms.all;
 
-    maintainers = [ lib.maintainers.neznalek ];
+    maintainers = [ stdenv.lib.maintainers.neznalek ];
   };
-}
+} // (if doCheck then { inherit doCheck; } else {}) )
