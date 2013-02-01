@@ -9,7 +9,9 @@ stdenv.mkDerivation rec {
     sha256 = "5d12f7e1f5b4a99436685d97b9b7b75f094d33580227aa998c406bbae6f2a687";
   };
 
-  buildInputs = [ autoconf213 nspr perl python readline zip ];
+  buildInputs = [ autoconf213 perl python readline zip ];
+
+  propagatedBuildInputs = [ nspr ];
 
   postUnpack = "sourceRoot=\${sourceRoot}/js/src";
 
