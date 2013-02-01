@@ -6,10 +6,14 @@
 , stdenv, fetchurl, pkgconfig, x11, fontconfig, freetype, xlibs
 , zlib, libpng, pixman
 , gettext, libiconvOrEmpty
+          # the test suite needs many deps. incl. cairo itself transitively (!)
+, doCheck ? false, which, binutils, gawk, ghostscript, libspectre, poppler, librsvg
 }:
 
 assert postscriptSupport -> zlib != null;
 assert pngSupport -> libpng != null;
+
+with { inherit (stdenv.lib) optional optionals; };
 
 stdenv.mkDerivation rec {
   name = "cairo-1.12.12";
@@ -21,25 +25,33 @@ stdenv.mkDerivation rec {
 
   buildInputs = with xlibs;
     [ pkgconfig x11 fontconfig libXrender ]
-    ++ stdenv.lib.optionals xcbSupport [ libxcb xcbutil ]
+
+    ++ optionals xcbSupport [ libxcb xcbutil ]
+
+    ++ optionals doCheck [ which ghostscript libspectre poppler glib librsvg ]
+      #ToDo: can't find poppler_page_render
 
     # On non-GNU systems we need GNU Gettext for libintl.
-    ++ stdenv.lib.optional (!stdenv.isLinux) gettext
+    ++ optional (!stdenv.isLinux) gettext
 
     ++ libiconvOrEmpty;
 
   propagatedBuildInputs =
     [ freetype pixman ] ++
-    stdenv.lib.optional gobjectSupport glib ++
-    stdenv.lib.optional postscriptSupport zlib ++
-    stdenv.lib.optional pngSupport libpng;
+    optional gobjectSupport glib ++
+    optional postscriptSupport zlib ++
+    optional pngSupport libpng;
 
   configureFlags =
     [ "--enable-tee" ]
-    ++ stdenv.lib.optional xcbSupport "--enable-xcb"
-    ++ stdenv.lib.optional pdfSupport "--enable-pdf";
+    ++ optional xcbSupport "--enable-xcb"
+    ++ optional doCheck    "--enable-full-testing"
+    ++ optional pdfSupport "--enable-pdf";
 
   preConfigure =
+    stdenv.lib.optionalString doCheck
+    "substituteInPlace src/check-doc-syntax.awk --replace /usr/bin/awk ${gawk}/bin/awk"
+    +
   # On FreeBSD, `-ldl' doesn't exist.
     (stdenv.lib.optionalString stdenv.isFreeBSD
        '' for i in "util/"*"/Makefile.in" boilerplate/Makefile.in
@@ -50,6 +62,8 @@ stdenv.mkDerivation rec {
        '');
 
   enableParallelBuilding = true;
+
+  inherit doCheck;
 
   # The default `--disable-gtk-doc' is ignored.
   postInstall = "rm -rf $out/share/gtk-doc";
@@ -74,5 +88,7 @@ stdenv.mkDerivation rec {
     licenses = [ "LGPLv2+" "MPLv1" ];
 
     platforms = stdenv.lib.platforms.all;
+
+    maintainers = [ lib.maintainers.neznalek ];
   };
 }

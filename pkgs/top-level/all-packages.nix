@@ -3947,6 +3947,7 @@ let
   cairo = callPackage ../development/libraries/cairo {
     pixman = pixman_cairo; # it's recommended to be in sync
   };
+  cairo_checked = cairo.override  { doCheck = true; };
   pixman_cairo = callPackage ../development/libraries/pixman { };
 
   pango = callPackage ../development/libraries/pango/1.30.x.nix { };
