@@ -30,6 +30,8 @@ rec {
 
   gvfs = callPackage ./core/gvfs { };
 
+  libgweather = callPackage ./core/libgweather { };
+
   vte = callPackage ./core/vte { };
 
   zenity = callPackage ./core/zenity { };
