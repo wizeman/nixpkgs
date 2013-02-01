@@ -1,5 +1,5 @@
 { stdenv, fetchurl, pkgconfig, dbus_glib, gtk, glib, libxml2
-, intltool, dbus_libs, polkit, orbit }:
+, intltool, polkit, orbit }:
 
 stdenv.mkDerivation rec {
 
@@ -16,7 +16,14 @@ stdenv.mkDerivation rec {
     sha256 = "1ijqks0jxc4dyfxg4vnbqds4aj6miyahlsmlqlkf2bi1798akpjd";
   };
 
-  buildInputs = [ dbus_libs dbus_glib libxml2 polkit gtk orbit ];
-  propagatedBuildInputs = [ glib ];
+  buildInputs = [ libxml2 polkit gtk orbit ];
+  propagatedBuildInputs = [ glib dbus_glib  ];
   buildNativeInputs = [ pkgconfig intltool ];
+
+  #configureFlags = "--disable-orbit";
+
+  meta = {
+    homepage = http://projects.gnome.org/gconf/;
+    description = "A system for storing application preferences";
+  };
 }
