@@ -1,6 +1,6 @@
 { pkgs, newScope, xfce_self }: rec {
 
-  callPackage = newScope (deps // xfce_common // xfce_self);
+  callPackage = newScope (deps // xfce_self);
 
   deps = rec { # xfce-global dependency overrides should be here
     inherit (pkgs.gnome) libglade libwnck vte gtksourceview;

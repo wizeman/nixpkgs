@@ -3,7 +3,7 @@
 common = (import ./common.nix) { inherit pkgs newScope xfce_self; };
 callPackage = common.callPackage;
 
-xfce_self = rec { # the lines are very long but it seems better than the even-odd line approach
+xfce_self = common.xfce_common // rec { # the lines are very long but it seems better than the even-odd line approach
 
   #### CORE
 
