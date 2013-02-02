@@ -6,7 +6,7 @@
 , stdenv, fetchurl, pkgconfig, x11, fontconfig, freetype, xlibs
 , zlib, libpng, pixman
 , gettext, libiconvOrEmpty
-          # the test suite needs many deps. incl. cairo itself transitively (!)
+  # the test suite takes hours and needs many deps. incl. cairo itself transitively (!)
 , doCheck ? false, which, binutils, gawk, ghostscript, libspectre, poppler, librsvg
 }:
 
@@ -29,7 +29,6 @@ stdenv.mkDerivation (rec {
     ++ optionals xcbSupport [ libxcb xcbutil ]
 
     ++ optionals doCheck [ which ghostscript libspectre poppler glib librsvg ]
-      #ToDo: can't find poppler_page_render
 
     # On non-GNU systems we need GNU Gettext for libintl.
     ++ optional (!stdenv.isLinux) gettext
@@ -45,7 +44,7 @@ stdenv.mkDerivation (rec {
   configureFlags =
     [ "--enable-tee" ]
     ++ optional xcbSupport "--enable-xcb"
-    ++ optional doCheck    "--enable-full-testing"
+    ++ optionals doCheck [ "--enable-full-testing" "--enable-test-surfaces=yes" ]
     ++ optional pdfSupport "--enable-pdf";
 
   preConfigure =
