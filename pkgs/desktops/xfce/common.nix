@@ -34,6 +34,8 @@
 
   xfce_common = rec {
 
+    inherit (deps) gvfs; # used by NixOS
+
     #### CORE
 
     garcon  = callPackage ./core/garcon.nix { v= "0.2.0";   h= "0v7pkvxcayi86z4f173z5l7w270f3g369sa88z59w0y0p7ns7ph2"; };
