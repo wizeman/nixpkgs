@@ -727,8 +727,6 @@ let
 
   fcron = callPackage ../tools/system/fcron { };
 
-  fdisk = callPackage ../tools/system/fdisk { };
-
   fdm = callPackage ../tools/networking/fdm {};
 
   figlet = callPackage ../tools/misc/figlet { };
@@ -813,6 +811,10 @@ let
     inherit (xorg) libXpm;
   };
 
+  gnufdisk = callPackage ../tools/system/fdisk {
+    guile = guile_1_8;
+  };
+
   gnugrep =
     # Use libiconv only on non-GNU platforms (we can't test with
     # `stdenv ? glibc' at this point.)
@@ -888,6 +890,8 @@ let
   gtkvnc = callPackage ../tools/admin/gtk-vnc {};
 
   gtmess = callPackage ../applications/networking/instant-messengers/gtmess { };
+
+  gummiboot = callPackage ../tools/misc/gummiboot { };
 
   gupnp = callPackage ../development/libraries/gupnp {
     inherit (gnome) libsoup;
@@ -1358,6 +1362,8 @@ let
   pngtoico = callPackage ../tools/graphics/pngtoico {
     libpng = libpng12;
   };
+
+  podiff = callPackage ../tools/text/podiff { };
 
   polipo = callPackage ../servers/polipo { };
 
@@ -2385,25 +2391,26 @@ let
   # Current Haskell Platform: 2012.4.0.0
   haskellPlatform = haskellPackages.haskellPlatform;
 
-  haskellPackages_ghc6104             = recurseIntoAttrs (haskell.packages_ghc6104);
+  haskellPackages_ghc6104             =                   haskell.packages_ghc6104;
   haskellPackages_ghc6121             =                   haskell.packages_ghc6121;
   haskellPackages_ghc6122             =                   haskell.packages_ghc6122;
-  haskellPackages_ghc6123             = recurseIntoAttrs (haskell.packages_ghc6123);
+  haskellPackages_ghc6123             =                   haskell.packages_ghc6123;
   haskellPackages_ghc701              =                   haskell.packages_ghc701;
   haskellPackages_ghc702              =                   haskell.packages_ghc702;
   haskellPackages_ghc703              =                   haskell.packages_ghc703;
-  haskellPackages_ghc704              = recurseIntoAttrs (haskell.packages_ghc704);
+  haskellPackages_ghc704              =                   haskell.packages_ghc704;
   haskellPackages_ghc721              =                   haskell.packages_ghc721;
   haskellPackages_ghc722              =                   haskell.packages_ghc722;
   # For the default version, we build profiling versions of the libraries, too.
   # The following three lines achieve that: the first two make Hydra build explicit
   # profiling and non-profiling versions; the final respects the user-configured
   # default setting.
-  haskellPackages_ghc741              = recurseIntoAttrs (haskell.packages_ghc741);
-  haskellPackages_ghc742_no_profiling = recurseIntoAttrs (haskell.packages_ghc741.noProfiling);
-  haskellPackages_ghc742_profiling    = recurseIntoAttrs (haskell.packages_ghc741.profiling);
+  haskellPackages_ghc741              =                   haskell.packages_ghc741;
+  haskellPackages_ghc742_no_profiling = recurseIntoAttrs (haskell.packages_ghc742.noProfiling);
+  haskellPackages_ghc742_profiling    = recurseIntoAttrs (haskell.packages_ghc742.profiling);
   haskellPackages_ghc742              = recurseIntoAttrs (haskell.packages_ghc742.highPrio);
-  haskellPackages_ghc761              = recurseIntoAttrs (haskell.packages_ghc761);
+  haskellPackages_ghc761              =                   haskell.packages_ghc761;
+  haskellPackages_ghc762              = recurseIntoAttrs (haskell.packages_ghc762);
   # Reasonably current HEAD snapshot.
   haskellPackages_ghcHEAD             =                   haskell.packages_ghcHEAD;
 
@@ -2649,7 +2656,7 @@ let
 
   stalin = callPackage ../development/compilers/stalin { };
 
-  strategoPackages = strategoPackages018;
+  strategoPackages = recurseIntoAttrs strategoPackages018;
 
   strategoPackages016 = callPackage ../development/compilers/strategoxt/0.16.nix {
     stdenv = overrideInStdenv stdenv [gnumake380];
@@ -4587,7 +4594,7 @@ let
 
   mesaSupported = lib.elem system lib.platforms.mesaPlatforms;
 
-  darwinX11AndOpenGL = callPackage ../build-support/native-darwin-x11-and-opengl { };
+  darwinX11AndOpenGL = callPackage ../os-specific/darwin/native-x11-and-opengl { };
 
   mesa = if stdenv.isDarwin then darwinX11AndOpenGL else
     callPackage ../development/libraries/mesa { };
@@ -5880,18 +5887,6 @@ let
       ];
   };
 
-  linux_2_6_32_xen = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.32-xen.nix) {
-    inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
-    kernelPatches =
-      [ kernelPatches.fbcondecor_2_6_31
-        kernelPatches.sec_perm_2_6_24
-        # kernelPatches.aufs2_2_6_32
-        kernelPatches.cifs_timeout_2_6_29
-        kernelPatches.no_xsave
-        kernelPatches.dell_rfkill
-      ];
-  };
-
   linux_2_6_35 = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.35.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
     kernelPatches =
@@ -6123,7 +6118,6 @@ let
 
   # Build the kernel modules for the some of the kernels.
   linuxPackages_2_6_32 = recurseIntoAttrs (linuxPackagesFor linux_2_6_32 pkgs.linuxPackages_2_6_32);
-  linuxPackages_2_6_32_xen = linuxPackagesFor linux_2_6_32_xen pkgs.linuxPackages_2_6_32_xen;
   linuxPackages_2_6_35 = recurseIntoAttrs (linuxPackagesFor linux_2_6_35 pkgs.linuxPackages_2_6_35);
   linuxPackages_3_0 = recurseIntoAttrs (linuxPackagesFor linux_3_0 pkgs.linuxPackages_3_0);
   linuxPackages_3_1 = recurseIntoAttrs (linuxPackagesFor linux_3_1 pkgs.linuxPackages_3_1);
@@ -7415,7 +7409,7 @@ let
 
   librecad2 = callPackage ../applications/misc/librecad/2.0.nix { };
 
-  libreoffice = callPackage ../applications/office/openoffice/libreoffice.nix {
+  libreoffice = callPackage ../applications/office/libreoffice {
     inherit (perlPackages) ArchiveZip CompressZlib;
     inherit (gnome) GConf ORBit2 gnome_vfs;
     zip = zip.override { enableNLS = false; };
@@ -7551,6 +7545,10 @@ let
     pulseSupport = config.pulseaudio or false;
   };
 
+  mplayer2 = callPackage ../applications/video/mplayer2 {
+    ffmpeg = ffmpeg_1_1;
+  };
+
   MPlayerPlugin = browser:
     import ../applications/networking/browsers/mozilla-plugins/mplayerplug-in {
       inherit browser;
@@ -7625,14 +7623,6 @@ let
   openbox = callPackage ../applications/window-managers/openbox { };
 
   openjump = callPackage ../applications/misc/openjump { };
-
-  openoffice = callPackage ../applications/office/openoffice {
-    inherit (perlPackages) ArchiveZip CompressZlib;
-    inherit (gnome) GConf ORBit2;
-    neon = neon029;
-    libwpd = libwpd_08;
-    zip = zip.override { enableNLS = false; };
-  };
 
   openscad = callPackage ../applications/graphics/openscad {};
 
@@ -7887,11 +7877,7 @@ let
 
   teamspeak_client = callPackage ../applications/networking/instant-messengers/teamspeak/client.nix { };
 
-  taskjuggler = callPackage ../applications/misc/taskjuggler {
-    # KDE support is not working yet.
-    inherit (kde3) kdelibs kdebase;
-    withKde = config.taskJuggler.kde or false;
-  };
+  taskjuggler = callPackage ../applications/misc/taskjuggler { };
 
   taskwarrior = callPackage ../applications/misc/taskwarrior { };
 
@@ -8367,10 +8353,6 @@ let
 
   simutrans = callPackage ../games/simutrans { };
 
-  six = callPackage ../games/six {
-    inherit (kde3) arts kdelibs;
-  };
-
   soi = callPackage ../games/soi {};
 
   # You still can override by passing more arguments.
@@ -8494,18 +8476,6 @@ let
   };
 
   gnome = recurseIntoAttrs gnome2;
-
-  kde3 = recurseIntoAttrs {
-
-    kdelibs = callPackage ../desktops/kde-3/kdelibs {
-      stdenv = overrideGCC stdenv gcc43;
-    };
-
-    arts = callPackage ../development/libraries/arts {
-      inherit (pkgs.kde3) kdelibs;
-    };
-
-  };
 
   kde4 = recurseIntoAttrs pkgs.kde47;
 

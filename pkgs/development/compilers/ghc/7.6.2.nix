@@ -1,12 +1,13 @@
 { stdenv, fetchurl, ghc, perl, gmp, ncurses }:
 
 stdenv.mkDerivation rec {
-  version = "7.7.20121213";
+  version = "7.6.2";
+
   name = "ghc-${version}";
 
   src = fetchurl {
-    url = "http://haskell.org/ghc/dist/current/dist/${name}-src.tar.bz2";
-    sha256 = "0z9ld6271jzv3mx02vqaakirj79pm2vzxnv5a178r6v874qbzx3p";
+    url = "http://haskell.org/ghc/dist/${version}/${name}-src.tar.bz2";
+    sha256 = "d5f45184abeacf7e9c6b4f63c7101a5c1d7b4fe9007901159e2287ecf38de533";
   };
 
   buildInputs = [ ghc perl gmp ncurses ];
@@ -16,7 +17,6 @@ stdenv.mkDerivation rec {
   buildMK = ''
     libraries/integer-gmp_CONFIGURE_OPTS += --configure-option=--with-gmp-libraries="${gmp}/lib"
     libraries/integer-gmp_CONFIGURE_OPTS += --configure-option=--with-gmp-includes="${gmp}/include"
-    DYNAMIC_BY_DEFAULT = NO
   '';
 
   preConfigure = ''
@@ -24,7 +24,7 @@ stdenv.mkDerivation rec {
     sed -i -e 's|-isysroot /Developer/SDKs/MacOSX10.5.sdk||' configure
   '';
 
-  configureFlags=[
+  configureFlags = [
     "--with-gcc=${stdenv.gcc}/bin/gcc"
   ];
 
