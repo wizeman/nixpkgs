@@ -126,7 +126,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
     GLUT         = self.GLUT_2_3_1_0;           # 7.6 ok
     haskellSrc   = self.haskellSrc_1_0_1_5;     # 7.6 ok
     html         = self.html_1_0_1_2;           # 7.6 ok
-    HTTP         = self.HTTP_4000_2_6;          # 7.6 ok
+    HTTP         = self.HTTP_4000_2_7;          # 7.6 ok
     HUnit        = self.HUnit_1_2_5_1;          # 7.6 ok
     mtl          = self.mtl_2_1_2;              # 7.6 ok
     network      = self.network_2_4_1_0;        # 7.6 ok
@@ -138,7 +138,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
     regexBase    = self.regexBase_0_93_2;       # 7.6 ok
     regexCompat  = self.regexCompat_0_95_1;     # 7.6 ok
     regexPosix   = self.regexPosix_0_95_2;      # 7.6 ok
-    split        = self.split_0_2_1_1;          # 7.6 ok
+    split        = self.split_0_2_1_2;          # 7.6 ok
     stm          = self.stm_2_4_2;              # 7.6 ok
     syb          = self.syb_0_3_7;              # 7.6 ok
     text         = self.text_0_11_2_3;          # 7.6 ok
@@ -967,8 +967,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   HTTP_4000_2_2 = callPackage ../development/libraries/haskell/HTTP/4000.2.2.nix {};
   HTTP_4000_2_3 = callPackage ../development/libraries/haskell/HTTP/4000.2.3.nix {};
   HTTP_4000_2_5 = callPackage ../development/libraries/haskell/HTTP/4000.2.5.nix {};
-  HTTP_4000_2_6 = callPackage ../development/libraries/haskell/HTTP/4000.2.6.nix {};
-  HTTP = self.HTTP_4000_2_6;
+  HTTP_4000_2_7 = callPackage ../development/libraries/haskell/HTTP/4000.2.7.nix {};
+  HTTP = self.HTTP_4000_2_7;
 
   httpReverseProxy = callPackage ../development/libraries/haskell/http-reverse-proxy {};
 
@@ -1558,6 +1558,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   stringCombinators = callPackage ../development/libraries/haskell/string-combinators {};
 
+  stringQq = callPackage ../development/libraries/haskell/string-qq {};
+
   stringsearch = callPackage ../development/libraries/haskell/stringsearch {};
 
   strptime = callPackage ../development/libraries/haskell/strptime {};
@@ -1606,7 +1608,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   SMTPClient = callPackage ../development/libraries/haskell/SMTPClient {};
 
   split_0_2_1_1 = callPackage ../development/libraries/haskell/split/0.2.1.1.nix {};
-  split = self.split_0_2_1_1;
+  split_0_2_1_2 = callPackage ../development/libraries/haskell/split/0.2.1.2.nix {};
+  split = self.split_0_2_1_2;
 
   stbImage = callPackage ../development/libraries/haskell/stb-image {};
 
