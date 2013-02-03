@@ -5,6 +5,8 @@ callPackage = common.callPackage;
 
 xfce_self = common.xfce_common // rec { # the lines are very long but it seems better than the even-odd line approach
 
+  xinitrc = "${xfce4session}/etc/xdg/xfce4/xinitrc";
+
   #### CORE
 
   exo             = callPackage ./core/exo.nix              { v= "0.10.2"; h= "1kknxiz703q4snmry65ajm26jwjslbgpzdal6bd090m3z25q51dk"; };
