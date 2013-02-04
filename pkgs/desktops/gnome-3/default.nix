@@ -1,11 +1,15 @@
 { callPackage, self, pkgs }:
 
 rec {
-  gtk = pkgs.gtk3;
-  orbit = pkgs.gnome2.ORBit2;
+  inherit (pkgs) gtk2 gtk3 gnome2;
+  gtk = gtk3; # just to be sure
+
 
 #### Overrides of libraries
-  poppler = pkgs.poppler.override { gtk = pkgs.gtk3; };
+
+  poppler = pkgs.poppler.override { gtk = gtk3; };
+  librsvg = pkgs.librsvg.override { inherit gtk2; }; # gtk2 mysteriously needed in librsvg for goffice (commented in Gentoo)
+
 
 #### Core (http://ftp.acc.umu.se/pub/GNOME/core/)
 
@@ -38,8 +42,8 @@ rec {
 
   zenity = callPackage ./core/zenity { };
 
-#### Apps (http://ftp.acc.umu.se/pub/GNOME/apps/)
 
+#### Apps (http://ftp.acc.umu.se/pub/GNOME/apps/)
 
   gnome_dictionary = callPackage ./desktop/gnome-dictionary { };
 
@@ -51,5 +55,10 @@ rec {
 
   # scrollkeeper replacement
   rarian = callPackage ./desktop/rarian { };
+
+
+#### Misc -- other packages on http://ftp.gnome.org/pub/GNOME/sources/
+
+  goffice = callPackage ./misc/goffice { };
 
 }

@@ -3841,19 +3841,6 @@ let
 
   gobjectIntrospection = callPackage ../development/libraries/gobject-introspection { };
 
-  goffice = callPackage ../development/libraries/goffice {
-    inherit (gnome) libglade libgnomeui;
-    gconf = gnome.GConf;
-    libart = gnome.libart_lgpl;
-  };
-
-  goffice_0_9 = callPackage ../development/libraries/goffice/0.9.nix {
-    inherit (gnome) libglade libgnomeui;
-    gconf = gnome.GConf;
-    libart = gnome.libart_lgpl;
-    gtk = gtk3;
-  };
-
   goocanvas = callPackage ../development/libraries/goocanvas { };
 
   google_perftools = callPackage ../development/libraries/google-perftools { };
@@ -7167,10 +7154,16 @@ let
   gmrun = callPackage ../applications/misc/gmrun {};
 
   gnucash = callPackage ../applications/office/gnucash {
-    inherit (gnome) libgnomeui libgtkhtml gtkhtml libbonoboui libgnomeprint;
-    gconf = gnome.GConf;
+    inherit (gnome2) libgnomeui libgtkhtml gtkhtml libbonoboui libgnomeprint libglade libart_lgpl;
+    gconf = gnome2.GConf;
     guile = guile_1_8;
     slibGuile = slibGuile.override { scheme = guile_1_8; };
+    goffice = goffice_0_8;
+  };
+  goffice_0_8 = callPackage ../desktops/gnome-3/misc/goffice/0.8.nix {
+    inherit (gnome) libglade libgnomeui;
+    gconf = gnome2.GConf;
+    libart = gnome.libart_lgpl;
   };
 
   libquvi = callPackage ../applications/video/quvi/library.nix { };
@@ -7197,8 +7190,7 @@ let
   };
 
   gnumeric = callPackage ../applications/office/gnumeric {
-    goffice = goffice_0_9;
-    inherit (gnome) libglade scrollkeeper;
+    inherit (gnome3) goffice;
   };
 
   gnunet08 = callPackage ../applications/networking/p2p/gnunet/0.8.nix {
