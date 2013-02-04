@@ -4306,9 +4306,7 @@ let
 
   libspectre = callPackage ../development/libraries/libspectre { };
 
-  libgsf = callPackage ../development/libraries/libgsf {
-    inherit (gnome) gnome_vfs libbonobo;
-  };
+  libgsf = callPackage ../development/libraries/libgsf { };
 
   libiconv = callPackage ../development/libraries/libiconv { };
 
