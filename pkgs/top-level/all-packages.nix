@@ -759,6 +759,8 @@ let
   fox = callPackage ../development/libraries/fox/default.nix { };
   fox_1_6 = callPackage ../development/libraries/fox/fox-1.6.nix { };
 
+  fping = callPackage ../tools/networking/fping {};
+
   fprot = callPackage ../tools/security/fprot { };
 
   freeipmi = callPackage ../tools/system/freeipmi {};
@@ -7055,6 +7057,10 @@ let
     inherit (gnome) libgnome libgnomeui vte;
   };
 
+  guitarix = callPackage ../applications/audio/guitarix {
+    fftw = fftwSinglePrec;
+  };
+
   wavesurfer = callPackage ../applications/misc/audio/wavesurfer { };
 
   wireshark = callPackage ../applications/networking/sniffers/wireshark { };
@@ -8043,14 +8049,14 @@ let
   wrapFirefox =
     { browser, browserName ? "firefox", desktopName ? "Firefox", nameSuffix ? ""
     , icon ? "${browser}/lib/${browser.name}/icons/mozicon128.png" }:
+    let
+      cfg = stdenv.lib.attrByPath [ browserName ] {} config;
+      enableAdobeFlash = cfg.enableAdobeFlash or true;
+      enableGnash = cfg.enableGnash or false;
+    in
     import ../applications/networking/browsers/firefox/wrapper.nix {
       inherit stdenv makeWrapper makeDesktopItem browser browserName desktopName nameSuffix icon;
       plugins =
-        let
-          cfg = stdenv.lib.attrByPath [ browserName ] {} config;
-          enableAdobeFlash = cfg.enableAdobeFlash or true;
-          enableGnash = cfg.enableGnash or false;
-        in
          assert !(enableGnash && enableAdobeFlash);
          ([ ]
           ++ lib.optional enableGnash gnash
@@ -8062,7 +8068,7 @@ let
           ++ lib.optional (cfg.enableGoogleTalkPlugin or false) google_talk_plugin
          );
       libs =
-        if config.browserName.enableQuakeLive or false
+        if cfg.enableQuakeLive or false
         then with xlibs; [ stdenv.gcc libX11 libXxf86dga libXxf86vm libXext libXt alsaLib zlib ]
         else [ ];
     };
