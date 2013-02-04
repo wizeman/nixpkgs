@@ -1,19 +1,21 @@
-{ stdenv, fetchurl, gnu_efi }:
+{ stdenv, fetchurl, gnu_efi, unzip }:
 
 stdenv.mkDerivation rec {
   name = "gummiboot-16";
+
+  buildInputs = [ unzip ];
 
   patches = [ ./no-usr.patch ];
 
   buildFlags = [
     "GNU_EFI=${gnu_efi}"
-  ];
+  ] ++ stdenv.lib.optional (stdenv.system == "i686-linux") "ARCH=ia32";
 
   installPhase = "mkdir -p $out/bin; mv gummiboot.efi $out/bin";
 
   src = fetchurl {
-    url = "http://cgit.freedesktop.org/gummiboot/snapshot/${name}.tar.gz";
-    sha256 = "1znvbxrhc7pkbhbw9bvg4zhfkp81q7fy4mq2jsw6vimccr7h29a0";
+    url = "http://cgit.freedesktop.org/gummiboot/snapshot/${name}.zip";
+    sha256 = "0as5svmvsbz08qgbvns77qfb36xi9lx2138ikiinqv6finzm8fi1";
   };
 
   meta = {
@@ -23,7 +25,7 @@ stdenv.mkDerivation rec {
 
     license = stdenv.lib.licenses.lgpl21Plus;
 
-    platforms = [ "x86_64-linux" ];
+    platforms = [ "x86_64-linux" "i686-linux" ];
 
     maintainers = [ stdenv.lib.maintainers.shlevy ];
   };
