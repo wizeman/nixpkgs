@@ -30,6 +30,8 @@ rec {
 
   gvfs = callPackage ./core/gvfs { };
 
+  libcroco = callPackage ./core/libcroco {};
+
   libgweather = callPackage ./core/libgweather { };
 
   vte = callPackage ./core/vte { };
