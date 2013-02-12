@@ -2,7 +2,7 @@
 , dbus_glib, libstartup_notification, libnotify, xfconf, xfce4panel, gamin, libexif, pcre }:
 
 stdenv.mkDerivation rec {
-  name = "Thunar-${v}";
+  name = "thunar-${v}";
   src = fetchXfce.core name h;
 
   buildInputs =
