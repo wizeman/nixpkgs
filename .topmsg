@@ -1,6 +1,6 @@
 From: Vladimír Čunát <vcunat@gmail.com>
-Subject: [PATCH] vlada/test
+Subject: [PATCH] vlada/xfce
 
-<patch description>
+Major Xfce refactoring, also adding versions 4.10.*
 
 Signed-off-by: Vladimír Čunát <vcunat@gmail.com>
