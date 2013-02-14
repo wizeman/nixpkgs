@@ -1,15 +1,18 @@
-{ v, h, stdenv, fetchXfce, pkgconfig, intltool, exo, gtk, libxfce4util
-, dbus_glib, libstartup_notification, libnotify, xfconf, xfce4panel, gamin, libexif, pcre }:
+{ v, h, stdenv, fetchXfce, pkgconfig, intltool
+, gtk, dbus_glib, libstartup_notification, libnotify, libexif, pcre, udev
+, exo, libxfce4util,  xfconf, xfce4panel
+}:
 
 stdenv.mkDerivation rec {
-  name = "thunar-${v}";
+  name = "Thunar-${v}";
   src = fetchXfce.core name h;
 
-  buildInputs =
-    [ pkgconfig intltool exo gtk libxfce4util
-      dbus_glib libstartup_notification libnotify xfconf xfce4panel gamin libexif pcre
-    ];
-  # TODO: gudev, optionality
+  buildInputs = [
+    pkgconfig intltool
+    gtk dbus_glib libstartup_notification libnotify libexif pcre udev
+    exo libxfce4util xfconf xfce4panel
+  ];
+  # TODO: optionality?
 
   enableParallelBuilding = true;
 
