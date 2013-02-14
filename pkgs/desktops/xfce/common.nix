@@ -16,15 +16,14 @@
 
     # intelligent fetcher for Xfce
     fetchXfce = rec {
-      generic = prepend : name : hash :
+      generic = prepend : name : sha256 :
         let lib = pkgs.lib;
             p = builtins.parseDrvName name;
             versions = lib.splitString "." p.version;
             ver_maj = lib.concatStrings (lib.intersperse "." (lib.take 2 versions));
-            name_low = lib.toLower p.name;
         in pkgs.fetchurl {
-          url = "mirror://xfce/src/${prepend}/${name_low}/${ver_maj}/${name}.tar.bz2";
-          sha256 = hash;
+          url = "mirror://xfce/src/${prepend}/${p.name}/${ver_maj}/${name}.tar.bz2";
+          inherit sha256;
         };
       core = generic "xfce";
       app = generic "apps";
