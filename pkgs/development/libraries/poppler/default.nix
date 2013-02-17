@@ -1,9 +1,10 @@
 { fetchurl, stdenv, cairo, freetype, fontconfig, zlib
 , libjpeg, curl, libpthreadstubs, xorg, openjpeg
 , libxml2, pkgconfig, cmake, lcms2
-, gtkSupport ? false, glib ? null, gtk3 ? null # gtk2 no longer accepted
+, gtkSupport ? false, glib, gdk_pixbuf, gtk3 # gtk2 no longer accepted
 , qt4Support ? false, qt4 ? null
-, fetchgit, doCheck?false # some strange test-compilation error
+, doCheck?false # some strange test-compilation errors (probably outdated tests)
+  , fetchgit, pango, gtk2
 }:
 
 stdenv.mkDerivation rec {
@@ -13,7 +14,7 @@ stdenv.mkDerivation rec {
     url = "${meta.homepage}${name}.tar.gz";
     sha256 = "1h4p241k7ysm7mb8wgwi7ilp69z297d7ql5padb0dnmzq39sddhj";
   };
-  testdata = fetchgit {
+  testdata = if !doCheck then null else fetchgit {
     url = "git://anongit.freedesktop.org/poppler/test";
     rev = "0d2bfd4af4c76a3bac27ccaff793d9129df7b57a";
   };
@@ -22,10 +23,12 @@ stdenv.mkDerivation rec {
     [ zlib cairo freetype fontconfig libjpeg lcms2 curl
       libpthreadstubs libxml2 stdenv.gcc.libc
       libXau libXdmcp libxcb libXrender libXext
-      #openjpeg # not detected
-    ]
-    ++ stdenv.lib.optionals gtkSupport [ glib /*gtk3*/ ]
-    ++ stdenv.lib.optional qt4Support qt4;
+      openjpeg # not detected
+    ] ++ (with stdenv.lib;
+         optionals gtkSupport [ glib gdk_pixbuf /*gtk3*/ ]
+      ++ optional qt4Support qt4
+      ++ optionals doCheck [ pango gtk2 ]
+    );
 
   buildNativeInputs = [ pkgconfig cmake ];
 
