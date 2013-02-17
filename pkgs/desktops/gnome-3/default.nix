@@ -7,7 +7,6 @@ rec {
 
 #### Overrides of libraries
 
-  poppler = pkgs.poppler.override { gtk = gtk3; };
   librsvg = pkgs.librsvg.override { inherit gtk2; }; # gtk2 mysteriously needed in librsvg for goffice (commented in Gentoo)
 
 
