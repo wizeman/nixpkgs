@@ -2852,6 +2852,7 @@ let
 
   python3 = python32;
   python32 = callPackage ../development/interpreters/python/3.2 { };
+  python33 = callPackage ../development/interpreters/python/3.3 { };
 
   python = python27;
   python26 = callPackage ../development/interpreters/python/2.6 { };
@@ -4431,6 +4432,7 @@ let
   libpng = callPackage ../development/libraries/libpng { };
   libpng_apng = callPackage ../development/libraries/libpng/libpng-apng.nix { };
   libpng12 = callPackage ../development/libraries/libpng/12.nix { };
+  libpng15 = callPackage ../development/libraries/libpng/15.nix { };
 
   libpaper = callPackage ../development/libraries/libpaper { };
 
@@ -4486,6 +4488,8 @@ let
   giflib = callPackage ../development/libraries/giflib { };
 
   libungif = callPackage ../development/libraries/giflib/libungif.nix { };
+
+  libunique = callPackage ../development/libraries/libunique/default.nix { };
 
   libusb = callPackage ../development/libraries/libusb { };
 
@@ -4576,13 +4580,14 @@ let
 
   liquidwar = builderDefsPackage ../games/liquidwar {
     inherit (xlibs) xproto libX11 libXrender;
-    inherit gmp mesa libjpeg libpng
+    inherit gmp mesa libjpeg
       expat gettext perl
       SDL SDL_image SDL_mixer SDL_ttf
       curl sqlite
       libogg libvorbis
       ;
-   guile = guile_1_8;
+    guile = guile_1_8;
+    libpng = libpng15; # 0.0.13 needs libpng 1.2--1.5
   };
 
   log4cxx = callPackage ../development/libraries/log4cxx { };
@@ -4809,6 +4814,10 @@ let
     gtkSupport = true;
     qt4Support = false;
   };
+  poppler_0_18 = callPackage ../development/libraries/poppler/0.18.nix {
+    gtkSupport = true;
+    qt4Support = false;
+  };
 
   popplerQt4 = poppler.override {
     gtkSupport = false;
@@ -4849,8 +4858,6 @@ let
   };
 
   qt4 = pkgs.kde4.qt4;
-
-  qt47 = callPackage ../development/libraries/qt-4.x/4.7 { };
 
   qt48 = callPackage ../development/libraries/qt-4.x/4.8 {
     # GNOME dependencies are not used unless gtkStyle == true
@@ -6209,7 +6216,9 @@ let
 
   nettools = callPackage ../os-specific/linux/net-tools { };
 
-  neverball = callPackage ../games/neverball { };
+  neverball = callPackage ../games/neverball {
+    libpng = libpng15;
+  };
 
   numactl = callPackage ../os-specific/linux/numactl { };
 
@@ -6704,7 +6713,7 @@ let
   };
 
   blender = callPackage  ../applications/misc/blender {
-    python = python32;
+    python = python33; # 2.65a doesn't accept lower
   };
 
   bristol = callPackage ../applications/audio/bristol { };
@@ -7022,6 +7031,7 @@ let
   evince = hiPrio (callPackage ../applications/misc/evince {
     inherit (gnome) gnomedocutils gnomeicontheme libgnome
       libgnomeui libglade scrollkeeper;
+    poppler = poppler_0_18;
   });
 
   evolution_data_server = newScope (gnome) ../servers/evolution-data-server { };
@@ -7164,8 +7174,8 @@ let
   gmrun = callPackage ../applications/misc/gmrun {};
 
   gnucash = callPackage ../applications/office/gnucash {
-    inherit (gnome) libgnomeui libgtkhtml gtkhtml libbonoboui libgnomeprint;
-    gconf = gnome.GConf;
+    inherit (gnome2) libgnomeui libgtkhtml gtkhtml libbonoboui libgnomeprint libglade libart_lgpl;
+    gconf = gnome2.GConf;
     guile = guile_1_8;
     slibGuile = slibGuile.override { scheme = guile_1_8; };
   };
@@ -7427,6 +7437,7 @@ let
         freefont_ttf xorg.fontmiscmisc xorg.fontbhttf
       ];
     };
+    poppler = poppler_0_18;
   };
 
   lingot = callPackage ../applications/audio/lingot {
@@ -7476,9 +7487,7 @@ let
 
   merkaartor = callPackage ../applications/misc/merkaartor { };
 
-  meshlab = callPackage ../applications/graphics/meshlab {
-    qt = qt47;
-  };
+  meshlab = callPackage ../applications/graphics/meshlab { };
 
   mhwaveedit = callPackage ../applications/audio/mhwaveedit {};
 
@@ -8622,12 +8631,9 @@ let
 
   oxygen_gtk = callPackage ../misc/themes/gtk2/oxygen-gtk { };
 
-  xfce = xfce48;
-
-  xfce48 = recurseIntoAttrs
-    (let callPackage = newScope pkgs.xfce48; in
-     import ../desktops/xfce-4.8 { inherit callPackage pkgs; });
-
+  xfce = xfce4_10;
+  xfce4_08 = recurseIntoAttrs (import ../desktops/xfce/4_08.nix { inherit pkgs newScope; });
+  xfce4_10 = recurseIntoAttrs (import ../desktops/xfce/4_10.nix { inherit pkgs newScope; });
 
   ### SCIENCE
 
