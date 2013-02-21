@@ -5093,7 +5093,7 @@ let
   webkit =
     builderDefsPackage ../development/libraries/webkit {
       inherit (gnome) gtkdoc libsoup;
-      inherit atk pango glib;
+      inherit atk pango glib gtk2 /*for plugins etc. even with gtk3, see Gentoo ebuild*/;
       gtk = gtk3;
       inherit freetype fontconfig gettext gperf curl
         libjpeg libtiff libxml2 libxslt sqlite
@@ -5103,8 +5103,7 @@ let
       inherit gstreamer gst_plugins_base gst_ffmpeg
         gst_plugins_good;
       inherit (xlibs) libXt renderproto libXrender kbproto;
-      libpng = libpng12;
-      perl = perl510;
+      inherit libpng perl;
     };
 
   webkit_gtk2 =
@@ -5119,8 +5118,7 @@ let
       inherit gstreamer gst_plugins_base gst_ffmpeg
         gst_plugins_good;
       inherit (xlibs) libXt renderproto libXrender;
-      libpng = libpng12;
-      perl = perl510;
+      inherit libpng perl;
     };
 
   webkitSVN =
@@ -5135,7 +5133,7 @@ let
       inherit gstreamer gst_plugins_base gst_ffmpeg
         gst_plugins_good;
       inherit (xlibs) libXt renderproto libXrender;
-      libpng = libpng12;
+      inherit libpng;
     };
 
   wvstreams = callPackage ../development/libraries/wvstreams { };
