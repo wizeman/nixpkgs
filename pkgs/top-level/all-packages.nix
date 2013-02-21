@@ -1290,7 +1290,6 @@ let
   patchutils = callPackage ../tools/text/patchutils { };
 
   parted = callPackage ../tools/misc/parted { hurd = null; };
-  parted_2_3 = callPackage ../tools/misc/parted/2.3.nix { hurd = null; };
 
   hurdPartedCross =
     if crossSystem != null && crossSystem.config == "i586-pc-gnu"
@@ -4633,7 +4632,9 @@ let
 
   mkvtoolnix = callPackage ../applications/video/mkvtoolnix { };
 
-  mlt = callPackage ../development/libraries/mlt { };
+  mlt = callPackage ../development/libraries/mlt {
+    ffmpeg = ffmpeg_1_1;
+  };
 
   libmpeg2 = callPackage ../development/libraries/libmpeg2 { };
 
@@ -4858,8 +4859,6 @@ let
   };
 
   qt4 = pkgs.kde4.qt4;
-
-  qt47 = callPackage ../development/libraries/qt-4.x/4.7 { };
 
   qt48 = callPackage ../development/libraries/qt-4.x/4.8 {
     # GNOME dependencies are not used unless gtkStyle == true
@@ -5942,15 +5941,6 @@ let
       ];
   };
 
-  linux_3_1 = makeOverridable (import ../os-specific/linux/kernel/linux-3.1.nix) {
-    inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
-    kernelPatches =
-      [ #kernelPatches.fbcondecor_2_6_38
-        kernelPatches.sec_perm_2_6_24
-        # kernelPatches.aufs3_1
-      ];
-  };
-
   linux_3_2 = makeOverridable (import ../os-specific/linux/kernel/linux-3.2.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
     kernelPatches =
@@ -5967,15 +5957,6 @@ let
     '';
   };
 
-  linux_3_3 = makeOverridable (import ../os-specific/linux/kernel/linux-3.3.nix) {
-    inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
-    kernelPatches =
-      [ #kernelPatches.fbcondecor_2_6_38
-        kernelPatches.sec_perm_2_6_24
-        # kernelPatches.aufs3_3
-      ];
-  };
-
   linux_3_4 = makeOverridable (import ../os-specific/linux/kernel/linux-3.4.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
     kernelPatches =
@@ -5985,34 +5966,6 @@ let
       ] ++ lib.optionals (platform.kernelArch == "mips")
       [ kernelPatches.mips_fpureg_emu
         kernelPatches.mips_fpu_sigill
-      ];
-  };
-
-  linux_3_5 = makeOverridable (import ../os-specific/linux/kernel/linux-3.5.nix) {
-    inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
-    kernelPatches =
-      [
-        kernelPatches.sec_perm_2_6_24
-        # kernelPatches.aufs3_5
-        kernelPatches.perf3_5
-        kernelPatches.cifs_timeout_3_5_7
-      ] ++ lib.optionals (platform.kernelArch == "mips")
-      [ kernelPatches.mips_fpureg_emu
-        kernelPatches.mips_fpu_sigill
-        kernelPatches.mips_ext3_n32
-      ];
-  };
-
-  linux_3_6 = makeOverridable (import ../os-specific/linux/kernel/linux-3.6.nix) {
-    inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
-    kernelPatches =
-      [
-        kernelPatches.sec_perm_2_6_24
-        # kernelPatches.aufs3_6
-      ] ++ lib.optionals (platform.kernelArch == "mips")
-      [ kernelPatches.mips_fpureg_emu
-        kernelPatches.mips_fpu_sigill
-        kernelPatches.mips_ext3_n32
       ];
   };
 
@@ -6144,13 +6097,9 @@ let
   linuxPackages_2_6_32 = recurseIntoAttrs (linuxPackagesFor linux_2_6_32 pkgs.linuxPackages_2_6_32);
   linuxPackages_2_6_35 = recurseIntoAttrs (linuxPackagesFor linux_2_6_35 pkgs.linuxPackages_2_6_35);
   linuxPackages_3_0 = recurseIntoAttrs (linuxPackagesFor linux_3_0 pkgs.linuxPackages_3_0);
-  linuxPackages_3_1 = recurseIntoAttrs (linuxPackagesFor linux_3_1 pkgs.linuxPackages_3_1);
   linuxPackages_3_2 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_2 pkgs.linuxPackages_3_2);
   linuxPackages_3_2_xen = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_2_xen pkgs.linuxPackages_3_2_xen);
-  linuxPackages_3_3 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_3 pkgs.linuxPackages_3_3);
   linuxPackages_3_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_4 pkgs.linuxPackages_3_4);
-  linuxPackages_3_5 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_5 pkgs.linuxPackages_3_5);
-  linuxPackages_3_6 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_6 pkgs.linuxPackages_3_6);
   linuxPackages_3_7 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_7 pkgs.linuxPackages_3_7);
 
   # The current default kernel / kernel modules.
@@ -6815,7 +6764,14 @@ let
 
   d4x = callPackage ../applications/misc/d4x { };
 
-  darcs = lib.setName "darcs-${haskellPackages.darcs.version}" haskellPackages.darcs;
+  darcs = haskellPackages.darcs.override {
+    # A variant of the Darcs derivation that containts only the executable and
+    # thus has no dependencies on other Haskell packages.
+    cabal = { mkDerivation = x: rec { final = haskellPackages.cabal.mkDerivation (self: (x final) // {
+	      isLibrary = false;
+	      configureFlags = "-f-library"; }); }.final;
+	    };
+  };
 
   darktable = callPackage ../applications/graphics/darktable {
     inherit (gnome) GConf libglade;
@@ -7497,9 +7453,7 @@ let
 
   merkaartor = callPackage ../applications/misc/merkaartor { };
 
-  meshlab = callPackage ../applications/graphics/meshlab {
-    qt = qt47;
-  };
+  meshlab = callPackage ../applications/graphics/meshlab { };
 
   mhwaveedit = callPackage ../applications/audio/mhwaveedit {};
 
@@ -8291,10 +8245,7 @@ let
 
   gnugo = callPackage ../games/gnugo { };
 
-  gparted = callPackage ../tools/misc/gparted {
-    parted = parted_2_3;
-    inherit (gnome) gnomedocutils;
-  };
+  gparted = callPackage ../tools/misc/gparted { };
 
   gsmartcontrol = callPackage ../tools/misc/gsmartcontrol {
     inherit (gnome) libglademm;
