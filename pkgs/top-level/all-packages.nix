@@ -8643,8 +8643,7 @@ let
   oxygen_gtk = callPackage ../misc/themes/gtk2/oxygen-gtk { };
 
   xfce = xfce4_10;
-  xfce4_08 = recurseIntoAttrs (import ../desktops/xfce/4_08.nix { inherit pkgs newScope; });
-  xfce4_10 = recurseIntoAttrs (import ../desktops/xfce/4_10.nix { inherit pkgs newScope; });
+  xfce4_10 = recurseIntoAttrs (import ../desktops/xfce { inherit pkgs newScope; });
 
   ### SCIENCE
 
