@@ -1,6 +1,9 @@
-{ callPackage, lib, self, stdenv, gettext, overrides ? {} }:
+{ callPackage, lib, self, stdenv, gettext, overrides ? {}, pkgs }:
 
-{
+rec {
+  inherit (pkgs) fetchurl_gnome glib gtk3 atk pango;
+  gtk = gtk3;
+  orbit = pkgs.gnome2.ORBit2;
 
   inherit (lib) lowPrio hiPrio appendToName makeOverridable;
 
@@ -12,23 +15,26 @@
 
   at_spi2_core = callPackage ./core/at-spi2-core { };
 
-  atk = callPackage ./core/atk { };
+  evince = callPackage ./core/evince { }; # ToDo: dbus would prevent compilation, enable tests
 
   gconf = callPackage ./core/gconf { };
 
-  gdk_pixbuf = callPackage ./core/gdk-pixbuf { };
+  gcr = callPackage ./core/gcr { }; # ToDo: tests fail
 
-  glib = callPackage ./core/glib { };
+  gnome_icon_theme = callPackage ./core/gnome-icon-theme { };
 
-  gobject_introspection = callPackage ./core/gobject-introspection { };
-
-  gtk = callPackage ./core/gtk { };
+  gnome_keyring = callPackage ./core/gnome-keyring { };
+  libgnome_keyring = callPackage ./core/libgnome-keyring { };
 
   gnome_terminal = callPackage ./core/gnome-terminal { };
 
   gsettings_desktop_schemas = lib.lowPrio (callPackage ./core/gsettings-desktop-schemas { });
 
-  pango = callPackage ./core/pango { };
+  gvfs = callPackage ./core/gvfs { };
+
+  libcroco = callPackage ./core/libcroco {};
+
+  libgweather = callPackage ./core/libgweather { };
 
   vte = callPackage ./core/vte { };
 

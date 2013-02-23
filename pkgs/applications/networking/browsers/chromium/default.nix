@@ -50,7 +50,7 @@ let
     use_system_libexpat = true;
     use_system_libexif = true;
     use_system_libjpeg = true;
-    use_system_libpng = true;
+    use_system_libpng = !post24;
     use_system_libusb = true;
     use_system_libxml = true;
     use_system_speex = true;
@@ -117,7 +117,8 @@ in stdenv.mkDerivation rec {
 
   patches = optional cupsSupport ./cups_allow_deprecated.patch
          ++ optional pulseSupport ./pulseaudio_array_bounds.patch
-         ++ maybeFixPulseAudioBuild;
+         ++ maybeFixPulseAudioBuild
+         ++ [ ./glibc-2.16-use-siginfo_t.patch ];
 
   postPatch = optionalString useOpenSSL ''
     cat $opensslPatches | patch -p1 -d third_party/openssl/openssl
