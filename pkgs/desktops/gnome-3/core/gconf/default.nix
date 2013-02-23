@@ -18,9 +18,9 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ libxml2 polkit gtk orbit ];
   propagatedBuildInputs = [ glib dbus_glib  ];
-  buildNativeInputs = [ pkgconfig intltool ];
+  nativeBuildInputs = [ pkgconfig intltool ];
 
-  #configureFlags = "--disable-orbit";
+  # ToDo: ldap reported as not found but afterwards reported as supported
 
   meta = {
     homepage = http://projects.gnome.org/gconf/;

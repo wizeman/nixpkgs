@@ -10,5 +10,5 @@ stdenv.mkDerivation rec {
   };
   configureFlags = if stdenv ? glibc then "--with-zoneinfo-dir=${stdenv.glibc}/share/zoneinfo" else "";
   propagatedBuildInputs = [ libxml2 gtk libsoup gconf pango gdk_pixbuf atk ];
-  buildNativeInputs = [ pkgconfig intltool ];
+  nativeBuildInputs = [ pkgconfig intltool ];
 }

@@ -13,4 +13,6 @@ stdenv.mkDerivation rec {
     pkgconfig intltool gnupg p11_kit glib
     libgcrypt libtasn1 dbus_glib gtk pango gdk_pixbuf atk
   ];
+
+  #doCheck = true;
 }

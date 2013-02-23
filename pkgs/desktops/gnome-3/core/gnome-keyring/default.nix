@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
 
   propagatedBuildInputs = [ glib libtasn1 ];
 
-  buildNativeInputs = [ pkgconfig intltool ];
+  nativeBuildInputs = [ pkgconfig intltool ];
 
   configureFlags = [
     "--with-ca-certificates=/etc/ssl/certs/ca-bundle.crt" # NixOS hardcoded path

@@ -3,6 +3,7 @@
 rec {
   inherit (pkgs) gtk2 gtk3 gnome2;
   gtk = gtk3; # just to be sure
+  orbit = pkgs.gnome2.ORBit2;
 
 
 #### Overrides of libraries
@@ -16,11 +17,11 @@ rec {
 
   at_spi2_core = callPackage ./core/at-spi2-core { };
 
-  evince = callPackage ./core/evince { };
+  evince = callPackage ./core/evince { }; # ToDo: dbus would prevent compilation, enable tests
 
   gconf = callPackage ./core/gconf { };
 
-  gcr = callPackage ./core/gcr { };
+  gcr = callPackage ./core/gcr { }; # ToDo: tests fail
 
   gnome_icon_theme = callPackage ./core/gnome-icon-theme { };
 

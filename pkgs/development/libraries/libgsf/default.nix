@@ -12,13 +12,12 @@ stdenv.mkDerivation rec {
     sha256 = "18ni8hwi3q83vs3m6mg6xwd4g7jvss4kz70kzf21k587gvq4hx8j";
   };
 
-  buildNativeInputs = [ pkgconfig intltool ];
+  nativeBuildInputs = [ pkgconfig intltool ];
   buildInputs = [ gettext bzip2 zlib python ];
 
   propagatedBuildInputs = [ libxml2 glib ];
 
   doCheck = true;
-
 
   meta = {
     homepage = http://www.gnome.org/projects/libgsf;

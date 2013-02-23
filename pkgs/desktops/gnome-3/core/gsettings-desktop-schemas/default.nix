@@ -1,4 +1,6 @@
-{ stdenv, fetchurl, pkgconfig, intltool, glib }:
+{ stdenv, fetchurl, pkgconfig, intltool, glib
+  # just for passthru
+, gtk3, gsettings_desktop_schemas }:
 
 stdenv.mkDerivation rec {
 
@@ -15,5 +17,14 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ glib ];
 
-  buildNativeInputs = [ pkgconfig intltool ];
+  nativeBuildInputs = [ pkgconfig intltool ];
+
+  passthru = {
+    doCompileSchemas = ''
+      for pkg in "${gsettings_desktop_schemas}" "${gtk3}"; do
+        cp -s $pkg/share/glib-2.0/schemas/*.gschema.xml $out/share/glib-2.0/schemas/
+      done
+      ${glib}/bin/glib-compile-schemas $out/share/glib-2.0/schemas/
+    '';
+  };
 }
