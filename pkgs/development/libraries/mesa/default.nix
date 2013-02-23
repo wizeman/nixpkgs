@@ -8,14 +8,14 @@ if ! stdenv.lib.lists.elem stdenv.system stdenv.lib.platforms.mesaPlatforms then
 else
 
 let
-  version = "9.0.2";
+  version = "9.0.3";
 in
 stdenv.mkDerivation {
   name = "mesa-${version}";
 
   src = fetchurl {
     url = "ftp://ftp.freedesktop.org/pub/mesa/${version}/MesaLib-${version}.tar.bz2";
-    sha256="0knnb8srr1xbin25js4y5kmpw7xys5gh1h8hwqamayvfdkr33gvm";
+    sha256="1986av3pl8v9hhxxqqdm2wn3qlwwnrznvfmm4wszhyf3n82h157a";
   };
 
   prePatch = "patchShebangs .";
@@ -30,10 +30,12 @@ stdenv.mkDerivation {
     # Texture floats are patented, see docs/patents.txt
     + stdenv.lib.optionalString enableTextureFloats " --enable-texture-float";
 
-  buildInputs = [ expat libdrm libXxf86vm libXfixes libXdamage glproto dri2proto
-    libxml2Python libX11 libXext libxcb libXt udev llvm ];
+  buildInputs = [
+    autoconf automake libtool expat libxml2Python udev llvm
+    libdrm libXxf86vm libXfixes libXdamage glproto dri2proto libX11 libXext libxcb libXt
+  ];
 
-  buildNativeInputs = [ pkgconfig python makedepend file flex bison automake autoconf libtool ];
+  nativeBuildInputs = [ pkgconfig python makedepend file flex bison ];
 
   enableParallelBuilding = true;
 

@@ -30,7 +30,7 @@ stdenv.mkDerivation rec {
       ++ optionals doCheck [ pango gtk2 ]
     );
 
-  buildNativeInputs = [ pkgconfig cmake ];
+  nativeBuildInputs = [ pkgconfig cmake ];
 
   cmakeFlags = "-DENABLE_XPDF_HEADERS=ON -DENABLE_LIBCURL=ON -DENABLE_ZLIB=ON";
 
