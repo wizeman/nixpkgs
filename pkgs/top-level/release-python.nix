@@ -116,9 +116,7 @@ in
   boost = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   boost144 = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   boost146 = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
-  boost147 = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   boost149 = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
-  boost151 = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   botan = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   box2d = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   box2d_2_0_1 = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
@@ -1501,7 +1499,6 @@ in
   qshowdiff = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   qsynth = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   qt3 = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
-  qt47 = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   qt_gstreamer = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   qtpfsgui = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   qtractor = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
