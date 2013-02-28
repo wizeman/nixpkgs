@@ -1,7 +1,8 @@
 { cabal, binary, blazeHtml, blazeMarkup, citeprocHs, cmdargs
-, cryptohash, deepseq, filepath, httpConduit, httpTypes, lrucache
-, mtl, pandoc, parsec, random, regexBase, regexTdfa, snapCore
-, snapServer, tagsoup, text, time
+, cryptohash, deepseq, filepath, httpConduit, httpTypes, HUnit
+, lrucache, mtl, pandoc, parsec, QuickCheck, random, regexBase
+, regexTdfa, snapCore, snapServer, tagsoup, testFramework
+, testFrameworkHunit, testFrameworkQuickcheck2, text, time
 }:
 
 cabal.mkDerivation (self: {
@@ -15,7 +16,14 @@ cabal.mkDerivation (self: {
     filepath httpConduit httpTypes lrucache mtl pandoc parsec random
     regexBase regexTdfa snapCore snapServer tagsoup text time
   ];
+  testDepends = [
+    binary blazeHtml blazeMarkup citeprocHs cmdargs cryptohash deepseq
+    filepath httpConduit httpTypes HUnit lrucache mtl pandoc parsec
+    QuickCheck random regexBase regexTdfa tagsoup testFramework
+    testFrameworkHunit testFrameworkQuickcheck2 text time
+  ];
   jailbreak = true;
+  doCheck = false;
   meta = {
     homepage = "http://jaspervdj.be/hakyll";
     description = "A static website compiler library";
