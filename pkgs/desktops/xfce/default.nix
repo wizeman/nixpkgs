@@ -17,6 +17,8 @@ deps = rec { # xfce-global dependency overrides should be here
 
 xfce_self = rec { # the lines are very long but it seems better than the even-odd line approach
 
+  inherit (deps) gvfs; # used by NixOS
+
   #### CORE                 from "mirror://xfce/src/xfce/${p_name}/${ver_maj}/${name}.tar.bz2"
 
   exo             = callPackage ./core/exo.nix { };
