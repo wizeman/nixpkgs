@@ -1,20 +1,20 @@
 { cabal, Cabal, convertible, emacs, filepath, ghcPaths, ghcSybUtils
-, hlint, hspec, ioChoice, regexPosix, syb, time, transformers
+, hlint, hspec, ioChoice, syb, time, transformers
 }:
 
 cabal.mkDerivation (self: {
   pname = "ghc-mod";
-  version = "1.11.5";
-  sha256 = "0lcq4ffmv017pdy58p91qn5d4hmcxcqzk8dvnmh7m4m7saslqivp";
+  version = "1.12.3";
+  sha256 = "1dc919xbq7aqvpayqh9czvpzz4w4j082d1fjv0n9b7i4a780xghv";
   isLibrary = false;
   isExecutable = true;
   buildDepends = [
-    Cabal convertible filepath ghcPaths ghcSybUtils hlint ioChoice
-    regexPosix syb time transformers
+    Cabal convertible filepath ghcPaths ghcSybUtils hlint ioChoice syb
+    time transformers
   ];
   testDepends = [
     Cabal convertible filepath ghcPaths ghcSybUtils hlint hspec
-    ioChoice regexPosix syb time transformers
+    ioChoice syb time transformers
   ];
   buildTools = [ emacs ];
   postInstall = ''

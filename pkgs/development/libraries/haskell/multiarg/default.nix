@@ -2,14 +2,17 @@
 
 cabal.mkDerivation (self: {
   pname = "multiarg";
-  version = "0.8.0.0";
-  sha256 = "17zfrm9zjf7c8g7q9vqj1srk0g766ifhwqp7gm4ql890541q5lv5";
+  version = "0.10.0.0";
+  sha256 = "09clgin66i2m0b3ws7di9p15cy9bd144as832xpx4li6cfbg16ip";
   buildDepends = [ explicitException utf8String ];
   meta = {
     homepage = "https://github.com/massysett/multiarg";
     description = "Combinators to build command line parsers";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [ self.stdenv.lib.maintainers.andres ];
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
