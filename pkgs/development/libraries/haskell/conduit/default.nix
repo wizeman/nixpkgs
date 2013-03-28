@@ -1,13 +1,13 @@
-{ cabal, doctest, hspec, liftedBase, monadControl, QuickCheck
-, resourcet, text, transformers, transformersBase, void
+{ cabal, doctest, hspec, liftedBase, mmorph, monadControl
+, QuickCheck, resourcet, text, transformers, transformersBase, void
 }:
 
 cabal.mkDerivation (self: {
   pname = "conduit";
-  version = "1.0.1";
-  sha256 = "1r3d30cap4f7qxi9v2ab5w31w9ay19z848d4l8klf1np9xs27hki";
+  version = "1.0.4.1";
+  sha256 = "1fihn6ixs6cmim5y605w2mzjrcwplr58r835wq9k3arb25d5wnys";
   buildDepends = [
-    liftedBase monadControl resourcet text transformers
+    liftedBase mmorph monadControl resourcet text transformers
     transformersBase void
   ];
   testDepends = [
@@ -18,6 +18,9 @@ cabal.mkDerivation (self: {
     description = "Streaming data processing library";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [ self.stdenv.lib.maintainers.andres ];
+    maintainers = [
+      self.stdenv.lib.maintainers.andres
+      self.stdenv.lib.maintainers.simons
+    ];
   };
 })
