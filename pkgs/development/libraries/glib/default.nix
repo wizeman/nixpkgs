@@ -1,5 +1,5 @@
 { stdenv, fetchurl, pkgconfig, gettext, perl, libiconvOrNull, zlib, libffi
-, python, pcre, libelf }:
+, python, pcre, libelf, libxml2 }:
 
 # TODO:
 # * Add gio-module-fam
@@ -11,6 +11,19 @@
 #     Reminder: add 'sed -e 's@python2\.[0-9]@python@' -i
 #       $out/bin/gtester-report' to postInstall if this is solved
 
+let
+  # some packages don't get "Cflags" from pkgconfig correctly
+  # and then fail to build when directly including like <glib/...>
+  flattenInclude = ''
+    for dir in $out/include/*; do
+      cp -r $dir/* "$out/include/"
+      rm -r "$dir"
+      ln -s . "$dir"
+    done
+    ln -sr -t "$out/include/" $out/lib/*/include/* || true
+  '';
+in
+
 stdenv.mkDerivation (rec {
   name = "glib-2.36.0";
 
@@ -20,19 +33,24 @@ stdenv.mkDerivation (rec {
   };
 
   # configure script looks for d-bus but it is only needed for tests
-  buildInputs = [ libiconvOrNull libelf ];
+  buildInputs = [ libiconvOrNull libxml2 ];
+  propagatedBuildInputs = [ pcre zlib libffi libelf ]; # in closure anyway
 
-  nativeBuildInputs = [ perl pkgconfig gettext python ];
-
-  propagatedBuildInputs = [ pcre zlib libffi ];
+  nativeBuildInputs = [ pkgconfig gettext ];
+  propagatedNativeBuildInputs = [ perl python ];
 
   configureFlags = "--with-pcre=system --disable-fam";
 
   enableParallelBuilding = true;
 
-  passthru.gioModuleDir = "lib/gio/modules";
+  postInstall = flattenInclude + ''
+    rm -rvf $out/share/gtk-doc
+  '';
 
-  postInstall = ''rm -rvf $out/share/gtk-doc'';
+  passthru = {
+     gioModuleDir = "lib/gio/modules";
+     inherit flattenInclude;
+  };
 
   meta = {
     description = "GLib, a C library of programming buildings blocks";

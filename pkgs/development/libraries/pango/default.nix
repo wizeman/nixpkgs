@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
 
-  postInstall = "rm -rf $out/share/gtk-doc";
+  postInstall = glib.flattenInclude + "rm -rf $out/share/gtk-doc";
 
   meta = {
     description = "A library for laying out and rendering of text, with an emphasis on internationalization";

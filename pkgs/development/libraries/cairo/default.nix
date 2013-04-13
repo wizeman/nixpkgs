@@ -59,7 +59,7 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = true;
 
   # The default `--disable-gtk-doc' is ignored.
-  postInstall = "rm -rf $out/share/gtk-doc";
+  postInstall = glib.flattenInclude + "rm -rf $out/share/gtk-doc";
 
   meta = {
     description = "A 2D graphics library with support for multiple output devices";

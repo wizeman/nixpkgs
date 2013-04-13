@@ -1,5 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, glib, libtiff, libjpeg, libpng, libX11, xz
-, jasper }:
+{ stdenv, fetchurl, pkgconfig, glib, libtiff, libjpeg, libpng, libX11, jasper }:
 
 stdenv.mkDerivation rec {
   name = "gdk-pixbuf-2.28.0";
@@ -18,7 +17,7 @@ stdenv.mkDerivation rec {
 
   configureFlags = "--with-libjasper --with-x11";
 
-  postInstall = "rm -rf $out/share/gtk-doc";
+  postInstall = glib.flattenInclude + "rm -rf $out/share/gtk-doc";
 
   meta = {
     description = "A library for image loading and manipulation";

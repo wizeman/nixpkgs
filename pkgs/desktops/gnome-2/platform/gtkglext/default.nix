@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
   # `GTK_WIDGET_NO_WINDOW', all of which appear to be deprecated nowadays.
   CPPFLAGS = "-UGTK_DISABLE_DEPRECATED";
 
+  postInstall = glib.flattenInclude;
+
   meta = {
     homepage = http://projects.gnome.org/gtkglext/;
 
