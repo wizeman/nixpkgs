@@ -1,5 +1,5 @@
 { stdenv, fetchurl, lib, iasl, dev86, pam, libxslt, libxml2, libX11, xproto, libXext
-, libXcursor, libXmu, qt4, libIDL, SDL, libcap, zlib, libpng, glib, kernel, lvm2
+, libXcursor, libXmu, qt4, libIDL, SDL, libcap, zlib, libpng, glib, kernelDev, lvm2
 , which, alsaLib, curl, gawk
 , xorriso, makeself, perl, pkgconfig
 , javaBindings ? false, jdk ? null
@@ -11,8 +11,8 @@ with stdenv.lib;
 
 let
 
-  version = "4.2.8";
-  extpackRevision = "83876";
+  version = "4.2.12";
+  extpackRevision = "84980";
 
   forEachModule = action: ''
     for mod in \
@@ -35,33 +35,28 @@ let
     name = "Oracle_VM_VirtualBox_Extension_Pack-${version}-${extpackRevision}"
          + ".vbox-extpack";
     # Has to be base16 because it's used as an input to VBoxExtPackHelperApp!
-    sha256 = "fa579416f382b58c4e93d3740d076ceba728e28d987e51aced5865a46cb9111c";
+    sha256 = "ad15a92e49095c2115bd1793b3b957d3eaf44af0f5d24bb53d6b4fc81c3e2fc4";
     url = "https://www.virtualbox.org/wiki/Downloads";
   };
 
 in stdenv.mkDerivation {
-  name = "virtualbox-${version}-${kernel.version}";
+  name = "virtualbox-${version}-${kernelDev.version}";
 
   src = fetchurl {
     url = "http://download.virtualbox.org/virtualbox/${version}/VirtualBox-${version}.tar.bz2";
-    sha256 = "f336af12244db74e6564dc22e438bbcba70f994aaf0d117fdf70caca9fab1b78";
+    sha256 = "eb65ecac94f63d6292a967d39cb5e28326404c10d0e8c2c50399eedb59c17ee6";
   };
 
   buildInputs =
     [ iasl dev86 libxslt libxml2 xproto libX11 libXext libXcursor qt4 libIDL SDL
-      libcap glib kernel lvm2 python alsaLib curl pam xorriso makeself perl
+      libcap glib kernelDev lvm2 python alsaLib curl pam xorriso makeself perl
       pkgconfig which libXmu ]
     ++ optional javaBindings jdk
     ++ optional pythonBindings python;
 
-  patches = [
-    ./strict_types.patch
-    ./build_fix_3.9.0.patch
-  ];
-
   prePatch = ''
     set -x
-    MODULES_BUILD_DIR=`echo ${kernel}/lib/modules/*/build`
+    MODULES_BUILD_DIR=`echo ${kernelDev}/lib/modules/*/build`
     sed -e 's@/lib/modules/`uname -r`/build@'$MODULES_BUILD_DIR@ \
         -e 's@MKISOFS --version@MKISOFS -version@' \
         -e 's@PYTHONDIR=.*@PYTHONDIR=${if pythonBindings then python else ""}@' \

@@ -8,22 +8,22 @@ assert xineramaSupport -> xlibs.libXinerama != null;
 assert cupsSupport -> cups != null;
 
 stdenv.mkDerivation rec {
-  name = "gtk+-2.24.16";
+  name = "gtk+-2.24.17";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gtk+/2.24/${name}.tar.xz";
-    sha256 = "1lq2jdpxy2diczlplllclhl6jakm4i5ay35566ma7ygc5k66kkck";
+    sha256 = "05gl82k82w3gjrzr4vmj3ski7mp1b0jbhc49wgl9hv8mc2sb4iz9";
   };
 
   enableParallelBuilding = true;
 
   nativeBuildInputs = [ perl pkgconfig ];
 
-  propagatedBuildInputs =
-    [ xlibs.xlibs glib atk pango gdk_pixbuf cairo
-      xlibs.libXrandr xlibs.libXrender xlibs.libXcomposite xlibs.libXi
+  propagatedBuildInputs = with xlibs;
+    [ glib cairo pango gdk_pixbuf atk
+      libXrandr libXrender libXcomposite libXi libXcursor
     ]
-    ++ stdenv.lib.optional xineramaSupport xlibs.libXinerama
+    ++ stdenv.lib.optional xineramaSupport libXinerama
     ++ stdenv.lib.optionals cupsSupport [ cups ];
 
   configureFlags = "--with-xinput=yes";
