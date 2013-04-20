@@ -1,6 +1,6 @@
 From: Vladimír Čunát <vcunat@gmail.com>
 Subject: [PATCH] vlada/libpng
 
-Trying system-wide libpng with apng support.
+Only poppler tests attempt now.
 
 Signed-off-by: Vladimír Čunát <vcunat@gmail.com>
