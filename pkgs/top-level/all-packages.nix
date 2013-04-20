@@ -4798,8 +4798,6 @@ let
 
   physfs = callPackage ../development/libraries/physfs { };
 
-  pixman_new = callPackage ../development/libraries/pixman { };
-
   plib = callPackage ../development/libraries/plib { };
 
   pocketsphinx = callPackage ../development/libraries/pocketsphinx { };
