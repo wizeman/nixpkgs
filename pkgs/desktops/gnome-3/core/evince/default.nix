@@ -1,9 +1,8 @@
 { fetchurl, stdenv, pkgconfig, intltool, perl, perlXMLParser, libxml2
-, glib, gtk3, pango, atk, gdk_pixbuf
+, glib, gtk3, pango, atk, gdk_pixbuf, shared_mime_info
 , itstool, gnome_icon_theme, libgnome_keyring, gsettings_desktop_schemas
 , poppler, ghostscriptX, djvulibre, libspectre
-, makeWrapper
-, shared_mime_info
+, makeWrapper #, python /*just for tests*/
 , recentListSize ? null # 5 is not enough, allow passing a different number
 }:
 
@@ -28,26 +27,28 @@ stdenv.mkDerivation rec {
     "--disable-dbus" # strange compilation error
   ];
 
-  postUnpack = if recentListSize != null then ''
-    sed -i 's/\(gtk_recent_chooser_set_limit .*\)5)/\1${builtins.toString recentListSize})/' */shell/ev-open-recent-action.c
-    sed -i 's/\(if (++n_items == \)5\(.*\)/\1${builtins.toString recentListSize}\2/' */shell/ev-window.c
-  '' else "";
+  preConfigure = with stdenv.lib;
+    optionalString doCheck ''
+      for file in test/*.py; do
+        echo "patching $file"
+        sed '1s,/usr,${python},' -i "$file"
+      done
+    '' + optionalString (recentListSize != null) ''
+      sed -i 's/\(gtk_recent_chooser_set_limit .*\)5)/\1${builtins.toString recentListSize})/' shell/ev-open-recent-action.c
+      sed -i 's/\(if (++n_items == \)5\(.*\)/\1${builtins.toString recentListSize}\2/' shell/ev-window.c
+    '';
 
   postInstall = ''
     # Tell Glib/GIO about the MIME info directory, which is used
     # by `g_file_info_get_content_type ()'.
     wrapProgram "$out/bin/evince" \
       --prefix XDG_DATA_DIRS : "${shared_mime_info}/share:$out/share"
-
-    for pkg in "${gsettings_desktop_schemas}" "${gtk3}"; do
-      cp -s $pkg/share/glib-2.0/schemas/*.gschema.xml $out/share/glib-2.0/schemas/
-    done
-    ${glib}/bin/glib-compile-schemas $out/share/glib-2.0/schemas/
-  '';
+  '' + gsettings_desktop_schemas.doCompileSchemas;
+  doCheck = false; # would need pythonPackages.dogTail, which is missing
 
   meta = {
     homepage = http://www.gnome.org/projects/evince/;
-    description = "Evince, GNOME's document viewer";
+    description = "GNOME's document viewer";
 
     longDescription = ''
       Evince is a document viewer for multiple document formats.  It
