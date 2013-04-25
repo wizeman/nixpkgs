@@ -1,0 +1,8 @@
+From: Vladimír Čunát <vcunat@gmail.com>
+Subject: [PATCH] vlada/xfce4session
+
+xfce4session: make it systemd-aware
+
+This should solve many issuses, including:
+ - show mountable volumes
+ - fix shutdown actions
