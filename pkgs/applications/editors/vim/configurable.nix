@@ -20,7 +20,7 @@ composableDerivation {} {
     # most interpreters aren't tested yet.. (see python for example how to do it)
     flags = {
         ftNix = {
-          patches = [ ./ft-nix-support.patch ];
+          patches = [ ./ft-nix-support.patch ./vim73-breakindent.patch ];
         };
       }
       // edf { name = "darwin"; } #Disable Darwin (Mac OS X) support.
