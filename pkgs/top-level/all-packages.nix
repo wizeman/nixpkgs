@@ -433,11 +433,19 @@ let
   apg = callPackage ../tools/security/apg { };
 
   xcodeenv = callPackage ../development/mobile/xcodeenv { };
-
-  titaniumenv = import ../development/mobile/titaniumenv {
+  
+  titaniumenv_2_1 = import ../development/mobile/titaniumenv {
+    inherit pkgs;
+    pkgs_i686 = pkgsi686Linux;
+    version = "2.1";
+  };
+  
+  titaniumenv_3_1 = import ../development/mobile/titaniumenv {
     inherit pkgs;
     pkgs_i686 = pkgsi686Linux;
   };
+  
+  titaniumenv = titaniumenv_3_1;
 
   inherit (androidenv) androidsdk_4_1;
 
@@ -556,7 +564,7 @@ let
 
   cfdg = builderDefsPackage ../tools/graphics/cfdg {
     inherit libpng bison flex;
-    ffmpeg = ffmpeg_1_1;
+    ffmpeg = ffmpeg_1;
   };
 
   checkinstall = callPackage ../tools/package-management/checkinstall { };
@@ -689,7 +697,6 @@ let
 
   docbook2x = callPackage ../tools/typesetting/docbook2x {
     inherit (perlPackages) XMLSAX XMLParser XMLNamespaceSupport;
-    libiconv = if stdenv.isDarwin then libiconv else null;
   };
 
   dosfstools = callPackage ../tools/filesystems/dosfstools { };
@@ -772,6 +779,8 @@ let
 
   libbsd = callPackage ../development/libraries/libbsd { };
 
+  lprof = callPackage ../tools/graphics/lprof { };
+
   flvtool2 = callPackage ../tools/video/flvtool2 { };
 
   fontforge = lowPrio (callPackage ../tools/misc/fontforge { });
@@ -813,6 +822,8 @@ let
 
   uni2ascii = callPackage ../tools/text/uni2ascii { };
 
+  g500-control = callPackage ../tools/misc/g500-control { };
+
   gawk = callPackage ../tools/text/gawk { };
 
   gdmap = callPackage ../tools/system/gdmap { };
@@ -843,13 +854,9 @@ let
     guile = guile_1_8;
   };
 
-  gnugrep =
-    # Use libiconv only on non-GNU platforms (we can't test with
-    # `stdenv ? glibc' at this point.)
-    let gnu = stdenv.isLinux; in
-      callPackage ../tools/text/gnugrep {
-        libiconv = if gnu then null else libiconv;
-      };
+  gnugrep = callPackage ../tools/text/gnugrep {
+    libiconv = libiconvOrNull;
+  };
 
   gnulib = callPackage ../development/tools/gnulib { };
 
@@ -1474,6 +1481,8 @@ let
 
   recutils = callPackage ../tools/misc/recutils { };
 
+  recoll = callPackage ../applications/search/recoll { };
+
   refind = callPackage ../tools/misc/refind { };
 
   reiser4progs = callPackage ../tools/filesystems/reiser4progs { };
@@ -1561,6 +1570,10 @@ let
   shebangfix = callPackage ../tools/misc/shebangfix { };
 
   siege = callPackage ../tools/networking/siege {};
+
+  silc_client = callPackage ../applications/networking/instant-messengers/silc-client { };
+
+  silc_server = callPackage ../servers/silc-server { };
 
   sleuthkit = callPackage ../tools/system/sleuthkit {};
 
@@ -3304,7 +3317,11 @@ let
   pkgconfig = forceNativeDrv (callPackage ../development/tools/misc/pkgconfig { });
   pkgconfigUpstream = lowPrio (pkgconfig.override { vanilla = true; });
 
-  premake = callPackage ../development/tools/misc/premake { };
+  premake3 = callPackage ../development/tools/misc/premake/3.nix { };
+
+  premake4 = callPackage ../development/tools/misc/premake { };
+
+  premake = premake4;
 
   pstack = callPackage ../development/tools/misc/gdb/pstack.nix { };
 
@@ -3647,9 +3664,11 @@ let
     vpxSupport = !stdenv.isMips;
   };
 
-  ffmpeg_1_1 = callPackage ../development/libraries/ffmpeg/1.1.nix {
+  ffmpeg_1 = callPackage ../development/libraries/ffmpeg/1.x.nix {
     vpxSupport = !stdenv.isMips;
   };
+
+  ffms = callPackage ../development/libraries/ffms { };
 
   fftw = callPackage ../development/libraries/fftw {
     singlePrecision = false;
@@ -4313,6 +4332,9 @@ let
 
   libiconvOrLibc = if libiconvOrNull == null then gcc.libc else libiconv;
 
+  # On non-GNU systems we need GNU Gettext for libintl.
+  libintlOrEmpty = stdenv.lib.optional (!stdenv.isLinux) gettext;
+
   libid3tag = callPackage ../development/libraries/libid3tag { };
 
   libidn = callPackage ../development/libraries/libidn { };
@@ -4408,6 +4430,8 @@ let
   libosip = callPackage ../development/libraries/osip {};
 
   libotr = callPackage ../development/libraries/libotr { };
+
+  libotr_3_2 = callPackage ../development/libraries/libotr/3.2.nix { };
 
   libp11 = callPackage ../development/libraries/libp11 { };
 
@@ -4570,6 +4594,8 @@ let
    guile = guile_1_8;
   };
 
+  log4cpp = callPackage ../development/libraries/log4cpp { };
+
   log4cxx = callPackage ../development/libraries/log4cxx { };
 
   log4cplus = callPackage ../development/libraries/log4cplus { };
@@ -4612,7 +4638,7 @@ let
   mkvtoolnix = callPackage ../applications/video/mkvtoolnix { };
 
   mlt = callPackage ../development/libraries/mlt {
-    ffmpeg = ffmpeg_1_1;
+    ffmpeg = ffmpeg_1;
   };
 
   libmpeg2 = callPackage ../development/libraries/libmpeg2 { };
@@ -4718,11 +4744,7 @@ let
 
   openldap = callPackage ../development/libraries/openldap { };
 
-  openlierox = builderDefsPackage ../games/openlierox {
-    inherit (xlibs) libX11 xproto;
-    inherit gd SDL SDL_image SDL_mixer zlib libxml2
-      pkgconfig;
-  };
+  openlierox = callPackage ../games/openlierox { };
 
   libopensc_dnie = callPackage ../development/libraries/libopensc-dnie {
     opensc = opensc_0_11_7;
@@ -5298,17 +5320,28 @@ let
   # regardless.
   python26Packages = import ./python-packages.nix {
     inherit pkgs;
+    inherit (lib) lowPrio;
     python = python26;
   };
 
   python27Packages = recurseIntoAttrs (import ./python-packages.nix {
     inherit pkgs;
+    inherit (lib) lowPrio;
     python = python27;
   });
 
-  plone43Packages = recurseIntoAttrs (import ../development/web/plone {
+  plone41Packages = recurseIntoAttrs (import ../development/web/plone/4.1.6.nix {
     inherit pkgs;
-    python = python27;
+    pythonPackages = python27Packages;
+  });
+
+  plone42Packages = recurseIntoAttrs (import ../development/web/plone/4.2.5.nix {
+    inherit pkgs;
+    pythonPackages = python27Packages;
+  });
+
+  plone43Packages = recurseIntoAttrs (import ../development/web/plone/4.3.0.nix {
+    inherit pkgs;
     pythonPackages = python27Packages;
   });
 
@@ -5531,7 +5564,7 @@ let
 
   OVMF = callPackage ../applications/virtualization/OVMF { };
 
-  postgresql = postgresql83;
+  postgresql = postgresql92;
 
   postgresql83 = callPackage ../servers/sql/postgresql/8.3.x.nix { };
 
@@ -5545,9 +5578,7 @@ let
 
   postgresql_jdbc = callPackage ../servers/sql/postgresql/jdbc { };
 
-  psqlodbc = callPackage ../servers/sql/postgresql/psqlodbc {
-    postgresql = postgresql91;
-  };
+  psqlodbc = callPackage ../servers/sql/postgresql/psqlodbc { };
 
   pyIRCt = builderDefsPackage (import ../servers/xmpp/pyIRCt) {
     inherit xmpppy pythonIRClib python makeWrapper;
@@ -6593,6 +6624,8 @@ let
     eigen = eigen2;
   };
 
+  avxsynth = callPackage ../applications/video/avxsynth { };
+
   awesome = callPackage ../applications/window-managers/awesome {
     lua = lua5;
     cairo = cairo.override { xcbSupport = true; };
@@ -6623,6 +6656,7 @@ let
     # For some reason, TLS support is broken when using GnuTLS 3.0 (can't
     # connect to jabber.org, for instance.)
     gnutls = gnutls2;
+    libotr = libotr_3_2;
   };
 
   blender = callPackage  ../applications/misc/blender {
@@ -7002,7 +7036,7 @@ let
 
   firefoxWrapper = wrapFirefox { browser = pkgs.firefox; };
 
-  firefoxPkgs = pkgs.firefox19Pkgs;
+  firefoxPkgs = pkgs.firefox20Pkgs;
 
   firefox36Pkgs = callPackage ../applications/networking/browsers/firefox/3.6.nix {
     inherit (gnome) libIDL;
@@ -7023,6 +7057,13 @@ let
 
   firefox19Wrapper = lowPrio (wrapFirefox { browser = firefox19Pkgs.firefox; });
 
+  firefox20Pkgs = callPackage ../applications/networking/browsers/firefox/20.0.nix {
+    inherit (gnome) libIDL;
+    inherit (pythonPackages) pysqlite;
+  };
+
+  firefox20Wrapper = lowPrio (wrapFirefox { browser = firefox20Pkgs.firefox; });
+
   flac = callPackage ../applications/audio/flac { };
 
   flashplayer = callPackage ../applications/networking/browsers/mozilla-plugins/flashplayer-11 {
@@ -7037,6 +7078,8 @@ let
     jdk = jdk;
     jre = jdk;
   };
+
+  freenet = callPackage ../applications/networking/p2p/freenet { };
 
   freepv = callPackage ../applications/graphics/freepv { };
 
@@ -7173,6 +7216,8 @@ let
 
   gqview = callPackage ../applications/graphics/gqview { };
 
+  gmpc = callPackage ../applications/audio/gmpc { };
+
   gmtk = callPackage ../applications/networking/browsers/mozilla-plugins/gmtk {
     inherit (gnome) GConf;
   };
@@ -7202,6 +7247,8 @@ let
   hello = callPackage ../applications/misc/hello/ex-2 { };
 
   hexedit = callPackage ../applications/editors/hexedit { };
+
+  hipchat = callPackage_i686 ../applications/networking/instant-messengers/hipchat { };
 
   homebank = callPackage ../applications/office/homebank { };
 
@@ -7282,6 +7329,10 @@ let
   iptraf = callPackage ../applications/networking/iptraf { };
 
   irssi = callPackage ../applications/networking/irc/irssi { };
+
+  irssi_fish = callPackage ../applications/networking/irc/irssi/fish { };
+
+  irssi_otr = callPackage ../applications/networking/irc/irssi/otr { };
 
   bip = callPackage ../applications/networking/irc/bip { };
 
@@ -7415,6 +7466,8 @@ let
 
   mhwaveedit = callPackage ../applications/audio/mhwaveedit {};
 
+  mid2key = callPackage ../applications/audio/mid2key { };
+
   midori = builderDefsPackage (import ../applications/networking/browsers/midori) {
     inherit imagemagick intltool python pkgconfig webkit libxml2
       which gettext makeWrapper file libidn sqlite docutils libnotify
@@ -7485,12 +7538,14 @@ let
 
   ncmpcpp = callPackage ../applications/audio/ncmpcpp { };
 
+  normalize = callPackage ../applications/audio/normalize { };
+
   mplayer = callPackage ../applications/video/mplayer {
     pulseSupport = config.pulseaudio or false;
   };
 
   mplayer2 = callPackage ../applications/video/mplayer2 {
-    ffmpeg = ffmpeg_1_1;
+    ffmpeg = ffmpeg_1;
   };
 
   MPlayerPlugin = browser:
@@ -7681,7 +7736,7 @@ let
   ratpoison = callPackage ../applications/window-managers/ratpoison { };
 
   rawtherapee = callPackage ../applications/graphics/rawtherapee {
-    fftw = fftw.override {float = true;}; 
+    fftw = fftw.override {float = true;};
   };
 
   rcs = callPackage ../applications/version-management/rcs { };
@@ -7732,9 +7787,16 @@ let
     usePulseAudio = config.pulseaudio or true;
   };
 
+  skype4pidgin = callPackage ../applications/networking/instant-messengers/pidgin-plugins/skype4pidgin { };
+
+
+  skype_call_recorder = callPackage ../applications/networking/instant-messengers/skype-call-recorder { };
+
   st = callPackage ../applications/misc/st { };
 
   dropbox = callPackage ../applications/networking/dropbox { };
+
+  dropbox-cli = callPackage ../applications/networking/dropbox-cli { };
 
   lightdm = callPackage ../applications/display-managers/lightdm { };
 
@@ -7958,7 +8020,7 @@ let
   };
 
   vlc = callPackage ../applications/video/vlc {
-    ffmpeg = ffmpeg_1_1;
+    ffmpeg = ffmpeg_1;
   };
 
   vnstat = callPackage ../applications/networking/vnstat { };
@@ -7977,7 +8039,7 @@ let
 
   wings = callPackage ../applications/graphics/wings {
     erlang = erlangR14B04;
-    esdl = esdl.override { erlang = erlangR14B04; }; 
+    esdl = esdl.override { erlang = erlangR14B04; };
   };
 
   wmname = callPackage ../applications/misc/wmname { };
@@ -8198,9 +8260,15 @@ let
 
   crrcsim = callPackage ../games/crrcsim {};
 
+  dhewm3 = callPackage ../games/dhewm3 {};
+
   drumkv1 = callPackage ../applications/audio/drumkv1 { };
 
   dwarf_fortress = callPackage_i686 ../games/dwarf-fortress { };
+
+  d1x_rebirth = callPackage ../games/d1x-rebirth { };
+
+  d2x_rebirth = callPackage ../games/d2x-rebirth { };
 
   eduke32 = callPackage ../games/eduke32 {
     stdenv = overrideGCC stdenv gcc47;
@@ -8453,16 +8521,18 @@ let
 
   gnome = recurseIntoAttrs gnome2;
 
-  kde4 = recurseIntoAttrs pkgs.kde47;
+  kde4 = recurseIntoAttrs pkgs.kde48;
 
   kde47 = kdePackagesFor (pkgs.kde47 // {
       boost = boost149;
       eigen = eigen2;
+      libotr = libotr_3_2;
     }) ../desktops/kde-4.7;
 
   kde48 = kdePackagesFor (pkgs.kde48 // {
       boost = boost149;
       eigen = eigen2;
+      libotr = libotr_3_2;
     }) ../desktops/kde-4.8;
 
   kdePackagesFor = self: dir:
@@ -9073,6 +9143,8 @@ let
   texLiveModerncv = builderDefsPackage (import ../tools/typesetting/tex/texlive/moderncv.nix) {
     inherit texLive unzip;
   };
+
+  thinkfan = callPackage ../tools/system/thinkfan { };
 
   vice = callPackage ../misc/emulators/vice { };
 
