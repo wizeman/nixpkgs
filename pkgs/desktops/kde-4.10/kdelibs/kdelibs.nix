@@ -55,7 +55,10 @@ kde {
     "-DDOCBOOKXML_CURRENTDTD_DIR=${docbook_xml_dtd_42}/xml/dtd/docbook"
     "-DDOCBOOKXSL_DIR=${docbook_xsl}/xml/xsl/docbook"
     "-DHUPNP_ENABLED=ON"
+    "-DCMAKE_BUILD_TYPE=debugfull"
   ];
+  dontStrip = true;
+
 
   meta = {
     description = "KDE libraries";

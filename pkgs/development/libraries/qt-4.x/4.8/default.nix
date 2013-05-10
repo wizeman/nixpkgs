@@ -21,6 +21,8 @@ let v = "4.8.4"; in
 #    false build-time dependencies
 
 stdenv.mkDerivation ( rec {
+  dontStrip = true;
+
   name = "qt-${v}";
 
   src = fetchurl {
@@ -62,7 +64,7 @@ stdenv.mkDerivation ( rec {
 
   configureFlags =
     ''
-      -v -no-separate-debug-info -release -no-fast -confirm-license -opensource
+      -v -debug -no-fast -confirm-license -opensource
 
       -opengl -xrender -xrandr -xinerama -xcursor -xinput -xfixes -fontconfig
       -qdbus -${if cups == null then "no-" else ""}cups -glib -dbus-linked -openssl-linked

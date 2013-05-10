@@ -29,7 +29,9 @@ kde {
   cmakeFlags = [
     "-DDOCBOOKXML_CURRENTDTD_DIR=${docbook_xml_dtd_42}/xml/dtd/docbook"
     "-DDOCBOOKXSL_DIR=${docbook_xsl}/xml/xsl/docbook"
+    "-DCMAKE_BUILD_TYPE=debugfull"
   ];
+  dontStrip = true;
 
   meta = {
     description = "KDE libraries";
