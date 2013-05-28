@@ -1,19 +1,20 @@
 {stdenv, fetchurl, libX11, xproto, libXt, libXaw, libSM, libICE, libXmu
-, libXext, gnuchess, texinfo, libXpm
+, libXext, gnuchess, texinfo, libXpm, pkgconfig, librsvg, cairo
 }:
 let
   s = # Generated upstream information
   rec {
     baseName="xboard";
-    version="4.6.2";
+    version="4.7.1";
     name="${baseName}-${version}";
-    hash="1pw90fh1crf0nkqyql54z728vn2093hwdh2v5i5703z9qv9g4mrf";
-    url="http://ftp.gnu.org/gnu/xboard/xboard-4.6.2.tar.gz";
-    sha256="1pw90fh1crf0nkqyql54z728vn2093hwdh2v5i5703z9qv9g4mrf";
+    hash="0hnav2swswaf0463c4wnmgwaif3g42f2a1mqyqc5fa1py32iy6ry";
+    url="http://ftp.gnu.org/gnu/xboard/xboard-4.7.1.tar.gz";
+    sha256="0hnav2swswaf0463c4wnmgwaif3g42f2a1mqyqc5fa1py32iy6ry";
   };
   buildInputs = [
     libX11 xproto libXt libXaw libSM libICE libXmu 
-    libXext gnuchess texinfo libXpm
+    libXext gnuchess texinfo libXpm pkgconfig librsvg 
+    cairo
   ];
 in
 stdenv.mkDerivation {

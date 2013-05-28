@@ -6,19 +6,18 @@
 , networkInfo, networkMulticast, networkProtocolXmpp, openssh, QuickCheck
 , random, regexCompat, rsync, SafeSemaphore, SHA, stm, text, time, transformers
 , transformersBase, utf8String, uuid, wai, waiLogger, warp, xmlConduit, xmlTypes
-, yesod, yesodDefault, yesodForm, yesodStatic, testpack
-, cabalInstall		# TODO: remove this build input at the next update
+, yesod, yesodDefault, yesodForm, yesodStatic, regexTdfa
 }:
 
 let
-  version = "4.20130227";
+  version = "4.20130501";
 in
 stdenv.mkDerivation {
   name = "git-annex-${version}";
 
   src = fetchurl {
-    url = "http://git.kitenet.net/?p=git-annex.git;a=snapshot;sf=tgz;h=${version}";
-    sha256 = "1zw5kzb08zz43ahbhrazjpq9zn73l3kwnqilp464frf7fg7rwan6";
+    url = "https://github.com/joeyh/git-annex/tarball/${version}";
+    sha256 = "1280sdj3d3s3k5a1znzl7xzzyncv9kz522bprhwb9if03v6xh2kl";
     name = "git-annex-${version}.tar.gz";
   };
 
@@ -30,20 +29,21 @@ stdenv.mkDerivation {
     networkProtocolXmpp openssh QuickCheck random regexCompat rsync
     SafeSemaphore SHA stm text time transformers transformersBase utf8String
     uuid wai waiLogger warp xmlConduit xmlTypes yesod yesodDefault yesodForm
-    yesodStatic which perl testpack cabalInstall ];
+    yesodStatic which perl regexTdfa ];
 
   configurePhase = ''
-    makeFlagsArray=( PREFIX=$out )
+    makeFlagsArray=( PREFIX=$out CABAL=./Setup )
     patchShebangs .
-
-    # cabal-install wants to store stuff in $HOME
-    mkdir ../tmp
-    export HOME=$PWD/../tmp
-
-    cabal configure -f-fast -ftestsuite -f-android -fproduction -fdns -fxmpp -fpairing -fwebapp -fassistant -fdbus -finotify -fwebdav -fs3
+    ghc -O2 --make Setup
+    ./Setup configure -ftestsuite -f-android -fproduction -fdns -fxmpp -fpairing -fwebapp -fassistant -fdbus -finotify -fwebdav -fs3
   '';
 
-  checkPhase = "./git-annex test";
+  doCheck = true;
+  checkPhase = ''
+    export HOME="$NIX_BUILD_TOP/tmp"
+    mkdir "$HOME"
+    ./git-annex test
+  '';
 
   meta = {
     homepage = "http://git-annex.branchable.com/";

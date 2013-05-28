@@ -9,14 +9,18 @@ ${VERSIONS}
 
 
 cat >default.nix <<EOF
-{ stdenv, fetchurl }:
+{ stdenv, fetchurl, lib }:
 
 let
 pythonDocs = {
 EOF
 
 for type in $TYPES; do
-    echo "  ${type/-/_} = {" >> default.nix
+    cat >>default.nix <<EOF
+  ${type/-/_} = {
+    recurseForDerivations = true;
+EOF
+
     for version in $VERSIONS; do
         major=$(echo -n ${version}| cut -d. -f1)
         minor=$(echo -n ${version}| cut -d. -f2)
@@ -42,7 +46,7 @@ for type in $TYPES; do
         attrname=python${major}${minor}
         cat >>default.nix <<EOF
     ${attrname} = import ./${major}.${minor}-${type}.nix {
-      inherit stdenv fetchurl;
+      inherit stdenv fetchurl lib;
     };
 EOF
 

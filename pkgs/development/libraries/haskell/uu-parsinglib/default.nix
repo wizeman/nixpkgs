@@ -1,10 +1,10 @@
-{ cabal, ListLike, time }:
+{ cabal, ListLike, time, uuInterleaved }:
 
 cabal.mkDerivation (self: {
   pname = "uu-parsinglib";
-  version = "2.7.4.1";
-  sha256 = "1aya95j7dd0yal0ygy6d4w4wmlhgn5ddy3c5f6ncl4k3kg7hjxd1";
-  buildDepends = [ ListLike time ];
+  version = "2.8.1";
+  sha256 = "10phjwm8dm45rms2vfpx9vzm56v7b9wp0308xkfbalh5zbvxmv35";
+  buildDepends = [ ListLike time uuInterleaved ];
   meta = {
     homepage = "http://www.cs.uu.nl/wiki/bin/view/HUT/ParserCombinators";
     description = "Fast, online, error-correcting, monadic, applicative, merging, permuting, idiomatic parser combinators";

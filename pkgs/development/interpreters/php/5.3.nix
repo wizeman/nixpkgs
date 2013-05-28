@@ -9,7 +9,7 @@ in
 
 composableDerivation.composableDerivation {} ( fixed : let inherit (fixed.fixed) version; in {
 
-  version = "5.3.18";
+  version = "5.3.25";
 
   name = "php-${version}";
 
@@ -43,7 +43,7 @@ composableDerivation.composableDerivation {} ( fixed : let inherit (fixed.fixed)
       libxml2 = {
         configureFlags = [
           "--with-libxml-dir=${libxml2}"
-          "--with-iconv-dir=${libiconv}"
+          #"--with-iconv-dir=${libiconv}"
           ];
         buildInputs = [ libxml2 ];
       };
@@ -143,6 +143,10 @@ composableDerivation.composableDerivation {} ( fixed : let inherit (fixed.fixed)
         configureFlags = ["--enable-zip"];
       };
 
+      ftp = {
+        configureFlags = ["--enable-ftp"];
+      };
+
       /*
          php is build within this derivation in order to add the xdebug lines to the php.ini.
          So both Apache and command line php both use xdebug without having to configure anything.
@@ -180,6 +184,7 @@ composableDerivation.composableDerivation {} ( fixed : let inherit (fixed.fixed)
     mcryptSupport = config.php.mcrypt or false;
     bz2Support = config.php.bz2 or false;
     zipSupport = config.php.zip or true;
+    ftpSupport = config.php.ftp or true;
   };
 
   configurePhase = ''
@@ -196,7 +201,7 @@ composableDerivation.composableDerivation {} ( fixed : let inherit (fixed.fixed)
 
   src = fetchurl {
     url = "http://nl.php.net/get/php-${version}.tar.bz2/from/this/mirror";
-    sha256 = "0bqsdwil13m1r449c4rhrc8cmx2a09k8h2g107qqxfwanzndwrgh";
+    sha256 = "15dwks0823m0vc3qv58yxfvchwx9ydg5gjvjy8kpc5w3syras76m";
     name = "php-${version}.tar.bz2";
   };
 

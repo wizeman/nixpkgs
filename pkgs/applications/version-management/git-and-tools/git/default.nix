@@ -1,4 +1,4 @@
-{ fetchurl, stdenv, curl, openssl, zlib, expat, perl, python, gettext, cpio, gnugrep
+{ fetchurl, stdenv, curl, openssl, zlib, expat, perl, python, gettext, cpio, gnugrep, gzip
 , asciidoc, texinfo, xmlto, docbook2x, docbook_xsl, docbook_xml_dtd_45
 , libxslt, tcl, tk, makeWrapper
 , svnSupport, subversionClient, perlLibs, smtpPerlLibs
@@ -10,7 +10,7 @@
 
 let
 
-  version = "1.8.1.3";
+  version = "1.8.2.3";
 
   svn = subversionClient.override { perlBindings = true; };
 
@@ -21,15 +21,18 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "http://git-core.googlecode.com/files/git-${version}.tar.gz";
-    sha256 = "1waz35cwgcwhgmgzmc4s00yd2vivhy77p49crgqsl0nqpxyj8lrp";
+    sha1 = "2831f7deec472db4d0d0cdffb4d82d91cecdf295";
   };
 
-  patches = [ ./docbook2texi.patch ];
+  patches = [ ./docbook2texi.patch ./symlinks-in-bin.patch ];
 
   buildInputs = [curl openssl zlib expat gettext cpio makeWrapper]
     ++ stdenv.lib.optionals withManual [ asciidoc texinfo xmlto docbook2x
          docbook_xsl docbook_xml_dtd_45 libxslt ]
     ++ stdenv.lib.optionals guiSupport [tcl tk];
+
+  # required to support pthread_cancel()
+  NIX_LDFLAGS = stdenv.lib.optionalString (!stdenv.isDarwin) "-lgcc_s";
 
   makeFlags = "prefix=\${out} PERL_PATH=${perl}/bin/perl SHELL_PATH=${stdenv.shell} "
       + (if pythonSupport then "PYTHON_PATH=${python}/bin/python" else "NO_PYTHON=1");
@@ -37,6 +40,8 @@ stdenv.mkDerivation {
   # FIXME: "make check" requires Sparse; the Makefile must be tweaked
   # so that `SPARSE_FLAGS' corresponds to the current architecture...
   #doCheck = true;
+
+  installFlags = "NO_INSTALL_HARDLINKS=1";
 
   postInstall =
     ''
@@ -63,6 +68,11 @@ stdenv.mkDerivation {
       sed -i -e 's|	perl -ne|	${perl}/bin/perl -ne|g' \
              -e 's|	perl -e|	${perl}/bin/perl -e|g' \
              $out/libexec/git-core/{git-am,git-submodule}
+
+      # gzip (and optionally bzip2, xz, zip) are a runtime dependencies for
+      # gitweb.cgi, need to patch so that it's found
+      sed -i -e "s|'compressor' => \['gzip'|'compressor' => ['${gzip}/bin/gzip'|" \
+          $out/share/gitweb/gitweb.cgi
     ''
 
    + (if svnSupport then
@@ -108,46 +118,21 @@ stdenv.mkDerivation {
          notSupported "$out/$prog" \
                       "reinstall with config git = { guiSupport = true; } set"
        done
-     '')
-
-   # Don't know why hardlinks aren't created. git installs the same executable
-   # multiple times into $out so replace duplicates by symlinks because I
-   # haven't tested whether the nix distribution system can handle hardlinks.
-   # This reduces the size of $out from 115MB down to 13MB on x86_64-linux!
-   + ''
-      declare -A seen
-      shopt -s globstar
-      for f in "$out/"**; do
-        if [ -L "$f" ]; then continue; fi
-        test -f "$f" || continue
-        sum=$(md5sum "$f");
-        sum=''\${sum/ */}
-        if [ -z "''\${seen["$sum"]}" ]; then
-          seen["$sum"]="$f"
-        else
-          rm "$f"; ln -v -s "''\${seen["$sum"]}" "$f"
-        fi
-      done
-     '';
+     '');
 
   enableParallelBuilding = true;
 
   meta = {
-    license = "GPLv2";
     homepage = http://git-scm.com/;
     description = "Git, a popular distributed version control system";
+    license = stdenv.lib.licenses.gpl2Plus;
 
     longDescription = ''
       Git, a popular distributed version control system designed to
       handle very large projects with speed and efficiency.
     '';
 
-    maintainers =
-      [ # Add your name here!
-        stdenv.lib.maintainers.ludo
-        stdenv.lib.maintainers.simons
-      ];
-
     platforms = stdenv.lib.platforms.all;
+    maintainers = [ stdenv.lib.maintainers.ludo stdenv.lib.maintainers.simons ];
   };
 }

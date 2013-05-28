@@ -118,7 +118,6 @@ rec {
   ];
 
   savannah = [
-    ftp://ftp.twaren.net/Unix/NonGNU/
     ftp://mirror.csclub.uwaterloo.ca/nongnu/
     ftp://mirror.publicns.net/pub/nongnu/
     ftp://savannah.c3sl.ufpr.br/
@@ -155,6 +154,7 @@ rec {
     ftp://ftp.nl.uu.net/pub/CPAN/
     http://ftp.funet.fi/pub/CPAN/
     http://cpan.perl.org/
+    http://backpan.perl.org/  # for old releases
   ];
 
   # Debian.
@@ -222,6 +222,20 @@ rec {
     http://mirror.aarnet.edu.au/pub/GNOME/
     ftp://ftp.cse.buffalo.edu/pub/Gnome/
     ftp://ftp.nara.wide.ad.jp/pub/X11/GNOME/
+  ];
+
+  xfce = [
+    http://archive.xfce.org/
+    http://mirror.netcologne.de/xfce/
+    http://archive.se.xfce.org/xfce/
+    http://archive.be.xfce.org/xfce/
+    http://mirror.perldude.de/archive.xfce.org/
+    http://archive.be2.xfce.org/
+    http://ftp.udc.es/xfce/
+    http://archive.al-us.xfce.org/
+    http://mirror.yongbok.net/X11/xfce-mirror/
+    http://mirrors.tummy.com/pub/archive.xfce.org/
+    http://xfce.mirror.uber.com.au/
   ];
 
   # X.org.

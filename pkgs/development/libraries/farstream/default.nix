@@ -10,11 +10,13 @@ stdenv.mkDerivation rec {
     sha256 = "1nbkbvq959f70zhr03fwdibhs0sbf1k7zmbz9w99vda7gdcl0nps";
   };
 
-  buildInputs = [ libnice python pygobject gupnp_igd ];
+  buildInputs = [ libnice python pygobject gupnp_igd libnice ];
 
-  buildNativeInputs = [ pkgconfig ];
+  nativeBuildInputs = [ pkgconfig ];
 
-  propagatedBuildInputs = [ gstreamer gst_plugins_base gst_plugins_good gst_plugins_bad gst_libav ];
+  propagatedBuildInputs = [ gstreamer gst_plugins_base
+    gst_plugins_good gst_plugins_bad gst_libav
+    ];
 
   meta = {
     homepage = http://www.freedesktop.org/wiki/Software/Farstream;

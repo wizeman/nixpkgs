@@ -4,11 +4,11 @@ let
   s= # Generated upstream information
   rec {
     baseName="sbcl";
-    version="1.1.3";
+    version="1.1.7";
     name="${baseName}-${version}";
-    hash="1qy64fy0nvjdgzlmasswgvzg1b2h2rygnnjvlf9vj7wg16i5383i";
-    url="mirror://sourceforge/project/sbcl/sbcl/1.1.3/sbcl-1.1.3-source.tar.bz2";
-    sha256="1qy64fy0nvjdgzlmasswgvzg1b2h2rygnnjvlf9vj7wg16i5383i";
+    hash="1g2z1p1qk9pdz1p2fbmy3bhwqq0li5vwy0vymkkxcwrhqnw5h8n8";
+    url="mirror://sourceforge/project/sbcl/sbcl/1.1.7/sbcl-1.1.7-source.tar.bz2";
+    sha256="1g2z1p1qk9pdz1p2fbmy3bhwqq0li5vwy0vymkkxcwrhqnw5h8n8";
   };
   buildInputs = with a; [
     clisp makeWrapper
@@ -21,7 +21,7 @@ rec {
   configureFlags = [];
 
   /* doConfigure should be removed if not needed */
-  phaseNames = ["setVars" "doFixNewer" "doFixTests" "setVersion" "doBuild" "doInstall" "doWrap"];
+  phaseNames = ["setVars" "doFixNewer" "doFixTests" "setVersion" "doPatch" "doBuild" "doInstall" "doWrap"];
 
   setVars = a.fullDepEntry (''
     export INSTALL_ROOT=$out

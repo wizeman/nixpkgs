@@ -32,8 +32,10 @@ stdenv.mkDerivation rec {
     sed -e 's@am__append_5 *=.*@am_append_5 =@' -i lib/gvc/Makefile
   '';
 
+  # "command -v" is POSIX, "which" is not
   postInstall = ''
     sed -i 's|`which lefty`|"'$out'/bin/lefty"|' $out/bin/dotty
+    sed -i 's|which|command -v|' $out/bin/vimdot
   '';
 
   meta = {
@@ -50,6 +52,6 @@ stdenv.mkDerivation rec {
     '';
 
     platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.simons ];
+    maintainers = with stdenv.lib.maintainers; [ simons bjornfor ];
   };
 }

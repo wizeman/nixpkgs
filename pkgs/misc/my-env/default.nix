@@ -59,12 +59,12 @@
 { mkDerivation, substituteAll, pkgs }:
     { stdenv ? pkgs.stdenv, name, buildInputs ? []
     , propagatedBuildInputs ? [], gcc ? stdenv.gcc, cTags ? [], extraCmds ? ""
-    , shell ? "${pkgs.bashInteractive}/bin/bash"}:
+    , cleanupCmds ? "", shell ? "${pkgs.bashInteractive}/bin/bash"}:
 
 mkDerivation {
   # The setup.sh script from stdenv will expect the native build inputs in
-  # the buildNativeInputs environment variable.
-  buildNativeInputs = [ ] ++ buildInputs;
+  # the nativeBuildInputs environment variable.
+  nativeBuildInputs = [ ] ++ buildInputs;
   # Trick to bypass the stdenv usual change of propagatedBuildInputs => propagatedNativeBuildInputs
   propagatedBuildInputs2 = propagatedBuildInputs;
 
@@ -87,7 +87,7 @@ mkDerivation {
         -e 's@trap.*@@' \
         -i "$s"
     cat >> "$out/dev-envs/''${name/env-/}" << EOF
-      buildNativeInputs="$buildNativeInputs"
+      nativeBuildInputs="$nativeBuildInputs"
       propagatedBuildInputs="$propagatedBuildInputs2"
       # the setup-new script wants to write some data to a temp file.. so just let it do that and tidy up afterwards
       tmp="\$("${pkgs.coreutils}/bin/mktemp" -d)"
@@ -133,8 +133,16 @@ mkDerivation {
       fi
       rm -fr "\$tmp"
       ${extraCmds}
+
+      nix_cleanup() {
+        :
+        ${cleanupCmds}
+      }
+
       export PATH
       echo $name loaded
+
+      trap nix_cleanup EXIT
     EOF
 
     mkdir -p $out/bin

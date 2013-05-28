@@ -4,8 +4,8 @@
 
 cabal.mkDerivation (self: {
   pname = "certificate";
-  version = "1.3.5";
-  sha256 = "17g2alyib89y2k8jjg4b6jskz0ndpr92yi8hzra7vw7ygfi5mi4j";
+  version = "1.3.7";
+  sha256 = "06sfka5p381gayx2q7vvyr7dl8q8d4jfqdrys3k0z8fjxdbqrqya";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [

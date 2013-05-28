@@ -1,11 +1,11 @@
 { stdenv, fetchurl, python, pkgconfig, glib }:
 
 stdenv.mkDerivation rec {
-  name = "pygobject-3.0.4";
+  name = "pygobject-2.28.6";
   
   src = fetchurl {
-    url = "http://ftp.gnome.org/pub/GNOME/sources/pygobject/3.0/${name}.tar.xz";
-    sha256 = "f457b1d7f6b8bfa727593c3696d2b405da66b4a8d34cd7d3362ebda1221f0661";
+    url = "http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/${name}.tar.xz";
+    sha256 = "1f5dfxjnil2glfwxnqr14d2cjfbkghsbsn8n04js2c2icr7iv2pv";
   };
 
   configureFlags = "--disable-introspection";

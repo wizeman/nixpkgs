@@ -1,16 +1,16 @@
-{ cabal, ansiTerminal, filepath, hspecExpectations, HUnit
-, QuickCheck, setenv, silently, time, transformers
+{ cabal, ansiTerminal, deepseq, filepath, hspecExpectations, HUnit
+, QuickCheck, quickcheckIo, random, setenv, time, transformers
 }:
 
 cabal.mkDerivation (self: {
   pname = "hspec-meta";
-  version = "1.4.4";
-  sha256 = "1p1miiaa38rd92bz695znlwd6wyvs8zpp2idyw5pkzvhqi8w10a1";
+  version = "1.5.4";
+  sha256 = "07m7wxannk9rr8q2bdxhkjjlvwlzp7lq2c41y6cgjkjcm2x9qcc8";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [
-    ansiTerminal filepath hspecExpectations HUnit QuickCheck setenv
-    silently time transformers
+    ansiTerminal deepseq filepath hspecExpectations HUnit QuickCheck
+    quickcheckIo random setenv time transformers
   ];
   doCheck = false;
   meta = {

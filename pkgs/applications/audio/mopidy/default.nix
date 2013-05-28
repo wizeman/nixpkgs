@@ -5,16 +5,16 @@
 pythonPackages.buildPythonPackage rec {
   name = "mopidy-${version}";
 
-  version = "0.11.1";
+  version = "0.14.1";
 
   src = fetchgit {
     url = "https://github.com/mopidy/mopidy.git";
     rev = "refs/tags/v${version}";
-    sha256 = "123p9hsnlgwvrw4vzlxjf5f43rqzqa3ynbqha8pyi6r0q3ln7qjn";
+    sha256 = "0lgd8dpiri9m6sigpf1g1qzvz25lkb38lskgwvb8j7x64y104z0v";
   };
 
   propagatedBuildInputs = with pythonPackages; [
-   gst_python pygobject pykka pyspotify pylast cherrypy ws4py
+   pygobject pykka pyspotify pylast cherrypy ws4py
   ];
 
   # python zip complains about old timestamps

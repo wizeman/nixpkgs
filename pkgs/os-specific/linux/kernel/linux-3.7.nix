@@ -164,6 +164,7 @@ let
       AIC79XX_DEBUG_ENABLE n
       AIC7XXX_DEBUG_ENABLE n
       AIC94XX_DEBUG n
+      AUDIT_LOGINUID_IMMUTABLE y
       B43_PCMCIA y
       BLK_DEV_CMD640_ENHANCED y # CMD640 enhanced support
       BLK_DEV_IDEACPI y # IDE ACPI support
@@ -178,6 +179,7 @@ let
       DMAR? n # experimental
       DVB_DYNAMIC_MINORS? y # we use udev
       EFI_STUB y # EFI bootloader in the bzImage itself
+      FHANDLE y # used by systemd
       FUSION y # Fusion MPT device support
       IDE_GD_ATAPI y # ATAPI floppy support
       IRDA_ULTRA y # Ultra (connectionless) protocol
@@ -213,8 +215,8 @@ let
       # Linux Containers
       RT_GROUP_SCHED? y
       CGROUP_DEVICE? y
-      CGROUP_MEM_RES_CTLR? y
-      CGROUP_MEM_RES_CTLR_SWAP? y
+      MEMCG? y
+      MEMCG_SWAP? y
       DEVPTS_MULTIPLE_INSTANCES? y
 
       # Enable staging drivers.  These are somewhat experimental, but

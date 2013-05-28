@@ -1,14 +1,15 @@
-{ cabal, basicPrelude, hashable, hspec, liftedBase, QuickCheck
-, systemFilepath, text, transformers, unorderedContainers, vector
+{ cabal, basicPrelude, hashable, hspec, liftedBase, monadControl
+, QuickCheck, systemFilepath, text, transformers
+, unorderedContainers, vector
 }:
 
 cabal.mkDerivation (self: {
   pname = "classy-prelude";
-  version = "0.5.3";
-  sha256 = "0xlhdxkxvrzj9y8wdl2f1pz94zz2gfa9vfbia9prhr7skirxvsad";
+  version = "0.5.7";
+  sha256 = "1wq8la7nq3dh21yqwcjhwgy5s5mpqlvmrfma48v8ch6w4wwb0sqz";
   buildDepends = [
-    basicPrelude hashable liftedBase systemFilepath text transformers
-    unorderedContainers vector
+    basicPrelude hashable liftedBase monadControl systemFilepath text
+    transformers unorderedContainers vector
   ];
   testDepends = [ hspec QuickCheck transformers ];
   meta = {
