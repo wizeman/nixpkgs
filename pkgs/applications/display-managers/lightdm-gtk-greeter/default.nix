@@ -1,23 +1,33 @@
-{ stdenv, fetchurl, lightdm, pkgconfig, gtk3, intltool }:
+{ stdenv, fetchurl, lightdm, pkgconfig, intltool
+, useGTK2 ? true, gtk2, gtk3 # don't pull gtk3 by default
+}:
 
-stdenv.mkDerivation {
-  name = "lightdm-gtk-greeter";
+let
+  ver_branch = "1.6";
+  version = "1.5.2";
+in
+stdenv.mkDerivation rec {
+  name = "lightdm-gtk-greeter-${version}";
 
   src = fetchurl {
-    url = "https://launchpad.net/lightdm-gtk-greeter/1.6/1.5.1/+download/lightdm-gtk-greeter-1.5.1.tar.gz";
-    sha256 = "ecce7e917a79fa8f2126c3fafb6337f81f2198892159a4ef695016afecd2d621";
+    url = "${meta.homepage}/${ver_branch}/${version}/+download/${name}.tar.gz";
+    sha256 = "1k41sxdzm35mh7pfg1czvby22bdgzhrwar881w5i61lk79w13rhd";
   };
 
-  buildInputs = [ pkgconfig gtk3 lightdm intltool ];
-
-  patches =
-    [ ./lightdm-gtk-greeter.patch
-    ];
-
+  patches = [ ./lightdm-gtk-greeter.patch ];
   patchFlags = "-p0";
+
+  buildInputs = [ pkgconfig lightdm intltool (if useGTK2 then gtk2 else gtk3) ];
+
+  configureFlags = stdenv.lib.optional useGTK2 "--with-gtk2";
 
   postInstall = ''
       substituteInPlace "$out/share/xgreeters/lightdm-gtk-greeter.desktop" \
         --replace "Exec=lightdm-gtk-greeter" "Exec=$out/sbin/lightdm-gtk-greeter"
     '';
+
+  meta = {
+    homepage = http://launchpad.net/lightdm-gtk-greeter;
+    platforms = stdenv.lib.platforms.linux;
+  };
 }
