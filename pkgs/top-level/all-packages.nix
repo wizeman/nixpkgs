@@ -4989,6 +4989,9 @@ let
   qt48 = callPackage ../development/libraries/qt-4.x/4.8 {
     # GNOME dependencies are not used unless gtkStyle == true
     inherit (pkgs.gnome) libgnomeui GConf gnome_vfs;
+    # qt48 doesn't support gst-1.* but even this doesn't seem to be detected and used
+    gstreamer = gstreamer_0_10;
+    gst_plugins_base = gst_plugins_base_0_10;
   };
 
   qt4_for_qtcreator = qt48.override {
