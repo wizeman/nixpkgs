@@ -1,26 +1,25 @@
-{ fetchurl, stdenv, perl, python, bison, flex, pkgconfig, glib, libxml2 }:
+{ fetchurl, stdenv, perl, python, bison, flex, pkgconfig, intltool, glib, libxml2 }:
 
 stdenv.mkDerivation rec {
-  name = "gstreamer-1.0.5";
+  name = "gstreamer-1.0.7";
 
   src = fetchurl {
     urls =
       [ "${meta.homepage}/src/gstreamer/${name}.tar.xz"
         "mirror://gentoo/distfiles/${name}.tar.xz"
       ];
-    sha256 = "0xsvgi4axavrh0bkjr9h8yq75bmjjs37y7mwlg84d6phcxsq5hi6";
+    sha256 = "1kmmn766yn9iihddi8n6lfkx3vlq33hws768bphj7pjfw9zdmjk8";
   };
 
-  buildInputs = [ perl python bison flex pkgconfig ];
+  buildInputs = [ perl python bison flex pkgconfig intltool ];
   propagatedBuildInputs = [ glib libxml2 ];
 
-  patchPhase = ''
-    sed -i -e 's/^   /\t/' docs/gst/Makefile.in docs/libs/Makefile.in docs/plugins/Makefile.in
+  configureFlags = ''
+    --disable-gst-debug --disable-debug --localstatedir=/var
+    --disable-examples --disable-gtk-doc --disable-docbook
   '';
 
-  configureFlags = ''
-    --disable-examples --enable-failing-tests --localstatedir=/var --disable-gtk-doc --disable-docbook
-  '';
+  doCheck = true;
 
   # Hm, apparently --disable-gtk-doc is ignored...
   postInstall = "rm -rf $out/share/gtk-doc";

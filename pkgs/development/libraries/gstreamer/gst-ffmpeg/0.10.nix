@@ -1,8 +1,7 @@
-
 # XXX: after gstream-1.0, this package became gst-libav. We're keeping this
 # around for phonon. 
 
-{ fetchurl, stdenv, pkgconfig, gst_plugins_base, bzip2, yasm
+{ fetchurl, stdenv, pkgconfig, gst_plugins_base, bzip2, yasm, orc
 , useInternalFfmpeg ? false, ffmpeg ? null }:
 
 stdenv.mkDerivation rec {
@@ -22,7 +21,7 @@ stdenv.mkDerivation rec {
   configureFlags = stdenv.lib.optionalString (!useInternalFfmpeg) "--with-system-ffmpeg";
 
   buildInputs =
-    [ pkgconfig bzip2 gst_plugins_base ]
+    [ pkgconfig bzip2 gst_plugins_base orc ]
     ++ (if useInternalFfmpeg then [ yasm ] else [ ffmpeg ]);
 
   meta = {

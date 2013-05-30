@@ -3926,6 +3926,9 @@ let
 
   gmp51 = callPackage ../development/libraries/gmp/5.1.1.nix { };
 
+  #GMP ex-satellite, so better keep it near gmp
+  mpfr = callPackage ../development/libraries/mpfr { };
+
   gobjectIntrospection = callPackage ../development/libraries/gobject-introspection { };
 
   goffice = callPackage ../development/libraries/goffice {
@@ -3944,9 +3947,6 @@ let
   goocanvas = callPackage ../development/libraries/goocanvas { };
 
   gperftools = callPackage ../development/libraries/gperftools { };
-
-  #GMP ex-satellite, so better keep it near gmp
-  mpfr = callPackage ../development/libraries/mpfr { };
 
   gst_all = {
     inherit (pkgs) gstreamer gnonlin qt_gstreamer;
@@ -3983,12 +3983,17 @@ let
     gst_plugins_base = gst_plugins_base_0_10;
   };
 
-  gst_libav = callPackage ../development/libraries/gstreamer/gst-libav {};
+  gst_libav = callPackage ../development/libraries/gstreamer/gst-libav {
+    libav = libav_0_8; # doesn't work with 9 yet
+  };
   gst_ffmpeg_0_10 = callPackage ../development/libraries/gstreamer/gst-ffmpeg/0.10.nix {  # gst_ffmpeg was renamed to gst_libav with gstreamer 1.0
     gst_plugins_base = gst_plugins_base_0_10;
   };
 
-  gnonlin = callPackage ../development/libraries/gstreamer/gnonlin {};
+  gnonlin = callPackage ../development/libraries/gstreamer/gnonlin {
+    gstreamer = gstreamer_0_10; # gnonlin doesn't seem to be ported yet
+    gst_plugins_base = gst_plugins_base_0_10;
+  };
 
   qt_gstreamer = callPackage ../development/libraries/gstreamer/qt-gstreamer {};
 
@@ -4892,6 +4897,8 @@ let
   };
 
   ortp = callPackage ../development/libraries/ortp { };
+
+  orc = callPackage ../development/libraries/orc { };
 
   p11_kit = callPackage ../development/libraries/p11-kit { };
 
