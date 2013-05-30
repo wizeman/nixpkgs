@@ -9,10 +9,16 @@
 , faacSupport   ? false,  faac      ? null
 , vaapiSupport  ? false,  libva     ? null # ToDo: it has huge closure
 , vdpauSupport  ? true,   libvdpau  ? null
+, freetypeSupport ? true, freetype  ? null # it's small and almost everywhere
 , SDL # only for avplay in $tools, adds nontrivial closure to it
 }:
 
 with { inherit (stdenv.lib) optional; };
+
+/* ToDo:
+    - more deps, inspiration: http://packages.ubuntu.com/raring/libav-tools
+    - maybe do some more splitting into outputs
+*/
 
 stdenv.mkDerivation rec {
   name = "libav-9.6";
@@ -43,6 +49,7 @@ stdenv.mkDerivation rec {
     ++ optional faacSupport "--enable-libfaac --enable-nonfree"
     ++ optional vaapiSupport "--enable-vaapi"
     ++ optional vdpauSupport "--enable-vdpau"
+    ++ optional freetypeSupport "--enable-libfreetype"
     ;
 
   buildInputs = [ pkgconfig lame yasm zlib bzip2 SDL ]
@@ -56,6 +63,7 @@ stdenv.mkDerivation rec {
     ++ optional faacSupport faac
     ++ optional vaapiSupport libva
     ++ optional vdpauSupport libvdpau
+    ++ optional freetypeSupport freetype
     ;
 
   enableParallelBuilding = true;
