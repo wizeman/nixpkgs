@@ -20,7 +20,7 @@ with { inherit (stdenv.lib) optional; };
     - maybe do some more splitting into outputs
 */
 
-stdenv.mkDerivation rec {
+let derivSrc = rec { # derivSrc is exported and re-used by expressions for older versions
   name = "libav-9.6";
 
   src = fetchurl {
@@ -89,9 +89,13 @@ stdenv.mkDerivation rec {
       ];
   };
 
+  passthru = { inherit derivSrc; };
+
   meta = {
     homepage = http://libav.org/;
     description = "A complete, cross-platform solution to record, convert and stream audio and video (fork of ffmpeg)";
     license = "GPLv2+";
   };
-}
+};
+in stdenv.mkDerivation derivSrc
+
