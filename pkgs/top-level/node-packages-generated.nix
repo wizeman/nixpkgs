@@ -30,6 +30,16 @@
     ];
   }
   {
+    baseName = "ansi-remover";
+    version = "0.0.2";
+    fullName = "ansi-remover-*";
+    hash = "cda72261ea8d6b830892764d69eff8d926be852fc91ad3b8b5b258d606400bc7";
+    patchLatest = false;
+    topLevel = true;
+    dependencies = [
+    ];
+  }
+  {
     baseName = "ansi";
     version = "0.1.2";
     fullName = "ansi-~0.1.2";
@@ -72,9 +82,9 @@
   }
   {
     baseName = "async";
-    version = "0.2.8";
+    version = "0.2.9";
     fullName = "async-*";
-    hash = "45d7c5ef1b87dc183b9265b882ae3fb2c20608832adc3234b766717016be2346";
+    hash = "7215c94b63ccaa543b4b75c5dd9b820fd4839e1f9616b08a0334a8ac74939c53";
     patchLatest = false;
     topLevel = true;
     dependencies = [
@@ -82,9 +92,9 @@
   }
   {
     baseName = "async";
-    version = "0.2.8";
+    version = "0.2.9";
     fullName = "async-~0.2.7";
-    hash = "45d7c5ef1b87dc183b9265b882ae3fb2c20608832adc3234b766717016be2346";
+    hash = "7215c94b63ccaa543b4b75c5dd9b820fd4839e1f9616b08a0334a8ac74939c53";
     patchLatest = false;
     topLevel = false;
     dependencies = [
@@ -92,9 +102,9 @@
   }
   {
     baseName = "aws-sdk";
-    version = "1.1.0";
+    version = "1.2.0";
     fullName = "aws-sdk-*";
-    hash = "124577c90a78db03356b9e13e704f55b774ac165ba67d539a3d2170ae02fb32d";
+    hash = "e2d4b32fba387b8f099c4180579b67554f875895a69e4c1ddb0a28546db9ba4c";
     patchLatest = true;
     topLevel = true;
     dependencies = [
@@ -1270,9 +1280,9 @@
   }
   {
     baseName = "npm2nix";
-    version = "1.0.0";
+    version = "1.2.0";
     fullName = "npm2nix-*";
-    hash = "c3fa4fd02e6184d60e780e31578a8a8ee190eea28b77d5b006f6ea920324ea54";
+    hash = "b79bd319e4030704bb41078dbbec0db9eebb984966c6bd3cad55ba4c76ec622c";
     patchLatest = false;
     topLevel = true;
     dependencies = [
