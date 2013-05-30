@@ -22,7 +22,9 @@ stdenv.mkDerivation rec {
     sha256 = "118wx8p12lh57yzx5vss32almfa0w3gaxwa0ljcz3xvy4xf1nm03";
   };
 
-  configureFlags = [
+  configureFlags =
+    assert stdenv.lib.all (x: x!=null) buildInputs;
+  [
     "--enable-gpl" # for `swscale', can only be used in GPLd packages
     #"--enable-postproc" # it's now a separate package in upstream
     "--enable-swscale"
