@@ -3405,7 +3405,6 @@ let
      nativeBuildInput after the renaming.
      */
   pkgconfig = forceNativeDrv (callPackage ../development/tools/misc/pkgconfig { });
-  pkgconfigUpstream = lowPrio (pkgconfig.override { vanilla = true; });
 
   premake3 = callPackage ../development/tools/misc/premake/3.nix { };
 
@@ -4044,7 +4043,9 @@ let
       gtkmm;
   };
 
-  glib = callPackage ../development/libraries/glib/2.34.x.nix { };
+  glib = callPackage ../development/libraries/glib/2.34.x.nix {
+    pkgconfig = pkgconfig.override { withInternalGlib = true; }; # avoid a potential cycle
+  };
   glibmm = callPackage ../development/libraries/glibmm { };
 
   glib_networking = callPackage ../development/libraries/glib-networking {};
