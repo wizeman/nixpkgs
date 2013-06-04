@@ -89,7 +89,7 @@ let derivSrc = rec { # derivSrc is exported and re-used by expressions for older
       ];
   };
 
-  passthru = { inherit derivSrc; };
+  passthru = { inherit derivSrc vdpauSupport; };
 
   meta = {
     homepage = http://libav.org/;
