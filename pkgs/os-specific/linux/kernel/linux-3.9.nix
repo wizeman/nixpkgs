@@ -164,6 +164,7 @@ let
       AIC79XX_DEBUG_ENABLE n
       AIC7XXX_DEBUG_ENABLE n
       AIC94XX_DEBUG n
+      AUDIT_LOGINUID_IMMUTABLE y
       B43_PCMCIA y
       BLK_DEV_CMD640_ENHANCED y # CMD640 enhanced support
       BLK_DEV_IDEACPI y # IDE ACPI support
@@ -214,8 +215,8 @@ let
       # Linux Containers
       RT_GROUP_SCHED? y
       CGROUP_DEVICE? y
-      CGROUP_MEM_RES_CTLR? y
-      CGROUP_MEM_RES_CTLR_SWAP? y
+      MEMCG? y
+      MEMCG_SWAP? y
       DEVPTS_MULTIPLE_INSTANCES? y
 
       # Enable staging drivers.  These are somewhat experimental, but
@@ -252,9 +253,8 @@ in
 import ./generic.nix (
 
   rec {
-    version = "3.9-rc4";
-    modDirVersion = "3.9.0-rc4";
-    testing = true;
+    version = "3.9.3";
+    testing = false;
 
     preConfigure = ''
       substituteInPlace scripts/depmod.sh --replace '-b "$INSTALL_MOD_PATH"' ""
@@ -262,7 +262,7 @@ import ./generic.nix (
 
     src = fetchurl {
       url = "mirror://kernel/linux/kernel/v3.x/${if testing then "testing/" else ""}linux-${version}.tar.xz";
-      sha256 = "15mjsxa8xl233k004a2myg24l1x5rp22icdpy5r165rhbknbb1as";
+      sha256 = "0hc82w3rg1ykpkq7na44vqa4b9zymvpl05kc7a3lpgmd1j3n3sw9";
     };
 
     config = configWithPlatform stdenv.platform;
