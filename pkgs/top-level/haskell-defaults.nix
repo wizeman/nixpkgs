@@ -22,6 +22,13 @@
       extensibleExceptions = self.extensibleExceptions_0_1_1_4;
     };
 
+  ghc763Prefs =
+    self : self.haskellPlatformArgs_2013_2_0_0 self // {
+      haskellPlatform = self.haskellPlatform_2013_2_0_0;
+      binary = null; # now a core package
+      extensibleExceptions = self.extensibleExceptions_0_1_1_4;
+    };
+
   ghc742Prefs =
     self : self.haskellPlatformArgs_2012_4_0_0 self // {
       haskellPlatform = self.haskellPlatform_2012_4_0_0;
@@ -53,6 +60,7 @@
       cabalInstall_1_16_0_2 = self.cabalInstall_1_16_0_2.override { Cabal = self.Cabal_1_16_0_3; };
       monadPar = self.monadPar_0_1_0_3;
       jailbreakCabal = self.jailbreakCabal.override { Cabal = self.disableTest self.Cabal_1_14_0; };
+      prettyShow = self.prettyShow_1_2;
     };
 
   ghc703Prefs =
@@ -62,6 +70,7 @@
       cabalInstall_1_16_0_2 = self.cabalInstall_1_16_0_2.override { Cabal = self.Cabal_1_16_0_3; zlib = self.zlib_0_5_3_3; };
       monadPar = self.monadPar_0_1_0_3;
       jailbreakCabal = self.jailbreakCabal.override { Cabal = self.disableTest self.Cabal_1_14_0; };
+      prettyShow = self.prettyShow_1_2;
     };
 
   ghc702Prefs = ghc701Prefs;
@@ -73,6 +82,7 @@
       cabalInstall_1_16_0_2 = self.cabalInstall_1_16_0_2.override { Cabal = self.Cabal_1_16_0_3; zlib = self.zlib_0_5_3_3; };
       monadPar = self.monadPar_0_1_0_3;
       jailbreakCabal = self.jailbreakCabal.override { Cabal = self.disableTest self.Cabal_1_14_0; };
+      prettyShow = self.prettyShow_1_2;
     };
 
   ghc6123Prefs = ghc6122Prefs;
@@ -276,13 +286,19 @@
   packages_ghc761 =
     packages { ghcPath = ../development/compilers/ghc/7.6.1.nix;
                ghcBinary = ghc704Binary;
-               prefFun = ghcHEADPrefs;
+               prefFun = ghc763Prefs;
              };
 
   packages_ghc762 =
     packages { ghcPath = ../development/compilers/ghc/7.6.2.nix;
                ghcBinary = ghc704Binary;
-               prefFun = ghcHEADPrefs;
+               prefFun = ghc763Prefs;
+             };
+
+  packages_ghc763 =
+    packages { ghcPath = ../development/compilers/ghc/7.6.3.nix;
+               ghcBinary = ghc704Binary;
+               prefFun = ghc763Prefs;
              };
 
   # Reasonably current HEAD snapshot. Should *always* be lowPrio.

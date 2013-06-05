@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pcre, libxml2, zlib, attr, bzip2, which, file }:
+{ stdenv, fetchurl, pcre, libxml2, zlib, attr, bzip2, which, file, openssl }:
 
 stdenv.mkDerivation {
   name = "lighttpd-1.4.32";
@@ -8,15 +8,19 @@ stdenv.mkDerivation {
     sha256 = "1hgd9bi4mrak732h57na89lqg58b1kkchnddij9gawffd40ghs0k";
   };
 
-  buildInputs = [ pcre libxml2 zlib attr bzip2 which file ];
+  buildInputs = [ pcre libxml2 zlib attr bzip2 which file openssl ];
+
+  configureFlags = "--with-openssl --with-openssl-libs=${openssl}";
 
   preConfigure = ''
     sed -i "s:/usr/bin/file:${file}/bin/file:g" configure
   '';
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "Lightweight high-performance web server";
     homepage = http://www.lighttpd.net/;
     license = "BSD";
+    platforms = platforms.linux;
+    maintainers = [maintainers.bjornfor];
   };
 }
