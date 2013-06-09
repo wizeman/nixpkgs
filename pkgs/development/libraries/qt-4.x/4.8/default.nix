@@ -10,6 +10,9 @@
 , flashplayerFix ? false, gdk_pixbuf
 , gtkStyle ? false, libgnomeui, gtk, GConf, gnome_vfs
 , developerBuild ? false
+, docs ? false
+, examples ? false
+, demos ? false
 }:
 
 with stdenv.lib;
@@ -27,6 +30,12 @@ stdenv.mkDerivation rec {
     url = "http://releases.qt-project.org/qt4/source/qt-everywhere-opensource-src-${v}.tar.gz";
     sha256 = "0w1j16q6glniv4hppdgcvw52w72gb2jab35ylkw0qjn5lj5y7c1k";
   };
+
+  prePatch = ''
+    substituteInPlace configure --replace /bin/pwd pwd
+    substituteInPlace src/corelib/global/global.pri --replace /bin/ls ${coreutils}/bin/ls
+    sed -e 's@/\(usr\|opt\)/@/var/empty/@g' -i config.tests/*/*.test -i mkspecs/*/*.conf
+  '';
 
   patches =
     [ ./glib-2.32.patch
@@ -60,6 +69,7 @@ stdenv.mkDerivation rec {
       "
     '';
 
+  prefixKey = "-prefix ";
   configureFlags =
     ''
       -v -no-separate-debug-info -release -no-fast -confirm-license -opensource
@@ -72,11 +82,19 @@ stdenv.mkDerivation rec {
       -exceptions -xmlpatterns
 
       -make libs -make tools -make translations
-      -nomake demos -nomake examples -nomake docs
+      -${if demos then "" else "no"}make demos
+      -${if examples then "" else "no"}make examples
+      -${if docs then "" else "no"}make docs
 
       -no-phonon ${if buildWebkit then "" else "-no"}-webkit ${if buildMultimedia then "" else "-no"}-multimedia -audio-backend
       ${if developerBuild then "-developer-build" else ""}
     '';
+
+  # fix underspecified dependency in a generated makefile
+  postConfigure = ''
+    substituteInPlace tools/designer/src/lib/Makefile --replace \
+      "moc_qtgradientviewdialog.cpp:" "moc_qtgradientviewdialog.cpp: .uic/release-shared/ui_qtgradientview.h"
+  '';
 
   propagatedBuildInputs =
     [ libXrender libXrandr libXinerama libXcursor libXext libXfixes
@@ -94,14 +112,6 @@ stdenv.mkDerivation rec {
     ++ optionals gtkStyle [ gtk gdk_pixbuf ];
 
   nativeBuildInputs = [ perl pkgconfig which ];
-
-  prefixKey = "-prefix ";
-
-  prePatch = ''
-    substituteInPlace configure --replace /bin/pwd pwd
-    substituteInPlace src/corelib/global/global.pri --replace /bin/ls ${coreutils}/bin/ls
-    sed -e 's@/\(usr\|opt\)/@/var/empty/@g' -i config.tests/*/*.test -i mkspecs/*/*.conf
-  '';
 
   enableParallelBuilding = true;
 

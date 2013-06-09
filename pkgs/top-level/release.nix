@@ -45,6 +45,7 @@ let
       apacheHttpd = linux;
       aspell = all;
       at = linux;
+      atlas = linux;
       audacious = linux;
       autoconf = all;
       automake110x = all;
@@ -359,7 +360,7 @@ let
       };
 
       firefox36Pkgs.firefox = linux;
-      firefox20Pkgs.firefox = linux;
+      firefox21Pkgs.firefox = linux;
 
       gnome = {
         gnome_panel = linux;
@@ -383,7 +384,7 @@ let
         ghc = ghcSupported;
       };
 
-      haskellPackages_ghc762 = {
+      haskellPackages_ghc763 = {
         ghc = ghcSupported;
       };
 
