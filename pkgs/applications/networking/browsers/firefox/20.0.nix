@@ -15,9 +15,9 @@ assert stdenv.gcc ? libc && stdenv.gcc.libc != null;
 
 rec {
 
-  firefoxVersion = "19.0.2";
+  firefoxVersion = "20.0";
 
-  xulVersion = "19.0.2"; # this attribute is used by other packages
+  xulVersion = "20.0"; # this attribute is used by other packages
 
 
   src = fetchurl {
@@ -27,7 +27,7 @@ rec {
         # Fall back to this url for versions not available at releases.mozilla.org.
         "ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/${firefoxVersion}/source/firefox-${firefoxVersion}.source.tar.bz2"
     ];
-    sha1 = "d108d356225379a86d69a4906c706289135f6342";
+    sha1 = "6d776c29da0be0d2a50abeb504d63b06b7861218";
   };
 
   commonConfigureFlags =
@@ -35,7 +35,7 @@ rec {
       #"--enable-profiling"
       "--disable-debug"
       "--enable-strip"
-      # "--with-system-jpeg" # Too old in nixpkgs
+      "--with-system-jpeg" # now we use recent libjpeg-turbo
       "--with-system-zlib"
       "--with-system-bz2"
       "--with-system-nspr"
@@ -135,7 +135,6 @@ rec {
       [ "--enable-application=browser"
         "--with-libxul-sdk=${xulrunner}/lib/xulrunner-devel-${xulrunner.version}"
         "--enable-chrome-format=jar"
-        "--disable-elf-hack"
       ]
       ++ commonConfigureFlags
       ++ stdenv.lib.optional enableOfficialBranding "--enable-official-branding";
