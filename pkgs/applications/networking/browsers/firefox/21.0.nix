@@ -2,6 +2,7 @@
 , libjpeg, libpng, zlib, cairo, dbus, dbus_glib, bzip2, xlibs
 , freetype, fontconfig, file, alsaLib, nspr, nss, libnotify
 , yasm, mesa, sqlite, unzip, makeWrapper, pysqlite
+, hunspell, libevent, libstartup_notification, libvpx
 
 , # If you want the resulting program to call itself "Firefox" instead
   # of "Shiretoko" or whatever, enable this option.  However, those
@@ -27,7 +28,7 @@ rec {
         # Fall back to this url for versions not available at releases.mozilla.org.
         "ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/${firefoxVersion}/source/firefox-${firefoxVersion}.source.tar.bz2"
     ];
-    sha256 = "076rfh82m1b1hw10dzbgg13h63wmnispgyvag4nb20ylnlf0629r";
+    sha1 = "e63b5488eaec1956947f59609d5839332ba7ffe1";
   };
 
   commonConfigureFlags =
@@ -35,14 +36,21 @@ rec {
       #"--enable-profiling"
       "--disable-debug"
       "--enable-strip"
-      "--with-system-jpeg" # now we use recent libjpeg-turbo
+      "--with-system-jpeg"
       "--with-system-zlib"
       "--with-system-bz2"
       "--with-system-nspr"
       "--with-system-nss"
+      "--with-system-libevent"
+      "--with-system-libvpx"
       # "--with-system-png" # <-- "--with-system-png won't work because the system's libpng doesn't have APNG support"
-      # "--enable-system-cairo" # <-- doesn't build
+      "--enable-startup-notification"
+      "--enable-system-cairo"
+      "--enable-system-ffi"
+      "--enable-system-hunspell"
+      "--enable-system-pixman"
       "--enable-system-sqlite"
+      "--with-system-libvpx"
       "--disable-crashreporter"
       "--disable-tests"
       "--disable-necko-wifi" # maybe we want to enable this at some point
@@ -63,6 +71,7 @@ rec {
         alsaLib nspr nss libnotify xlibs.pixman yasm mesa
         xlibs.libXScrnSaver xlibs.scrnsaverproto pysqlite
         xlibs.libXext xlibs.xextproto sqlite unzip makeWrapper
+        hunspell libevent libstartup_notification libvpx
       ];
 
     configureFlags =
@@ -71,6 +80,10 @@ rec {
       ] ++ commonConfigureFlags;
 
     enableParallelBuilding = true;
+
+    patches = [
+      ./system-cairo.patch # accepted upstream, probably in 22
+    ];
 
     preConfigure =
       ''
@@ -127,7 +140,12 @@ rec {
       [ pkgconfig gtk perl zip libIDL libjpeg zlib cairo bzip2 python
         dbus dbus_glib pango freetype fontconfig alsaLib nspr nss libnotify
         xlibs.pixman yasm mesa sqlite file unzip pysqlite
+        hunspell libevent libstartup_notification libvpx
       ];
+
+    patches = [
+      ./disable-reporter.patch # fixes "search box not working when built on xulrunner"
+    ];
 
     propagatedBuildInputs = [xulrunner];
 
@@ -135,7 +153,6 @@ rec {
       [ "--enable-application=browser"
         "--with-libxul-sdk=${xulrunner}/lib/xulrunner-devel-${xulrunner.version}"
         "--enable-chrome-format=jar"
-        "--disable-elf-hack"
       ]
       ++ commonConfigureFlags
       ++ stdenv.lib.optional enableOfficialBranding "--enable-official-branding";
@@ -160,6 +177,10 @@ rec {
         rm firefox
         echo -e '#!${stdenv.shell}\nexec ${xulrunner}/bin/xulrunner "'"$PWD"'/application.ini" "$@"' > firefox
         chmod a+x firefox
+
+        # Put chrome.manifest etc. in the right place.
+        mv browser/* .
+        rmdir browser
       ''; # */
 
     meta = {
