@@ -3,7 +3,7 @@
 , speexSupport  ? true,   speex     ? null
 , theoraSupport ? true,   libtheora ? null
 , vorbisSupport ? true,   libvorbis ? null
-, vpxSupport    ? false,  libvpx    ? null
+, vpxSupport    ? true,  libvpx    ? null
 , x264Support   ? false,  x264      ? null
 , xvidSupport   ? true,   xvidcore  ? null
 , faacSupport   ? false,  faac      ? null
