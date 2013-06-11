@@ -5310,7 +5310,8 @@ let
         libjpeg libpng libtiff libxml2 libxslt sqlite icu curl
         which libproxy geoclue enchant python ruby perl
         mesa xlibs;
-      inherit gstreamer gst_plugins_base gst_libav gst_plugins_good;
+      gstreamer = gstreamer_0_10; gst_plugins_base = gst_plugins_base_0_10;
+      gst_libav = gst_ffmpeg_0_10; gst_plugins_good = gst_plugins_good_0_10;
     };
 
   webkit_gtk2 =
@@ -5321,7 +5322,8 @@ let
         libjpeg libpng libtiff libxml2 libxslt sqlite icu curl
         which libproxy geoclue enchant python ruby perl
         mesa xlibs;
-      inherit gstreamer gst_plugins_base gst_libav gst_plugins_good;
+      gstreamer = gstreamer_0_10; gst_plugins_base = gst_plugins_base_0_10;
+      gst_libav = gst_ffmpeg_0_10; gst_plugins_good = gst_plugins_good_0_10;
     };
 
   webkitSVN =
@@ -5333,8 +5335,8 @@ let
         icu cairo perl intltool automake libtool
         pkgconfig autoconf bison libproxy enchant
         python ruby which flex geoclue;
-      inherit gstreamer gst_plugins_base gst_libav
-        gst_plugins_good;
+      gstreamer = gstreamer_0_10; gst_plugins_base = gst_plugins_base_0_10;
+      gst_libav = gst_ffmpeg_0_10; gst_plugins_good = gst_plugins_good_0_10;
       inherit (xlibs) libXt renderproto libXrender;
       inherit libpng;
     };
@@ -8416,10 +8418,12 @@ let
 
   xineUI = callPackage ../applications/video/xine-ui { };
 
-  xneur_0_13 = callPackage ../applications/misc/xneur { };
-
-  xneur_0_8 = callPackage ../applications/misc/xneur/0.8.nix { };
-
+  xneur_0_13 = callPackage ../applications/misc/xneur {
+    gstreamer = gstreamer_0_10;
+  };
+  xneur_0_8 = callPackage ../applications/misc/xneur/0.8.nix {
+    gstreamer = gstreamer_0_10;
+  };
   xneur = xneur_0_13;
 
   gxneur = callPackage ../applications/misc/gxneur  {

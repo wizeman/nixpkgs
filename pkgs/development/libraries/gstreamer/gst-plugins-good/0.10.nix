@@ -13,7 +13,9 @@ stdenv.mkDerivation rec {
       "mirror://gentoo/distfiles/${name}.tar.xz"
       ];
     sha256 = "0r1b54yixn8v2l1dlwmgpkr0v2a6a21id5njp9vgh58agim47a3p";
-  };
+  }; # it's very old, maybe we should take git branch for 0.10 (recent updates)
+
+  patches = [ ./new-kernel-0.10.patch ];
 
   configureFlags = "--disable-oss";
 
