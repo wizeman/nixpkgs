@@ -3759,8 +3759,7 @@ let
   faad2 = callPackage ../development/libraries/faad2 { };
 
   farsight2 = callPackage ../development/libraries/farsight2 { };
-
-  farstream = callPackage ../development/libraries/farstream { };
+  farstream = callPackage ../development/libraries/farstream { }; # replaces farsight2
 
   fcgi = callPackage ../development/libraries/fcgi { };
 
@@ -4038,6 +4037,8 @@ let
   gst_ffmpeg_0_10 = callPackage ../development/libraries/gstreamer/gst-ffmpeg/0.10.nix {  # gst_ffmpeg was renamed to gst_libav with gstreamer 1.0
     gst_plugins_base = gst_plugins_base_0_10;
   };
+
+  gst_python_0_10 = callPackage ../development/libraries/gstreamer/gst-python { }; # deprecated
 
   gnonlin = callPackage ../development/libraries/gstreamer/gnonlin {
     gstreamer = gstreamer_0_10; # gnonlin doesn't seem to be ported yet

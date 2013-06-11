@@ -12,7 +12,7 @@
  */
 { stdenv, fetchurl, pkgconfig, gtk, gtkspell, aspell,
   gstreamer, gst_plugins_base, startupnotification, gettext,
-  perl, perlXMLParser, libxml2, nss, nspr, farsight2,
+  perl, perlXMLParser, libxml2, nss, nspr, farsight2, #farstream /* for gst-1.0 probably not before 3.*/,
   libXScrnSaver, ncurses, avahi, dbus, dbus_glib, intltool, libidn
   , lib, python
   , openssl ? null
@@ -27,6 +27,9 @@ stdenv.mkDerivation rec {
     sha256 = "14piyx4xpc3l8286x4nh5pna2wfyn9cv0qa29br1q3d2xja2k8zb";
   };
 
+  patches = [ ./pidgin-makefile.patch ];
+  #ToDo: port some patch for gst-1.0? e.g. https://developer.pidgin.im/ticket/15386#no1
+
   inherit nss ncurses;
   buildInputs = [
     gtkspell aspell
@@ -36,7 +39,7 @@ stdenv.mkDerivation rec {
   ++ (lib.optional (gnutls != null) gnutls)
   ++ (lib.optional (libgcrypt != null) libgcrypt)
   ++
-  [nss nspr farsight2
+  [nss nspr farsight2 #farstream
     libXScrnSaver ncurses python
     avahi dbus dbus_glib intltool libidn
   ]
@@ -46,7 +49,6 @@ stdenv.mkDerivation rec {
     pkgconfig gtk perl perlXMLParser gettext
   ];
 
-  patches = [./pidgin-makefile.patch ];
 
   configureFlags="--with-nspr-includes=${nspr}/include/nspr --with-nspr-libs=${nspr}/lib --with-nss-includes=${nss}/include/nss --with-nss-libs=${nss}/lib --with-ncurses-headers=${ncurses}/include --disable-meanwhile --disable-nm --disable-tcl"
   + (lib.optionalString (gnutls != null) " --enable-gnutls=yes --enable-nss=no")

@@ -322,7 +322,6 @@ in
   fail2ban = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   fakenes = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   fam = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
-  farsight2 = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   farstream = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   fbida = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   fbpanel = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
