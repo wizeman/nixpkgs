@@ -3,7 +3,7 @@
 , speexSupport  ? true,   speex     ? null
 , theoraSupport ? true,   libtheora ? null
 , vorbisSupport ? true,   libvorbis ? null
-, vpxSupport    ? false,  libvpx    ? null
+, vpxSupport    ? true,  libvpx    ? null
 , x264Support   ? false,  x264      ? null
 , xvidSupport   ? true,   xvidcore  ? null
 , faacSupport   ? false,  faac      ? null
@@ -89,7 +89,7 @@ let derivSrc = rec { # derivSrc is exported and re-used by expressions for older
       ];
   };
 
-  passthru = { inherit derivSrc; };
+  passthru = { inherit derivSrc vdpauSupport; };
 
   meta = {
     homepage = http://libav.org/;
