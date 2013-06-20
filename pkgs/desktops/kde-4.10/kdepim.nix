@@ -9,6 +9,9 @@ kde {
       libxslt cyrus_sasl gpgme libassuan grantlee prison dblatex
     ];
 
+  cmakeFlags = [ "-DCMAKE_BUILD_TYPE=debugfull" ];
+  dontStrip = true;
+
   passthru.propagatedUserEnvPackages = [ akonadi kdepimlibs kdepim_runtime ];
 
   meta = {

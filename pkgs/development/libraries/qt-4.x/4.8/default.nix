@@ -112,7 +112,7 @@ stdenv.mkDerivation rec {
 
   # occasional build problems if one has too many cores (like on Hydra)
   # @vcunat has been unable to find a *reliable* fix
-  enableParallelBuilding = false;
+  enableParallelBuilding = true;
 
   crossAttrs = let
     isMingw = stdenv.cross.config == "i686-pc-mingw32" ||
