@@ -4,8 +4,8 @@
 
 cabal.mkDerivation (self: {
   pname = "conduit";
-  version = "1.0.4.2";
-  sha256 = "11xrqn7jc4vccfwds6hy0d3jpm0d0ycwaszv18xk237zwl63w159";
+  version = "1.0.6";
+  sha256 = "0da5wxhsfjgcn850iimcp15vhg5lw0fa8i7c3hdw4yvrpza14dcn";
   buildDepends = [
     liftedBase mmorph monadControl resourcet text transformers
     transformersBase void
@@ -18,9 +18,6 @@ cabal.mkDerivation (self: {
     description = "Streaming data processing library";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

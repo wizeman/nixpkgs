@@ -4,8 +4,8 @@
 
 cabal.mkDerivation (self: {
   pname = "ghc-vis";
-  version = "0.6.1.1";
-  sha256 = "1fg8bxkhw2s3y8w0ljnnqbf8f5ld17p70v4aikc26ybmb0938yl6";
+  version = "0.7.1";
+  sha256 = "05j3yw1276wvy4va7r7pbnvhjg1k1mxzp4baxcb9jlb5dxfh0daa";
   buildDepends = [
     cairo deepseq fgl ghcHeapView graphviz gtk mtl svgcairo text
     transformers xdot
@@ -15,9 +15,6 @@ cabal.mkDerivation (self: {
     description = "Live visualization of data structures in GHCi";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

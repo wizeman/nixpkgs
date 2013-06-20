@@ -4,8 +4,8 @@
 
 cabal.mkDerivation (self: {
   pname = "io-choice";
-  version = "0.0.2";
-  sha256 = "0kxn357cc31gvaajg41h6xwpivq049dl1zd551xfvrvzndvy061f";
+  version = "0.0.4";
+  sha256 = "1b6jvk37jkpd4m3r6ip70xwzrz67a30yam831nqpljsbgk2f9arq";
   buildDepends = [
     liftedBase monadControl transformers transformersBase
   ];
@@ -14,9 +14,6 @@ cabal.mkDerivation (self: {
     description = "Choice for IO and lifted IO";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })
