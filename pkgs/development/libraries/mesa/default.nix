@@ -3,7 +3,7 @@
 , libdrm, xorg, wayland, udev, llvm, libffi
 , libvdpau
 , enableTextureFloats ? false # Texture floats are patented, see docs/patents.txt
-, enableR600LlvmCompiler ? false # current llvm-3.3 + mesa-9.1.6 don't configure
+, enableR600LlvmCompiler ? true
 , enableExtraFeatures ? false # add ~15 MB to mesa_drivers
 }:
 
@@ -16,8 +16,8 @@ else
     This or the mesa attribute (which also contains GLU) are small (~ 2.2 MB, mostly headers)
     and are designed to be the buildInput of other packages.
   - DRI and EGL drivers are compiled into $drivers output,
-    which is bigger (~13 MB) and depends on LLVM (~40 MB).
-    These should be searched at runtime in /run/current-system/sw/lib/*
+    which is bigger (~13 MB) and depends on LLVM (~44 MB).
+    These should be searched at runtime in "/run/opengl-driver{,-32}/lib/*"
     and so are kind-of impure (given by NixOS).
     (I suppose on non-NixOS one would create the appropriate symlinks from there.)
 */
@@ -29,7 +29,9 @@ in
 stdenv.mkDerivation {
   name = "mesa-noglu-${version}";
 
-  src = fetchurl {
+  tmp = throw "Mesa probably needs updating";
+
+  src =  fetchurl {
     url = "ftp://ftp.freedesktop.org/pub/mesa/${version}/MesaLib-${version}.tar.bz2";
     sha256 = "0gay00fy84hrnp25hpacz5cbvxrpvgg1d390vichmbdgmkqdycp6";
   };
