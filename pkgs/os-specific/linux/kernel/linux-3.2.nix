@@ -240,7 +240,7 @@ in
 import ./generic.nix (
 
   rec {
-    version = "3.2.43";
+    version = "3.2.46";
 
     modDirVersion = version;
 
@@ -250,7 +250,7 @@ import ./generic.nix (
 
     src = fetchurl {
       url = "mirror://kernel/linux/kernel/v3.0/linux-${version}.tar.xz";
-      sha256 = "0cg88mdlqs7zj2ndj4i9hmvmxasmgv2fqlpzr87qm7bqkmmb6p58";
+      sha256 = "1yxkkiay2a84113zjxyf680fz5l0ihvjq3fcik8hfibrb5x2rhgr";
     };
 
     config = configWithPlatform stdenv.platform;

@@ -1,10 +1,10 @@
-{ kde, kdelibs, kactivities, qjson, pyqt4, sip }:
+{ kde, kdelibs, kactivities, qjson, pyqt4, sip, python, pykde4 }:
 
 kde {
   dontStrip = true;
   cmakeFlags = [ "-DCMAKE_BUILD_TYPE=debugfull" ];
-#todo: PythonLibrary, SIP, PyQt4, PyKDE4
-  buildInputs = [ kdelibs kactivities qjson pyqt4 sip ];
+
+  buildInputs = [ kdelibs kactivities qjson pyqt4 sip python pykde4];
 
   meta = {
     description = "Kate, the KDE Advanced Text Editor, as well as KWrite";

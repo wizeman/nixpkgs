@@ -5,11 +5,14 @@
 , libtiff, glib, icu
 , mysql, postgresql, sqlite
 , perl, coreutils, libXi
-, buildMultimedia ? true, alsaLib, gstreamer, gst_plugins_base
-, buildWebkit ? true
+, buildMultimedia ? stdenv.isLinux, alsaLib, gstreamer, gst_plugins_base
+, buildWebkit ? stdenv.isLinux
 , flashplayerFix ? false, gdk_pixbuf
 , gtkStyle ? false, libgnomeui, gtk, GConf, gnome_vfs
 , developerBuild ? false
+, docs ? false
+, examples ? false
+, demos ? false
 }:
 
 with stdenv.lib;
@@ -20,7 +23,7 @@ let v = "4.8.4"; in
 #  * move some plugins (e.g., SQL plugins) to dedicated derivations to avoid
 #    false build-time dependencies
 
-stdenv.mkDerivation ( rec {
+stdenv.mkDerivation rec {
   dontStrip = true;
 
   name = "qt-${v}";
@@ -30,8 +33,15 @@ stdenv.mkDerivation ( rec {
     sha256 = "0w1j16q6glniv4hppdgcvw52w72gb2jab35ylkw0qjn5lj5y7c1k";
   };
 
+  prePatch = ''
+    substituteInPlace configure --replace /bin/pwd pwd
+    substituteInPlace src/corelib/global/global.pri --replace /bin/ls ${coreutils}/bin/ls
+    sed -e 's@/\(usr\|opt\)/@/var/empty/@g' -i config.tests/*/*.test -i mkspecs/*/*.conf
+  '';
+
   patches =
     [ ./glib-2.32.patch
+      ./CVE-2013-0254.patch
       (substituteAll {
         src = ./dlopen-absolute-paths.diff;
         inherit cups icu libXfixes;
@@ -62,6 +72,7 @@ stdenv.mkDerivation ( rec {
       "
     '';
 
+  prefixKey = "-prefix ";
   configureFlags =
     ''
       -v -debug -no-fast -confirm-license -opensource
@@ -74,7 +85,9 @@ stdenv.mkDerivation ( rec {
       -exceptions -xmlpatterns
 
       -make libs -make tools -make translations
-      -nomake demos -nomake examples -nomake docs
+      -${if demos then "" else "no"}make demos
+      -${if examples then "" else "no"}make examples
+      -${if docs then "" else "no"}make docs
 
       -no-phonon ${if buildWebkit then "" else "-no"}-webkit ${if buildMultimedia then "" else "-no"}-multimedia -audio-backend
       ${if developerBuild then "-developer-build" else ""}
@@ -85,7 +98,7 @@ stdenv.mkDerivation ( rec {
       libXv libXi libSM
     ]
     ++ optional (stdenv.lib.lists.elem stdenv.system stdenv.lib.platforms.mesaPlatforms) mesa
-    ++ optional (buildWebkit || buildMultimedia) alsaLib
+    ++ optional ((buildWebkit || buildMultimedia) && stdenv.isLinux ) alsaLib
     ++ [ zlib libpng openssl dbus.libs freetype fontconfig glib ]
     ++ optionals (buildWebkit || buildMultimedia) [ gstreamer gst_plugins_base ];
 
@@ -97,15 +110,9 @@ stdenv.mkDerivation ( rec {
 
   nativeBuildInputs = [ perl pkgconfig which ];
 
-  prefixKey = "-prefix ";
-
-  prePatch = ''
-    substituteInPlace configure --replace /bin/pwd pwd
-    substituteInPlace src/corelib/global/global.pri --replace /bin/ls ${coreutils}/bin/ls
-    sed -e 's@/\(usr\|opt\)/@/var/empty/@g' -i config.tests/*/*.test -i mkspecs/*/*.conf
-  '';
-
-  enableParallelBuilding = true;
+  # occasional build problems if one has too many cores (like on Hydra)
+  # @vcunat has been unable to find a *reliable* fix
+  enableParallelBuilding = false;
 
   crossAttrs = let
     isMingw = stdenv.cross.config == "i686-pc-mingw32" ||
@@ -145,17 +152,7 @@ stdenv.mkDerivation ( rec {
     homepage = http://qt-project.org/;
     description = "A cross-platform application framework for C++";
     license = "GPL/LGPL";
-    maintainers = with maintainers; [ urkud sander ];
-    platforms = platforms.linux;
+    maintainers = with maintainers; [ urkud sander phreedom ];
+    platforms = platforms.all;
   };
 }
-  # ToDo: this attribute is optional *only* to prevent rebuild on hydra
-  // stdenv.lib.optionalAttrs developerBuild {
-    # fix underspecified dependency in a generated makefile
-    postConfigure = ''
-      substituteInPlace tools/designer/src/lib/Makefile --replace \
-        "moc_qtgradientviewdialog.cpp:" "moc_qtgradientviewdialog.cpp: .uic/release-shared/ui_qtgradientview.h"
-    '';
-  }
-)
-
