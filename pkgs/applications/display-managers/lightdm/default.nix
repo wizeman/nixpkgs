@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ pkgconfig pam libxcb glib libXdmcp itstool libxml2 intltool libxklavier libgcrypt ];
 
-  configureFlags = [ "--enable-liblightdm-gobject" ];
+  configureFlags = [ "--enable-liblightdm-gobject" "--localstatedir=/var" ];
 
   meta = {
     homepage = http://launchpad.net/lightdm;
