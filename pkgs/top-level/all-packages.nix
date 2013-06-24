@@ -593,6 +593,8 @@ let
 
   chrony = callPackage ../tools/networking/chrony { };
 
+  cjdns = callPackage ../tools/networking/cjdns { };
+
   cksfv = callPackage ../tools/networking/cksfv { };
 
   ciopfs = callPackage ../tools/filesystems/ciopfs { };
@@ -1987,7 +1989,7 @@ let
 
   xvfb_run = callPackage ../tools/misc/xvfb-run { inherit (texFunctions) fontsConf; };
 
-  youtubeDL = callPackage ../tools/misc/youtube-dl { inherit (haskellPackages) pandoc; };
+  youtubeDL = callPackage ../tools/misc/youtube-dl { };
 
   zbar = callPackage ../tools/graphics/zbar {
     pygtk = lib.overrideDerivation pygtk (x: {
@@ -2811,6 +2813,8 @@ let
     ocaml = ocaml_3_08_0;
   };
 
+  repeatableStdenv  = lowPrio (stdenvAdapters.overrideSetup stdenv ../stdenv/generic/setup-repeatable.sh );
+
   roadsend = callPackage ../development/compilers/roadsend { };
 
   # TODO: the corresponding nix file is missing
@@ -3252,7 +3256,7 @@ let
 
   cgdb = callPackage ../development/tools/misc/cgdb { };
 
-  chromedriver = callPackage ../development/tools/selenium/chromedriver { };
+  chromedriver = callPackage ../development/tools/selenium/chromedriver { gconf = gnome.GConf; };
 
   complexity = callPackage ../development/tools/misc/complexity { };
 
@@ -4218,6 +4222,8 @@ let
 
   id3lib = callPackage ../development/libraries/id3lib { };
 
+  iksemel = callPackage ../development/libraries/iksemel { };
+
   ilbc = callPackage ../development/libraries/ilbc { };
 
   ilmbase = callPackage ../development/libraries/ilmbase { };
@@ -4413,6 +4419,8 @@ let
 
   libgnome_keyring = callPackage ../development/libraries/libgnome-keyring { };
   libgnome_keyring3 = gnome3.libgnome_keyring;
+
+  libsecret = callPackage ../development/libraries/libsecret { };
 
   libgtop = callPackage ../development/libraries/libgtop {};
 
@@ -5908,9 +5916,7 @@ let
     inherit fetchurl stdenv pkgconfig postgresql curl openssl zlib;
   });
 
-  zabbix20 = recurseIntoAttrs (import ../servers/monitoring/zabbix/2.0.nix {
-    inherit fetchurl stdenv pkgconfig postgresql curl openssl zlib gettext;
-  });
+  zabbix20 = callPackage ../servers/monitoring/zabbix/2.0.nix { };
 
 
   ### OS-SPECIFIC
@@ -6990,11 +6996,11 @@ let
     pulseSupport = config.pulseaudio or false;
   });
 
-  chromiumBeta = chromium.override { channel = "beta"; };
-  chromiumBetaWrapper = wrapChromium chromiumBeta;
+  chromiumBeta = lowPrio (chromium.override { channel = "beta"; });
+  chromiumBetaWrapper = lowPrio (wrapChromium chromiumBeta);
 
-  chromiumDev = chromium.override { channel = "dev"; };
-  chromiumDevWrapper = wrapChromium chromiumDev;
+  chromiumDev = lowPrio (chromium.override { channel = "dev"; });
+  chromiumDevWrapper = lowPrio (wrapChromium chromiumDev);
 
   chromiumWrapper = wrapChromium chromium;
 
@@ -7868,12 +7874,15 @@ let
 
   ruby_ncursesw_sup = callPackage ../development/libraries/ruby_ncursesw_sup { };
 
+  smplayer = callPackage ../applications/video/smplayer { };
+
   sup = callPackage ../applications/networking/mailreaders/sup {
     ruby = ruby19;
 
     chronic = rubyLibs.chronic;
     gettext = rubyLibs.gettext;
     gpgme = ruby_gpgme;
+    highline = rubyLibs.highline;
     iconv = rubyLibs.iconv;
     locale = rubyLibs.locale;
     lockfile = rubyLibs.lockfile;
@@ -7883,7 +7892,7 @@ let
     rmail = rubyLibs.rmail;
     text = rubyLibs.text;
     trollop = rubyLibs.trollop;
-    xapian_full_alaveteli = rubyLibs.xapian_full_alaveteli_1_2_9_5;
+    xapian_ruby = rubyLibs.xapian_ruby;
   };
 
   msmtp = callPackage ../applications/networking/msmtp { };
@@ -8386,7 +8395,9 @@ let
       glSupport = true;
     };
   };
-    
+
+  winswitch = callPackage ../tools/X11/winswitch { };
+
   wings = callPackage ../applications/graphics/wings {
     erlang = erlangR14B04;
     esdl = esdl.override { erlang = erlangR14B04; };
