@@ -30,10 +30,16 @@ let
     done
   '';
 
-  extensionPack = fetchurl {
-    url = "http://download.virtualbox.org/virtualbox/${version}/Oracle_VM_VirtualBox_Extension_Pack-${version}.vbox-extpack";
+  extensionPack = requireFile rec {
+    name = "Oracle_VM_VirtualBox_Extension_Pack-${version}.vbox-extpack";
+    url = "http://download.virtualbox.org/virtualbox/${version}/${name}";
     # Has to be base16 because it's used as an input to VBoxExtPackHelperApp!
     sha256 = "5813cae72790de4893cadb839ffbd148290a44ec6913d901d84c9b3740ab1b1e";
+    message = ''
+      Please accept PUEL http://www.virtualbox.org/wiki/VirtualBox_PUEL ,
+      then you can run: nix-prefetch-url ${url}
+      and re-run the installation.
+    '';
   };
 
 in stdenv.mkDerivation {
@@ -140,6 +146,7 @@ in stdenv.mkDerivation {
     description = "PC emulator";
     homepage = http://www.virtualbox.org/;
     maintainers = [ lib.maintainers.sander ];
+    license = with lib.licenses; if enableExtensionPack then unfree else gpl2;
     platforms = lib.platforms.linux;
   };
 }
