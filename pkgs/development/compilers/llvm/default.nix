@@ -20,7 +20,10 @@ stdenv.mkDerivation {
   # created binaries need to be run before installation... I coudn't find a better way
   preBuild = ''export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:"`pwd`/lib'';
 
-  cmakeFlags = [ "-DCMAKE_BUILD_TYPE=Release" "-DBUILD_SHARED_LIBS=ON" "-DLLVM_ENABLE_FFI=ON" ];
+  cmakeFlags = [
+    "-DCMAKE_BUILD_TYPE=Release" "-DBUILD_SHARED_LIBS=ON" "-DLLVM_ENABLE_FFI=ON"
+    "-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=R600" # for mesa
+  ];
 
   enableParallelBuilding = true;
 
