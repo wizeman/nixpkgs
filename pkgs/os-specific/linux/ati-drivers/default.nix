@@ -1,5 +1,5 @@
 { stdenv, fetchurl, kernelDev, xlibs, which, imake
-, mesa # for fgl_glxgears
+, mesa /*for fgl_glxgears*/, mesa_drivers
 , libXxf86vm, xf86vidmodeproto # for fglrx_gamma
 , xorg, makeWrapper, glibc, patchelf
 , unzip
@@ -24,14 +24,14 @@ assert stdenv.system == "x86_64-linux";
 
 stdenv.mkDerivation rec {
   name = "ati-drivers-${version}-${kernelDev.version}";
-  version = "10-11-x86";
+  version = "12-8";
 
   builder = ./builder.sh;
 
   inherit libXxf86vm xf86vidmodeproto;
 
   src = fetchurl {
-    url = http://www2.ati.com/drivers/linux/amd-driver-installer-12-8-x86.x86_64.zip;
+    url = "http://www2.ati.com/drivers/linux/amd-driver-installer-${version}-x86.x86_64.zip";
     sha256 = "0hdv89vdap6v0dnwhddizfmlkwyh0j910sp4wyj2lq5pn9rm2lk2";
 
     # beta
@@ -55,9 +55,11 @@ stdenv.mkDerivation rec {
       "${xorg.libXrender}/lib"
       "${xorg.libXext}/lib"
       "${xorg.libX11}/lib"
+      "${stdenv.gcc.gcc}/lib"
     ];
 
-  inherit mesa; # only required to build examples
+  inherit mesa # only required to build examples
+    mesa_drivers;
 
   meta = {
     description = "ATI drivers";

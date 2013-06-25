@@ -64,6 +64,14 @@ setModVersions(){
   # make.sh contains much more code to determine this whether its enabled
 }
 
+doPatchElf(){
+  for prog in $@ ; do
+    echo "$prog" | grep -qv '\.so' && patchelf --set-interpreter $(echo $glibc/lib/ld-linux*.so.2) "$prog" || true
+    patchelf --set-rpath "$out/lib:$LD_LIBRARY_PATH" "$prog"
+    patchelf --shrink-rpath "$prog"
+  done
+}
+
 # ==============================================================
 # resolve if we are building for a kernel with a fix for CVE-2010-3081
 # On kernels with the fix, use arch_compat_alloc_user_space instead
@@ -180,6 +188,9 @@ GCC_MAJOR="`gcc --version | grep -o -e ") ." | head -1 | cut -d " " -f 2`"
   # make xorg use the ati version
   ln -s $out/lib/xorg/modules/extensions/{fglrx/fglrx-libglx.so,libglx.so}
 
+  mv "$out"/lib/fglrx_dri.so "$out"/lib/dri/
+  doPatchElf `find "$out" -name "*.so"`
+  cp -s "${mesa_drivers}"/lib/dri/{swrast,vmwgfx}_dri.so "$out/lib/dri/"
 }
 
 { # build samples
@@ -193,10 +204,10 @@ GCC_MAJOR="`gcc --version | grep -o -e ") ." | head -1 | cut -d " " -f 2`"
   ( # build and install fgl_glxgears
     cd fgl_glxgears; 
     gcc -DGL_ARB_texture_multisample=1 -g \
-    -I$mesa/include \
-    -I$out/include \
-    -L$mesa/lib -lGL -lGLU -lX11 -lm \
-    -o $out/bin/fgl_glxgears -Wall  fgl_glxgears.c
+      -I$mesa/include \
+      -I$out/include \
+      -L$mesa/lib -lGL -lGLU -lX11 -lm \
+      -o $out/bin/fgl_glxgears -Wall  fgl_glxgears.c
   )
 
   true || ( # build and install
@@ -206,19 +217,16 @@ GCC_MAJOR="`gcc --version | grep -o -e ") ." | head -1 | cut -d " " -f 2`"
 
     cd programs/fglrx_gamma
     gcc -fPIC -I${libXxf86vm}/include \
-	    -I${xf86vidmodeproto}/include \
-	    -I$out/X11R6/include \
-	    -L$out/lib \
-	    -Wall -lm -lfglrx_gamma -lX11 -lXext -o fglrx_xgamma fglrx_xgamma.c 
+      -I${xf86vidmodeproto}/include \
+      -I$out/X11R6/include \
+      -L$out/lib \
+      -Wall -lm -lfglrx_gamma -lX11 -lXext -o fglrx_xgamma fglrx_xgamma.c 
   )
 
   { # copy binaries and wrap them:
     BIN=$TMP/arch/$arch/usr/X11R6/bin
     cp $BIN/* $out/bin
-    for prog in $BIN/*; do
-      patchelf --set-interpreter $(echo $glibc/lib/ld-linux*.so.2) $out/bin/$(basename $prog)
-      wrapProgram $out/bin/$(basename $prog) --prefix LD_LIBRARY_PATH : $out/lib:$LD_LIBRARY_PATH
-    done
+    doPatchElf $out/bin/*
   }
 
   rm -fr $out/lib/modules/fglrx # don't think those .a files are needed. They cause failure of the mod
