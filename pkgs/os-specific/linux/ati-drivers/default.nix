@@ -20,23 +20,20 @@
 # There is one issue left:
 # /usr/lib/dri/fglrx_dri.so must point to /run/opengl-driver/lib/fglrx_dri.so
 
-assert stdenv.system == "x86_64-linux";
+
+#assert stdenv.system == "x86_64-linux"; # i686-linux should work as well - however I didn't test it.
 
 stdenv.mkDerivation rec {
   name = "ati-drivers-${version}-${kernelDev.version}";
-  version = "12-8";
+  version = "13-4";
 
   builder = ./builder.sh;
 
   inherit libXxf86vm xf86vidmodeproto;
 
   src = fetchurl {
-    url = "http://www2.ati.com/drivers/linux/amd-driver-installer-${version}-x86.x86_64.zip";
-    sha256 = "0hdv89vdap6v0dnwhddizfmlkwyh0j910sp4wyj2lq5pn9rm2lk2";
-
-    # beta
-    # url = "http://www2.ati.com/drivers/beta/amd-driver-installer-12-9-beta-x86.x86_64.zip";
-    # sha256 = "02dmflzfrgr07fa1hv34m7ad8pra21xv7qbk500gqm6v8s9vbplk";
+    url = "http://www2.ati.com/drivers/linux/amd-driver-installer-catalyst-${version}-linux-x86.x86_64.zip";
+    sha256 = "1914ikdich0kg047bqh89ai5z4dyryj5mlw5i46n90fsfiaxa532";
   };
 
   buildInputs =
@@ -66,14 +63,6 @@ stdenv.mkDerivation rec {
     homepage = http://support.amd.com/us/gpudownload/Pages/index.aspx;
     license = "unfree";
     maintainers = [stdenv.lib.maintainers.marcweber];
-    #platforms = [ "x86_64-linux" ];
+    platforms = [ "x86_64-linux" ];
   };
-
-  # moved assertions here because the name is evaluated when the NixOS manual is generated
-  # Don't make that fail - fail lazily when a users tries to build this derivation only
-  dummy =
-    # assert xorg.xorgserver.name == "xorg-server-1.7.5";
-    assert stdenv.system == "x86_64-linux"; # i686-linux should work as well - however I didn't test it.
-    null;
-
 }

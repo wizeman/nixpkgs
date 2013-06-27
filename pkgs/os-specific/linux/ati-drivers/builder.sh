@@ -189,7 +189,7 @@ GCC_MAJOR="`gcc --version | grep -o -e ") ." | head -1 | cut -d " " -f 2`"
   ln -s $out/lib/xorg/modules/extensions/{fglrx/fglrx-libglx.so,libglx.so}
 
   mv "$out"/lib/fglrx_dri.so "$out"/lib/dri/
-  doPatchElf `find "$out" -name "*.so"`
+  doPatchElf `find "$out" -type f -name "*.so*"`
   cp -s "${mesa_drivers}"/lib/dri/{swrast,vmwgfx}_dri.so "$out/lib/dri/"
 }
 
@@ -230,5 +230,5 @@ GCC_MAJOR="`gcc --version | grep -o -e ") ." | head -1 | cut -d " " -f 2`"
   }
 
   rm -fr $out/lib/modules/fglrx # don't think those .a files are needed. They cause failure of the mod
-
+  rm "$out/bin/amdcccle" # we don't want to pull Qt because of this, otherwise it won't run (possible to split out in the future)
 }
