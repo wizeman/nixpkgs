@@ -126,4 +126,45 @@ in
     };
   };
 
+  syntastic = stdenv.mkDerivation {
+    name = "vim-syntastic-3.0.0";
+   
+    src = fetchurl {
+      url = "https://github.com/scrooloose/syntastic/archive/3.0.0.tar.gz";
+      sha256 = "0nf69wpa8qa7xcfvywy2khmazs4dn1i2nal9qwjh2bzrbwbbkdyl";
+    };
+
+    buildPhase = "";
+
+    installPhase = ''
+      mkdir -p "$out/vim-plugins"
+      cp -R autoload "$out/vim-plugins"
+      cp -R doc "$out/vim-plugins"
+      cp -R plugin "$out/vim-plugins"
+      cp -R syntax_checkers "$out/vim-plugins"
+    '';
+  };
+
+  coffeeScript = stdenv.mkDerivation {
+    name = "vim-coffee-script-v002";
+
+    src = fetchurl {
+      url = "https://github.com/vim-scripts/vim-coffee-script/archive/v002.tar.gz";
+      sha256 = "1xln6i6jbbihcyp5bsdylr2146y41hmp2xf7wi001g2ymj1zdsc0";
+    };
+
+    buildPhase = "";
+
+    installPhase = ''
+      mkdir -p "$out/vim-plugins"
+      cp -R after "$out/vim-plugins"
+      cp -R compiler "$out/vim-plugins"
+      cp -R doc "$out/vim-plugins"
+      cp -R ftdetect "$out/vim-plugins"
+      cp -R ftplugin "$out/vim-plugins"
+      cp -R indent "$out/vim-plugins"
+      cp -R syntax "$out/vim-plugins"
+    '';
+  };
 }
+
