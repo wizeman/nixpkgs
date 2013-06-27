@@ -1,4 +1,5 @@
-{ fetchurl, stdenv, perl, python, bison, flex, pkgconfig, intltool, glib, libxml2 }:
+{ fetchurl, stdenv, perl, python, bison, flex, pkgconfig, intltool
+, glib, libxml2, libintlOrEmpty }:
 
 stdenv.mkDerivation rec {
   name = "gstreamer-1.0.7";
@@ -12,7 +13,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ perl python bison flex pkgconfig intltool ];
-  propagatedBuildInputs = [ glib libxml2 ];
+  propagatedBuildInputs = [ glib libxml2 ] ++ libintlOrEmpty;
 
   configureFlags = ''
     --disable-gst-debug --disable-debug --localstatedir=/var

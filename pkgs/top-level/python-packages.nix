@@ -97,7 +97,7 @@ pythonPackages = python.modules // rec {
   };
 
   pygtk = import ../development/python-modules/pygtk {
-    inherit (pkgs) fetchurl stdenv pkgconfig glib gtk;
+    inherit (pkgs) fetchurl stdenv pkgconfig gtk;
     inherit python buildPythonPackage pygobject pycairo;
   };
 
@@ -106,7 +106,7 @@ pythonPackages = python.modules // rec {
   #  inherit (pkgs.gnome) libglade;
   #};
   pyGtkGlade = import ../development/python-modules/pygtk {
-    inherit (pkgs) fetchurl stdenv pkgconfig glib gtk;
+    inherit (pkgs) fetchurl stdenv pkgconfig gtk;
     inherit (pkgs.gnome) libglade;
     inherit python buildPythonPackage pygobject pycairo;
   };
@@ -447,6 +447,44 @@ pythonPackages = python.modules // rec {
       description = "Music tagger and library organizer";
       license = pkgs.lib.licenses.mit;
       maintainers = [ stdenv.lib.maintainers.iElectric ];
+    };
+  };
+
+
+  blivet = buildPythonPackage rec {
+    name = "blivet-${version}";
+    version = "0.16-1";
+
+    src = fetchurl {
+      url = "https://git.fedorahosted.org/cgit/blivet.git/snapshot/"
+          + "${name}.tar.bz2";
+      sha256 = "0gfxf86sc0mkpqjcainch6gqh3r7brgma85pbl4nfpzmylhzj5sg";
+    };
+
+    postPatch = ''
+      sed -i -e '/find_library/,/find_library/ {
+        c libudev = "${pkgs.udev}/lib/libudev.so.1"
+      }' blivet/pyudev.py
+      sed -i -e 's|"multipath"|"${pkgs.multipath_tools}/sbin/multipath"|' \
+        blivet/devicelibs/mpath.py blivet/devices.py
+    '';
+
+    propagatedBuildInputs = let
+      pyenable = { enablePython = true; };
+      selinuxWithPython = pkgs.libselinux.override pyenable;
+      cryptsetupWithPython = pkgs.cryptsetup.override pyenable;
+    in [
+      pykickstart pyparted pkgs.udev pyblock
+      selinuxWithPython cryptsetupWithPython
+    ];
+
+    # tests are currently _heavily_ broken upstream
+    doCheck = false;
+
+    meta = {
+      homepage = "https://fedoraproject.org/wiki/Blivet";
+      description = "Module for management of a system's storage configuration";
+      license = [ "GPLv2+" "LGPLv2.1+" ];
     };
   };
 
@@ -2401,6 +2439,24 @@ pythonPackages = python.modules // rec {
   });
 
 
+  meld3 = buildPythonPackage rec {
+    name = "meld3-0.6.10";
+
+    src = fetchurl {
+      url = https://pypi.python.org/packages/source/m/meld3/meld3-0.6.10.tar.gz;
+      md5 = "42e58624e9d427be7659d7a28e2b0b6f";
+    };
+
+    doCheck = false;
+
+    meta = {
+      description = "An HTML/XML templating engine used by supervisor";
+      homepage = https://github.com/supervisor/meld3;
+      license = "ZPL";
+    };
+  };
+
+
   memcached = buildPythonPackage rec {
     name = "memcached-1.48";
 
@@ -2485,16 +2541,17 @@ pythonPackages = python.modules // rec {
 
   mrbob = buildPythonPackage rec {
     name = "mrbob-${version}";
-    version = "0.1a6";
+    version = "0.1a9";
 
     src = fetchurl {
       url = "http://pypi.python.org/packages/source/m/mr.bob/mr.bob-${version}.zip";
-      md5 = "361c8ac7a31953ab94a95cf34d9a0b2b";
+      md5 = "2d27d9bd1fc6269a3ecfd1a1ae47cd8a";
     };
 
-    buildInputs = [ pkgs.unzip six ] ++ (optionals isPy26 [ importlib ordereddict ]);
+    buildInputs = [ pkgs.unzip ];
 
-    propagatedBuildInputs = [ argparse jinja2 ];
+    propagatedBuildInputs = [ argparse jinja2 six python.modules.readline ] ++
+                            (optionals isPy26 [ importlib ordereddict ]);
 
     meta = {
       homepage = https://github.com/iElectric/mr.bob.git;
@@ -2873,6 +2930,7 @@ pythonPackages = python.modules // rec {
     src = fetchgit {
       url = https://git.torproject.org/pluggable-transports/obfsproxy.git;
       rev = "3c4e843a30c430aec1de03e0e09ef654072efc03";
+      sha256 = "8fd1e63a37bc42add7609d97d50ecd81da81881bcf7015a9e2958531dbf39018";
     };
 
     propagatedBuildInputs = [ pyptlib argparse twisted pycrypto ];
@@ -2947,6 +3005,28 @@ pythonPackages = python.modules // rec {
     };
   });
 
+  pandas = buildPythonPackage rec {
+    name = "pandas-0.11.0";
+
+    src = fetchurl {
+      url = "https://pypi.python.org/packages/source/p/pandas/${name}.tar.gz";
+      sha256 = "1mwh783hcch6lywgjayj8aqmbfv6n8fd2qbf1xlwqk2913ad8x2d";
+    };
+
+    buildInputs = [ nose ];
+    propagatedBuildInputs = [ dateutil numpy pytz python.modules.sqlite3 ];
+
+    # Tests require networking to pass
+    doCheck = false;
+
+    meta = {
+      homepage = "http://pandas.pydata.org/";
+      description = "Python Data Analysis Library";
+      license = stdenv.lib.licenses.bsd3;
+      maintainers = [ stdenv.lib.maintainers.raskin ];
+      platforms = stdenv.lib.platforms.linux;
+    };
+  };
 
   paramiko = buildPythonPackage rec {
     name = "paramiko-1.10";
@@ -3369,6 +3449,10 @@ pythonPackages = python.modules // rec {
       md5 = "8d27f84509a96d6791a6c393ae67d7c8";
     };
 
+    preConfigure = ( if stdenv.isDarwin then ''
+      export DYLD_LIBRARY_PATH="${pkgs.libgit2}/lib"
+    '' else "" );
+
     propagatedBuildInputs = [ pkgs.libgit2 ];
 
     meta = {
@@ -3398,6 +3482,35 @@ pythonPackages = python.modules // rec {
       platforms = stdenv.lib.platforms.linux;
     };
   });
+
+
+  pyblock = stdenv.mkDerivation rec {
+    name = "python-pyblock-${version}";
+    version = "0.52-1";
+
+    src = fetchurl {
+      url = "https://git.fedorahosted.org/cgit/pyblock.git/snapshot/"
+          + "pyblock-${version}.tar.bz2";
+      sha256 = "1jj5hd1dcr8xx00rg3jynsf4ak88wwr5id3fmb0qf6zvim1whj7l";
+    };
+
+    postPatch = ''
+      sed -i -e 's|/usr/include/python|${python}/include/python|' \
+             -e 's/-Werror *//' -e 's|/usr/|'"$out"'/|' Makefile
+    '';
+
+    buildInputs = [ python pkgs.lvm2 pkgs.dmraid ];
+
+    makeFlags = [
+      "USESELINUX=0"
+      "SITELIB=$(out)/lib/${python.libPrefix}/site-packages"
+    ];
+
+    meta = {
+      description = "Interface for working with block devices";
+      license = stdenv.lib.licenses.gpl2Plus;
+    };
+  };
 
 
   pycryptopp = buildPythonPackage (rec {
@@ -3585,6 +3698,35 @@ pythonPackages = python.modules // rec {
   };
 
 
+  pykickstart = buildPythonPackage rec {
+    name = "pykickstart-${version}";
+    version = "1.99.32-1";
+
+    src = fetchurl {
+      url = "https://git.fedorahosted.org/cgit/pykickstart.git/snapshot/"
+          + "r${version}.tar.bz2";
+      sha256 = "1sq68jvc39k9wrkcc4xlabhwi8gdz019yh2k5nrl7ya35b8daqw0";
+    };
+
+    postPatch = ''
+      sed -i -e "s/for tst in tstList/for tst in sorted(tstList, \
+                 key=lambda m: m.__name__)/" tests/baseclass.py
+    '';
+
+    propagatedBuildInputs = [ urlgrabber ];
+
+    checkPhase = ''
+      python tests/baseclass.py -vv
+    '';
+
+    meta = {
+      homepage = "http://fedoraproject.org/wiki/Pykickstart";
+      description = "Read and write Fedora kickstart files";
+      license = pkgs.lib.licenses.gpl2Plus;
+    };
+  };
+
+
   pyparsing = buildPythonPackage rec {
     name = "pyparsing-1.5.6";
 
@@ -3601,6 +3743,47 @@ pythonPackages = python.modules // rec {
       description = "The pyparsing module is an alternative approach to creating and executing simple grammars, vs. the traditional lex/yacc approach, or the use of regular expressions.";
     };
   };
+
+
+  pyparted = buildPythonPackage rec {
+    name = "pyparted-${version}";
+    version = "3.10";
+
+    src = fetchurl {
+      url = "https://fedorahosted.org/releases/p/y/pyparted/${name}.tar.gz";
+      sha256 = "17wq4invmv1nfazaksf59ymqyvgv3i8h4q03ry2az0s9lldyg3dv";
+    };
+
+    postPatch = ''
+      sed -i -e 's|/sbin/mke2fs|${pkgs.e2fsprogs}&|' tests/baseclass.py
+      sed -i -e '
+        s|e\.path\.startswith("/tmp/temp-device-")|"temp-device-" in e.path|
+      ' tests/test__ped_ped.py
+    '' + pkgs.lib.optionalString stdenv.isi686 ''
+      # remove some integers in this test case which overflow on 32bit systems
+      sed -i -r -e '/class *UnitGetSizeTestCase/,/^$/{/[0-9]{11}/d}' \
+        tests/test__ped_ped.py
+    '';
+
+    preConfigure = ''
+      PATH="${pkgs.parted}/sbin:$PATH"
+    '';
+
+    buildInputs = [ pkgs.pkgconfig ];
+
+    propagatedBuildInputs = [ pkgs.parted ];
+
+    checkPhase = ''
+      python -m unittest discover -v
+    '';
+
+    meta = {
+      homepage = "https://fedorahosted.org/pyparted/";
+      description = "Python interface for libparted";
+      license = pkgs.lib.licenses.gpl2Plus;
+    };
+  };
+
 
   pyptlib = buildPythonPackage (rec {
     name = "pyptlib-${version}";
@@ -3630,6 +3813,32 @@ pythonPackages = python.modules // rec {
       maintainers = [ stdenv.lib.maintainers.iElectric ];
     };
   });
+
+
+  pyudev = buildPythonPackage rec {
+    name = "pyudev-${version}";
+    version = "0.16.1";
+
+    src = fetchurl {
+      url = "https://pypi.python.org/packages/source/p/pyudev/${name}.tar.gz";
+      md5 = "4034de584b6d9efcbfc590a047c63285";
+    };
+
+    postPatch = ''
+      sed -i -e '/udev_library_name/,/^ *libudev/ {
+        s|CDLL([^,]*|CDLL("${pkgs.udev}/lib/libudev.so.1"|p; d
+      }' pyudev/_libudev.py
+    '';
+
+    propagatedBuildInputs = [ pkgs.udev ];
+
+    meta = {
+      homepage = "http://pyudev.readthedocs.org/";
+      description = "Pure Python libudev binding";
+      license = stdenv.lib.licenses.lgpl21Plus;
+    };
+  };
+
 
   pynzb = buildPythonPackage (rec {
     name = "pynzb-0.1.0";
@@ -4338,11 +4547,11 @@ pythonPackages = python.modules // rec {
 
 
   six = buildPythonPackage rec {
-    name = "six-1.1.0";
+    name = "six-1.3.0";
 
     src = fetchurl {
       url = "http://pypi.python.org/packages/source/s/six/${name}.tar.gz";
-      md5 = "9e8099b57cd27493a6988e9c9b313e23";
+      md5 = "ec47fe6070a8a64c802363d2c2b1e2ee";
     };
 
     # error: invalid command 'test'
@@ -4402,6 +4611,25 @@ pythonPackages = python.modules // rec {
       license = pkgs.lib.licenses.mit;
     };
   };
+
+
+  supervisor = buildPythonPackage rec {
+    name = "supervisor-3.0b2";
+
+    src = fetchurl {
+      url = https://pypi.python.org/packages/source/s/supervisor/supervisor-3.0b2.tar.gz;
+      md5 = "e2557853239ee69955f993091b0eddc4";
+    };
+
+    buildInputs = [ mock ];
+    propagatedBuildInputs = [ meld3  ];
+
+    meta = {
+      description = "A system for controlling process state under UNIX";
+      homepage = http://supervisord.org/;
+    };
+  };
+
 
   sphinx = buildPythonPackage (rec {
     name = "Sphinx-1.1.3";
@@ -5633,6 +5861,36 @@ pythonPackages = python.modules // rec {
       md5 = "c738af97c31dd70f41f6726cf0968941";
     };
     doCheck = false;
+  };
+
+
+  tarman = buildPythonPackage rec {
+    version = "0.1.1";
+    name = "tarman-${version}";
+
+    src = fetchurl {
+      url = "https://pypi.python.org/packages/source/t/tarman/tarman-${version}.zip";
+      sha256 = "0ppd2365hf841b58fss5pgaja0y0mwx5n0gk1p3rxx9y3r0kyfas";
+    };
+
+    buildInputs = [ pkgs.unzip unittest2 nose mock ];
+    propagatedBuildInputs = [ python.modules.curses libarchive ];
+
+    # two tests fail
+    doCheck = false;
+  };
+
+
+  libarchive = buildPythonPackage rec {
+    version = "3.0.4-5";
+    name = "libarchive-${version}";
+
+    src = fetchurl {
+      url = "http://python-libarchive.googlecode.com/files/python-libarchive-${version}.tar.gz";
+      sha256 = "141yx9ym8gvybn67mw0lmgafzsd79rmd9l77lk0k6m2fzclqx1j5";
+    };
+
+    propagatedBuildInputs = [ pkgs.libarchive ];
   };
 
 

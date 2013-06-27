@@ -5,8 +5,8 @@
 , libtiff, glib, icu
 , mysql, postgresql, sqlite
 , perl, coreutils, libXi
-, buildMultimedia ? true, alsaLib, gstreamer, gst_plugins_base
-, buildWebkit ? true
+, buildMultimedia ? stdenv.isLinux, alsaLib, gstreamer, gst_plugins_base
+, buildWebkit ? stdenv.isLinux
 , flashplayerFix ? false, gdk_pixbuf
 , gtkStyle ? false, libgnomeui, gtk, GConf, gnome_vfs
 , developerBuild ? false
@@ -39,6 +39,7 @@ stdenv.mkDerivation rec {
 
   patches =
     [ ./glib-2.32.patch
+      ./CVE-2013-0254.patch
       (substituteAll {
         src = ./dlopen-absolute-paths.diff;
         inherit cups icu libXfixes;
@@ -90,18 +91,12 @@ stdenv.mkDerivation rec {
       ${if developerBuild then "-developer-build" else ""}
     '';
 
-  # fix underspecified dependency in a generated makefile
-  postConfigure = ''
-    substituteInPlace tools/designer/src/lib/Makefile --replace \
-      "moc_qtgradientviewdialog.cpp:" "moc_qtgradientviewdialog.cpp: .uic/release-shared/ui_qtgradientview.h"
-  '';
-
   propagatedBuildInputs =
     [ libXrender libXrandr libXinerama libXcursor libXext libXfixes
       libXv libXi libSM
     ]
     ++ optional (stdenv.lib.lists.elem stdenv.system stdenv.lib.platforms.mesaPlatforms) mesa
-    ++ optional (buildWebkit || buildMultimedia) alsaLib
+    ++ optional ((buildWebkit || buildMultimedia) && stdenv.isLinux ) alsaLib
     ++ [ zlib libpng openssl dbus.libs freetype fontconfig glib ]
     ++ optionals (buildWebkit || buildMultimedia) [ gstreamer gst_plugins_base ];
 
@@ -113,7 +108,9 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ perl pkgconfig which ];
 
-  enableParallelBuilding = true;
+  # occasional build problems if one has too many cores (like on Hydra)
+  # @vcunat has been unable to find a *reliable* fix
+  enableParallelBuilding = false;
 
   crossAttrs = let
     isMingw = stdenv.cross.config == "i686-pc-mingw32" ||
@@ -154,6 +151,6 @@ stdenv.mkDerivation rec {
     description = "A cross-platform application framework for C++";
     license = "GPL/LGPL";
     maintainers = with maintainers; [ urkud sander phreedom ];
-    platforms = platforms.linux;
+    platforms = platforms.all;
   };
 }

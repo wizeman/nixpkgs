@@ -21,11 +21,11 @@ with { inherit (stdenv.lib) optional; };
 */
 
 let derivSrc = rec { # derivSrc is exported and re-used by expressions for older versions
-  name = "libav-9.6";
+  name = "libav-9.7";
 
   src = fetchurl {
     url = "http://libav.org/releases/${name}.tar.xz";
-    sha256 = "118wx8p12lh57yzx5vss32almfa0w3gaxwa0ljcz3xvy4xf1nm03";
+    sha256 = "0wjrpjiqaqd3xjxd81vmb3zyiq10qx00lkz1axr3329xlidl4nns";
   };
 
   configureFlags =
