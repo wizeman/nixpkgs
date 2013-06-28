@@ -2131,6 +2131,37 @@ let
 
   gcc45 = gcc45_real;
 
+  wrapDeterministicGCCWith = gccWrapper: glibc: baseGCC: gccWrapper {
+    nativeTools = stdenv ? gcc && stdenv.gcc.nativeTools;
+    nativeLibc = stdenv ? gcc && stdenv.gcc.nativeLibc;
+    nativePrefix = if stdenv ? gcc then stdenv.gcc.nativePrefix else "";
+    gcc = baseGCC;
+    libc = glibc;
+    shell = bash;
+    binutils = binutils_deterministic;
+    inherit stdenv coreutils zlib;
+  };
+  
+  wrapDeterministicGCC = wrapDeterministicGCCWith (import ../build-support/gcc-wrapper) glibc;
+  
+  gcc46_deterministic = lowPrio (wrapDeterministicGCC (callPackage ../development/compilers/gcc/4.6 {
+    inherit noSysDirs;
+
+    # bootstrapping a profiled compiler does not work in the sheevaplug:
+    # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43944
+    profiledCompiler = !stdenv.isArm;
+
+    # When building `gcc.crossDrv' (a "Canadian cross", with host == target
+    # and host != build), `cross' must be null but the cross-libc must still
+    # be passed.
+    cross = null;
+    libcCross = if crossSystem != null then libcCross else null;
+    libpthreadCross =
+      if crossSystem != null && crossSystem.config == "i586-pc-gnu"
+      then gnu.libpthreadCross
+      else null;
+  }));
+
   gcc46 = gcc46_real;
 
   gcc47 = gcc47_real;
@@ -2813,7 +2844,14 @@ let
     ocaml = ocaml_3_08_0;
   };
 
-  repeatableStdenv  = lowPrio (stdenvAdapters.overrideSetup stdenv ../stdenv/generic/setup-repeatable.sh );
+  deterministicStdenv = lowPrio (
+    overrideInStdenv (
+      stdenvAdapters.overrideGCC
+        (stdenvAdapters.overrideSetup stdenv ../stdenv/generic/setup-repeatable.sh )
+      gcc46_deterministic
+    )
+    [ binutils_deterministic ]
+  );
 
   roadsend = callPackage ../development/compilers/roadsend { };
 
@@ -3206,6 +3244,11 @@ let
     inherit noSysDirs;
   };
 
+  binutils_deterministic = lowPrio (callPackage ../development/tools/misc/binutils {
+    inherit noSysDirs;
+    deterministic = true;
+  });
+
   binutils_gold = lowPrio (callPackage ../development/tools/misc/binutils {
     inherit noSysDirs;
     gold = true;
@@ -3496,8 +3539,6 @@ let
   seleniumRCBin = callPackage ../development/tools/selenium/remote-control {
     jre = jdk;
   };
-
-  sbt = callPackage ../development/tools/build-managers/sbt { };
 
   scons = callPackage ../development/tools/build-managers/scons { };
 
@@ -7325,10 +7366,6 @@ let
 
   firefox = pkgs.firefoxPkgs.firefox;
 
-  firefoxWrapper = wrapFirefox { browser = pkgs.firefox; };
-
-  firefoxPkgs = pkgs.firefox21Pkgs;
-
   firefox36Pkgs = callPackage ../applications/networking/browsers/firefox/3.6.nix {
     inherit (gnome) libIDL;
   };
@@ -7341,19 +7378,12 @@ let
 
   firefox13Wrapper = lowPrio (wrapFirefox { browser = firefox13Pkgs.firefox; });
 
-  firefox20Pkgs = callPackage ../applications/networking/browsers/firefox/20.0.nix {
+  firefoxPkgs = callPackage ../applications/networking/browsers/firefox {
     inherit (gnome) libIDL;
     inherit (pythonPackages) pysqlite;
   };
 
-  firefox20Wrapper = lowPrio (wrapFirefox { browser = firefox20Pkgs.firefox; });
-
-  firefox21Pkgs = callPackage ../applications/networking/browsers/firefox/21.0.nix {
-    inherit (gnome) libIDL;
-    inherit (pythonPackages) pysqlite;
-  };
-
-  firefox21Wrapper = lowPrio (wrapFirefox { browser = firefox21Pkgs.firefox; });
+  firefoxWrapper = lowPrio (wrapFirefox { browser = firefoxPkgs.firefox; });
 
   flac = callPackage ../applications/audio/flac { };
 
@@ -8113,6 +8143,10 @@ let
 
   seq24 = callPackage ../applications/audio/seq24 { };
 
+  sflphone = callPackage ../applications/networking/instant-messengers/sflphone {
+    gtk = gtk3;
+  };
+
   siproxd = callPackage ../applications/networking/siproxd { };
 
   skype = callPackage_i686 ../applications/networking/instant-messengers/skype {
@@ -8120,7 +8154,6 @@ let
   };
 
   skype4pidgin = callPackage ../applications/networking/instant-messengers/pidgin-plugins/skype4pidgin { };
-
 
   skype_call_recorder = callPackage ../applications/networking/instant-messengers/skype-call-recorder { };
 
@@ -9390,6 +9423,8 @@ let
   };
   */
 
+  nixops = callPackage ../tools/package-management/nixops { };
+
   nut = callPackage ../applications/misc/nut { };
 
   solfege = callPackage ../misc/solfege {
@@ -9398,7 +9433,7 @@ let
 
   disnix = callPackage ../tools/package-management/disnix { };
 
-  disnix_activation_scripts = callPackage ../tools/package-management/disnix/activation-scripts {
+  dysnomia = callPackage ../tools/package-management/disnix/dysnomia {
     enableApacheWebApplication = config.disnix.enableApacheWebApplication or false;
     enableAxis2WebService = config.disnix.enableAxis2WebService or false;
     enableEjabberdDump = config.disnix.enableEjabberdDump or false;
