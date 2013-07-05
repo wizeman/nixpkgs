@@ -4,14 +4,14 @@
 
 let
   ver_branch = "1.6";
-  version = "1.5.2";
+  version = "1.5.1"; # 1.5.2 results into infinite cycling of X in restarts
 in
 stdenv.mkDerivation rec {
   name = "lightdm-gtk-greeter-${version}";
 
   src = fetchurl {
     url = "${meta.homepage}/${ver_branch}/${version}/+download/${name}.tar.gz";
-    sha256 = "1k41sxdzm35mh7pfg1czvby22bdgzhrwar881w5i61lk79w13rhd";
+    sha256 = "08fnsbnay5jhd7ps8n91i6c227zq6xizpyn34qhqzykrga8pxkpc";
   };
 
   patches = [ ./lightdm-gtk-greeter.patch ];
