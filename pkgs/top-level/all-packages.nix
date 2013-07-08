@@ -444,6 +444,12 @@ let
 
   apg = callPackage ../tools/security/apg { };
 
+  otool = callPackage ../os-specific/darwin/otool { };
+
+  setfile = callPackage ../os-specific/darwin/setfile { };
+
+  install_name_tool = callPackage ../os-specific/darwin/install_name_tool { };
+
   xcodeenv = callPackage ../development/mobile/xcodeenv { };
 
   titaniumenv_2_1 = import ../development/mobile/titaniumenv {
@@ -751,6 +757,11 @@ let
 
   ecryptfs = callPackage ../tools/security/ecryptfs { };
 
+  editres = callPackage ../tools/graphics/editres {
+    inherit (xlibs) libXt libXaw;
+    inherit (xorg) utilmacros;
+  };
+
   edk2 = callPackage ../development/compilers/edk2 { };
 
   efibootmgr = callPackage ../tools/system/efibootmgr { };
@@ -913,6 +924,11 @@ let
   gnuplot = callPackage ../tools/graphics/gnuplot {
     texLive = null;
     lua = null;
+
+    # use gccApple to compile on darwin, seems to resolve a malloc error
+    stdenv = if stdenv.isDarwin
+      then stdenvAdapters.overrideGCC stdenv gccApple
+      else stdenv;
   };
 
   gnused = callPackage ../tools/text/gnused { };
@@ -1304,6 +1320,8 @@ let
   networkmanager_pptp_gnome = networkmanager_pptp.override { withGnome = true; };
 
   networkmanagerapplet = newScope gnome ../tools/networking/network-manager-applet { };
+
+  newsbeuter = callPackage ../applications/networking/feedreaders/newsbeuter { };
 
   pa_applet = callPackage ../tools/audio/pa-applet { };
 
@@ -3085,7 +3103,9 @@ let
 
   python = python27;
   python26 = callPackage ../development/interpreters/python/2.6 { };
-  python27 = callPackage ../development/interpreters/python/2.7 { };
+  python27 = callPackage ../development/interpreters/python/2.7 {
+    libX11 = xlibs.libX11;
+  };
 
   pythonFull = python27Full;
   python26Full = callPackage ../development/interpreters/python/wrapper.nix {
@@ -3135,10 +3155,6 @@ let
   rake = callPackage ../development/ruby-modules/rake { };
 
   rubySqlite3 = callPackage ../development/ruby-modules/sqlite3 { };
-
-  rLang = callPackage ../development/interpreters/r-lang {
-    withBioconductor = config.rLang.withBioconductor or false;
-  };
 
   rubygemsFun = ruby: builderDefsPackage (import ../development/interpreters/ruby/rubygems.nix) {
     inherit ruby makeWrapper;
@@ -4396,6 +4412,9 @@ let
   libcaca = callPackage ../development/libraries/libcaca { };
 
   libcanberra = callPackage ../development/libraries/libcanberra { };
+  libcanberra_kde = if (config.kde_runtime.libcanberraWithoutGTK or true)
+    then libcanberra.override { gtk = null; }
+    else libcanberra;
 
   libcello = callPackage ../development/libraries/libcello {};
 
@@ -4966,7 +4985,14 @@ let
 
   mythes = callPackage ../development/libraries/mythes { };
 
-  ncurses = makeOverridable (import ../development/libraries/ncurses) {
+  ncurses_5_4 = makeOverridable (import ../development/libraries/ncurses/5_4.nix) {
+    inherit fetchurl;
+    unicode = system != "i686-cygwin";
+    stdenv = if stdenv.isDarwin
+      then allStdenvs.stdenvNative
+      else stdenv;
+  };
+  ncurses_5_9 = makeOverridable (import ../development/libraries/ncurses) {
     inherit fetchurl;
     unicode = system != "i686-cygwin";
     stdenv =
@@ -4977,6 +5003,7 @@ let
       then allStdenvs.stdenvNative
       else stdenv;
   };
+  ncurses = ncurses_5_9;
 
   neon = callPackage ../development/libraries/neon {
     compressionSupport = true;
@@ -5124,7 +5151,13 @@ let
 
   popt = callPackage ../development/libraries/popt { };
 
-  portaudio = callPackage ../development/libraries/portaudio { };
+  portaudio = callPackage ../development/libraries/portaudio {
+    # resolves a variety of compile-time errors
+    stdenv = if stdenv.isDarwin
+      then clangStdenv
+      else stdenv;
+  };
+
   portaudioSVN = callPackage ../development/libraries/portaudio/svn-head.nix { };
 
   prison = callPackage ../development/libraries/prison { };
@@ -5323,6 +5356,12 @@ let
     inherit readline ncurses;
   });
 
+  stfl = callPackage ../development/libraries/stfl {
+    stdenv = if stdenv.isDarwin
+      then overrideGCC stdenv gccApple
+      else stdenv;
+  };
+
   stlink = callPackage ../development/tools/misc/stlink { };
 
   stlport = callPackage ../development/libraries/stlport { };
@@ -5367,7 +5406,9 @@ let
 
   tinyxml2 = callPackage ../development/libraries/tinyxml/2.6.2.nix { };
 
-  tk = callPackage ../development/libraries/tk { };
+  tk = callPackage ../development/libraries/tk {
+    libX11 = xlibs.libX11;
+  };
 
   tnt = callPackage ../development/libraries/tnt { };
 
@@ -5473,6 +5514,11 @@ let
   wxGTK29 = callPackage ../development/libraries/wxGTK-2.9/default.nix {
     inherit (gnome) GConf;
     withMesa = lib.elem system lib.platforms.mesaPlatforms;
+
+    # use for Objective-C++ compiler
+    stdenv = if stdenv.isDarwin
+      then clangStdenv
+      else stdenv;
   };
 
   wtk = callPackage ../development/libraries/wtk { };
@@ -7232,6 +7278,12 @@ let
     alsaLib = null;
     imagemagick = null;
     texinfo = texinfo5;
+
+    # use gccApple on darwin to deal with: unexec: 'my_edata is not in section
+    # __data'
+    stdenv = if stdenv.isDarwin
+      then stdenvAdapters.overrideGCC stdenv gccApple
+      else stdenv;
   };
 
   emacsPackages = emacs: self: let callPackage = newScope self; in rec {
@@ -7640,6 +7692,7 @@ let
   i3 = callPackage ../applications/window-managers/i3 { };
 
   i3lock = callPackage ../applications/window-managers/i3/lock.nix {
+    inherit (xorg) libxkbfile;
     cairo = cairo.override { xcbSupport = true; };
   };
 
@@ -8997,6 +9050,7 @@ let
       eigen = eigen2;
       libotr = libotr_3_2;
       libgphoto2 = libgphoto2_4;
+      libcanberra = libcanberra_kde;
     }) ../desktops/kde-4.7;
 
   kde48 = kdePackagesFor (pkgs.kde48 // {
@@ -9004,6 +9058,7 @@ let
       eigen = eigen2;
       libotr = libotr_3_2;
       libgphoto2 = libgphoto2_4;
+      libcanberra = libcanberra_kde;
     }) ../desktops/kde-4.8;
 
   kde410 = kdePackagesFor (pkgs.kde410 // {
@@ -9012,6 +9067,7 @@ let
       libotr = libotr_3_2;
       libusb = libusb1;
       ffmpeg = ffmpeg_1;
+      libcanberra = libcanberra_kde;
     }) ../desktops/kde-4.10;
 
   kdePackagesFor = self: dir:
