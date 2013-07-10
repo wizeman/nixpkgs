@@ -197,13 +197,13 @@ pythonPackages = python.modules // rec {
 
 
   alot = buildPythonPackage rec {
-    rev = "d3c1880a60ddd8ded397d92cddf310a948b97fdc";
+    rev = "0711cf8efaf1a4cca24617c3406210a415006457";
     name = "alot-0.3.4_${rev}";
 
     src = fetchurl {
       url = "https://github.com/pazz/alot/tarball/${rev}";
       name = "${name}.tar.bz";
-      sha256 = "049fzxs83zry5xr3al5wjvh7bcjq63wilf9wxh2c6sjmg96kpvvl";
+      sha256 = "1rxkx9cjajsv9x1dl4xp1r3vr0kb66sglxaqzjiwaknqzahmmji5";
     };
 
     # error: invalid command 'test'
@@ -453,12 +453,12 @@ pythonPackages = python.modules // rec {
 
   blivet = buildPythonPackage rec {
     name = "blivet-${version}";
-    version = "0.16-1";
+    version = "0.17-1";
 
     src = fetchurl {
       url = "https://git.fedorahosted.org/cgit/blivet.git/snapshot/"
           + "${name}.tar.bz2";
-      sha256 = "0gfxf86sc0mkpqjcainch6gqh3r7brgma85pbl4nfpzmylhzj5sg";
+      sha256 = "0b28q539657mqif0mn5dfqcpqv7gbyszg83gf2fv6z7q6206rnx5";
     };
 
     postPatch = ''
@@ -467,6 +467,13 @@ pythonPackages = python.modules // rec {
       }' blivet/pyudev.py
       sed -i -e 's|"multipath"|"${pkgs.multipath_tools}/sbin/multipath"|' \
         blivet/devicelibs/mpath.py blivet/devices.py
+      sed -i -e '/"wipefs"/ {
+        s|wipefs|${pkgs.utillinux}/sbin/wipefs|
+        s/-f/--force/
+      }' blivet/formats/__init__.py
+      sed -i -e 's|"lsof"|"${pkgs.lsof}/bin/lsof"|' blivet/formats/fs.py
+      sed -i -r -e 's|"(u?mount)"|"${pkgs.utillinux}/bin/\1"|' blivet/util.py
+      sed -i '/pvscan/s/, *"--cache"//' blivet/devicelibs/lvm.py
     '';
 
     propagatedBuildInputs = let
@@ -723,6 +730,28 @@ pythonPackages = python.modules // rec {
       description = "Python module for handling HTML forms on the client side";
     };
   });
+
+
+  cogapp = buildPythonPackage rec {
+    version = "2.3";
+    name    = "cogapp-${version}";
+
+    src = fetchurl {
+      url    = "https://pypi.python.org/packages/source/c/cogapp/${name}.tar.gz";
+      sha256 = "0gzmzbsk54r1qa6wd0yg4zzdxvn2f19ciprr2acldxaknzrpllnn";
+    };
+
+    # there are no tests
+    doCheck = false;
+
+    meta = with stdenv.lib; {
+      description = "A code generator for executing Python snippets in source files";
+      homepage    = http://nedbatchelder.com/code/cog;
+      license     = licenses.mit;
+      maintainers = with maintainers; [ lovek323 ];
+      platforms   = platforms.unix;
+    };
+  };
 
 
   colorama = buildPythonPackage rec {
@@ -990,6 +1019,31 @@ pythonPackages = python.modules // rec {
   };
 
 
+  demjson = buildPythonPackage rec {
+    name = "demjson-1.6";
+
+    src = fetchurl {
+      url = "https://pypi.python.org/packages/source/d/demjson/${name}.tar.gz";
+      sha256 = "0abf7wqqq7rk1sycy47ayn5p93yy7gjq50cb2z69wmik1qqrr60x";
+    };
+
+    doCheck = false; # there are no tests
+
+    preFixup = ''
+      mkdir -p "$out/bin"
+      cp jsonlint "$out/bin/"
+    '';
+
+    meta = {
+      description = "Encoder/decoder and lint/validator for JSON (JavaScript Object Notation)";
+      homepage = http://deron.meranda.us/python/demjson/;
+      license = stdenv.lib.licenses.lgpl3Plus;
+      maintainers = with stdenv.lib.maintainers; [ bjornfor ];
+      platforms = stdenv.lib.platforms.all;
+    };
+  };
+
+
   evdev = buildPythonPackage rec {
     version = "0.3.2";
     name = "evdev-${version}";
@@ -1012,6 +1066,41 @@ pythonPackages = python.modules // rec {
       maintainers = [ maintainers.goibhniu ];
     };
   };
+
+
+  eyeD3 = buildPythonPackage rec {
+    version = "0.7.2";
+    name    = "eyeD3-${version}";
+
+    src = fetchurl {
+      url = http://eyed3.nicfit.net/releases/eyeD3-0.7.2.tgz;
+      sha256 = "1r0vxdflrj83s8jc5f2qg4p00k37pskn3djym0w73bvq167vkxar";
+    };
+
+    buildInputs = [ paver ];
+
+    postInstall = ''
+      for prog in $out/bin/*; do
+        wrapProgram "$prog" --prefix PYTHONPATH : "$PYTHONPATH"
+      done
+    '';
+
+    meta = with stdenv.lib; {
+      description = "A Python module and command line program for processing ID3 tags";
+      homepage    = http://eyed3.nicfit.net/;
+      license     = licenses.gpl2;
+      maintainers = with maintainers; [ lovek323 ];
+      platforms   = platforms.unix;
+
+      longDescription = ''
+        eyeD3 is a Python module and command line program for processing ID3
+        tags. Information about mp3 files (i.e bit rate, sample frequency, play
+        time, etc.) is also provided. The formats supported are ID3 v1.0/v1.1
+        and v2.3/v2.4.
+      '';
+    };
+  };
+
 
   fabric = buildPythonPackage rec {
     name = "fabric-1.6.1";
@@ -1042,6 +1131,31 @@ pythonPackages = python.modules // rec {
     };
 
     propagatedBuildInputs = [ logilab_common ];
+  };
+
+
+  paver = buildPythonPackage rec {
+    version = "1.2.1";
+    name    = "Paver-${version}";
+
+    src = fetchurl {
+      url    = "https://pypi.python.org/packages/source/P/Paver/Paver-${version}.tar.gz";
+      sha256 = "1b1023jks1gi1rwphdy3y2zx7dh4bvwk2050kclp95j7xym1ya0y";
+    };
+
+    buildInputs = [ cogapp mock virtualenv ];
+
+    propagatedBuildInputs = [ nose ];
+
+    # the tests do not pass
+    doCheck = false;
+
+    meta = with stdenv.lib; {
+      description = "A Python-based build/distribution/deployment scripting tool";
+      homepage    = http://github.com/paver/paver;
+      matinainers = with maintainers; [ lovek323 ];
+      platforms   = platforms.unix;
+    };
   };
 
 
@@ -1845,11 +1959,11 @@ pythonPackages = python.modules // rec {
   };
 
   genshi = buildPythonPackage {
-    name = "genshi-0.6";
+    name = "genshi-0.7";
 
     src = fetchurl {
-      url = http://ftp.edgewall.com/pub/genshi/Genshi-0.6.tar.gz;
-      sha256 = "0jrajyppdzb3swcxv3w1mpp88vcy7400gy1v2h2gm3pq0dmggaij";
+      url = http://ftp.edgewall.com/pub/genshi/Genshi-0.7.tar.gz;
+      sha256 = "0lkkbp6fbwzv0zda5iqc21rr7rdldkwh3hfabfjl9i4bwq14858x";
     };
 
     # FAIL: test_sanitize_remove_script_elem (genshi.filters.tests.html.HTMLSanitizerTestCase)
@@ -2740,36 +2854,56 @@ pythonPackages = python.modules // rec {
       name = "${name}.tar.gz";
     };
 
-   propagatedBuildInputs = [ twisted ];
+    propagatedBuildInputs = [ twisted ];
 
-   postInstall = "twistd --help > /dev/null";
+    postInstall = "twistd --help > /dev/null";
 
-   meta = {
-     description = "Nevow, a web application construction kit for Python";
+    meta = {
+      description = "Nevow, a web application construction kit for Python";
 
-     longDescription = ''
-       Nevow - Pronounced as the French "nouveau", or "noo-voh", Nevow
-       is a web application construction kit written in Python.  It is
-       designed to allow the programmer to express as much of the view
-       logic as desired in Python, and includes a pure Python XML
-       expression syntax named stan to facilitate this.  However it
-       also provides rich support for designer-edited templates, using
-       a very small XML attribute language to provide bi-directional
-       template manipulation capability.
+      longDescription = ''
+        Nevow - Pronounced as the French "nouveau", or "noo-voh", Nevow
+        is a web application construction kit written in Python.  It is
+        designed to allow the programmer to express as much of the view
+        logic as desired in Python, and includes a pure Python XML
+        expression syntax named stan to facilitate this.  However it
+        also provides rich support for designer-edited templates, using
+        a very small XML attribute language to provide bi-directional
+        template manipulation capability.
 
-       Nevow also includes formless, a declarative syntax for
-       specifying the types of method parameters and exposing these
-       methods to the web.  Forms can be rendered automatically, and
-       form posts will be validated and input coerced, rendering error
-       pages if appropriate.  Once a form post has validated
-       successfully, the method will be called with the coerced values.
-     '';
+        Nevow also includes formless, a declarative syntax for
+        specifying the types of method parameters and exposing these
+        methods to the web.  Forms can be rendered automatically, and
+        form posts will be validated and input coerced, rendering error
+        pages if appropriate.  Once a form post has validated
+        successfully, the method will be called with the coerced values.
+      '';
 
-     homepage = http://divmod.org/trac/wiki/DivmodNevow;
+      homepage = http://divmod.org/trac/wiki/DivmodNevow;
 
-     license = "BSD-style";
-   };
- });
+      license = "BSD-style";
+    };
+  });
+
+  nixpart = buildPythonPackage rec {
+    name = "nixpart-${version}";
+    version = "0.2.0";
+
+    src = fetchurl {
+      url = "https://github.com/aszlig/nixpart/archive/v${version}.tar.gz";
+      sha256 = "1z94h76jn9igksgr84wwbi03fjamwb15hg432x189kgsld1ark4n";
+    };
+
+    propagatedBuildInputs = [ blivet ];
+
+    doCheck = false;
+
+    meta = {
+      description = "NixOS storage manager/partitioner";
+      license = pkgs.lib.licenses.gpl2Plus;
+      maintainers = [ stdenv.lib.maintainers.aszlig ];
+    };
+  };
 
   nose = buildPythonPackage rec {
     name = "nose-1.2.1";
@@ -3429,9 +3563,13 @@ pythonPackages = python.modules // rec {
 
     buildInputs = [ python pkgs.portaudio ];
 
-    installPhase = ''
-      python setup.py install --prefix=$out
+    buildPhase = if stdenv.isDarwin then ''
+      PORTAUDIO_PATH="${pkgs.portaudio}" python setup.py build --static-link
+    '' else ''
+      python setup.py build
     '';
+
+    installPhase = "python setup.py install --prefix=$out";
 
     meta = {
       description = "Python bindings for PortAudio";
@@ -6130,28 +6268,38 @@ pythonPackages = python.modules // rec {
   pyspotify = buildPythonPackage rec {
     name = "pyspotify-${version}";
   
-    version = "1.10";
+    version = "1.11";
   
-    src = fetchgit {
-      url = "https://github.com/mopidy/pyspotify.git";
-      rev = "refs/tags/v${version}";
-      sha256 = "1rvgrviwn6f037m8vq395chz6a1119dbsdhfwdbv5ambi0bak6ll";
+    src = fetchurl {
+      url = "https://github.com/mopidy/pyspotify/archive/v1.11.tar.gz";
+      sha256 = "089ml6pqr3f2d15n70jpzbaqjp5pjgqlyv4algkxw92xscjw2izg";
     };
   
-    buildInputs = [ pkgs.libspotify ];
+    buildInputs = [ pkgs.libspotify ]
+      ++ stdenv.lib.optional stdenv.isDarwin pkgs.install_name_tool;
   
     # python zip complains about old timestamps
     preConfigure = ''
       find -print0 | xargs -0 touch
     '';
+
+    postInstall = stdenv.lib.optionalString stdenv.isDarwin ''
+      find "$out" -name _spotify.so -exec \
+          install_name_tool -change \
+          @loader_path/../Frameworks/libspotify.framework/libspotify \
+          ${pkgs.libspotify}/lib/libspotify.dylib \
+          {} \;
+    '';
   
     # There are no tests
     doCheck = false;
   
-    meta = {
-      homepage = http://pyspotify.mopidy.com;
+    meta = with stdenv.lib; {
+      homepage    = http://pyspotify.mopidy.com;
       description = "A Python interface to Spotify’s online music streaming service";
-      maintainers = [ stdenv.lib.maintainers.rickynils ];
+      license     = licenses.unfree;
+      maintainers = with maintainers; [ lovek323 rickynils ];
+      platforms   = platforms.unix;
     };
   };
 

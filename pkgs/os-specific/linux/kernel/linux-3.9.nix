@@ -246,6 +246,10 @@ let
       # Easier debug of NFS issues
       SUNRPC_DEBUG y
 
+      # Enable the 9P cache to speed up NixOS VM tests.
+      9P_FSCACHE y
+      9P_FS_POSIX_ACL y
+
       ${if kernelPlatform ? kernelExtraConfig then kernelPlatform.kernelExtraConfig else ""}
       ${extraConfig}
     '';
@@ -254,7 +258,7 @@ in
 import ./generic.nix (
 
   rec {
-    version = "3.9.7";
+    version = "3.9.9";
     testing = false;
 
     preConfigure = ''
@@ -263,7 +267,7 @@ import ./generic.nix (
 
     src = fetchurl {
       url = "mirror://kernel/linux/kernel/v3.x/${if testing then "testing/" else ""}linux-${version}.tar.xz";
-      sha256 = "1xgk13bj33wayrs2jfgb2vf4xfys3vm28ijaavpjgs2wlsav94lx";
+      sha256 = "1zrw65m8kvxjkqfj708s418qdm87x0axjm0mr6c2zas5fnla981k";
     };
 
     config = configWithPlatform stdenv.platform;
