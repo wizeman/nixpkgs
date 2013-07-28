@@ -1,4 +1,5 @@
-{ stdenv, fetchurl, pam, pkgconfig, libxcb, glib, libXdmcp, itstool, libxml2, intltool, x11, libxklavier, libgcrypt }:
+{ stdenv, fetchurl, pam, pkgconfig, libxcb, glib, libXdmcp, itstool, libxml2
+, intltool, x11, libxklavier, libgcrypt, dbus/*for tests*/ }:
 
 let
   ver_branch = "1.8";
@@ -15,9 +16,13 @@ stdenv.mkDerivation rec {
   patches = [ ./lightdm.patch ];
   patchFlags = "-p0";
 
-  buildInputs = [ pkgconfig pam libxcb glib libXdmcp itstool libxml2 intltool libxklavier libgcrypt ];
+  buildInputs = [
+    pkgconfig pam libxcb glib libXdmcp itstool libxml2 intltool libxklavier libgcrypt
+  ] ++ stdenv.lib.optional doCheck dbus.daemon;
 
   configureFlags = [ "--enable-liblightdm-gobject" "--localstatedir=/var" ];
+
+  doCheck = false; # some tests fail, don't know why
 
   meta = {
     homepage = http://launchpad.net/lightdm;
