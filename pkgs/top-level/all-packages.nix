@@ -599,6 +599,8 @@ let
 
   ciopfs = callPackage ../tools/filesystems/ciopfs { };
 
+  colord = callPackage ../tools/misc/colord { };
+
   colordiff = callPackage ../tools/text/colordiff { };
 
   connect = callPackage ../tools/networking/connect { };
@@ -3296,6 +3298,8 @@ let
 
   ddd = callPackage ../development/tools/misc/ddd { };
 
+  dispcalgui = callPackage ../tools/graphics/dispcalgui { };
+
   distcc = callPackage ../development/tools/misc/distcc { };
 
   # distccWrapper: wrapper that works as gcc or g++
@@ -4067,6 +4071,10 @@ let
   gst_python = callPackage ../development/libraries/gstreamer/gst-python {};
 
   gnonlin = callPackage ../development/libraries/gstreamer/gnonlin {};
+
+  gusb = callPackage ../development/libraries/gusb {
+    inherit (gnome) gtkdoc;
+  };
 
   qt_gstreamer = callPackage ../development/libraries/gstreamer/qt-gstreamer {};
 
@@ -7903,6 +7911,7 @@ let
   mupdf = callPackage ../applications/misc/mupdf { };
 
   mypaint = callPackage ../applications/graphics/mypaint { };
+  mypaintGit = (mypaint.override { version = "git"; }).deepOverride { gtk = gtk3; };
 
   mythtv = callPackage ../applications/video/mythtv { };
 
