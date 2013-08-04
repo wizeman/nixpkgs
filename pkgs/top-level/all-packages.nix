@@ -206,6 +206,8 @@ let
 
   nix-generate-from-cpan = callPackage ../../maintainers/scripts/nix-generate-from-cpan.nix { };
 
+  nixpkgs-lint = callPackage ../../maintainers/scripts/nixpkgs-lint.nix { };
+
 
   ### STANDARD ENVIRONMENT
 
@@ -419,6 +421,8 @@ let
     };
   };
 
+  awscli = callPackage ../tools/admin/awscli { };
+
   ec2_api_tools = callPackage ../tools/virtualization/ec2-api-tools { };
 
   ec2_ami_tools = callPackage ../tools/virtualization/ec2-ami-tools { };
@@ -502,6 +506,8 @@ let
   bchunk = callPackage ../tools/cd-dvd/bchunk { };
 
   bfr = callPackage ../tools/misc/bfr { };
+
+  bmon = callPackage ../tools/misc/bmon { };
 
   boomerang = callPackage ../development/tools/boomerang { };
 
@@ -1325,6 +1331,10 @@ let
 
   networkmanager_pptp_gnome = networkmanager_pptp.override { withGnome = true; };
 
+  networkmanager_vpnc = callPackage ../tools/networking/network-manager/vpnc.nix { };
+
+  networkmanager_openconnect = callPackage ../tools/networking/network-manager/openconnect.nix { gconf = gnome.GConf; };
+
   networkmanagerapplet = newScope gnome ../tools/networking/network-manager-applet { };
 
   newsbeuter = callPackage ../applications/networking/feedreaders/newsbeuter { };
@@ -1820,6 +1830,8 @@ let
   viking = callPackage ../applications/misc/viking {
     inherit (gnome) scrollkeeper;
   };
+
+  vnc2flv = callPackage ../tools/video/vnc2flv {};
 
   vncrec = builderDefsPackage ../tools/video/vncrec {
     inherit (xlibs) imake libX11 xproto gccmakedep libXt
@@ -3048,6 +3060,8 @@ let
      lua = lua5;
   };
 
+  lush2 = callPackage ../development/interpreters/lush {};
+
   maude = callPackage ../development/interpreters/maude { };
 
   octave = callPackage ../development/interpreters/octave {
@@ -3081,10 +3095,12 @@ let
 
   php_xcache = callPackage ../development/libraries/php-xcache { };
 
-  phpXdebug_5_3 = callPackage ../development/interpreters/php-xdebug {
+  phpXdebug_5_3 = lowPrio (callPackage ../development/interpreters/php-xdebug {
     php = php53;
-  };
+  });
+
   phpXdebug_5_4 = callPackage ../development/interpreters/php-xdebug { };
+
   phpXdebug = phpXdebug_5_4;
 
   picolisp = callPackage ../development/interpreters/picolisp {};
@@ -3104,6 +3120,8 @@ let
   python27 = callPackage ../development/interpreters/python/2.7 {
     libX11 = xlibs.libX11;
   };
+
+  pypy = callPackage ../development/interpreters/pypy/2.0 { };
 
   pythonFull = python27Full;
   python26Full = callPackage ../development/interpreters/python/wrapper.nix {
@@ -3846,6 +3864,8 @@ let
   dbus_libs = dbus.libs;
   dbus_daemon = dbus.daemon;
 
+  dhex = callPackage ../applications/editors/dhex { };
+
   dclib = callPackage ../development/libraries/dclib { };
 
   directfb = callPackage ../development/libraries/directfb { };
@@ -4007,8 +4027,6 @@ let
 
   glfw = callPackage ../development/libraries/glfw { };
 
-  glibc = glibc217;
-
   glibcCross = glibc217Cross;
 
   glibc213 = (callPackage ../development/libraries/glibc/2.13 {
@@ -4032,7 +4050,7 @@ let
         inherit fetchgit;
       }));
 
-  glibc217 = callPackage ../development/libraries/glibc/2.17 {
+  glibc = callPackage ../development/libraries/glibc/2.17 {
     kernelHeaders = linuxHeaders;
     installLocales = config.glibc.locales or false;
     machHeaders = null;
@@ -4181,8 +4199,8 @@ let
     guileBindings = config.gnutls.guile or true;
   };
 
-  gnutls_without_guile = gnutls.override { guileBindings = false; };
-  gnutls2_without_guile = gnutls2.override { guileBindings = false; };
+  gnutls_without_guile = lowPrio (gnutls.override { guileBindings = false; });
+  gnutls2_without_guile = lowPrio (gnutls2.override { guileBindings = false; });
 
   gpac = callPackage ../applications/video/gpac { };
 
@@ -4427,6 +4445,7 @@ let
   libcaca = callPackage ../development/libraries/libcaca { };
 
   libcanberra = callPackage ../development/libraries/libcanberra { };
+  libcanberra_gtk3 = libcanberra.override { gtk = gtk3; };
   libcanberra_kde = if (config.kde_runtime.libcanberraWithoutGTK or true)
     then libcanberra.override { gtk = null; }
     else libcanberra;
@@ -5236,13 +5255,13 @@ let
       else stdenv;
   };
 
-  qt48Full = callPackage ../development/libraries/qt-4.x/4.8 {
+  qt48Full = lowPrio (callPackage ../development/libraries/qt-4.x/4.8 {
     # GNOME dependencies are not used unless gtkStyle == true
     inherit (pkgs.gnome) libgnomeui GConf gnome_vfs;
     docs = true;
     demos = true;
     examples = true;
-  };
+  });
 
   qtscriptgenerator = callPackage ../development/libraries/qtscriptgenerator { };
 
@@ -5345,7 +5364,7 @@ let
 
   sofia_sip = callPackage ../development/libraries/sofia-sip { };
 
-  soprano = callPackage ../development/libraries/soprano { clucene_core = clucene_core_2; };
+  soprano = callPackage ../development/libraries/soprano { };
 
   soqt = callPackage ../development/libraries/soqt { };
 
@@ -5522,21 +5541,6 @@ let
         which libproxy geoclue enchant python ruby perl
         mesa xlibs;
       inherit gstreamer gst_plugins_base gst_ffmpeg gst_plugins_good;
-    };
-
-  webkitSVN =
-    builderDefsPackage ../development/libraries/webkit/svn.nix {
-      inherit (gnome) gtkdoc libsoup;
-      inherit gtk atk pango glib;
-      inherit freetype fontconfig gettext gperf curl
-        libjpeg libtiff libxml2 libxslt sqlite
-        icu cairo perl intltool automake libtool
-        pkgconfig autoconf bison libproxy enchant
-        python ruby which flex geoclue;
-      inherit gstreamer gst_plugins_base gst_ffmpeg
-        gst_plugins_good;
-      inherit (xlibs) libXt renderproto libXrender;
-      inherit libpng;
     };
 
   wildmidi = callPackage ../development/libraries/wildmidi { };
@@ -5729,6 +5733,7 @@ let
 
   ### DEVELOPMENT / PYTHON MODULES
 
+  # python function with default python interpreter
   buildPythonPackage = pythonPackages.buildPythonPackage;
 
   pythonPackages = python27Packages;
@@ -5743,21 +5748,41 @@ let
     python = python26;
   };
 
+  python3Packages = python33Packages;
+
+  python33Packages = recurseIntoAttrs (import ./python-packages.nix {
+    inherit pkgs;
+    inherit (lib) lowPrio;
+    python = python33;
+  });
+
+  python32Packages = import ./python-packages.nix {
+    inherit pkgs;
+    inherit (lib) lowPrio;
+    python = python32;
+  };
+
   python27Packages = recurseIntoAttrs (import ./python-packages.nix {
     inherit pkgs;
     inherit (lib) lowPrio;
     python = python27;
   });
 
-  plone41Packages = recurseIntoAttrs (import ../development/web/plone/4.1.nix {
+  pypyPackages = recurseIntoAttrs (import ./python-packages.nix {
     inherit pkgs;
-    pythonPackages = python26Packages;
+    inherit (lib) lowPrio;
+    python = pypy;
   });
 
-  plone42Packages = recurseIntoAttrs (import ../development/web/plone/4.2.nix {
+  plone41Packages = import ../development/web/plone/4.1.nix {
     inherit pkgs;
     pythonPackages = python26Packages;
-  });
+  };
+
+  plone42Packages = import ../development/web/plone/4.2.nix {
+    inherit pkgs;
+    pythonPackages = python26Packages;
+  };
 
   plone43Packages = recurseIntoAttrs (import ../development/web/plone/4.3.nix {
     inherit pkgs;
@@ -5792,6 +5817,8 @@ let
 
   pyGtkGlade = pythonPackages.pyGtkGlade;
 
+  pylint = callPackage ../development/python-modules/pylint { };
+
   pyopenssl = builderDefsPackage (import ../development/python-modules/pyopenssl) {
     inherit python openssl;
   };
@@ -5815,6 +5842,8 @@ let
   pyx = callPackage ../development/python-modules/pyx { };
 
   pyxml = callPackage ../development/python-modules/pyxml { };
+
+  rbtools = callPackage ../development/python-modules/rbtools { };
 
   setuptools = pythonPackages.setuptools;
 
@@ -6074,6 +6103,8 @@ let
       openssl;
   });
   squid = squids.squid31; # has ipv6 support
+
+  thttpd = callPackage ../servers/http/thttpd { };
 
   tomcat5 = callPackage ../servers/http/tomcat/5.0.nix { };
 
@@ -6355,23 +6386,23 @@ let
       ];
   };
 
-  linux_3_2_grsecurity = lib.overrideDerivation (linux_3_2.override (args: {
+  linux_3_2_grsecurity = lowPrio (lib.overrideDerivation (linux_3_2.override (args: {
     kernelPatches = args.kernelPatches ++ [ kernelPatches.grsecurity_2_9_1_3_2_48 ];
-  })) (args: { makeFlags = "DISABLE_PAX_PLUGINS=y";});
+  })) (args: { makeFlags = "DISABLE_PAX_PLUGINS=y";}));
 
-  linux_3_2_apparmor = linux_3_2.override {
+  linux_3_2_apparmor = lowPrio (linux_3_2.override {
     kernelPatches = [ kernelPatches.apparmor_3_2 ];
     extraConfig = ''
       SECURITY_APPARMOR y
       DEFAULT_SECURITY_APPARMOR y
     '';
-  };
+  });
 
-  linux_3_2_xen = linux_3_2.override {
+  linux_3_2_xen = lowPrio (linux_3_2.override {
     extraConfig = ''
       XEN_DOM0 y
     '';
-  };
+  });
 
   linux_3_4 = makeOverridable (import ../os-specific/linux/kernel/linux-3.4.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
@@ -6384,13 +6415,13 @@ let
       ];
   };
 
-  linux_3_4_apparmor = linux_3_4.override {
+  linux_3_4_apparmor = lowPrio (linux_3_4.override {
     kernelPatches = [ kernelPatches.apparmor_3_4 ];
     extraConfig = ''
       SECURITY_APPARMOR y
       DEFAULT_SECURITY_APPARMOR y
     '';
-  };
+  });
 
   linux_3_6_rpi = makeOverridable (import ../os-specific/linux/kernel/linux-rpi-3.6.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
@@ -6550,10 +6581,10 @@ let
   # Build the kernel modules for the some of the kernels.
   linuxPackages_3_0 = recurseIntoAttrs (linuxPackagesFor linux_3_0 linuxPackages_3_0);
   linuxPackages_3_2 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_2 linuxPackages_3_2);
-  linuxPackages_3_2_apparmor = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_2_apparmor linuxPackages_3_2_apparmor);
-  linuxPackages_3_2_xen = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_2_xen linuxPackages_3_2_xen);
+  linuxPackages_3_2_apparmor = linuxPackagesFor pkgs.linux_3_2_apparmor linuxPackages_3_2_apparmor;
+  linuxPackages_3_2_xen = linuxPackagesFor pkgs.linux_3_2_xen linuxPackages_3_2_xen;
   linuxPackages_3_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_4 linuxPackages_3_4);
-  linuxPackages_3_4_apparmor = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_4_apparmor linuxPackages_3_4_apparmor);
+  linuxPackages_3_4_apparmor = linuxPackagesFor pkgs.linux_3_4_apparmor linuxPackages_3_4_apparmor;
   linuxPackages_3_6_rpi = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_6_rpi linuxPackages_3_6_rpi);
   linuxPackages_3_8 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_8 linuxPackages_3_8);
   linuxPackages_3_9 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_3_9 linuxPackages_3_9);
@@ -6592,7 +6623,7 @@ let
     linuxHeaders = glibc.kernelHeaders;
   };
 
-  klibcShrunk = callPackage ../os-specific/linux/klibc/shrunk.nix { };
+  klibcShrunk = lowPrio (callPackage ../os-specific/linux/klibc/shrunk.nix { });
 
   kmod = callPackage ../os-specific/linux/kmod { };
 
@@ -6692,7 +6723,7 @@ let
 
   "procps-ng" = callPackage ../os-specific/linux/procps-ng { };
 
-  qemu_kvm = callPackage ../os-specific/linux/qemu-kvm { };
+  qemu_kvm = lowPrio (qemu.override { x86Only = true; });
 
   firmwareLinuxNonfree = callPackage ../os-specific/linux/firmware/firmware-linux-nonfree { };
 
@@ -7415,7 +7446,7 @@ let
 
     maudeMode = callPackage ../applications/editors/emacs-modes/maude { };
 
-    notmuch = callPackage ../applications/networking/mailreaders/notmuch { };
+    notmuch = lowPrio (callPackage ../applications/networking/mailreaders/notmuch { });
 
     # This is usually a newer version of Org-Mode than that found in GNU Emacs, so
     # we want it to have higher precedence.
@@ -7742,9 +7773,6 @@ let
   herbstluftwm = callPackage ../applications/window-managers/herbstluftwm { };
 
   hexedit = callPackage ../applications/editors/hexedit { };
-
-  hetznerNixOpsInstaller =
-    callPackage ../tools/misc/hetzner-nixops-installer { };
 
   hipchat = callPackage_i686 ../applications/networking/instant-messengers/hipchat { };
 
@@ -8189,9 +8217,7 @@ let
 
   panotools = callPackage ../applications/graphics/panotools { };
 
-  pavucontrol = callPackage ../applications/audio/pavucontrol {
-    inherit (gnome) libglademm;
-  };
+  pavucontrol = callPackage ../applications/audio/pavucontrol { };
 
   paraview = callPackage ../applications/graphics/paraview { };
 
@@ -8311,6 +8337,7 @@ let
   # = urxvt
   rxvt_unicode = callPackage ../applications/misc/rxvt_unicode {
     perlSupport = true;
+    gdkPixbufSupport = true;
   };
 
   sakura = callPackage ../applications/misc/sakura {
@@ -8375,12 +8402,12 @@ let
     libpng = libpng12;
   };
 
-  sndBase = builderDefsPackage (import ../applications/audio/snd) {
+  sndBase = lowPrio (builderDefsPackage (import ../applications/audio/snd) {
     inherit fetchurl stdenv stringsWithDeps lib fftw;
     inherit pkgconfig gmp gettext;
     inherit (xlibs) libXpm libX11;
     inherit gtk glib;
-  };
+  });
 
   snd = sndBase.passthru.function {
     inherit mesa libtool jackaudio alsaLib;
@@ -8593,8 +8620,8 @@ let
     # so that we can use gccApple if we're building on darwin
     inherit stdenvAdapters gccApple;
   };
-  vimLatest = vim_configurable.override { source = "latest"; };
-  vimNox = vim_configurable.override { source = "vim-nox"; };
+  vimLatest = lowPrio (vim_configurable.override { source = "latest"; });
+  vimNox = lowPrio (vim_configurable.override { source = "vim-nox"; });
 
   virtviewer = callPackage ../applications/virtualization/virt-viewer {};
   virtmanager = callPackage ../applications/virtualization/virt-manager {
@@ -8643,6 +8670,8 @@ let
   };
 
   wmname = callPackage ../applications/misc/wmname { };
+
+  wmctrl = callPackage ../tools/X11/wmctrl { };
 
   # I'm keen on wmiimenu only  >wmii-3.5 no longer has it...
   wmiimenu = import ../applications/window-managers/wmii31 {
@@ -8714,6 +8743,8 @@ let
   xbmc = callPackage ../applications/video/xbmc { };
 
   xcalib = callPackage ../tools/X11/xcalib { };
+
+  xcape = callPackage ../tools/X11/xcape { };
 
   xchainkeys = callPackage ../tools/X11/xchainkeys { };
 
@@ -9122,10 +9153,10 @@ let
     inherit (pkgs) libsoup libwnck gtk_doc gnome_doc_utils;
   };
 
-  gnome3 = callPackage ../desktops/gnome-3 {
+  gnome3 = recurseIntoAttrs (callPackage ../desktops/gnome-3 {
     callPackage = pkgs.newScope pkgs.gnome3;
     self = pkgs.gnome3;
-  };
+  });
 
   gnome = recurseIntoAttrs gnome2;
 
@@ -9291,7 +9322,8 @@ let
 
   spyder = callPackage ../applications/science/spyder {
     inherit (pythonPackages) pyflakes rope sphinx numpy scipy matplotlib; # recommended
-    inherit (pythonPackages) ipython pylint pep8; # optional
+    inherit (pythonPackages) ipython pep8; # optional
+    inherit pylint;
   };
 
   stellarium = callPackage ../applications/science/astronomy/stellarium { };
@@ -9872,5 +9904,7 @@ let
   dart = callPackage ../development/interpreters/dart { };
 
   httrack = callPackage ../tools/backup/httrack { };
+
+  mg = callPackage ../applications/editors/mg { };
 
 }; in pkgs
