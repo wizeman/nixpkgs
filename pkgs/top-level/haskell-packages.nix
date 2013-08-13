@@ -591,6 +591,10 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   binaryShared = callPackage ../development/libraries/haskell/binary-shared {};
 
+  bindingsDSL = callPackage ../development/libraries/haskell/bindings-DSL {};
+
+  bindingsPosix = callPackage ../development/libraries/haskell/bindings-posix {};
+
   bitarray = callPackage ../development/libraries/haskell/bitarray {};
 
   bitmap = callPackage ../development/libraries/haskell/bitmap {};
@@ -627,6 +631,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   boomerang = callPackage ../development/libraries/haskell/boomerang {};
 
+  byteable = callPackage ../development/libraries/haskell/byteable {};
+
   bytedump = callPackage ../development/libraries/haskell/bytedump {};
 
   byteorder = callPackage ../development/libraries/haskell/byteorder {};
@@ -641,9 +647,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   bytestringProgress = callPackage ../development/libraries/haskell/bytestring-progress {};
 
-  c2hs = callPackage ../development/libraries/haskell/c2hs {
-    languageC = self.languageC_0_3_2_1;
-  };
+  c2hs = callPackage ../development/libraries/haskell/c2hs {};
 
   Cabal_1_14_0 = callPackage ../development/libraries/haskell/Cabal/1.14.0.nix { cabal = self.cabal.override { Cabal = null; }; };
   Cabal_1_16_0_3 = callPackage ../development/libraries/haskell/Cabal/1.16.0.3.nix { cabal = self.cabal.override { Cabal = null; }; };
@@ -718,6 +722,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   compactStringFix = callPackage ../development/libraries/haskell/compact-string-fix {};
 
+  concatenative = callPackage ../development/libraries/haskell/concatenative {};
+
   conduit = callPackage ../development/libraries/haskell/conduit {};
 
   ConfigFile = callPackage ../development/libraries/haskell/ConfigFile {};
@@ -747,6 +753,10 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   cryptoApi = callPackage ../development/libraries/haskell/crypto-api {};
 
   cryptocipher = callPackage ../development/libraries/haskell/cryptocipher {};
+
+  cryptoCipherTests = callPackage ../development/libraries/haskell/crypto-cipher-tests {};
+
+  cryptoCipherTypes = callPackage ../development/libraries/haskell/crypto-cipher-types {};
 
   cryptoConduit = callPackage ../development/libraries/haskell/crypto-conduit {};
 
@@ -894,6 +904,10 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   editline = self.editline_0_2_1_1;
 
   elerea = callPackage ../development/libraries/haskell/elerea {};
+
+  Elm = callPackage ../development/compilers/elm/elm.nix {};
+
+  elmServer = callPackage ../development/compilers/elm/elm-server.nix {};
 
   emailValidate = callPackage ../development/libraries/haskell/email-validate {};
 
@@ -1077,6 +1091,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   happstackHamlet = callPackage ../development/libraries/haskell/happstack/happstack-hamlet.nix {};
 
+  happstackLite = callPackage ../development/libraries/haskell/happstack/happstack-lite.nix {};
+
   hashable_1_1_2_5 = callPackage ../development/libraries/haskell/hashable/1.1.2.5.nix {};
   hashable_1_2_0_10 = callPackage ../development/libraries/haskell/hashable/1.2.0.10.nix {};
   hashable = self.hashable_1_2_0_10;
@@ -1120,6 +1136,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   HTTP_4000_2_5 = callPackage ../development/libraries/haskell/HTTP/4000.2.5.nix {};
   HTTP_4000_2_8 = callPackage ../development/libraries/haskell/HTTP/4000.2.8.nix {};
   HTTP = self.HTTP_4000_2_8;
+
+  httpAttoparsec = callPackage ../development/libraries/haskell/http-attoparsec {};
 
   httpReverseProxy = callPackage ../development/libraries/haskell/http-reverse-proxy {};
 
@@ -1253,7 +1271,11 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   ieee754 = callPackage ../development/libraries/haskell/ieee754 {};
 
+  indents = callPackage ../development/libraries/haskell/indents {};
+
   instantGenerics = callPackage ../development/libraries/haskell/instant-generics {};
+
+  intervals = callPackage ../development/libraries/haskell/intervals {};
 
   ioChoice = callPackage ../development/libraries/haskell/io-choice {};
 
@@ -1290,9 +1312,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   knob = callPackage ../development/libraries/haskell/knob {};
 
-  languageC_0_4_2   = callPackage ../development/libraries/haskell/language-c/0.4.2.nix {};
-  languageC_0_3_2_1 = callPackage ../development/libraries/haskell/language-c/0.3.2.1.nix {};
-  languageC = self.languageC_0_4_2;
+  languageC = callPackage ../development/libraries/haskell/language-c {};
 
   languageCQuote = callPackage ../development/libraries/haskell/language-c-quote {};
 
@@ -1372,7 +1392,9 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   misfortune = callPackage ../development/libraries/haskell/misfortune {};
 
-  MissingH = callPackage ../development/libraries/haskell/MissingH {};
+  MissingH = callPackage ../development/libraries/haskell/MissingH {
+    testpack = null;
+  };
 
   mmap = callPackage ../development/libraries/haskell/mmap {};
 
@@ -1389,8 +1411,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   monadLogger = callPackage ../development/libraries/haskell/monad-logger {};
 
   monadPar_0_1_0_3 = callPackage ../development/libraries/haskell/monad-par/0.1.0.3.nix {};
-  monadPar_0_3_4_2 = callPackage ../development/libraries/haskell/monad-par/0.3.4.2.nix {};
-  monadPar = self.monadPar_0_3_4_2;
+  monadPar_0_3_4_3 = callPackage ../development/libraries/haskell/monad-par/0.3.4.3.nix {};
+  monadPar = self.monadPar_0_3_4_3;
 
   monadParExtras = callPackage ../development/libraries/haskell/monad-par-extras {};
 
@@ -1482,6 +1504,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   newtype = callPackage ../development/libraries/haskell/newtype {};
 
   nonNegative = callPackage ../development/libraries/haskell/non-negative {};
+
+  numericExtras = callPackage ../development/libraries/haskell/numeric-extras {};
 
   numericPrelude = callPackage ../development/libraries/haskell/numeric-prelude {};
 
@@ -1637,6 +1661,10 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   quickcheckIo = callPackage ../development/libraries/haskell/quickcheck-io {};
 
+  qrencode = callPackage ../development/libraries/haskell/qrencode {
+    inherit (pkgs) qrencode;
+  };
+
   RangedSets = callPackage ../development/libraries/haskell/Ranged-sets {};
 
   random_1_0_1_1 = callPackage ../development/libraries/haskell/random/1.0.1.1.nix {};
@@ -1726,6 +1754,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   SafeSemaphore = callPackage ../development/libraries/haskell/SafeSemaphore {};
 
   scotty = callPackage ../development/libraries/haskell/scotty {};
+
+  securemem = callPackage ../development/libraries/haskell/securemem {};
 
   sendfile = callPackage ../development/libraries/haskell/sendfile {};
 
@@ -1931,7 +1961,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   threads = callPackage ../development/libraries/haskell/threads {};
 
   time_1_1_2_4 = callPackage ../development/libraries/haskell/time/1.1.2.4.nix {};
-  time_1_4_0_2 = callPackage ../development/libraries/haskell/time/1.4.0.2.nix {};
+  time_1_4_1 = callPackage ../development/libraries/haskell/time/1.4.1.nix {};
   # time is in the core package set. It should only be necessary to
   # pass it explicitly in rare circumstances.
   time = null;
@@ -1959,6 +1989,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   unbound = callPackage ../development/libraries/haskell/unbound {};
 
   unboundedDelays = callPackage ../development/libraries/haskell/unbounded-delays {};
+
+  unionFind = callPackage ../development/libraries/haskell/union-find {};
 
   uniplate = callPackage ../development/libraries/haskell/uniplate {};
 
@@ -2040,6 +2072,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   waiTest = callPackage ../development/libraries/haskell/wai-test {};
 
   warp = callPackage ../development/libraries/haskell/warp {};
+
+  warpTls = callPackage ../development/libraries/haskell/warp-tls {};
 
   WebBits_1_0 = callPackage ../development/libraries/haskell/WebBits/1.0.nix {
     parsec = self.parsec2;

@@ -19,9 +19,9 @@ assert useSystemCairo -> cairo != null;
 let optional = stdenv.lib.optional;
 in rec {
 
-  firefoxVersion = "22.0";
+  firefoxVersion = "23.0";
 
-  xulVersion = "22.0"; # this attribute is used by other packages
+  xulVersion = "23.0"; # this attribute is used by other packages
 
 
   src = fetchurl {
@@ -31,7 +31,7 @@ in rec {
         # Fall back to this url for versions not available at releases.mozilla.org.
         "ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/${firefoxVersion}/source/firefox-${firefoxVersion}.source.tar.bz2"
     ];
-    sha1 = "db2d5b028b6ea95b5f006b46e153f50f7a52bf80";
+    sha1 = "31936d2ddb727640c96a3ae697bf145c42a2a20e";
   };
 
   commonConfigureFlags =
@@ -46,7 +46,7 @@ in rec {
       "--with-system-nss"
       "--with-system-libevent"
       "--with-system-libvpx"
-      # "--with-system-png" # <-- "--with-system-png won't work because the system's libpng doesn't have APNG support"
+      "--with-system-png"
       "--enable-startup-notification"
       "--enable-system-ffi"
       "--enable-system-hunspell"
@@ -66,7 +66,7 @@ in rec {
     inherit src;
 
     buildInputs =
-      [ pkgconfig gtk perl zip libIDL libjpeg libpng zlib bzip2
+      [ pkgconfig libpng gtk perl zip libIDL libjpeg zlib bzip2
         python dbus dbus_glib pango freetype fontconfig xlibs.libXi
         xlibs.libX11 xlibs.libXrender xlibs.libXft xlibs.libXt file
         alsaLib nspr nss libnotify xlibs.pixman yasm mesa
@@ -82,7 +82,7 @@ in rec {
 
     enableParallelBuilding = true;
 
-    patches = optional useSystemCairo ./system-cairo.patch; # probably in 22
+    patches = optional useSystemCairo ./system-cairo.patch;
 
     preConfigure =
       ''
@@ -136,7 +136,7 @@ in rec {
     enableParallelBuilding = true;
 
     buildInputs =
-      [ pkgconfig gtk perl zip libIDL libjpeg zlib bzip2 python
+      [ pkgconfig libpng gtk perl zip libIDL libjpeg zlib bzip2 python
         dbus dbus_glib pango freetype fontconfig alsaLib nspr nss libnotify
         xlibs.pixman yasm mesa sqlite file unzip pysqlite
         hunspell libevent libstartup_notification libvpx

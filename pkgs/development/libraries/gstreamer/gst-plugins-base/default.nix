@@ -1,5 +1,5 @@
-{ fetchurl, stdenv, pkgconfig, intltool
-, gstreamer, orc, glib, alsaLib
+{ fetchurl, stdenv, pkgconfig, intltool, libintlOrEmpty
+, gstreamer, orc, liboil, glib, cairo, alsaLib
 
   # Whether to build no plugins that have external dependencies
   # (except the ALSA plugin).
@@ -22,9 +22,17 @@ stdenv.mkDerivation rec {
   patchPhase = "sed -i 's@/bin/echo@echo@g' configure";
 
   # TODO: libvisual
-  buildInputs = [ pkgconfig intltool ]
+  buildInputs = [ pkgconfig intltool glib cairo ]
+    # can't build alsaLib on darwin
+    ++ stdenv.lib.optional (!stdenv.isDarwin) alsaLib
     ++ stdenv.lib.optionals (!minimalDeps)
-      [ xlibs.xlibs xlibs.libXv cdparanoia libogg libtheora libvorbis freetype pango ];
+      [ xlibs.xlibs xlibs.libXv libogg libtheora libvorbis freetype pango
+        liboil ]
+    # can't build cdparanoia on darwin
+    ++ stdenv.lib.optional (!minimalDeps && !stdenv.isDarwin) cdparanoia
+    ++ libintlOrEmpty;
+
+  NIX_CFLAGS_COMPILE = stdenv.lib.optionalString stdenv.isDarwin "-lintl";
 
   propagatedBuildInputs = [ gstreamer orc glib alsaLib ];
 
@@ -33,12 +41,12 @@ stdenv.mkDerivation rec {
 
   postInstall = "rm -rf $out/share/gtk-doc"; # the disabling option would be disregarded
 
-  meta = {
-    homepage = http://gstreamer.freedesktop.org;
-
+  meta = with stdenv.lib; {
+    homepage    = http://gstreamer.freedesktop.org;
     description = "Base plug-ins for GStreamer";
-
-    license = "LGPLv2+";
+    license     = licenses.lgpl2Plus;
+    maintainers = with maintainers; [ lovek323 ];
+    platforms   = platforms.unix;
   };
 }
 
