@@ -1,5 +1,5 @@
 { fetchurl, stdenv, pkgconfig, intltool, libintlOrEmpty
-, gstreamer, orc, liboil, glib, cairo, alsaLib
+, gstreamer, orc, glib, alsaLib
 
   # Whether to build no plugins that have external dependencies
   # (except the ALSA plugin).
@@ -21,20 +21,19 @@ stdenv.mkDerivation rec {
 
   patchPhase = "sed -i 's@/bin/echo@echo@g' configure";
 
-  # TODO: libvisual
-  buildInputs = [ pkgconfig intltool glib cairo ]
+  # TODO: libvisual and perhaps others
+  buildInputs = [ pkgconfig intltool ]
     # can't build alsaLib on darwin
     ++ stdenv.lib.optional (!stdenv.isDarwin) alsaLib
     ++ stdenv.lib.optionals (!minimalDeps)
-      [ xlibs.xlibs xlibs.libXv libogg libtheora libvorbis freetype pango
-        liboil ]
+      [ xlibs.xlibs xlibs.libXv libogg libtheora libvorbis pango ]
     # can't build cdparanoia on darwin
     ++ stdenv.lib.optional (!minimalDeps && !stdenv.isDarwin) cdparanoia
     ++ libintlOrEmpty;
 
   NIX_CFLAGS_COMPILE = stdenv.lib.optionalString stdenv.isDarwin "-lintl";
 
-  propagatedBuildInputs = [ gstreamer orc glib alsaLib ];
+  propagatedBuildInputs = [ gstreamer orc glib ];
 
   enableParallelBuilding = true;
   doCheck = true;
