@@ -127,8 +127,7 @@ in stdenv.mkDerivation rec {
 
   prePatch = "patchShebangs .";
 
-  patches = [ userns_patch ]
-         ++ optional cupsSupport ./cups_allow_deprecated.patch;
+  patches = [ userns_patch ];
 
   postPatch = ''
     sed -i -r -e 's/-f(stack-protector)(-all)?/-fno-\1/' build/common.gypi
@@ -216,7 +215,7 @@ in stdenv.mkDerivation rec {
   '';
 
   meta = {
-    description = "Chromium, an open source web browser";
+    description = "An open source web browser from Google";
     homepage = http://www.chromium.org/;
     maintainers = with maintainers; [ goibhniu chaoflow aszlig ];
     license = licenses.bsd3;
