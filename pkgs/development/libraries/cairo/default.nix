@@ -34,8 +34,6 @@ stdenv.mkDerivation rec {
     ++ optional pdfSupport "--enable-pdf"
     ;
 
-  NIX_CFLAGS_COMPILE = "-I${pixman}/include/pixman-1";
-
   preConfigure =
   # On FreeBSD, `-ldl' doesn't exist.
     (stdenv.lib.optionalString stdenv.isFreeBSD
@@ -56,7 +54,11 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = true;
 
   # The default `--disable-gtk-doc' is ignored.
-  postInstall = "rm -rf $out/share/gtk-doc";
+  postInstall = "rm -rf $out/share/gtk-doc"
+    + stdenv.lib.optionalString stdenv.isDarwin (''
+      #newline
+    '' + glib.flattenInclude
+    );
 
   meta = {
     description = "A 2D graphics library with support for multiple output devices";
