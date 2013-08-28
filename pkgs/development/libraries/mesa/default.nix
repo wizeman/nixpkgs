@@ -24,7 +24,7 @@ else
 
 let
   ver_maj = "9.2";
-  version = ver_maj + ".0-rc1";
+  version = ver_maj + ".0";
   driverLink = "/run/opengl-driver" + stdenv.lib.optionalString stdenv.isi686 "-32";
 in
 with { inherit (stdenv.lib) optional optionals optionalString; };
@@ -34,7 +34,7 @@ stdenv.mkDerivation {
 
   src =  fetchurl {
     url = "ftp://ftp.freedesktop.org/pub/mesa/${ver_maj}/MesaLib-${version}.tar.bz2";
-    sha256 = "02pm6j47bwa7cfff16y662blkqldwlxsajia2awkqz03ah9nqhnz";
+    sha256 = "11wi78i0df9323a9qmr9ja0aba5gzx7bwinqprgjyh7vb6zskrkm";
   };
 
   prePatch = "patchShebangs .";
