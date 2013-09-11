@@ -2228,37 +2228,6 @@ let
 
   gcc45 = gcc45_real;
 
-  wrapDeterministicGCCWith = gccWrapper: glibc: baseGCC: gccWrapper {
-    nativeTools = stdenv ? gcc && stdenv.gcc.nativeTools;
-    nativeLibc = stdenv ? gcc && stdenv.gcc.nativeLibc;
-    nativePrefix = if stdenv ? gcc then stdenv.gcc.nativePrefix else "";
-    gcc = baseGCC;
-    libc = glibc;
-    shell = bash;
-    binutils = binutils_deterministic;
-    inherit stdenv coreutils zlib;
-  };
-
-  wrapDeterministicGCC = wrapDeterministicGCCWith (import ../build-support/gcc-wrapper) glibc;
-
-  gcc46_deterministic = lowPrio (wrapDeterministicGCC (callPackage ../development/compilers/gcc/4.6 {
-    inherit noSysDirs;
-
-    # bootstrapping a profiled compiler does not work in the sheevaplug:
-    # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43944
-    profiledCompiler = !stdenv.isArm;
-
-    # When building `gcc.crossDrv' (a "Canadian cross", with host == target
-    # and host != build), `cross' must be null but the cross-libc must still
-    # be passed.
-    cross = null;
-    libcCross = if crossSystem != null then libcCross else null;
-    libpthreadCross =
-      if crossSystem != null && crossSystem.config == "i586-pc-gnu"
-      then gnu.libpthreadCross
-      else null;
-  }));
-
   gcc46 = gcc46_real;
 
   gcc47 = gcc47_real;
@@ -2977,15 +2946,6 @@ let
     ocaml = ocaml_3_08_0;
   };
 
-  deterministicStdenv = lowPrio (
-    overrideInStdenv (
-      stdenvAdapters.overrideGCC
-        (stdenvAdapters.overrideSetup stdenv ../stdenv/generic/setup-repeatable.sh )
-      gcc46_deterministic
-    )
-    [ binutils_deterministic ]
-  );
-
   roadsend = callPackage ../development/compilers/roadsend { };
 
   # TODO: the corresponding nix file is missing
@@ -3396,11 +3356,6 @@ let
   binutils = callPackage ../development/tools/misc/binutils {
     inherit noSysDirs;
   };
-
-  binutils_deterministic = lowPrio (callPackage ../development/tools/misc/binutils {
-    inherit noSysDirs;
-    deterministic = true;
-  });
 
   binutils_nogold = lowPrio (callPackage ../development/tools/misc/binutils {
     inherit noSysDirs;

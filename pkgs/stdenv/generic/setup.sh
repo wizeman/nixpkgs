@@ -718,7 +718,7 @@ fixupPhase() {
         GLOBIGNORE=.:..:*.gz:*.bz2
         for f in "$out"/share/man/*/* "$out"/share/man/*/*/*; do
             if [ -f "$f" -a ! -L "$f" ]; then
-                if gzip -c "$f" > "$f".gz; then
+                if gzip -c -n "$f" > "$f".gz; then
                     rm "$f"
                 else
                     rm "$f".gz
@@ -734,15 +734,18 @@ fixupPhase() {
     fi
 
     # TODO: strip _only_ ELF executables, and return || fail here...
+
+    # TODO: the flag --enable-deterministic-archives shouldn't be needed after binutils-2.23.2
+    #   where the default setting is taken from the configure-time flag
     if [ -z "$dontStrip" ]; then
         stripDebugList=${stripDebugList:-lib lib32 lib64 libexec bin sbin}
         if [ -n "$stripDebugList" ]; then
-            stripDirs "$stripDebugList" "${stripDebugFlags:--S}"
+            stripDirs "$stripDebugList" "${stripDebugFlags:--S --enable-deterministic-archives}"
         fi
 
         stripAllList=${stripAllList:-}
         if [ -n "$stripAllList" ]; then
-            stripDirs "$stripAllList" "${stripAllFlags:--s}"
+            stripDirs "$stripAllList" "${stripAllFlags:--s --enable-deterministic-archives}"
         fi
     fi
 
