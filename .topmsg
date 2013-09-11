@@ -1,0 +1,4 @@
+From: Vladimír Čunát <vcunat@gmail.com>
+Subject: [PATCH] vlada/determ
+
+Integrating deterministic archives (from binutils).
