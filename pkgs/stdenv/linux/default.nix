@@ -107,7 +107,7 @@ rec {
   # Build a dummy stdenv with no GCC or working fetchurl.  This is
   # because we need a stdenv to build the GCC wrapper and fetchurl.
   stdenvLinuxBoot0 = stdenvBootFun {
-    gcc = "/no-such-path";
+    gcc = "/no-such-path/salt";
     fetchurl = null;
   };
 
