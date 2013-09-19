@@ -3365,10 +3365,11 @@ let
 
   bam = callPackage ../development/tools/build-managers/bam {};
 
-  binutils = callPackage ../development/tools/misc/binutils { };
+  binutils = callPackage ../development/tools/misc/binutils {
+    inherit noSysDirs;
+  };
 
   binutils_nogold = lowPrio (callPackage ../development/tools/misc/binutils {
-    inherit noSysDirs;
     gold = false;
   });
 

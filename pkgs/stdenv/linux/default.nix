@@ -154,6 +154,9 @@ rec {
       coreutils = bootstrapTools;
     };
     inherit fetchurl;
+    overrides = pkgs: {
+      binutils = pkgs.binutils.override { noLibs = true; };
+    };
   };
 
 
@@ -164,9 +167,6 @@ rec {
   stdenvLinuxBoot1Pkgs = allPackages {
     inherit system platform;
     bootStdenv = stdenvLinuxBoot1;
-    overrides = pkgs: {
-      binutils = pkgs.binutils.override { noLibs = true; };
-    };
   };
 
 
