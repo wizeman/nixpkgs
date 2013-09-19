@@ -44,6 +44,9 @@ rec {
   # Linux standard environment.
   stdenvLinux = (import ./linux { inherit system allPackages platform config;}).stdenvLinux;
 
+  #TEMPORARY!
+  STB = import ./linux { inherit system allPackages platform config;};
+
 
   # MinGW/MSYS standard environment.
   stdenvMinGW = import ./mingw {
