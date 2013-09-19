@@ -171,7 +171,7 @@ rec {
   stdenvLinuxBoot2 = stdenvBootFun {
     gcc = wrapGCC {
       libc = bootstrapGlibc;
-      binutils = stdenvLinuxBoot1Pkgs.binutils;
+      binutils = stdenvLinuxBoot1Pkgs.binutils.override { noLibs = true; };
       coreutils = bootstrapTools;
     };
     overrides = pkgs: {
