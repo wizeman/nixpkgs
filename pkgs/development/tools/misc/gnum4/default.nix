@@ -7,11 +7,11 @@ stdenv.mkDerivation {
     url = mirror://gnu/m4/m4-1.4.16.tar.bz2;
     sha256 = "035r7ma272j2cwni2961jp22k6bn3n9xwn3b3qbcn2yrvlghql22";
   };
-
+/* TEMPORARY!
   doCheck = !stdenv.isDarwin
     && !stdenv.isCygwin                    # XXX: `test-dup2' fails on Cygwin
     && !stdenv.isSunOS;                    # XXX: `test-setlocale2.sh' fails
-
+*/
   # Upstream is aware of it; it may be in the next release.
   patches = [ ./s_isdir.patch ./readlink-EINVAL.patch ./no-gets.patch ];
 
