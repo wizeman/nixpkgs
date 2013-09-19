@@ -164,6 +164,9 @@ rec {
   stdenvLinuxBoot1Pkgs = allPackages {
     inherit system platform;
     bootStdenv = stdenvLinuxBoot1;
+    overrides = pkgs: {
+      binutils = pkgs.binutils.override { noLibs = true; };
+    };
   };
 
 
@@ -171,11 +174,11 @@ rec {
   stdenvLinuxBoot2 = stdenvBootFun {
     gcc = wrapGCC {
       libc = bootstrapGlibc;
-      binutils = stdenvLinuxBoot1Pkgs.binutils.override { noLibs = true; };
+      binutils = stdenvLinuxBoot1Pkgs.binutils;
       coreutils = bootstrapTools;
     };
     overrides = pkgs: {
-      inherit (stdenvLinuxBoot1Pkgs) perl;
+      #inherit (stdenvLinuxBoot1Pkgs) perl;
     };
     inherit fetchurl;
   };

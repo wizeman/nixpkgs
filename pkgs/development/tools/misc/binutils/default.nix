@@ -30,14 +30,10 @@ stdenv.mkDerivation rec {
     [ zlib ]
     ++ optional gold bison;
 
-  inherit noSysDirs;
-
-  preConfigure = ''
+  preConfigure = optionalString noSysDirs ''
     # Clear the default library search path.
-    if test "$noSysDirs" = "1"; then
-        echo 'NATIVE_LIB_DIRS=' >> ld/configure.tgt
-    fi
-
+    echo 'NATIVE_LIB_DIRS=' >> ld/configure.tgt
+  '' + ''
     # Use symlinks instead of hard links to save space ("strip" in the
     # fixup phase strips each hard link separately).
     for i in binutils/Makefile.in gas/Makefile.in ld/Makefile.in; do
@@ -59,7 +55,7 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
 
-  postInstall = stdenv.lib.optional noLibs ''rm -r "$out"/lib*'';
+  postInstall = optional noLibs ''rm -r "$out"/lib*'';
 
   meta = {
     description = "GNU Binutils, tools for manipulating binaries (linker, assembler, etc.)";
