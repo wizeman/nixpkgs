@@ -25,6 +25,7 @@ else
 let
   ver_maj = "9.2";
   version = ver_maj + ".0";
+  # this is the default search path for DRI drivers (note: X server introduces an overriding env var)
   driverLink = "/run/opengl-driver" + stdenv.lib.optionalString stdenv.isi686 "-32";
 in
 with { inherit (stdenv.lib) optional optionals optionalString; };
@@ -137,6 +138,8 @@ stdenv.mkDerivation {
         patchelf --set-rpath "$(patchelf --print-rpath $lib):$drivers/lib" "$lib"
       fi
     done
+  '' + /* set the default search path for DRI drivers; used e.g. by X server */ ''
+    substituteInPlace "$out/lib/pkgconfig/dri.pc" --replace '$(drivers)' "${driverLink}"
   '';
   #ToDo: @vcunat isn't sure if drirc will be found when in $out/etc/, but it doesn't seem important ATM
 
