@@ -75,7 +75,9 @@ chmod +x $out/bin/curl
 mv "$out/bin/ar" "$out/bin/.ar-wrapped"
 cat > $out/bin/ar <<EOF
 #!$out/bin/sh
-exec $out/bin/.ar-wrapped -D "\$@"
+flags=\$($out/bin/echo -n "\$1" | $out/bin/tr -d u)D
+shift 1
+exec $out/bin/.ar-wrapped "\$flags" "\$@"
 EOF
 chmod +x "$out/bin/ar"
 
