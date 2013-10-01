@@ -70,3 +70,12 @@ chmod +x $out/bin/gunzip
 # fetchurl needs curl.
 bzip2 -d < $curl > $out/bin/curl
 chmod +x $out/bin/curl
+
+# make ar create deterministic archives by default
+mv "$out/bin/ar" "$out/bin/.ar-wrapped"
+cat > $out/bin/ar <<EOF
+#!$out/bin/sh
+exec $out/bin/.ar-wrapped -D "\$@"
+EOF
+chmod +x "$out/bin/ar"
+
