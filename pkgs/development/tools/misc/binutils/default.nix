@@ -1,6 +1,6 @@
 { stdenv, fetchurl, noSysDirs, zlib
 , cross ? null, gold ? true, bison ? null
-, deterministic ? true, noLibs ? false }:
+, deterministic ? true }:
 
 let basename = "binutils-2.23.1"; in
 
@@ -54,8 +54,6 @@ stdenv.mkDerivation rec {
     ;
 
   enableParallelBuilding = true;
-
-  postInstall = optional noLibs ''rm -r "$out"/lib*'';
 
   meta = {
     description = "GNU Binutils, tools for manipulating binaries (linker, assembler, etc.)";
