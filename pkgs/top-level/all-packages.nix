@@ -633,6 +633,8 @@ let
 
   ciopfs = callPackage ../tools/filesystems/ciopfs { };
 
+  colord = callPackage ../tools/misc/colord { };
+
   colordiff = callPackage ../tools/text/colordiff { };
 
   connect = callPackage ../tools/networking/connect { };
@@ -665,11 +667,7 @@ let
 
   convmv = callPackage ../tools/misc/convmv { };
 
-  coreutils = (if stdenv.isDarwin then
-      # 8.20 doesn't build on Darwin
-      callPackage ../tools/misc/coreutils/8.19.nix
-    else
-      callPackage ../tools/misc/coreutils)
+  coreutils = callPackage ../tools/misc/coreutils
     {
       # TODO: Add ACL support for cross-Linux.
       aclSupport = crossSystem == null && stdenv.isLinux;
@@ -806,7 +804,12 @@ let
 
   encfs = callPackage ../tools/filesystems/encfs { };
 
-  enscript = callPackage ../tools/text/enscript { };
+  enscript = callPackage ../tools/text/enscript {
+    # fix syntax errors
+    stdenv = if stdenv.isDarwin
+      then clangStdenv
+      else stdenv;
+  };
 
   ethtool = callPackage ../tools/misc/ethtool { };
 
@@ -1244,6 +1247,8 @@ let
 
   mdbtools_git = callPackage ../tools/misc/mdbtools/git.nix { };
 
+  megacli = callPackage ../tools/misc/megacli { };
+
   megatools = callPackage ../tools/networking/megatools { };
 
   minecraft = callPackage ../games/minecraft { };
@@ -1322,6 +1327,8 @@ let
   namazu = callPackage ../tools/text/namazu { };
 
   nbd = callPackage ../tools/networking/nbd { };
+
+  netatalk = callPackage ../tools/filesystems/netatalk { };
 
   netcdf = callPackage ../development/libraries/netcdf { };
 
@@ -2428,6 +2435,7 @@ let
 
   gcc47_real = lowPrio (wrapGCC (callPackage ../development/compilers/gcc/4.7 {
     inherit noSysDirs;
+    texinfo = texinfo4;
     # I'm not sure if profiling with enableParallelBuilding helps a lot.
     # We can enable it back some day. This makes the *gcc* builds faster now.
     profiledCompiler = false;
@@ -2445,7 +2453,7 @@ let
 
   gcc47_debug = lowPrio (wrapGCC (callPackage ../development/compilers/gcc/4.7 {
     stripped = false;
-
+    texinfo = texinfo4;
     inherit noSysDirs;
     cross = null;
     libcCross = null;
@@ -2488,7 +2496,7 @@ let
       stdenv = allStdenvs.stdenvNative;
     });
 
-  gfortran = gfortran47;
+  gfortran = gfortran48;
 
   gfortran43 = wrapGCC (gcc43.gcc.override {
     name = "gfortran";
@@ -2507,6 +2515,14 @@ let
   });
 
   gfortran47 = wrapGCC (gcc47.gcc.override {
+    name = "gfortran";
+    langFortran = true;
+    langCC = false;
+    langC = false;
+    profiledCompiler = false;
+  });
+
+  gfortran48 = wrapGCC (gcc48.gcc.override {
     name = "gfortran";
     langFortran = true;
     langCC = false;
@@ -2744,7 +2760,11 @@ let
 
   go_1_0 = callPackage ../development/compilers/go { };
 
-  go_1_1 = callPackage ../development/compilers/go/1.1.nix { };
+  go_1_1 =
+    if stdenv.isDarwin then
+      callPackage ../development/compilers/go/1.1-darwin.nix { }
+    else
+      callPackage ../development/compilers/go/1.1.nix { };
 
   go = go_1_1;
 
@@ -3158,9 +3178,10 @@ let
   love = callPackage ../development/interpreters/love {};
 
   lua4 = callPackage ../development/interpreters/lua-4 { };
-  lua5 = callPackage ../development/interpreters/lua-5 { };
   lua5_0 = callPackage ../development/interpreters/lua-5/5.0.3.nix { };
   lua5_1 = callPackage ../development/interpreters/lua-5/5.1.nix { };
+  lua5_2 = callPackage ../development/interpreters/lua-5/5.2.nix { };
+  lua5 = lua5_1;
 
   luarocks = callPackage ../development/tools/misc/luarocks {
      lua = lua5;
@@ -3246,6 +3267,8 @@ let
   });
 
   pythonLinkmeWrapper = callPackage ../development/interpreters/python/python-linkme-wrapper.nix { };
+
+  pypi2nix = python27Packages.pypi2nix;
 
   pyrex = pyrex095;
 
@@ -3743,10 +3766,9 @@ let
   tcptrack = callPackage ../development/tools/misc/tcptrack { };
 
   texinfo413 = callPackage ../development/tools/misc/texinfo/4.13a.nix { };
-  texinfo49 = callPackage ../development/tools/misc/texinfo/4.9.nix { };
-  texinfo5 = callPackage ../development/tools/misc/texinfo/5.1.nix { };
-  texinfo = texinfo5;
+  texinfo5 = callPackage ../development/tools/misc/texinfo/5.2.nix { };
   texinfo4 = texinfo413;
+  texinfo = texinfo5;
 
   texi2html = callPackage ../development/tools/misc/texi2html { };
 
@@ -4303,6 +4325,10 @@ let
   gst_python = callPackage ../development/libraries/gstreamer/gst-python {};
 
   gnonlin = callPackage ../development/libraries/gstreamer/gnonlin {};
+
+  gusb = callPackage ../development/libraries/gusb {
+    inherit (gnome) gtkdoc;
+  };
 
   qt_gstreamer = callPackage ../development/libraries/gstreamer/qt-gstreamer {};
 
@@ -4959,7 +4985,12 @@ let
 
   libtommath = callPackage ../development/libraries/libtommath { };
 
-  libtorrentRasterbar = callPackage ../development/libraries/libtorrent-rasterbar { };
+  libtorrentRasterbar = callPackage ../development/libraries/libtorrent-rasterbar {
+    # fix "unrecognized option -arch" error
+    stdenv = if stdenv.isDarwin
+      then clangStdenv
+      else stdenv;
+  };
 
   libtunepimp = callPackage ../development/libraries/libtunepimp { };
 
@@ -5543,23 +5574,12 @@ let
 
   srtp_linphone = callPackage ../development/libraries/srtp/linphone.nix { };
 
-  sqlite_3_7_16 = lowPrio (callPackage ../development/libraries/sqlite/3.7.16.nix {
+  sqlite = lowPrio (callPackage ../development/libraries/sqlite {
     readline = null;
     ncurses = null;
   });
-
-  sqlite_3_7_14 = lowPrio (callPackage ../development/libraries/sqlite/3.7.14.nix {
-    readline = null;
-    ncurses = null;
-  });
-
-  sqlite = sqlite_3_7_16;
 
   sqliteInteractive = appendToName "interactive" (sqlite.override {
-    inherit readline ncurses;
-  });
-
-  sqliteFull = lowPrio (callPackage ../development/libraries/sqlite/3.7.9-full.nix {
     inherit readline ncurses;
   });
 
@@ -6015,6 +6035,8 @@ let
 
   bind = callPackage ../servers/dns/bind { };
 
+  bird = callPackage ../servers/bird { };
+
   couchdb = callPackage ../servers/http/couchdb {
     spidermonkey = spidermonkey_185;
   };
@@ -6259,7 +6281,11 @@ let
 
   axis2 = callPackage ../servers/http/tomcat/axis2 { };
 
-  virtuoso = callPackage ../servers/sql/virtuoso { };
+  virtuoso6 = callPackage ../servers/sql/virtuoso/6.x.nix { };
+
+  virtuoso7 = callPackage ../servers/sql/virtuoso/7.x.nix { };
+
+  virtuoso = virtuoso6;
 
   vsftpd = callPackage ../servers/ftp/vsftpd { };
 
@@ -6775,8 +6801,6 @@ let
 
   module_init_tools = callPackage ../os-specific/linux/module-init-tools { };
 
-  mountall = callPackage ../os-specific/linux/mountall { };
-
   aggregateModules = modules:
     callPackage ../os-specific/linux/kmod/aggregator.nix {
       inherit modules;
@@ -6882,6 +6906,15 @@ let
   sysstat = callPackage ../os-specific/linux/sysstat { };
 
   systemd = callPackage ../os-specific/linux/systemd { };
+
+  # In nixos, you can set systemd.package = pkgs.systemd_with_lvm2 to get
+  # LVM2 working in systemd.
+  systemd_with_lvm2 = pkgs.lib.overrideDerivation pkgs.systemd (p: {
+      name = p.name + "-with-lvm2";
+      postInstall = p.postInstall + ''
+        cp ${pkgs.lvm2}/lib/systemd/system-generators/* $out/lib/systemd/system-generators
+      '';
+  });
 
   sysvinit = callPackage ../os-specific/linux/sysvinit { };
 
@@ -7482,17 +7515,16 @@ let
     # use override to enable additional features
     libXaw = if stdenv.isDarwin then xlibs.libXaw else null;
     Xaw3d = null;
-    gtk = if stdenv.isDarwin then null else gtk;
     gconf = null;
     librsvg = null;
     alsaLib = null;
     imagemagick = null;
     texinfo = texinfo5;
 
-    # use gccApple on darwin to deal with: unexec: 'my_edata is not in section
-    # __data'
+    # use clangStdenv on darwin to deal with: unexec: 'my_edata is not in
+    # section __data'
     stdenv = if stdenv.isDarwin
-      then stdenvAdapters.overrideGCC stdenv gccApple
+      then clangStdenv
       else stdenv;
   };
 
@@ -7663,6 +7695,8 @@ let
   grip = callPackage ../applications/misc/grip {
     inherit (gnome) libgnome libgnomeui vte;
   };
+
+  gtimelog = pythonPackages.gtimelog;
 
   guitarix = callPackage ../applications/audio/guitarix {
     fftw = fftwSinglePrec;
@@ -8498,6 +8532,8 @@ let
   skype4pidgin = callPackage ../applications/networking/instant-messengers/pidgin-plugins/skype4pidgin { };
 
   skype_call_recorder = callPackage ../applications/networking/instant-messengers/skype-call-recorder { };
+
+  ssvnc = callPackage ../applications/networking/remote/ssvnc { };
 
   st = callPackage ../applications/misc/st {
     conf = config.st.conf or null;
@@ -9525,6 +9561,8 @@ let
 
   pal2nal = callPackage ../applications/science/biology/pal2nal { };
 
+  plink = callPackage ../applications/science/biology/plink/default.nix { };
+
 
   ### SCIENCE/MATH
 
@@ -9550,6 +9588,7 @@ let
 
   openblas = callPackage ../development/libraries/science/math/openblas { };
 
+  mathematica = callPackage ../applications/science/math/mathematica { };
 
   ### SCIENCE/MOLECULAR-DYNAMICS
 
@@ -9815,6 +9854,8 @@ let
   */
 
   nixops = callPackage ../tools/package-management/nixops { };
+
+  nix-repl = callPackage ../tools/package-management/nix-repl { };
 
   nut = callPackage ../applications/misc/nut { };
 
