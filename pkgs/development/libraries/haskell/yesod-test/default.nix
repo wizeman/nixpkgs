@@ -1,25 +1,27 @@
 { cabal, attoparsec, blazeBuilder, blazeHtml, blazeMarkup
 , caseInsensitive, cookie, hspec, htmlConduit, httpTypes, HUnit
 , monadControl, network, persistent, poolConduit, text, time
-, transformers, wai, waiTest, xmlConduit, xmlTypes
+, transformers, wai, waiTest, xmlConduit, xmlTypes, yesodCore
+, yesodForm
 }:
 
 cabal.mkDerivation (self: {
   pname = "yesod-test";
-  version = "0.3.5";
-  sha256 = "095hwl1dm4mk467la68x3lilj0c056603kl0nn8ra4glcr86273j";
+  version = "1.2.1";
+  sha256 = "1f92q9wjj6npxfsjibw0qlg6pai721mwkjcadh121bwgrancflyr";
   buildDepends = [
     attoparsec blazeBuilder blazeHtml blazeMarkup caseInsensitive
     cookie hspec htmlConduit httpTypes HUnit monadControl network
     persistent poolConduit text time transformers wai waiTest
-    xmlConduit xmlTypes
+    xmlConduit xmlTypes yesodCore
   ];
-  testDepends = [ hspec htmlConduit HUnit xmlConduit ];
+  testDepends = [
+    hspec htmlConduit HUnit text xmlConduit yesodCore yesodForm
+  ];
   meta = {
     homepage = "http://www.yesodweb.com";
     description = "integration testing for WAI/Yesod Applications";
     license = self.stdenv.lib.licenses.mit;
     platforms = self.ghc.meta.platforms;
-    maintainers = [ self.stdenv.lib.maintainers.simons ];
   };
 })

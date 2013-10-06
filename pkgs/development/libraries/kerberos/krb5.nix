@@ -2,7 +2,7 @@
 
 let
   pname = "krb5";
-  version = "1.10";
+  version = "1.11.3";
   name = "${pname}-${version}";
   webpage = http://web.mit.edu/kerberos/;
 in
@@ -11,8 +11,8 @@ stdenv.mkDerivation (rec {
   inherit name;
 
   src = fetchurl {
-    url = "${webpage}/dist/krb5/1.10/${name}-signed.tar";
-    sha256 = "1pa4m6538drb51gsqxbbxlsnc9fm9ccid9m2s3pv3di5l0a7l8bg";
+    url = "${webpage}/dist/krb5/1.11/${name}-signed.tar";
+    sha256 = "1daiaxgkxcryqs37w28v4x1vajqmay4l144d1zd9c2d7jjxr9gcs";
   };
 
   buildInputs = [ perl ncurses yacc ];
@@ -23,7 +23,9 @@ stdenv.mkDerivation (rec {
     cd ${name}/src
   '';
 
-  meta = { 
+  enableParallelBuilding = true;
+
+  meta = {
       description = "MIT Kerberos 5";
       homepage = webpage;
       license = "MPL";

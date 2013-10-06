@@ -11,8 +11,7 @@ with stdenv.lib;
 
 let
 
-  version = "4.2.12";
-  extpackRevision = "84980";
+  version = "4.2.18"; # changes ./guest-additions as well
 
   forEachModule = action: ''
     for mod in \
@@ -31,12 +30,25 @@ let
     done
   '';
 
-  extensionPack = requireFile {
-    name = "Oracle_VM_VirtualBox_Extension_Pack-${version}-${extpackRevision}"
-         + ".vbox-extpack";
-    # Has to be base16 because it's used as an input to VBoxExtPackHelperApp!
-    sha256 = "ad15a92e49095c2115bd1793b3b957d3eaf44af0f5d24bb53d6b4fc81c3e2fc4";
-    url = "https://www.virtualbox.org/wiki/Downloads";
+  # See https://github.com/NixOS/nixpkgs/issues/672 for details
+  extpackRevision = "88780";
+  extensionPack = requireFile rec {
+    name = "Oracle_VM_VirtualBox_Extension_Pack-${version}-${extpackRevision}.vbox-extpack";
+    # IMPORTANT: Hash must be base16 encoded because it's used as an input to
+    # VBoxExtPackHelperApp!
+    # Tip: see http://dlc.sun.com.edgesuite.net/virtualbox/4.2.18/SHA256SUMS
+    sha256 = "1d1737b59d0f30f5d42beeabaff168bdc0a75b8b28df685979be6173e5adbbba";
+    message = ''
+      In order to use the extension pack, you need to comply with the VirtualBox Personal Use
+      and Evaluation License (PUEL) by downloading the related binaries from:
+
+      https://www.virtualbox.org/wiki/Downloads
+
+      Once you have downloaded the file, please use the following command and re-run the
+      installation:
+
+      nix-prefetch-url file://${name}
+    '';
   };
 
 in stdenv.mkDerivation {
@@ -44,7 +56,7 @@ in stdenv.mkDerivation {
 
   src = fetchurl {
     url = "http://download.virtualbox.org/virtualbox/${version}/VirtualBox-${version}.tar.bz2";
-    sha256 = "eb65ecac94f63d6292a967d39cb5e28326404c10d0e8c2c50399eedb59c17ee6";
+    sha256 = "9dbddf393b029c549249f627d12040c1d257972bc09292969b8819a31ab78d74";
   };
 
   buildInputs =
@@ -136,6 +148,8 @@ in stdenv.mkDerivation {
       ln -s $libexec/icons/$size/*.png $out/share/icons/hicolor/$size/apps
     done
   '';
+
+  passthru = { inherit version; /* for guest additions */ };
 
   meta = {
     description = "PC emulator";

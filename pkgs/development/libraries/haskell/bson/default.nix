@@ -4,8 +4,8 @@
 
 cabal.mkDerivation (self: {
   pname = "bson";
-  version = "0.2.2";
-  sha256 = "043lbaj4rrvh4a1yc033np51vi8xlbczflbhyx2bsiryzbi27waf";
+  version = "0.2.3";
+  sha256 = "0p8c4cq8ldspwj4pmg0l8pg8bkwsk9xan07md32ikm4bfqsnv2rb";
   buildDepends = [
     binary cryptohash dataBinaryIeee754 mtl network text time
   ];
@@ -19,9 +19,6 @@ cabal.mkDerivation (self: {
     description = "BSON documents are JSON-like objects with a standard binary encoding";
     license = "unknown";
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

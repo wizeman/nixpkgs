@@ -1,22 +1,18 @@
-{ cabal, aeson, attoparsec, cereal, cryptoApi, httpConduit
-, httpTypes, HUnit, network, pureMD5, testFramework
-, testFrameworkHunit, text
+{ cabal, aeson, cereal, contravariant, cryptoApi, httpConduit
+, httpTypes, network, pureMD5, semigroups, text, void
 }:
 
 cabal.mkDerivation (self: {
   pname = "liblastfm";
-  version = "0.1.1.2";
-  sha256 = "1zckgjc0r2s1s6s9s309dr2ri8bzj1fi8gcbhm3hifczq1v149w9";
+  version = "0.3.0.0";
+  sha256 = "131p51yi17qfgk8h5b0rx2jyl37w4spafxmlcws1s5pk6bwy75jf";
   buildDepends = [
-    aeson cereal cryptoApi httpConduit httpTypes network pureMD5 text
-  ];
-  testDepends = [
-    aeson attoparsec HUnit testFramework testFrameworkHunit text
+    aeson cereal contravariant cryptoApi httpConduit httpTypes network
+    pureMD5 semigroups text void
   ];
   meta = {
     description = "Lastfm API interface";
     license = self.stdenv.lib.licenses.mit;
     platforms = self.ghc.meta.platforms;
-    maintainers = [ self.stdenv.lib.maintainers.simons ];
   };
 })

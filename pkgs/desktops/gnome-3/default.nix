@@ -1,9 +1,10 @@
 { callPackage, self, pkgs }:
 
 rec {
-  inherit (pkgs) gtk2 gtk3 gnome2;
+  inherit (pkgs) glib gtk2 gtk3 gnome2;
   gtk = gtk3; # just to be sure
-  orbit = pkgs.gnome2.ORBit2;
+  inherit (pkgs.gnome2) gnome_common ORBit2;
+  orbit = ORBit2;
 
 
 #### Overrides of libraries

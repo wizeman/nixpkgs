@@ -1,27 +1,29 @@
-{ cabal, binary, blazeBuilder, Cabal, caseInsensitive, cmdargs
-, conduit, filepath, haskellSrcExts, httpTypes, parsec, random
-, safe, tagsoup, time, transformers, uniplate, wai, warp
+{ cabal, aeson, binary, blazeBuilder, Cabal, caseInsensitive
+, cmdargs, conduit, deepseq, filepath, haskellSrcExts, hspec
+, hspecExpectations, httpTypes, HUnit, parsec, random, safe
+, systemFileio, tagsoup, text, time, transformers, uniplate, wai
+, warp
 }:
 
 cabal.mkDerivation (self: {
   pname = "hoogle";
-  version = "4.2.16";
-  sha256 = "1hamwqhndrkajm4xvxxfhr2rnlmf3z2ysyfxx3y6d24jawjyqf8a";
+  version = "4.2.23";
+  sha256 = "1ykjf0w6c3pzsrzdhxs53nxj84aj2px3gpfc8f53dmgqv3wkyii7";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [
-    binary blazeBuilder Cabal caseInsensitive cmdargs conduit filepath
-    haskellSrcExts httpTypes parsec random safe tagsoup time
-    transformers uniplate wai warp
+    aeson binary blazeBuilder Cabal caseInsensitive cmdargs conduit
+    deepseq filepath haskellSrcExts httpTypes parsec random safe
+    tagsoup text time transformers uniplate wai warp
+  ];
+  testDepends = [
+    conduit hspec hspecExpectations HUnit systemFileio transformers
   ];
   meta = {
     homepage = "http://www.haskell.org/hoogle/";
     description = "Haskell API Search";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

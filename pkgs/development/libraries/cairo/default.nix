@@ -1,47 +1,38 @@
-{ postscriptSupport ? true
-, pdfSupport ? true
-, pngSupport ? true
-, xcbSupport ? true # no longer experimental since 1.12
-, glSupport ? false
+{ stdenv, fetchurl, pkgconfig, libiconvOrEmpty, libintlOrEmpty
+, expat, zlib, libpng, pixman, fontconfig, freetype, xlibs
 , gobjectSupport ? true, glib
-, stdenv, fetchurl, pkgconfig, x11, fontconfig, freetype, xlibs
-, expat
-, zlib, libpng, pixman, libxcb ? null, xcbutil ? null, mesa ? null
-, libiconvOrEmpty, libintlOrEmpty
+, xcbSupport ? true # no longer experimental since 1.12
+, glSupport ? true, mesa_noglu ? null # mesa is no longer a big dependency
+, pdfSupport ? true
 }:
 
-assert postscriptSupport -> zlib != null;
-assert pngSupport -> libpng != null;
-assert xcbSupport -> libxcb != null && xcbutil != null;
-assert glSupport -> mesa != null;
+assert glSupport -> mesa_noglu != null;
+
+with { inherit (stdenv.lib) optional optionals; };
 
 stdenv.mkDerivation rec {
-  name = "cairo-1.12.14";
+  name = "cairo-1.12.16";
 
   src = fetchurl {
     url = "http://cairographics.org/releases/${name}.tar.xz";
-    sha256 = "04xcykglff58ygs0dkrmmnqljmpjwp2qgwcz8sijqkdpz7ix3l4n";
+    sha256 = "0inqwsylqkrzcjivdirkjx5nhdgxbdc62fq284c3xppinfg9a195";
   };
 
-  buildInputs = with xlibs;
-    [ pkgconfig x11 fontconfig expat ]
-    ++ stdenv.lib.optional (!stdenv.isDarwin) libXrender
-    ++ stdenv.lib.optionals xcbSupport [ libxcb xcbutil ]
-    ++ stdenv.lib.optionals glSupport [ mesa ]
-    ++ libintlOrEmpty
-    ++ libiconvOrEmpty;
+  nativeBuildInputs = [ pkgconfig ] ++ libintlOrEmpty ++ libiconvOrEmpty;
 
   propagatedBuildInputs =
-    [ freetype pixman ] ++
-    stdenv.lib.optional gobjectSupport glib ++
-    stdenv.lib.optional postscriptSupport zlib ++
-    stdenv.lib.optional pngSupport libpng;
+    with xlibs; [ xlibs.xlibs fontconfig expat freetype pixman zlib libpng ]
+    ++ optional (!stdenv.isDarwin) libXrender
+    ++ optionals xcbSupport [ libxcb xcbutil ]
+    ++ optional gobjectSupport glib
+    ++ optionals glSupport [ mesa_noglu ]
+    ;
 
-  configureFlags =
-    [ "--enable-tee" ]
-    ++ stdenv.lib.optional xcbSupport "--enable-xcb"
-    ++ stdenv.lib.optional glSupport "--enable-gl"
-    ++ stdenv.lib.optional pdfSupport "--enable-pdf";
+  configureFlags = [ "--enable-tee" ]
+    ++ optional xcbSupport "--enable-xcb"
+    ++ optional glSupport "--enable-gl"
+    ++ optional pdfSupport "--enable-pdf"
+    ;
 
   preConfigure =
   # On FreeBSD, `-ldl' doesn't exist.
@@ -51,12 +42,23 @@ stdenv.mkDerivation rec {
             cat "$i" | sed -es/-ldl//g > t
             mv t "$i"
           done
-       '');
+       '') 
+       +
+    ''
+    # Work around broken `Requires.private' that prevents Freetype
+    # `-I' flags to be propagated.
+    sed -i "src/cairo.pc.in" \
+        -es'|^Cflags:\(.*\)$|Cflags: \1 -I${freetype}/include/freetype2 -I${freetype}/include|g'
+    '';
 
   enableParallelBuilding = true;
 
   # The default `--disable-gtk-doc' is ignored.
-  postInstall = "rm -rf $out/share/gtk-doc";
+  postInstall = "rm -rf $out/share/gtk-doc"
+    + stdenv.lib.optionalString stdenv.isDarwin (''
+      #newline
+    '' + glib.flattenInclude
+    );
 
   meta = {
     description = "A 2D graphics library with support for multiple output devices";

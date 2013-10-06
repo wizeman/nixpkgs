@@ -2,17 +2,14 @@
 
 cabal.mkDerivation (self: {
   pname = "logict";
-  version = "0.6";
-  sha256 = "1np4wizvwlx458kq6mmdrh8qcp1794y1bs4mnnz951h6hay5z49f";
+  version = "0.6.0.1";
+  sha256 = "0sznrnx7l5sqnyvc2xwx1q33b4833qsnhppm06a3scp9gj3y1xp2";
   buildDepends = [ mtl ];
   meta = {
     homepage = "http://code.haskell.org/~dolio/logict";
     description = "A backtracking logic-programming monad";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

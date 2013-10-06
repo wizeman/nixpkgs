@@ -29,13 +29,13 @@ assert x11grabSupport -> libXext != null && libXfixes != null;
 assert playSupport -> SDL != null;
 
 stdenv.mkDerivation rec {
-  name = "ffmpeg-1.2";
-  
+  name = "ffmpeg-1.2.3";
+
   src = fetchurl {
     url = "http://www.ffmpeg.org/releases/${name}.tar.bz2";
-    sha256 = "1bssxbn4p813xlgb8whg4b60j90yzfy92x70b4q8j35fgp0gnfcs";
+    sha256 = "0nvilgwaivzvikgp9lpvrwi4p1clxl4w8j961599bg0r2v7n4x6r";
   };
-  
+
   # `--enable-gpl' (as well as the `postproc' and `swscale') mean that
   # the resulting library is GPL'ed, so it can only be used in GPL'ed
   # applications.
@@ -78,7 +78,7 @@ stdenv.mkDerivation rec {
     ++ stdenv.lib.optional playSupport SDL;
 
   enableParallelBuilding = true;
-    
+
   crossAttrs = {
     dontSetConfigureCross = true;
     configureFlags = configureFlags ++ [
@@ -87,6 +87,10 @@ stdenv.mkDerivation rec {
       "--target_os=linux"
       "--arch=${stdenv.cross.arch}"
       ];
+  };
+
+  passthru = {
+    inherit vdpauSupport;
   };
 
   meta = {

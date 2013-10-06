@@ -1,30 +1,20 @@
-{ cabal, cereal, cipherAes, cipherRc4, cpu, cryptoApi, cryptohash
-, cryptoPubkeyTypes, entropy, primitive, QuickCheck, tagged
-, testFramework, testFrameworkQuickcheck2, vector
+{ cabal, cipherAes, cipherBlowfish, cipherCamellia, cipherDes
+, cipherRc4, cryptoCipherTypes
 }:
 
 cabal.mkDerivation (self: {
   pname = "cryptocipher";
-  version = "0.4.0";
-  sha256 = "1qbnhzbzypin7h62sn2sibij7clsgmaiq24q3xhgbjrirb6bhqf0";
-  isLibrary = true;
-  isExecutable = true;
+  version = "0.6.1";
+  sha256 = "1qa0s7mr1a3nv4ppyk8wr57rxbfc2qpw9rq26pfziwnpin5k2j3x";
   buildDepends = [
-    cereal cipherAes cipherRc4 cpu cryptoApi cryptoPubkeyTypes
-    primitive tagged vector
-  ];
-  testDepends = [
-    cryptoApi cryptohash entropy QuickCheck testFramework
-    testFrameworkQuickcheck2 vector
+    cipherAes cipherBlowfish cipherCamellia cipherDes cipherRc4
+    cryptoCipherTypes
   ];
   meta = {
-    homepage = "http://github.com/vincenthz/hs-cryptocipher";
+    homepage = "http://github.com/vincenthz/hs-crypto-cipher";
     description = "Symmetrical block and stream ciphers";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

@@ -1,21 +1,25 @@
-{ cabal, basicPrelude, hashable, hspec, liftedBase, QuickCheck
+{ cabal, async, basicPrelude, deepseq, hashable, hspec, liftedBase
+, monadControl, monoTraversable, QuickCheck, semigroups
 , systemFilepath, text, transformers, unorderedContainers, vector
+, vectorInstances
 }:
 
 cabal.mkDerivation (self: {
   pname = "classy-prelude";
-  version = "0.5.4";
-  sha256 = "1p30f1inp0kj2dsvqnxaplxl83kd8bv41jmszvbdbf3vijjpk6kr";
+  version = "0.6.0";
+  sha256 = "0wpymr2gl0hmbgpw0qd0h1ik1h42s8raykq7jsdjqnmcvsmww5j6";
   buildDepends = [
-    basicPrelude hashable liftedBase systemFilepath text transformers
-    unorderedContainers vector
+    async basicPrelude deepseq hashable liftedBase monadControl
+    monoTraversable semigroups systemFilepath text transformers
+    unorderedContainers vector vectorInstances
   ];
-  testDepends = [ hspec QuickCheck transformers ];
+  testDepends = [
+    hspec QuickCheck transformers unorderedContainers
+  ];
   meta = {
     homepage = "https://github.com/snoyberg/classy-prelude";
     description = "A typeclass-based Prelude";
     license = self.stdenv.lib.licenses.mit;
     platforms = self.ghc.meta.platforms;
-    maintainers = [ self.stdenv.lib.maintainers.simons ];
   };
 })

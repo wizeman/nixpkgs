@@ -32,6 +32,6 @@ stdenv.mkDerivation rec {
   doCheck = true;
 
   meta = gnome3.goffice.meta // {
-    maintainers = [ stdenv.lib.maintainers.ludo ];
+    maintainers = [ ];
   };
 }

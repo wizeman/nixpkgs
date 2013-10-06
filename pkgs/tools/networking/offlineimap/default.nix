@@ -1,8 +1,9 @@
-{ pkgs, fetchurl, buildPythonPackage }:
+{ pkgs, fetchurl, buildPythonPackage, sqlite3 }:
 
 buildPythonPackage rec {
   version = "6.5.5-rc2";
   name = "offlineimap-${version}";
+  namePrefix = "";
 
   src = fetchurl {
     url = "https://github.com/OfflineIMAP/offlineimap/tarball/v${version}";
@@ -11,6 +12,10 @@ buildPythonPackage rec {
   };
 
   doCheck = false;
+
+  propagatedBuildInputs = [
+    sqlite3
+  ];
 
   meta = {
     description = "OfflineImap synchronizes emails between two repositories, so that you can read the same mailbox from multiple computers.";

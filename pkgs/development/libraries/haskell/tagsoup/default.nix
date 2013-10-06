@@ -2,8 +2,8 @@
 
 cabal.mkDerivation (self: {
   pname = "tagsoup";
-  version = "0.12.8";
-  sha256 = "05cm9h80qmxvk7xhlgly9zcmpbsajagspaa8p6k4ddch6q9lj7m3";
+  version = "0.13";
+  sha256 = "1pfkcfrmhzxplfkdzb0zj24dfsddw91plqp3mg2gqkv82y8blzk1";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [ text ];
@@ -12,9 +12,6 @@ cabal.mkDerivation (self: {
     description = "Parsing and extracting information from (possibly malformed) HTML/XML documents";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

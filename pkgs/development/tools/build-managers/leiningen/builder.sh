@@ -20,8 +20,6 @@ chmod -v 755 $out_bin
 
 patchShebangs $out
 
-wrapProgram $out_bin --prefix PATH ":" ${rlwrap}/bin
-
-echo "Testing out \"lein version\"..."
-$out_bin version
-echo "Success."
+wrapProgram $out_bin \
+    --prefix PATH ":" ${rlwrap}/bin \
+    --set LEIN_GPG ${gnupg}/bin/gpg

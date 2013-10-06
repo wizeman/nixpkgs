@@ -1,16 +1,15 @@
-{ stdenv, fetchgit, pythonPackages, pygobject, gst_python
+{ stdenv, fetchurl, pythonPackages, pygobject, gst_python
 , gst_plugins_good, gst_plugins_base
 }:
 
 pythonPackages.buildPythonPackage rec {
   name = "mopidy-${version}";
 
-  version = "0.12.0";
+  version = "0.15.0";
 
-  src = fetchgit {
-    url = "https://github.com/mopidy/mopidy.git";
-    rev = "refs/tags/v${version}";
-    sha256 = "18b1gsyq1ph1a8gl6m4jmhkvq1gyyhbkbb6rrr3qr4rb5prl1fyi";
+  src = fetchurl {
+    url = "https://github.com/mopidy/mopidy/archive/v${version}.tar.gz";
+    sha256 = "1fpnddcx6343wgxzh10s035w21g8jmfh2kzgx32w0xsshpra3gn1";
   };
 
   propagatedBuildInputs = with pythonPackages; [

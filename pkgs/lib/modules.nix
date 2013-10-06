@@ -46,25 +46,21 @@ rec {
   unifyModuleSyntax = m:
     let
       delayedModule = delayProperties m;
-      getImports =
-        if m ? config || m ? options then
-          m.imports or []
-        else
-          toList (rmProperties (delayedModule.require or []));
 
+      getImports =
+        toList (rmProperties (delayedModule.require or []));
       getImportedPaths = filter isPath getImports;
       getImportedSets = filter (x: !isPath x) getImports;
 
       getConfig =
-        removeAttrs delayedModule ["require" "key"];
+        removeAttrs delayedModule ["require" "key" "imports"];
 
     in
       if isModule m then
         { key = "<unknown location>"; } // m
       else
-        {
-          key = "<unknown location>";
-          imports = getImportedPaths;
+        { key = "<unknown location>";
+          imports = (m.imports or []) ++ getImportedPaths;
           config = getConfig;
         } // (
           if getImportedSets != [] then
@@ -75,12 +71,19 @@ rec {
         );
 
 
-  unifyOptionModule = {key ? "<unknown location>"}: m: (args:
-    let module = lib.applyIfFunction m args; in
-    if lib.isModule module then
-      { inherit key; } // module
+  unifyOptionModule = {key ? "<unknown location>"}: name: index: m: (args:
+    let
+      module = lib.applyIfFunction m args;
+      key_ = rec {
+        file = key;
+        option = name;
+        number = index;
+        outPath = key;
+      };
+    in if lib.isModule module then
+      { key = key_; } // module
     else
-      { inherit key; options = module; }
+      { key = key_; options = module; }
   );
 
 
@@ -197,9 +200,9 @@ rec {
       recurseInto = name:
         moduleMerge (addName name) (modulesOf name);
 
-      recurseForOption = name: modules:
+      recurseForOption = name: modules: args:
         moduleMerge name (
-          map unifyModuleSyntax modules
+          moduleClosure modules args
         );
 
       errorSource = modules:
@@ -240,7 +243,7 @@ rec {
           decls = # add location to sub-module options.
             map (m:
               mapSubOptions
-                (unifyOptionModule {inherit (m) key;})
+                (unifyOptionModule {inherit (m) key;} name)
                 m.options
             ) declarations;
 
@@ -302,7 +305,7 @@ rec {
               let opt = option.decl; in
               opt.apply (
                 if isNotDefined then
-                  opt.default or (throw "Not defined.")
+                  opt.default or (throw "Option `${addName name}' not defined and does not have a default value.")
                 else opt.merge defs
               )
             );

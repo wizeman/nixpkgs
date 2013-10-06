@@ -1,18 +1,15 @@
-{ cabal, nats }:
+{ cabal, hashable, nats, text, unorderedContainers }:
 
 cabal.mkDerivation (self: {
   pname = "semigroups";
-  version = "0.9";
-  sha256 = "0cwyjjlr9zgpxryzdf26pb58dmad0cp8d0493rarhh5zmgighh90";
-  buildDepends = [ nats ];
+  version = "0.11";
+  sha256 = "0w81ap41j28pbppqs33hz7b9n5ghyj2hnny0kgxgcg8iv2qg9czy";
+  buildDepends = [ hashable nats text unorderedContainers ];
   meta = {
     homepage = "http://github.com/ekmett/semigroups/";
-    description = "Haskell 98 semigroups";
+    description = "Anything that associates";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

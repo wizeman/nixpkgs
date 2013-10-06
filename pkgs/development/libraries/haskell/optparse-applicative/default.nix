@@ -10,11 +10,11 @@ cabal.mkDerivation (self: {
   testDepends = [
     HUnit testFramework testFrameworkHunit testFrameworkThPrime
   ];
+  jailbreak = true;
   meta = {
     homepage = "https://github.com/pcapriotti/optparse-applicative";
     description = "Utilities and combinators for parsing command line options";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [ self.stdenv.lib.maintainers.simons ];
   };
 })

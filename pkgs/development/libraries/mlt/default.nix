@@ -1,27 +1,29 @@
 { stdenv, fetchurl, SDL, ffmpeg, libdv, libsamplerate, libvorbis
-, libxml2 , pkgconfig, qt4, sox }:
+, libxml2 , pkgconfig, qt4, sox, gtk2 }:
 
 stdenv.mkDerivation rec {
   name = "mlt-${version}";
-  version = "0.8.8";
+  version = "0.9.0";
 
   src = fetchurl {
     url = "mirror://sourceforge/mlt/${name}.tar.gz";
-    sha256 = "0m4nzxli1pl8w59m4iwwhpmr1xdz7xfknmbl3a0mkkd1jzdiq3nc";
+    sha256 = "1j8wbkwpa6k5anyf4nvf71l8251d7clzj6v09jl3vvfakaf6l37j";
   };
 
-  buildInputs = 
+  buildInputs =
     [ SDL ffmpeg libdv libsamplerate libvorbis libxml2 pkgconfig qt4
-      sox
+      sox # gtk2 /*optional*/
     ];
 
   # Mostly taken from:
   # http://www.kdenlive.org/user-manual/downloading-and-installing-kdenlive/installing-source/installing-mlt-rendering-engine
-  configureFlags = [ "--enable-gpl" "--avformat-swscale" ];
+  configureFlags = [ "--enable-gpl" "--enable-gpl3" "--avformat-swscale" ];
+
+  enableParallelBuilding = true;
 
   meta = {
     homepage = http://www.mltframework.org/;
     description = "Open source multimedia framework, designed for television broadcasting";
-    license = "GPLv2+";
+    license = "GPLv3";
   };
 }

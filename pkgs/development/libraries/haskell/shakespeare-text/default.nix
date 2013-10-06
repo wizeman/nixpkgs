@@ -2,8 +2,8 @@
 
 cabal.mkDerivation (self: {
   pname = "shakespeare-text";
-  version = "1.0.0.5";
-  sha256 = "176yzx43sh0fnxpszn8kximd6i96yf2s374z55kvc1kspf7jk736";
+  version = "1.0.0.7";
+  sha256 = "0vl8884a0x927svvkza5xzjn4g1rip8dak1zh9wkm4d0q7lhv2px";
   buildDepends = [ shakespeare text ];
   testDepends = [ hspec HUnit text ];
   meta = {
@@ -11,9 +11,6 @@ cabal.mkDerivation (self: {
     description = "Interpolation with quasi-quotation: put variables strings";
     license = self.stdenv.lib.licenses.mit;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

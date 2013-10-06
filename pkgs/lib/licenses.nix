@@ -4,6 +4,40 @@
    * add it to this list. The URL mentioned above is a good source for inspiration.
    */
 
+  artistic2 = {
+    shortName = "Artistic 2.0";
+    fullName = "Artistic 2.0";
+    url = "http://opensource.org/licenses/artistic-license-2.0.php";
+  };
+
+  agpl3 = {
+    shortName = "AGPLv3";
+    fullName = "GNU Affero General Public License version 3 only";
+    url = https://www.gnu.org/licenses/agpl.html;
+  };
+
+  agpl3Plus = {
+    shortName = "AGPLv3+";
+    fullName = "GNU Affero General Public License version 3 or later";
+    url = https://www.gnu.org/licenses/agpl.html;
+  };
+
+  amd = {
+    shortName = "amd";
+    fullName = "AMD License Agreement";
+    url = "http://developer.amd.com/amd-license-agreement/";
+  };
+
+  amdadl = {
+    shortName = "amd-adl";
+    fullName = "amd-adl license";
+    url = "http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/licenses/AMD-ADL?revision=1.1";
+  };
+
+  # Apple Public Source License 2.0;
+  # http://opensource.org/licenses/APSL-2.0
+  apsl20 = "APSL 2.0";
+
   asl20 = {
     shortName = "ASL2.0";
     fullName = "Apache Software License 2.0";
@@ -19,13 +53,13 @@
   bsd2 = {
     shortName = "BSD-2";
     fullName = "BSD license (2 clause)";
-    url = http://www.freebsd.org/copyright/freebsd-license.html;
+    url = http://opensource.org/licenses/BSD-2-Clause;
   };
 
   bsd3 = {
     shortName = "BSD-3";
     fullName = "BSD license (3 clause)";
-    url = http://www.opensource.org/licenses/bsd-license.php;
+    url = http://opensource.org/licenses/BSD-3-Clause;
   };
 
   bsdOriginal = {
@@ -52,11 +86,7 @@
     url = http://www.eclipse.org/legal/epl-v10.html;
   };
 
-  gpl2 = {
-    shortName = "GPLv2";
-    fullName = "GNU General Public License version 2 only";
-    url = http://www.gnu.org/licenses/old-licenses/gpl-2.0.html;
-  };
+  gpl2 = "GPLv2";
 
   gpl2Oss = {
     shortName = "GPLv2+OSS";
@@ -64,11 +94,9 @@
     url = http://www.mysql.com/about/legal/licensing/foss-exception;
   };
 
-  gpl2Plus = {
-    shortName = "GPLv2+";
-    fullName = "GNU General Public License version 2 or later";
-    url = http://www.gnu.org/licenses/old-licenses/gpl-2.0.html;
-  };
+  # GNU General Public License version 2 or later;
+  # http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+  gpl2Plus = "GPLv2+";
 
   gpl3 = {
     shortName = "GPLv3";
@@ -112,11 +140,7 @@
     url = https://fedoraproject.org/wiki/Licensing/libtiff;
   };
 
-  lgpl2 = {
-    shortName = "LGPLv2";
-    fullName = "GNU Library General Public License version 2";
-    url = http://www.gnu.org/licenses/old-licenses/lgpl-2.0.html;
-  };
+  lgpl2 = "LGPLv2";
 
   lgpl2Plus = {
     shortName = "LGPLv2+";
@@ -124,16 +148,18 @@
     url = http://www.gnu.org/licenses/old-licenses/lgpl-2.0.html;
   };
 
-  lgpl21 = {
-    shortName = "LGPLv2.1";
-    fullName = "GNU Lesser General Public License version 2.1 only";
-    url = http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html;
-  };
+  lgpl21 = "LGPLv2.1";
 
   lgpl21Plus = {
     shortName = "LGPLv2.1+";
     fullName = "GNU Lesser General Public License version 2.1 or later";
     url = http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html;
+  };
+
+  llgpl21 = {
+    shortName = "LLGPLv2.1";
+    fullName = "Lisp LGPL; GNU Lesser General Public License version 2.1 with Franz Inc. preamble for clarification of LGPL terms in context of Lisp";
+    url = http://opensource.franz.com/preamble.html;
   };
 
   lgpl3 = {
@@ -186,6 +212,8 @@
   unfree = "unfree";
 
   unfreeRedistributable = "unfree-redistributable";
+
+  unfreeRedistributableFirmware = "unfree-redistributable-firmware";
 
   zlib = {
     shortName = "zlib";
