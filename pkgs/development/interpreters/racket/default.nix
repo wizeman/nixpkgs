@@ -4,12 +4,12 @@
 
 stdenv.mkDerivation rec {
   pname = "racket";
-  version = "5.3.3";
+  version = "5.3.6";
   name = "${pname}-${version}";
 
   src = fetchurl {
     url = "http://download.racket-lang.org/installers/${version}/${pname}/${name}-src-unix.tgz";
-    sha256 = "1qp0fmsh4dkxvlj35xnwdcf4m97jcf927cwhnckjicqx1lfa0wj7";
+    sha256 = "12pvgidaym1rwyyi69bd2gfmfwi1y0lf8xgih7a8r20z4g0zzq3z";
   };
 
   # Various racket executables do run-time searches for these.

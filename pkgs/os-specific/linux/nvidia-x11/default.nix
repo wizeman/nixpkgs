@@ -8,25 +8,32 @@
 
 with stdenv.lib;
 
-let versionNumber = "313.30"; in
+let
+
+  versionNumber = "319.60";
+
+in
 
 stdenv.mkDerivation {
   name = "nvidia-x11-${versionNumber}${optionalString (!libsOnly) "-${kernelDev.version}"}";
 
   builder = ./builder.sh;
 
-  patches = [ ./version-test.patch ];
+  patches =
+    [ ./version-test.patch ]
+    ++ optional (!libsOnly && versionAtLeast kernelDev.version "3.11") ./nvidia-drivers-linux-3.11-incremental.patch
+    ;
 
   src =
     if stdenv.system == "i686-linux" then
       fetchurl {
         url = "http://us.download.nvidia.com/XFree86/Linux-x86/${versionNumber}/NVIDIA-Linux-x86-${versionNumber}.run";
-        sha256 = "1ba9mphvynni44dv3mwx9a9819drmrc4n82f4i58xjhvkfbi03qa";
+        sha256 = "0kjidkwd2b5aik74663mxk3ffq4a3fmaybq2aq1lcbfhvvh49j6j";
       }
     else if stdenv.system == "x86_64-linux" then
       fetchurl {
         url = "http://us.download.nvidia.com/XFree86/Linux-x86_64/${versionNumber}/NVIDIA-Linux-x86_64-${versionNumber}-no-compat32.run";
-        sha256 = "1ggd3raxax99xnbphf945f0ggj5kq30jnknhyqy2fha9is1jbnjp";
+        sha256 = "0fhrxcfsw2jaycnz9gr04c9w585wydx8kpm6rjjbw19wkf8hlq3z";
       }
     else throw "nvidia-x11 does not support platform ${stdenv.system}";
 

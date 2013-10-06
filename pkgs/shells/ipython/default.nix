@@ -13,12 +13,12 @@ assert qtconsoleSupport == true -> pyqt4 != null;
 assert pylabQtSupport == true -> pyqt4 != null && sip != null;
 
 buildPythonPackage rec {
-  name = "ipython-0.13.1";
+  name = "ipython-1.1.0";
   namePrefix = "";
 
   src = fetchurl {
     url = "http://pypi.python.org/packages/source/i/ipython/${name}.tar.gz";
-    sha256 = "1h7q2zlyfn7si2vf6gnq2d0krkm1f5jy5nbi105by7zxqjai1grv";
+    sha256 = "1glivwy7k2dciy0y5i39syngip84nrqhpggn4glmpd2s49jllkkc";
   };
 
   propagatedBuildInputs = [
@@ -46,12 +46,12 @@ buildPythonPackage rec {
     homepage = http://ipython.scipy.org/;
     description = "An interactive computing environment for Python";
     license = "BSD";
-
     longDescription = ''
       The goal of IPython is to create a comprehensive environment
       for interactive and exploratory computing. It consists of an
       enhanced interactive Python shell and an architecture for
       interactive parallel computing.
     '';
+    maintainers = [ stdenv.lib.maintainers.bjornfor ];
   };
 }

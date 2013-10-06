@@ -2,17 +2,14 @@
 
 cabal.mkDerivation (self: {
   pname = "dimensional";
-  version = "0.10.2";
-  sha256 = "14idyacd38a2kc97hp773j8iiim2lxh9czr8gp12m66w4n603znn";
+  version = "0.12.1.1";
+  sha256 = "1fjkvyp62bh5gyzhkn189z5mxrr1acwmk39mqxk4579xbchvpyq6";
   buildDepends = [ numtype time ];
   meta = {
     homepage = "http://dimensional.googlecode.com/";
     description = "Statically checked physical dimensions";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

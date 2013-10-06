@@ -1,20 +1,17 @@
-{ cabal, parsec, syb, xml }:
+{ cabal, pandocTypes, parsec, syb, xml }:
 
 cabal.mkDerivation (self: {
   pname = "texmath";
-  version = "0.6.1.3";
-  sha256 = "1f2hka9jwlrm9dvw7z3896yfpdzxs2vaw0vbcmj5p401mvzc8w05";
+  version = "0.6.4";
+  sha256 = "090xqs14ap3c6pljqzyva46phxb1lhqayi4g098f6d77d1ygvshf";
   isLibrary = true;
   isExecutable = true;
-  buildDepends = [ parsec syb xml ];
+  buildDepends = [ pandocTypes parsec syb xml ];
   meta = {
     homepage = "http://github.com/jgm/texmath";
     description = "Conversion of LaTeX math formulas to MathML or OMML";
     license = "GPL";
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

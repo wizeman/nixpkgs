@@ -1,31 +1,26 @@
-{ stdenv, fetchgit, zlib, libuuid, acl, attr, e2fsprogs }:
+{ stdenv, fetchgit, zlib, libuuid, acl, attr, e2fsprogs, lzo }:
 
-let version = "0.20pre20121005"; in
+let version = "0.20pre20130705"; in
 
 stdenv.mkDerivation {
   name = "btrfs-progs-${version}";
 
   src = fetchgit {
     url = "git://git.kernel.org/pub/scm/linux/kernel/git/mason/btrfs-progs.git";
-    rev = "91d9eec1ff044394f2b98ee7fcb76713dd33b994";
-    sha256 = "72d4cd4fb23d876a17146d6231ad40a2151fa47c648485c54cf7478239b43764";
+    rev = "194aa4a1bd6447bb545286d0bcb0b0be8204d79f";
+    sha256 = "07c6762c9873cdcc1b9b3be0b412ba14b83457d8f5608d3dd945953b5e06f0f2";
   };
 
-  patches = [
-    ./subvol-listing.patch
-    ./btrfs-receive-help-text.patch
-    ./btrfs-progs-Fix-the-receive-code-pathing.patch
-    ./btrfs-receive-lchown.patch
-  ];
-
-  buildInputs = [ zlib libuuid acl attr e2fsprogs ];
+  buildInputs = [ zlib libuuid acl attr e2fsprogs lzo ];
 
   postPatch = ''
     cp ${./btrfs-set-received-uuid.c} btrfs-set-received-uuid.c
   '';
 
   postBuild = ''
-    gcc -O2 -luuid -o btrfs-set-received-uuid send-utils.o rbtree.o btrfs-list.o btrfs-set-received-uuid.c
+    gcc -Wall -D_FILE_OFFSET_BITS=64 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -DBTRFS_FLAT_INCLUDES \
+        -fPIC -g -O1 -luuid -o btrfs-set-received-uuid rbtree.o send-utils.o btrfs-list.o \
+        btrfs-set-received-uuid.c
   '';
 
   postInstall = ''

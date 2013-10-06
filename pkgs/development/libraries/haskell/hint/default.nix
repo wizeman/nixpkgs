@@ -4,8 +4,8 @@
 
 cabal.mkDerivation (self: {
   pname = "hint";
-  version = "0.3.3.6";
-  sha256 = "080wnds99lg9p4n2h9d4bpgvk73yzc3im2ysn1r8f3nqai4b2can";
+  version = "0.3.3.7";
+  sha256 = "1aba9dfkxlpmvbvllw4qnlrd300vnr0ismkn3kva1pv1cay5pifk";
   buildDepends = [
     extensibleExceptions filepath ghcMtl ghcPaths haskellSrc
     MonadCatchIOMtl mtl random utf8String
@@ -15,9 +15,6 @@ cabal.mkDerivation (self: {
     description = "Runtime Haskell interpreter (GHC API wrapper)";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

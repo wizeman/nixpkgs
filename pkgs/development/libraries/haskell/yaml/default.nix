@@ -4,23 +4,23 @@
 
 cabal.mkDerivation (self: {
   pname = "yaml";
-  version = "0.8.2.3";
-  sha256 = "1ds6969gbkxgkm2fha0ifmssjl7by9glgix165v0h8i7fx9wx3wa";
+  version = "0.8.5";
+  sha256 = "12jj785gzcnrif460cx2k69pc2h9h956g0w1gp8pcr5hawrvd6rg";
+  isLibrary = true;
+  isExecutable = true;
   buildDepends = [
     aeson attoparsec conduit resourcet text transformers
     unorderedContainers vector
   ];
   testDepends = [
-    conduit hspec HUnit text transformers unorderedContainers
+    aeson conduit hspec HUnit text transformers unorderedContainers
+    vector
   ];
   meta = {
     homepage = "http://github.com/snoyberg/yaml/";
     description = "Support for parsing and rendering YAML documents";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

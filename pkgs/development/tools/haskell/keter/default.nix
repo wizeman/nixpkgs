@@ -1,23 +1,25 @@
-{ cabal, attoparsec, blazeBuilder, caseInsensitive, conduit
-, dataDefault, filepath, hinotify, httpConduit, httpReverseProxy
-, httpTypes, mtl, network, networkConduit, networkConduitTls
-, random, regexTdfa, systemFileio, systemFilepath, tar, text, time
-, transformers, unixCompat, unixProcessConduit, wai, waiAppStatic
-, yaml, zlib
+{ cabal, aeson, async, attoparsec, blazeBuilder, caseInsensitive
+, conduit, dataDefault, filepath, fsnotify, httpConduit
+, httpReverseProxy, httpTypes, mtl, network, networkConduit
+, networkConduitTls, random, regexTdfa, stm, systemFileio
+, systemFilepath, tar, text, time, transformers, unixCompat
+, unixProcessConduit, unorderedContainers, vector, wai
+, waiAppStatic, waiExtra, warp, warpTls, yaml, zlib
 }:
 
 cabal.mkDerivation (self: {
   pname = "keter";
-  version = "0.3.6.1";
-  sha256 = "0jww64q74kx5h69mnv9wgc4kx0nlb06r7lf651gjkai8mf9dkqf2";
+  version = "1.0.1.1";
+  sha256 = "1bcp9yxmh5z7cvap4nrj8gxnndwws21w6y352yasf35bf432nxa9";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [
-    attoparsec blazeBuilder caseInsensitive conduit dataDefault
-    filepath hinotify httpConduit httpReverseProxy httpTypes mtl
-    network networkConduit networkConduitTls random regexTdfa
-    systemFileio systemFilepath tar text time transformers unixCompat
-    unixProcessConduit wai waiAppStatic yaml zlib
+    aeson async attoparsec blazeBuilder caseInsensitive conduit
+    dataDefault filepath fsnotify httpConduit httpReverseProxy
+    httpTypes mtl network networkConduit networkConduitTls random
+    regexTdfa stm systemFileio systemFilepath tar text time
+    transformers unixCompat unixProcessConduit unorderedContainers
+    vector wai waiAppStatic waiExtra warp warpTls yaml zlib
   ];
   meta = {
     homepage = "http://www.yesodweb.com/";

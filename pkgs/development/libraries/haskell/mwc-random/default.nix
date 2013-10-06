@@ -4,8 +4,8 @@
 
 cabal.mkDerivation (self: {
   pname = "mwc-random";
-  version = "0.12.0.1";
-  sha256 = "1sq4yxi231ka8rzwsihqziibs7amvl27ycr018wymm3yz36vsy7c";
+  version = "0.13.0.0";
+  sha256 = "16f8dd81wj81h0jcqnrlr2d6mjc7q2r436qf8z320d6wpzih2djy";
   buildDepends = [ primitive time vector ];
   testDepends = [
     HUnit QuickCheck statistics testFramework testFrameworkHunit
@@ -17,9 +17,6 @@ cabal.mkDerivation (self: {
     description = "Fast, high quality pseudo random number generation";
     license = self.stdenv.lib.licenses.bsd3;
     platforms = self.ghc.meta.platforms;
-    maintainers = [
-      self.stdenv.lib.maintainers.andres
-      self.stdenv.lib.maintainers.simons
-    ];
+    maintainers = [ self.stdenv.lib.maintainers.andres ];
   };
 })

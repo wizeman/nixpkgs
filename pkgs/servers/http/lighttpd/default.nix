@@ -1,4 +1,8 @@
-{ stdenv, fetchurl, pcre, libxml2, zlib, attr, bzip2, which, file }:
+{ stdenv, fetchurl, pkgconfig, pcre, libxml2, zlib, attr, bzip2, which, file
+, openssl, enableMagnet ? false, lua5 ? null
+}:
+
+assert enableMagnet -> lua5 != null;
 
 stdenv.mkDerivation {
   name = "lighttpd-1.4.32";
@@ -8,15 +12,21 @@ stdenv.mkDerivation {
     sha256 = "1hgd9bi4mrak732h57na89lqg58b1kkchnddij9gawffd40ghs0k";
   };
 
-  buildInputs = [ pcre libxml2 zlib attr bzip2 which file ];
+  buildInputs = [ pkgconfig pcre libxml2 zlib attr bzip2 which file openssl ]
+             ++ stdenv.lib.optional enableMagnet lua5;
+
+  configureFlags = [ "--with-openssl" ]
+                ++ stdenv.lib.optional enableMagnet "--with-lua";
 
   preConfigure = ''
     sed -i "s:/usr/bin/file:${file}/bin/file:g" configure
   '';
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "Lightweight high-performance web server";
     homepage = http://www.lighttpd.net/;
     license = "BSD";
+    platforms = platforms.linux;
+    maintainers = [maintainers.bjornfor];
   };
 }

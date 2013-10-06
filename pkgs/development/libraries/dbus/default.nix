@@ -1,10 +1,10 @@
 { stdenv, fetchurl, pkgconfig, autoconf, automake, libtool
 , expat, systemd, glib, dbus_glib, python
-, libX11, libICE, libSM, useX11 ? true }:
+, libX11, libICE, libSM, useX11 ? (stdenv.isLinux || stdenv.isDarwin) }:
 
 let
-  version = "1.6.8"; # 1.7.* isn't recommended, even for gnome 3.8
-  sha256 = "1b0vq5b81synr0hqsfyypyq5yw305q0fq1f9alzv3vmb73pp04zw";
+  version = "1.6.14"; # 1.7.* isn't recommended, even for gnome 3.8
+  sha256 = "0v7mcxwfmpjf7vndnvf2kf02al61clrxs36bqii20s0lawfh2xjn";
 
   inherit (stdenv) lib;
 
@@ -13,6 +13,7 @@ let
   # also other parts than "libs" need this statically linked lib
   makeInternalLib = "(cd dbus && make libdbus-internal.la)";
 
+  systemdOrEmpty = lib.optional stdenv.isLinux systemd;
 
   # A generic builder for individual parts (subdirs) of D-Bus
   dbus_drv = name: subdirs: merge: stdenv.mkDerivation (lib.mergeAttrsByFuncDefaultsClean [{
@@ -24,31 +25,13 @@ let
       inherit sha256;
     };
 
-    configureFlags = [
-      "--localstatedir=/var"
-      "--sysconfdir=/etc"
-      "--with-session-socket-dir=/tmp"
-      "--with-systemdsystemunitdir=$(out)/lib/systemd"
-    ];
-
-    preConfigure = ''
-      patchShebangs .
-      substituteInPlace tools/Makefile.am --replace 'install-localstatelibDATA:' 'disabled:'
-      autoreconf -fi
-    '';
-
-    installFlags = "sysconfdir=$(out)/etc";
-
-    doCheck = true;
-
     patches = [
-      ./ignore-missing-includedirs.patch ./implement-getgrouplist.patch
-      ./ucred-dirty-hack.patch ./no-create-dirs.patch
-    ];
-
-    nativeBuildInputs = [ pkgconfig ];
-    propagatedBuildInputs = [ expat ];
-    buildInputs = [ autoconf automake libtool ]; # ToDo: optional selinux?
+        ./ignore-missing-includedirs.patch
+        ./ucred-dirty-hack.patch
+        ./no-create-dirs.patch
+      ]
+      ++ lib.optional (stdenv.isSunOS || stdenv.isLinux) ./implement-getgrouplist.patch
+      ;
 
     # build only the specified subdirs
     postPatch = "sed '/SUBDIRS/s/=.*/=" + subdirs + "/' -i Makefile.am\n"
@@ -59,16 +42,40 @@ let
           done
         '';
 
+    nativeBuildInputs = [ pkgconfig ];
+    propagatedBuildInputs = [ expat ];
+    buildInputs = [ autoconf automake libtool ]; # ToDo: optional selinux?
+
+    preConfigure = ''
+      patchShebangs .
+      substituteInPlace tools/Makefile.am --replace 'install-localstatelibDATA:' 'disabled:'
+      autoreconf -fi
+    '';
+
+    configureFlags = [
+      "--localstatedir=/var"
+      "--sysconfdir=/etc"
+      "--with-session-socket-dir=/tmp"
+      "--with-systemdsystemunitdir=$(out)/lib/systemd"
+    ];
+
+    enableParallelBuilding = true;
+
+    doCheck = true;
+
+    installFlags = "sysconfdir=$(out)/etc";
+
   } merge ]);
 
-  libs = dbus_drv "libs" "dbus" {
-    buildInputs = [ systemd.headers ];
-    patches = [ ./systemd.patch ]; # bypass systemd detection
-
+  libs = dbus_drv "libs" "dbus" ({
     # Enable X11 autolaunch support in libdbus. This doesn't actually depend on X11
     # (it just execs dbus-launch in dbus.tools), contrary to what the configure script demands.
     NIX_CFLAGS_COMPILE = "-DDBUS_ENABLE_X11_AUTOLAUNCH=1";
-  };
+  } // stdenv.lib.optionalAttrs (systemdOrEmpty != []) {
+    buildInputs = [ systemd.headers ];
+    patches = [ ./systemd.patch ]; # bypass systemd detection
+  });
+
 
 in rec {
 
@@ -81,21 +88,27 @@ in rec {
 
   tools = dbus_drv "tools" "tools" {
     configureFlags = [ "--with-dbus-daemondir=${daemon}/bin" ];
-    buildInputs = buildInputsX ++ [ libs daemon systemd dbus_glib ];
-    NIX_CFLAGS_LINK = "-Wl,--as-needed -ldbus-1";
+    buildInputs = buildInputsX ++ systemdOrEmpty ++ [ libs daemon dbus_glib ];
+    NIX_CFLAGS_LINK = 
+      stdenv.lib.optionalString (!stdenv.isDarwin) "-Wl,--as-needed "
+      + "-ldbus-1";
+
+    meta.platforms = stdenv.lib.platforms.all;
   };
 
   daemon = dbus_drv "daemon" "bus" {
     preBuild = makeInternalLib;
-    buildInputs = [ systemd ];
+    buildInputs = systemdOrEmpty;
   };
 
   # Some of the tests don't work yet; in fact, @vcunat tried several packages
   # containing dbus testing, and all of them have some test failure.
   tests = dbus_drv "tests" "test" {
     preBuild = makeInternalLib;
-    buildInputs = buildInputsX ++ [ systemd libs tools daemon dbus_glib python ];
-    NIX_CFLAGS_LINK = "-Wl,--as-needed -ldbus-1";
+    buildInputs = buildInputsX ++ systemdOrEmpty ++ [ libs tools daemon dbus_glib python ];
+    NIX_CFLAGS_LINK = 
+      stdenv.lib.optionalString (!stdenv.isDarwin) "-Wl,--as-needed "
+      + "-ldbus-1";
   };
 
   docs = dbus_drv "docs" "doc" {

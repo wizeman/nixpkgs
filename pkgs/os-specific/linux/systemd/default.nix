@@ -1,17 +1,18 @@
 { stdenv, fetchurl, pkgconfig, intltool, gperf, libcap, dbus, kmod
 , xz, pam, acl, cryptsetup, libuuid, m4, utillinux
 , glib, kbd, libxslt, coreutils, libgcrypt, sysvtools, docbook_xsl
+, kexectools
 }:
 
-assert stdenv.gcc.libc or null != null;
+assert stdenv.isLinux;
 
 stdenv.mkDerivation rec {
-  version = "201";
+  version = "203";
   name = "systemd-${version}";
 
   src = fetchurl {
     url = "http://www.freedesktop.org/software/systemd/${name}.tar.xz";
-    sha256 = "046cr1q7xv7bslzc16g8zz8nddf64lw8v01isw1204n21cd9yafn";
+    sha256 = "07gvn3rpski8sh1nz16npjf2bvj0spsjdwc5px9685g2pi6kxcb1";
   };
 
   patches =
@@ -23,6 +24,9 @@ stdenv.mkDerivation rec {
       ./0006-Don-t-call-plymouth-quit.patch
       ./0007-Ignore-IPv6-link-local-addresses.patch
       ./0008-Don-t-try-to-unmount-nix-or-nix-store.patch
+      ./0009-Start-ctrl-alt-del.target-irreversibly.patch
+      ./0010-Fix-CPUShares-configuration-option.patch
+      ./0011-polkit-Avoid-race-condition-in-scraping-proc.patch
     ] ++ stdenv.lib.optional stdenv.isArm ./libc-bug-accept4-arm.patch;
 
   buildInputs =
@@ -49,7 +53,7 @@ stdenv.mkDerivation rec {
     ''
       # FIXME: patch this in systemd properly (and send upstream).
       # FIXME: use sulogin from util-linux once updated.
-      for i in src/remount-fs/remount-fs.c src/core/mount.c src/core/swap.c src/fsck/fsck.c units/emergency.service.in units/rescue.service.m4.in; do
+      for i in src/remount-fs/remount-fs.c src/core/mount.c src/core/swap.c src/fsck/fsck.c units/emergency.service.in units/rescue.service.m4.in src/journal/cat.c src/core/shutdown.c; do
         test -e $i
         substituteInPlace $i \
           --replace /bin/mount ${utillinux}/bin/mount \
@@ -58,7 +62,9 @@ stdenv.mkDerivation rec {
           --replace /sbin/swapoff ${utillinux}/sbin/swapoff \
           --replace /sbin/fsck ${utillinux}/sbin/fsck \
           --replace /bin/echo ${coreutils}/bin/echo \
-          --replace /sbin/sulogin ${sysvtools}/sbin/sulogin
+          --replace /bin/cat ${coreutils}/bin/cat \
+          --replace /sbin/sulogin ${sysvtools}/sbin/sulogin \
+          --replace /sbin/kexec ${kexectools}/sbin/kexec
       done
 
       substituteInPlace src/journal/catalog.c \

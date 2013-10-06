@@ -1,38 +1,29 @@
-{ stdenv, fetchgit, python, autoconf, automake, libtool, gettext, emacs, gmp
-, pcre, expat, boost, mpfr, git, texinfo }:
+{ stdenv, fetchgit, cmake, boost, gmp, mpfr, libedit, python, texinfo }:
 
 let
-  rev = "d2915c66";
+  rev = "0ec4291";
 in
 stdenv.mkDerivation {
-  name = "ledger3-2012.01.${rev}";
+  name = "ledger3-2013.08.${rev}";
 
   src = fetchgit {
-    url = "git://github.com/jwiegley/ledger.git";
+    url = "https://github.com/ledger/ledger.git";
     inherit rev;
-    sha256 = "a489c8b1c48889040d2cebaac1a0019e90acac0b51c9abf7914944dcb4b801e7";
+    sha256 = "1y4rcbx8y2fxkdc7i06n1i5jf3cq05bvzpb8498mis2gwfmkw470";
   };
 
-  buildInputs = [
-    python autoconf automake libtool gettext emacs gmp pcre expat boost mpfr
-    git texinfo
-  ];
+  buildInputs = [ cmake boost gmp mpfr libedit python texinfo ];
 
-  CPPFLAGS = "-I${gmp}/include -I${mpfr}/include";
-
-  LDFLAGS = "-L${gmp}/lib -L${mpfr}/lib";
-
-  buildPhase = ''
-    sed -i acprep \
-      -e 's|search_prefixes = .*|search_prefixes = ["${boost}"]|' \
-      -e 's|/usr/bin/python|${python}/bin/python|'
-    export MAKEFLAGS="-j$NIX_BUILD_CORES -l$NIX_BUILD_CORES"
-    python acprep update --no-pch --prefix=$out
-  '';
-
+  # Tests on Darwin are failing
   doCheck = !stdenv.isDarwin;
-
   enableParallelBuilding = true;
+
+  # Skip byte-compiling of emacs-lisp files because this is currently
+  # broken in ledger...
+  postInstall = ''
+    mkdir -p $out/share/emacs/site-lisp/
+    cp -v $src/lisp/*.el $out/share/emacs/site-lisp/
+  '';
 
   meta = {
     homepage = "http://ledger-cli.org/";
@@ -47,6 +38,6 @@ stdenv.mkDerivation {
     '';
 
     platforms = stdenv.lib.platforms.all;
-    maintainers = [ stdenv.lib.maintainers.simons ];
+    maintainers = with stdenv.lib.maintainers; [ simons the-kenny ];
   };
 }

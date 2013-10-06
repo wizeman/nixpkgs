@@ -1,12 +1,12 @@
 { stdenv, fetchurl, ghc, perl, gmp, ncurses }:
 
 stdenv.mkDerivation rec {
-  version = "7.7.20130223";
+  version = "7.7.20130816";
   name = "ghc-${version}";
 
   src = fetchurl {
-    url = "http://haskell.org/ghc/dist/current/dist/${name}-src.tar.bz2";
-    sha256 = "1naw6x1mjij10h9k4biard2pkzi6zml26vv4h34asprv0h6ymdbg";
+    url = "http://darcs.haskell.org/ghcBuilder/uploads/tn23/${name}-src.tar.bz2";
+    sha256 = "0w636gfjn3xigrlj31z4hy9kv44svyifsqcshrq95qxijx396j5m";
   };
 
   buildInputs = [ ghc perl gmp ncurses ];
@@ -24,13 +24,11 @@ stdenv.mkDerivation rec {
     sed -i -e 's|-isysroot /Developer/SDKs/MacOSX10.5.sdk||' configure
   '';
 
-  configureFlags=[
-    "--with-gcc=${stdenv.gcc}/bin/gcc"
-  ];
+  configureFlags = "--with-gcc=${stdenv.gcc}/bin/gcc";
 
   # required, because otherwise all symbols from HSffi.o are stripped, and
   # that in turn causes GHCi to abort
-  stripDebugFlags=["-S" "--keep-file-symbols"];
+  stripDebugFlags = [ "-S" "--keep-file-symbols" ];
 
   meta = {
     homepage = "http://haskell.org/ghc";
