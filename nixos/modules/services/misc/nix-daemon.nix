@@ -77,8 +77,8 @@ in
       };
 
       useChroot = mkOption {
-        default = false;
-        example = true;
+        default = true;
+        example = false;
         description = "
           If set, Nix will perform builds in a chroot-environment that it
           will set up automatically for each build.  This prevents
