@@ -194,6 +194,12 @@ in stdenv.mkDerivation rec {
     ' content/browser/browser_main_loop.cc
   '';
 
+  arch = if stdenv.system == "x86_64-linux" then "x64" else
+         if stdenv.system == "i686-linux" then "ia32" else
+         if stdenv.isArm then "arm" else
+         if stdenv.isMips then "mipsel" else
+         throw "Sorry, I don't know the Chromium name for your architecture";
+
   gypFlags = mkGypFlags (gypFlagsUseSystemLibs // {
     linux_use_gold_binary = false;
     linux_use_gold_flags = false;
@@ -217,14 +223,12 @@ in stdenv.mkDerivation rec {
     google_default_client_id = "404761575300.apps.googleusercontent.com";
     google_default_client_secret = "9rIFQjfnkykEmqb6FfjJQD1D";
 
+    target_arch = arch;
+
   } // optionalAttrs proprietaryCodecs {
     # enable support for the H.264 codec
     proprietary_codecs = true;
     ffmpeg_branding = "Chrome";
-  } // optionalAttrs (stdenv.system == "x86_64-linux") {
-    target_arch = "x64";
-  } // optionalAttrs (stdenv.system == "i686-linux") {
-    target_arch = "ia32";
   });
 
   configurePhase = ''
@@ -234,13 +238,22 @@ in stdenv.mkDerivation rec {
   buildPhase = let
     CC = "${gcc}/bin/gcc";
     CXX = "${gcc}/bin/g++";
+    buildCommand = ''
+      CC="${CC}" CC_host="${CC}"     \
+      CXX="${CXX}" CXX_host="${CXX}" \
+      LINK_host="${CXX}"             \
+        "${ninja}/bin/ninja" -C "${buildPath}" \
+        -j$NIX_BUILD_CORES -l$NIX_BUILD_CORES  \
+    '';
   in ''
-    CC="${CC}" CC_host="${CC}"     \
-    CXX="${CXX}" CXX_host="${CXX}" \
-    LINK_host="${CXX}"             \
-      "${ninja}/bin/ninja" -C "${buildPath}"  \
-        -j$NIX_BUILD_CORES -l$NIX_BUILD_CORES \
-        chrome ${optionalString (!enableSELinux) "chrome_sandbox"}
+    # We need to build mksnapshot.${arch} and disable mprotect for it before
+    # compiling chrome, as mksnapshot is used during the build of chrome.
+    for target in mksnapshot.${arch} chrome; do
+      ${buildCommand} $target
+      paxmark m "${buildPath}/$target"
+    done
+
+    ${optionalString (!enableSELinux) ''${buildCommand} chrome_sandbox''}
   '';
 
   installPhase = ''
