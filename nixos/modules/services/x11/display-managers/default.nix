@@ -45,7 +45,8 @@ let
         if [ -z "$_INHIBITION_LOCK_TAKEN" ]; then
           export _INHIBITION_LOCK_TAKEN=1
           if ! ${config.systemd.package}/bin/loginctl show-session $XDG_SESSION_ID | grep -q '^RemoteHost='; then
-            exec ${config.systemd.package}/bin/systemd-inhibit --what=handle-lid-switch:handle-power-key "$0" "$sessionType"
+            echo systemd-inhibit disabled due to grsecurity
+            #exec ${config.systemd.package}/bin/systemd-inhibit --what=handle-lid-switch:handle-power-key "$0" "$sessionType"
           fi
         fi
 
