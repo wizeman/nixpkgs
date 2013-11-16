@@ -51,7 +51,7 @@ stdenv.mkDerivation {
       -i src/egl/main/Makefile.am
   '';
 
-  outputs = ["out" "drivers"];
+  outputs = ["out" "drivers" "osmesa"];
 
   preConfigure = "./autogen.sh";
 
@@ -68,6 +68,7 @@ stdenv.mkDerivation {
     "--enable-xa" # used in vmware driver
     "--enable-gles1" "--enable-gles2"
     "--enable-vdpau"
+    "--enable-osmesa" # used by wine
 
     "--with-dri-drivers=i965,r200,radeon"
     ("--with-gallium-drivers=i915,nouveau,r300,r600,svga,swrast"
@@ -77,7 +78,6 @@ stdenv.mkDerivation {
     ++ optional enableR600LlvmCompiler "--enable-r600-llvm-compiler"
     ++ optional enableTextureFloats "--enable-texture-float"
     ++ optionals enableExtraFeatures [
-      "--enable-osmesa"
       "--enable-openvg" "--enable-gallium-egl" # not needed for EGL in Gallium, but OpenVG might be useful
       #"--enable-xvmc" # tests segfault with 9.1.{1,2,3}
       #"--enable-opencl" # ToDo: opencl seems to need libclc for clover
@@ -101,13 +101,13 @@ stdenv.mkDerivation {
   #doCheck = true; # https://bugs.freedesktop.org/show_bug.cgi?id=67672
   # TODO: best fix this before merging >=9.2 to master
 
-  # move gallium-related stuff to $drivers, so $out doesn't depend on LLVM
+  # move gallium-related stuff to $drivers, so $out doesn't depend on LLVM;
+  #   also move libOSMesa to $osmesa, as it's relatively big
   # ToDo: probably not all .la files are completely fixed, but it shouldn't matter
   postInstall = with stdenv.lib; ''
     mv -t "$drivers/lib/" \
   '' + optionalString enableExtraFeatures ''
       `#$out/lib/libXvMC*` \
-      $out/lib/libOSMesa* \
       $out/lib/gbm $out/lib/libgbm* \
       $out/lib/gallium-pipe \
   '' + ''
@@ -116,11 +116,20 @@ stdenv.mkDerivation {
       $out/lib/vdpau \
       $out/lib/libxatracker*
 
+    mkdir -p {$osmesa,$drivers}/lib/pkgconfig
+    mv -t $osmesa/lib/ \
+      $out/lib/libOSMesa*
+
+    mv -t $drivers/lib/pkgconfig/ \
+      $out/lib/pkgconfig/xatracker.pc
+
+    mv -t $osmesa/lib/pkgconfig/ \
+      $out/lib/pkgconfig/osmesa.pc
+
   '' + /* now fix references in .la files */ ''
     sed "/^libdir=/s,$out,$drivers," -i \
   '' + optionalString enableExtraFeatures ''
       `#$drivers/lib/libXvMC*.la` \
-      $drivers/lib/libOSMesa*.la \
       $drivers/lib/gallium-pipe/*.la \
   '' + ''
       $drivers/lib/libgallium.la \
@@ -130,8 +139,11 @@ stdenv.mkDerivation {
     sed "s,$out\(/lib/\(libdricore[0-9\.]*\|libgallium\).la\),$drivers\1,g" \
       -i $drivers/lib/*.la $drivers/lib/*/*.la
 
+    sed "/^libdir=/s,$out,$osmesa," -i \
+      $osmesa/lib/libOSMesa*.la
+
   '' + /* work around bug #529, but maybe $drivers should also be patchelf-ed */ ''
-    find $drivers/ -type f -executable -print0 | xargs -0 strip -S || true
+    find $drivers/ $osmesa/ -type f -executable -print0 | xargs -0 strip -S || true
 
   '' + /* add RPATH so the drivers can find the moved libgallium and libdricore9 */ ''
     for lib in $drivers/lib/*.so* $drivers/lib/*/*.so*; do
