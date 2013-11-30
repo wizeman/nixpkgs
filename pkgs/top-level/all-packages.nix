@@ -9550,6 +9550,10 @@ let
 
   ### DESKTOP ENVIRONMENTS
 
+  cinnamon = recurseIntoAttrs {
+    cjs = callPackage ../desktops/cinnamon/cjs.nix { };
+  };
+
   enlightenment = callPackage ../desktops/enlightenment { };
 
   e17 = recurseIntoAttrs (
