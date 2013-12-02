@@ -24,7 +24,7 @@ else
 */
 
 let
-  version = "9.2.4";
+  version = "10.0"; # a testing release (additional zero in version on download)
   # this is the default search path for DRI drivers (note: X server introduces an overriding env var)
   driverLink = "/run/opengl-driver" + stdenv.lib.optionalString stdenv.isi686 "-32";
 in
@@ -34,16 +34,16 @@ stdenv.mkDerivation {
   name = "mesa-noglu-${version}";
 
   src =  fetchurl {
-    url = "ftp://ftp.freedesktop.org/pub/mesa/${version}/MesaLib-${version}.tar.bz2";
-    sha256 = "0dxrawlpfhmlp0qxdrvpmp9q9vrfsx0drxgwkbxf27bss71i1ppx";
+    url = "ftp://ftp.freedesktop.org/pub/mesa/${version}/MesaLib-${version}.0.tar.bz2";
+    sha256 = "00kifgfp9a06499z2iww1hlc169p2x0f1mxxlx1q4s5hzrc9ysx3";
   };
 
   prePatch = "patchShebangs .";
 
-  patches = [
+  patches = [ # some don't apply -- try without them ATM
     ./static-gallium.patch
-    ./dricore-gallium.patch
-    ./werror-wundef.patch
+   # ./dricore-gallium.patch
+   # ./werror-wundef.patch
   ];
 
   # Change the search path for EGL drivers from $drivers/* to driverLink
