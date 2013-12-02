@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, intltool, flex, bison, autoconf, automake, libtool
+{ stdenv, fetchurl, pkgconfig, intltool, flex, bison, autoreconfHook
 , python, libxml2Python, file, expat, makedepend
 , libdrm, xorg, wayland, udev, llvm, libffi
 , libvdpau
@@ -54,8 +54,6 @@ stdenv.mkDerivation {
 
   outputs = ["out" "drivers" "osmesa"];
 
-  preConfigure = "./autogen.sh";
-
   configureFlags = [
     "--with-dri-driverdir=$(drivers)/lib/dri"
     "--with-egl-driver-dir=$(drivers)/lib/egl"
@@ -90,7 +88,7 @@ stdenv.mkDerivation {
     ++ optionals stdenv.isLinux [libdrm]
     ;
   buildInputs = with xorg; [
-    autoconf automake libtool intltool expat libxml2Python llvm
+    autoreconfHook intltool expat libxml2Python llvm
     libXfixes glproto dri2proto libX11 libXext libxcb libXt
     libffi wayland libvdpau
   ] ++ optionals enableExtraFeatures [ /*libXvMC*/ ]
