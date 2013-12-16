@@ -49,12 +49,14 @@
   rickynils = "Rickard Nilsson <rickynils@gmail.com>";
   rob = "Rob Vermaas <rob.vermaas@gmail.com>";
   roconnor = "Russell O'Connor <roconnor@theorem.ca>";
+  roelof = "Roelof Wobben <rwobben@hotmail.com>";
   sander = "Sander van der Burg <s.vanderburg@tudelft.nl>";
   shlevy = "Shea Levy <shea@shealevy.com>";
   simons = "Peter Simons <simons@cryp.to>";
   smironov = "Sergey Mironov <ierton@gmail.com>";
   thammers = "Tobias Hammerschmidt <jawr@gmx.de>";
   the-kenny = "Moritz Ulrich <moritz@tarn-vedra.de>";
+  tomberek = "Thomas Bereknyei <tomberek@gmail.com>";
   urkud = "Yury G. Kudryashov <urkud+nix@ya.ru>";
   vcunat = "Vladimír Čunát <vcunat@gmail.com>";
   viric = "Lluís Batlle i Rossell <viric@viric.name>";
