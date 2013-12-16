@@ -24,8 +24,8 @@ else
 */
 
 let
-  version = "10.0"; # a testing release (additional zero in version on download)
-  # this is the default search path for DRI drivers (note: X server introduces an overriding env var)
+  version = "10.0.1";
+  # this is the default search path for DRI drivers
   driverLink = "/run/opengl-driver" + stdenv.lib.optionalString stdenv.isi686 "-32";
 in
 with { inherit (stdenv.lib) optional optionals optionalString; };
@@ -34,8 +34,8 @@ stdenv.mkDerivation {
   name = "mesa-noglu-${version}";
 
   src =  fetchurl {
-    url = "ftp://ftp.freedesktop.org/pub/mesa/${version}/MesaLib-${version}.0.tar.bz2";
-    sha256 = "00kifgfp9a06499z2iww1hlc169p2x0f1mxxlx1q4s5hzrc9ysx3";
+    url = "ftp://ftp.freedesktop.org/pub/mesa/${version}/MesaLib-${version}.tar.bz2";
+    sha256 = "0w1jh8pl4gbzazigsqc5pzc076gckb7b9xgw2w633jlrjn7qdprw";
   };
 
   prePatch = "patchShebangs .";
@@ -97,8 +97,8 @@ stdenv.mkDerivation {
     ;
 
   enableParallelBuilding = true;
-  #doCheck = true; # https://bugs.freedesktop.org/show_bug.cgi?id=67672
-  # TODO: best fix this before merging >=9.2 to master
+  #doCheck = true; # https://bugs.freedesktop.org/show_bug.cgi?id=67672,
+    #tests for 10.* seem to need LLVM-3.4
 
   # move gallium-related stuff to $drivers, so $out doesn't depend on LLVM;
   #   also move libOSMesa to $osmesa, as it's relatively big
