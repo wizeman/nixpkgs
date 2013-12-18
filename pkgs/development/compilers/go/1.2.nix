@@ -52,6 +52,9 @@ stdenv.mkDerivation {
     sed -i '/TestHostname/areturn' src/pkg/os/os_test.go
     # ParseInLocation fails the test
     sed -i '/TestParseInSydney/areturn' src/pkg/time/time_test.go
+
+    # XXX Temporarily disable race tests due to grsecurity
+    sed -i 's|go test -race|echo go test -race|' src/run.bash
   '';
 
   patches = [ ./cacert-1.2.patch ];
