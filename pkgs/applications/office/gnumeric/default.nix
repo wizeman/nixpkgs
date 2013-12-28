@@ -1,5 +1,5 @@
 { stdenv, fetchurl, pkgconfig, intltool, perl, perlXMLParser
-, goffice, gtk3
+, goffice, gtk3, makeWrapper
 }:
 
 stdenv.mkDerivation rec {
@@ -10,17 +10,21 @@ stdenv.mkDerivation rec {
     sha256 = "1rv2ifw6rp0iza4fkf3bffvdkyi77dwvzdnvcbpqcyn2kxfsvlsc";
   };
 
-  preConfigure = ''sed -i 's/\(SUBDIRS.*\) doc/\1/' Makefile.in ''; # fails when installing docs
+  preConfigure = ''sed -i 's/\(SUBDIRS.*\) doc/\1/' Makefile.in''; # fails when installing docs
 
   configureFlags = "--disable-component";
 
   # ToDo: optional libgda, python, introspection?
   buildInputs = [
-    #bzip2 glib goffice gtk3 intltool libglade libgsf libxml2
-    #pango pkgconfig scrollkeeper zlib
     pkgconfig intltool perl perlXMLParser
-    goffice gtk3
+    goffice gtk3 makeWrapper
   ];
+
+  # ToDo: make also the default hicolor icons work
+  postInstall = ''
+    wrapProgram "$out"/bin/gnumeric-* \
+      --prefix XDG_DATA_DIRS : "${gtk3}/share"
+  '';
 
   meta = {
     description = "The GNOME Office Spreadsheet";
