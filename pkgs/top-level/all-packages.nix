@@ -400,6 +400,11 @@ let
 
   aefs = callPackage ../tools/filesystems/aefs { };
 
+  aegisub = callPackage ../applications/video/aegisub {
+    wxGTK = wxGTK29;
+    lua = lua5_1; 
+  };
+
   aespipe = callPackage ../tools/security/aespipe { };
 
   aescrypt = callPackage ../tools/misc/aescrypt { };
@@ -1834,7 +1839,7 @@ let
 
   sourceHighlight = callPackage ../tools/text/source-highlight {
     # Boost 1.54 causes the "test_regexranges" test to fail
-    boost = boost153;
+    boost = boost149;
   };
 
   squashfsTools = callPackage ../tools/filesystems/squashfs { };
@@ -2371,7 +2376,7 @@ let
 
     # bootstrapping a profiled compiler does not work in the sheevaplug:
     # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43944
-    profiledCompiler = !stdenv.isArm;
+    profiledCompiler = false;
 
     # When building `gcc.crossDrv' (a "Canadian cross", with host == target
     # and host != build), `cross' must be null but the cross-libc must still
@@ -2501,7 +2506,7 @@ let
 
     # bootstrapping a profiled compiler does not work in the sheevaplug:
     # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43944
-    profiledCompiler = !stdenv.isArm;
+    profiledCompiler = false;
 
     # When building `gcc.crossDrv' (a "Canadian cross", with host == target
     # and host != build), `cross' must be null but the cross-libc must still
@@ -3026,7 +3031,9 @@ let
 
     pycaml = callPackage ../development/ocaml-modules/pycaml { };
 
-    opam = callPackage ../development/tools/ocaml/opam { };
+    opam_1_0_0 = callPackage ../development/tools/ocaml/opam/1.0.0.nix { };
+    opam_1_1 = callPackage ../development/tools/ocaml/opam/1.1.nix { };
+    opam = opam_1_1;
   };
 
   ocamlPackages = recurseIntoAttrs ocamlPackages_3_12_1;
@@ -3953,8 +3960,6 @@ let
 
   boost144 = callPackage ../development/libraries/boost/1.44.nix { };
   boost149 = callPackage ../development/libraries/boost/1.49.nix { };
-  boost153 = callPackage ../development/libraries/boost/1.53.nix { };
-  boost154 = callPackage ../development/libraries/boost/1.54.nix { };
   boost155 = callPackage ../development/libraries/boost/1.55.nix { };
   boost = boost155;
 
@@ -4262,30 +4267,7 @@ let
 
   glfw = callPackage ../development/libraries/glfw { };
 
-  glibcCross = glibc217Cross;
-
-  glibc213 = (callPackage ../development/libraries/glibc/2.13 {
-    kernelHeaders = linuxHeaders;
-    installLocales = config.glibc.locales or false;
-    machHeaders = null;
-    hurdHeaders = null;
-    gccCross = null;
-  }) // (if crossSystem != null then { crossDrv = glibc213Cross; } else {});
-
-  glibc213Cross = forceNativeDrv (makeOverridable (import ../development/libraries/glibc/2.13)
-    (let crossGNU = crossSystem != null && crossSystem.config == "i586-pc-gnu";
-     in {
-       inherit stdenv fetchurl;
-       gccCross = gccCrossStageStatic;
-       kernelHeaders = if crossGNU then gnu.hurdHeaders else linuxHeadersCross;
-       installLocales = config.glibc.locales or false;
-     }
-     // lib.optionalAttrs crossGNU {
-        inherit (gnu) machHeaders hurdHeaders libpthreadHeaders mig;
-        inherit fetchgit;
-      }));
-
-  glibc = callPackage ../development/libraries/glibc/2.17 {
+  glibc = callPackage ../development/libraries/glibc/2.18 {
     kernelHeaders = linuxHeaders;
     installLocales = config.glibc.locales or false;
     machHeaders = null;
@@ -4293,13 +4275,13 @@ let
     gccCross = null;
   };
 
-  glibc_memusage = callPackage ../development/libraries/glibc/2.17 {
+  glibc_memusage = callPackage ../development/libraries/glibc/2.18 {
     kernelHeaders = linuxHeaders;
     installLocales = false;
     withGd = true;
   };
 
-  glibc217Cross = forceNativeDrv (makeOverridable (import ../development/libraries/glibc/2.17)
+  glibcCross = forceNativeDrv (makeOverridable (import ../development/libraries/glibc/2.18)
     (let crossGNU = crossSystem != null && crossSystem.config == "i586-pc-gnu";
      in {
        inherit stdenv fetchurl;
@@ -4328,9 +4310,9 @@ let
     installLocales = config.glibc.locales or false;
   };
 
-  glibcLocales = callPackage ../development/libraries/glibc/2.17/locales.nix { };
+  glibcLocales = callPackage ../development/libraries/glibc/2.18/locales.nix { };
 
-  glibcInfo = callPackage ../development/libraries/glibc/2.17/info.nix { };
+  glibcInfo = callPackage ../development/libraries/glibc/2.18/info.nix { };
 
   glibc_multi =
     runCommand "${glibc.name}-multi"
@@ -4378,19 +4360,6 @@ let
   gmp51 = callPackage ../development/libraries/gmp/5.1.1.nix { };
 
   gobjectIntrospection = callPackage ../development/libraries/gobject-introspection { };
-
-  goffice = callPackage ../development/libraries/goffice {
-    inherit (gnome) libglade libgnomeui;
-    gconf = gnome.GConf;
-    libart = gnome.libart_lgpl;
-  };
-
-  goffice_0_10 = callPackage ../development/libraries/goffice/0.10.nix {
-    inherit (gnome) libglade libgnomeui;
-    gconf = gnome.GConf;
-    libart = gnome.libart_lgpl;
-    gtk = gtk3;
-  };
 
   goocanvas = callPackage ../development/libraries/goocanvas { };
 
@@ -5328,15 +5297,7 @@ let
 
   nanomsg = callPackage ../development/libraries/nanomsg { };
 
-  ncurses_5_4 = makeOverridable (import ../development/libraries/ncurses/5_4.nix) {
-    inherit fetchurl;
-    unicode = system != "i686-cygwin";
-    stdenv = if stdenv.isDarwin
-      then allStdenvs.stdenvNative
-      else stdenv;
-  };
-  ncurses_5_9 = makeOverridable (import ../development/libraries/ncurses) {
-    inherit fetchurl;
+  ncurses = callPackage ../development/libraries/ncurses {
     unicode = system != "i686-cygwin";
     stdenv =
       # On Darwin, NCurses uses `-no-cpp-precomp', which is specific to
@@ -5346,7 +5307,6 @@ let
       then allStdenvs.stdenvNative
       else stdenv;
   };
-  ncurses = ncurses_5_9;
 
   neon = callPackage ../development/libraries/neon {
     compressionSupport = true;
@@ -6737,7 +6697,7 @@ let
     # Install gcc plugins. These are needed for compiling dependant packages.
     postInstall = ''
       ${args.postInstall or ""}
-      cp tools/gcc/*.so $out/lib/modules/$version/build/tools/gcc/
+      cp "tools/gcc/"*.so $out/lib/modules/$version/build/tools/gcc/
     '';
     # Apparently as of gcc 4.6, gcc-plugin headers (which are needed by PaX plugins)
     # include libgmp headers, so we need these extra tweaks
@@ -7904,7 +7864,6 @@ let
 
   inherit (gnome3) evince;
   keepass = callPackage ../applications/misc/keepass { };
-
   evolution_data_server = newScope (gnome) ../servers/evolution-data-server { };
 
   exrdisplay = callPackage ../applications/graphics/exrdisplay {
@@ -8068,6 +8027,10 @@ let
   gitFull = gitAndTools.gitFull;
   gitSVN = gitAndTools.gitSVN;
 
+  gitRepo = callPackage ../applications/version-management/git-repo {
+    python = python27;
+  };
+
   giv = callPackage ../applications/graphics/giv {
     pcre = pcre.override { unicodeSupport = true; };
   };
@@ -8079,7 +8042,15 @@ let
     gconf = gnome2.GConf;
     guile = guile_1_8;
     slibGuile = slibGuile.override { scheme = guile_1_8; };
+    goffice = goffice_0_8;
   };
+  goffice_0_8 = callPackage ../desktops/gnome-3/misc/goffice/0.8.nix {
+    inherit (gnome2) libglade libgnomeui;
+    gconf = gnome2.GConf;
+    libart = gnome2.libart_lgpl;
+  }; # latest version: gnome3.goffice
+
+  ideas = recurseIntoAttrs (callPackage ../applications/editors/idea { });
 
   libquvi = callPackage ../applications/video/quvi/library.nix { };
 
@@ -8107,8 +8078,7 @@ let
   };
 
   gnumeric = callPackage ../applications/office/gnumeric {
-    goffice = goffice_0_10;
-    inherit (gnome) libglade scrollkeeper;
+    inherit (gnome3) goffice gnome_icon_theme;
   };
 
   gnunet = callPackage ../applications/networking/p2p/gnunet { };
@@ -8435,15 +8405,7 @@ let
 
   mid2key = callPackage ../applications/audio/mid2key { };
 
-  midori = builderDefsPackage (import ../applications/networking/browsers/midori) {
-    inherit imagemagick intltool python pkgconfig webkit libxml2
-      which gettext makeWrapper file libidn sqlite docutils libnotify
-      vala dbus_glib glib_networking;
-    inherit gtk3 glib;
-    inherit (gnome) gtksourceview;
-    inherit (webkit.passthru.args) libsoup;
-    inherit (xlibs) kbproto xproto libXScrnSaver scrnsaverproto;
-  };
+  midori = callPackage ../applications/networking/browsers/midori { };
 
   midoriWrapper = wrapFirefox
     { browser = midori; browserName = "midori"; desktopName = "Midori";
@@ -8531,7 +8493,6 @@ let
     };
 
   mpv = callPackage ../applications/video/mpv {
-    ffmpeg = ffmpeg_2;
     bs2bSupport = true;
     quviSupport = true;
     cacaSupport = true;
@@ -9692,6 +9653,8 @@ let
   hsetroot = callPackage ../tools/X11/hsetroot { };
 
   kde4 = recurseIntoAttrs pkgs.kde410;
+
+  kde4_next = recurseIntoAttrs( lib.lowPrioSet pkgs.kde411 );
 
   kde410 = kdePackagesFor (pkgs.kde410 // {
       boost = boost149;
