@@ -1,13 +1,13 @@
-{ cabal, binary, deepseq, mmap, mtl, primitive, transformers
-, vector, zlib
+{ cabal, binary, deepseq, mtl, primitive, transformers, vector
+, zlib
 }:
 
 cabal.mkDerivation (self: {
   pname = "JuicyPixels";
-  version = "3.1";
-  sha256 = "1z3adva85qgdyx85hldqi99lnb3pg7a42q44zxil4gxwi62pw4xr";
+  version = "3.1.2";
+  sha256 = "19bal3g3cp4nn8g3zp4yi5g4zw5wnkbi74gcra8mxs4zy99bf8s2";
   buildDepends = [
-    binary deepseq mmap mtl primitive transformers vector zlib
+    binary deepseq mtl primitive transformers vector zlib
   ];
   meta = {
     homepage = "https://github.com/Twinside/Juicy.Pixels";

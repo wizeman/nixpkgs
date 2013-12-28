@@ -12,11 +12,11 @@ let
   edf = enabled: flag: if enabled then "--enable-" + flag else "--disable-" + flag;
 in 
 mkDerivation rec {
-  name = "aMule-2.2.6";
+  name = "aMule-2.3.1";
 
   src = fetchurl {
     url = "mirror://sourceforge/amule/${name}.tar.bz2";
-    sha256 = "08l1931hcg1ia8yvhgx70hx64mknjnfn6l78m0ja44w13mgjpqvc";
+    sha256 = "17g6xh6k7rqy2sjp9l4m7h4in96cqwk5gfgg4fhlymzc6jfa3vfj";
   };
 
   buildInputs =
@@ -46,7 +46,7 @@ mkDerivation rec {
 
   meta = {
     homepage = http://amule.org/;
-    description = "aMule, a peer-to-peer client for the eD2K and Kademlia networks";
+    description = "Peer-to-peer client for the eD2K and Kademlia networks";
 
     longDescription = ''
       aMule is an eMule-like client for the eD2k and Kademlia

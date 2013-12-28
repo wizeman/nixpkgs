@@ -84,6 +84,7 @@
 , "grunt-contrib-cssmin"
 , "grunt-contrib-uglify"
 , "grunt-karma"
+, "grunt-bower-task"
 , "grunt-sed"
 , "karma"
 , "karma-mocha"
@@ -105,4 +106,10 @@
 , "connect-jade-static"
 , "plist-native"
 , "x509"
+, "owl-deepcopy"
+, "meat"
+, "hipache"
+, "posix"
+, "node-protobuf"
+, "rethinkdb"
 ]

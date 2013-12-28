@@ -10,14 +10,14 @@ assert cupsSupport -> cups != null;
 
 let
   ver_maj = "3.10";
-  ver_min = "0";
+  ver_min = "5"; # .6 needs currently unreleased wayland for introspection (wl_proxy_marshal_constructor)
 in
 stdenv.mkDerivation rec {
   name = "gtk+-${ver_maj}.${ver_min}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gtk+/${ver_maj}/${name}.tar.xz";
-    sha256 = "1zjkbjvp6ay08107r6zfsrp39x7qfadbd86p3hs5v4ydc2rzwnb5";
+    sha256 = "1iyc566r61d3jfdiq5knwbssq5bsqsn8hqzdm30vmw6dx3cgd49i";
   };
 
   enableParallelBuilding = true;

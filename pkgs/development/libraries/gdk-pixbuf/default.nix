@@ -3,14 +3,14 @@
 
 let
   ver_maj = "2.30";
-  ver_min = "0";
+  ver_min = "2";
 in
 stdenv.mkDerivation rec {
   name = "gdk-pixbuf-${ver_maj}.${ver_min}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gdk-pixbuf/${ver_maj}/${name}.tar.xz";
-    sha256 = "0n56rbi1acpi8skj8zdhzkm4yv0jq5rzii9n8jhq64k24l2n0wsa";
+    sha256 = "1gzczsv41h28is4rrxjfyj1qx8ifp23fq2ckh0k099m9fnhbzfna";
   };
 
   # !!! We might want to factor out the gdk-pixbuf-xlib subpackage.
@@ -30,10 +30,8 @@ stdenv.mkDerivation rec {
 
   meta = {
     description = "A library for image loading and manipulation";
-
     homepage = http://library.gnome.org/devel/gdk-pixbuf/;
-
     maintainers = [ stdenv.lib.maintainers.eelco ];
-    platforms = stdenv.lib.platforms.linux;
+    platforms = stdenv.lib.platforms.unix;
   };
 }

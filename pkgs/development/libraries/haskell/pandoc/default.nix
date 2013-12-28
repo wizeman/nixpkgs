@@ -9,8 +9,8 @@
 
 cabal.mkDerivation (self: {
   pname = "pandoc";
-  version = "1.12.0.2";
-  sha256 = "125vl6l7nd3s3zwkms46y8l5zhg22iwz5387ll9rd2hf6asfpp56";
+  version = "1.12.2.1";
+  sha256 = "1xyvhfsz0cy5f7cwpz4kl0l87vylb8860c06wvk49z9fh2xkg6lf";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [
@@ -26,6 +26,7 @@ cabal.mkDerivation (self: {
     testFrameworkQuickcheck2 text
   ];
   buildTools = [ alex happy ];
+  jailbreak = true;
   doCheck = false;
   meta = {
     homepage = "http://johnmacfarlane.net/pandoc";

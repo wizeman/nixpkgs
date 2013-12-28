@@ -21,13 +21,13 @@ assert compressionSupport -> neon.compressionSupport;
 
 stdenv.mkDerivation rec {
 
-  version = "1.7.13";
+  version = "1.7.14";
 
   name = "subversion-${version}";
 
   src = fetchurl {
     url = "mirror://apache/subversion//${name}.tar.bz2";
-    sha1 = "844bb756ec505edaa12b9610832bcd21567139f1";
+    sha256 = "038jbcpwm083abp0rvk0fhnx65kp9mz1qvzs3f83ig8fxcvqzb64";
   };
 
   buildInputs = [ zlib apr aprutil sqlite ]
@@ -67,6 +67,9 @@ stdenv.mkDerivation rec {
         make install
         cd -
     fi
+
+    mkdir -p $out/share/bash-completion/completions
+    cp tools/client-side/bash_completion $out/share/bash-completion/completions/subversion
   '';
 
   inherit perlBindings pythonBindings;
@@ -77,6 +80,6 @@ stdenv.mkDerivation rec {
     description = "A version control system intended to be a compelling replacement for CVS in the open source community";
     homepage = http://subversion.apache.org/;
     maintainers = with stdenv.lib.maintainers; [ eelco lovek323 ];
-    platforms = stdenv.lib.platforms.all;
+    platforms = stdenv.lib.platforms.linux ++ stdenv.lib.platforms.darwin;
   };
 }

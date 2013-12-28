@@ -27,15 +27,15 @@ let
   mkFlag = c: f: if c then "--enable-${f}" else "--disable-${f}";
 
 in stdenv.mkDerivation rec {
-  name = "mpd-0.17.4";
+  name = "mpd-0.18.5";
   src = fetchurl {
-    url = "http://www.musicpd.org/download/mpd/stable/${name}.tar.gz";
-    sha256 = "06diyprg65xx0c0bgxdwlgrc5bhwy6cf39rabwnv9ikhimh94ir3";
+    url    = "http://www.musicpd.org/download/mpd/stable/${name}.tar.gz";
+    sha256 = "1jhkpbwjmzicnkjl8nsfjdgsvqvkcdjm497rl081sy8mq1jzr80c";
   };
 
   buildInputs = [ pkgconfig glib ]
-    ++ opt (!stdenv.isDarwin) systemd
-    ++ opt (!stdenv.isDarwin && alsaSupport) alsaLib
+    ++ opt stdenv.isLinux systemd
+    ++ opt (stdenv.isLinux && alsaSupport) alsaLib
     ++ opt flacSupport flac
     ++ opt vorbisSupport libvorbis
     # using libmad to decode mp3 files on darwin is causing a segfault -- there
@@ -81,7 +81,7 @@ in stdenv.mkDerivation rec {
       (mkFlag mpg123Support "mpg123")
       (mkFlag aacSupport "aac")
       "--enable-debugging" ]
-    ++ opt (!stdenv.isDarwin)
+    ++ opt stdenv.isLinux
       "--with-systemdsystemunitdir=$(out)/etc/systemd/system";
 
   NIX_LDFLAGS = ''
