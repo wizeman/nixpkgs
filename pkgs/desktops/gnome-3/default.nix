@@ -26,6 +26,8 @@ rec {
 
   gnome_icon_theme = callPackage ./core/gnome-icon-theme { };
 
+  gnome-menus = callPackage ./core/gnome-menus { };
+
   gnome_keyring = callPackage ./core/gnome-keyring { };
   libgnome_keyring = callPackage ./core/libgnome-keyring { };
 
@@ -33,7 +35,7 @@ rec {
 
   gsettings_desktop_schemas = callPackage ./core/gsettings-desktop-schemas { };
 
-  gvfs = callPackage ./core/gvfs { };
+  gvfs = pkgs.gvfs.override { gnome = pkgs.gnome3; };
 
   libcroco = callPackage ./core/libcroco {};
 

@@ -2,32 +2,33 @@
 , caseInsensitive, clientsession, cryptoApi, cryptohash, curl
 , dataDefault, dataenc, DAV, dbus, dlist, dns, editDistance
 , extensibleExceptions, feed, filepath, git, gnupg1, gnutls, hamlet
-, hinotify, hS3, hslogger, HTTP, httpConduit, httpTypes, HUnit
-, IfElse, json, lsof, MissingH, MonadCatchIOTransformers
-, monadControl, mtl, network, networkInfo, networkMulticast
+, hinotify, hS3, hslogger, HTTP, httpConduit, httpTypes, IfElse
+, json, lsof, MissingH, MonadCatchIOTransformers, monadControl, mtl
+, network, networkConduit, networkInfo, networkMulticast
 , networkProtocolXmpp, openssh, perl, QuickCheck, random, regexTdfa
-, rsync, SafeSemaphore, SHA, stm, text, time, transformers
-, unixCompat, utf8String, uuid, wai, waiLogger, warp, which
-, xmlConduit, xmlTypes, yesod, yesodCore, yesodDefault, yesodForm
-, yesodStatic
+, rsync, SafeSemaphore, SHA, stm, tasty, tastyHunit
+, tastyQuickcheck, text, time, transformers, unixCompat, utf8String
+, uuid, wai, waiLogger, warp, which, xmlConduit, xmlTypes, yesod
+, yesodCore, yesodDefault, yesodForm, yesodStatic
 }:
 
 cabal.mkDerivation (self: {
   pname = "git-annex";
-  version = "4.20131002";
-  sha256 = "00pjb0ivcggpx4qdihrarss68c1q5viwfz4jgg7rqjnhslwvk440";
+  version = "5.20131213";
+  sha256 = "0mwslkz0kklp4phlsf8hibh97sabdnigls7hr9725wb0ncfa85yn";
   isLibrary = false;
   isExecutable = true;
   buildDepends = [
     aeson async blazeBuilder bloomfilter caseInsensitive clientsession
     cryptoApi cryptohash dataDefault dataenc DAV dbus dlist dns
     editDistance extensibleExceptions feed filepath gnutls hamlet
-    hinotify hS3 hslogger HTTP httpConduit httpTypes HUnit IfElse json
+    hinotify hS3 hslogger HTTP httpConduit httpTypes IfElse json
     MissingH MonadCatchIOTransformers monadControl mtl network
-    networkInfo networkMulticast networkProtocolXmpp QuickCheck random
-    regexTdfa SafeSemaphore SHA stm text time transformers unixCompat
-    utf8String uuid wai waiLogger warp xmlConduit xmlTypes yesod
-    yesodCore yesodDefault yesodForm yesodStatic
+    networkConduit networkInfo networkMulticast networkProtocolXmpp
+    QuickCheck random regexTdfa SafeSemaphore SHA stm tasty tastyHunit
+    tastyQuickcheck text time transformers unixCompat utf8String uuid
+    wai waiLogger warp xmlConduit xmlTypes yesod yesodCore yesodDefault
+    yesodForm yesodStatic
   ];
   buildTools = [ bup curl git gnupg1 lsof openssh perl rsync which ];
   configureFlags = "-fS3
@@ -46,8 +47,6 @@ cabal.mkDerivation (self: {
   checkPhase = ''
     export HOME="$NIX_BUILD_TOP/tmp"
     mkdir "$HOME"
-    cp dist/build/git-annex/git-annex git-annex
-    ./git-annex test
   '';
   meta = {
     homepage = "http://git-annex.branchable.com/";

@@ -22,10 +22,13 @@ stdenv.mkDerivation (rec {
     ++ stdenv.lib.optional perlSupport perl
     ++ stdenv.lib.optional gdkPixbufSupport gdk_pixbuf;
 
+  outputs = [ "out" "terminfo" ];
+
   preConfigure =
     ''
-      configureFlags="--with-terminfo=$out/share/terminfo --enable-256-color ${if perlSupport then "--enable-perl" else "--disable-perl"}";
-      export TERMINFO=$out/share/terminfo # without this the terminfo won't be compiled by tic, see man tic
+      mkdir -p $terminfo/share/terminfo
+      configureFlags="--with-terminfo=$terminfo/share/terminfo --enable-256-color ${if perlSupport then "--enable-perl" else "--disable-perl"}";
+      export TERMINFO=$terminfo/share/terminfo # without this the terminfo won't be compiled by tic, see man tic
       NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -I${freetype}/include/freetype2"
       NIX_LDFLAGS="$NIX_LDFLAGS -lfontconfig -lXrender "
     ''

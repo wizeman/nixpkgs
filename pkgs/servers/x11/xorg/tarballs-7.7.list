@@ -77,7 +77,7 @@ mirror://xorg/individual/lib/libXrender-0.9.8.tar.bz2
 mirror://xorg/individual/lib/libXres-1.0.7.tar.bz2
 mirror://xorg/X11R7.7/src/everything/libXScrnSaver-1.2.2.tar.bz2
 mirror://xorg/individual/lib/libXt-1.1.4.tar.bz2
-mirror://xorg/X11R7.7/src/everything/libXtst-1.2.1.tar.bz2
+mirror://xorg/individual/lib/libXtst-1.2.2.tar.bz2
 mirror://xorg/individual/lib/libXv-1.0.8.tar.bz2
 mirror://xorg/individual/lib/libXvMC-1.0.8.tar.bz2
 mirror://xorg/individual/lib/libXxf86dga-1.1.4.tar.bz2
@@ -164,7 +164,7 @@ mirror://xorg/X11R7.7/src/everything/xlsatoms-1.1.1.tar.bz2
 mirror://xorg/X11R7.7/src/everything/xlsclients-1.1.2.tar.bz2
 mirror://xorg/X11R7.7/src/everything/xmodmap-1.0.7.tar.bz2
 mirror://xorg/X11R7.7/src/everything/xorg-docs-1.7.tar.bz2
-mirror://xorg/individual/xserver/xorg-server-1.14.3.tar.bz2
+mirror://xorg/individual/xserver/xorg-server-1.14.5.tar.bz2
 mirror://xorg/X11R7.7/src/everything/xorg-sgml-doctools-1.11.tar.bz2
 mirror://xorg/X11R7.7/src/everything/xpr-1.0.4.tar.bz2
 mirror://xorg/X11R7.7/src/everything/xprop-1.2.1.tar.bz2

@@ -1,21 +1,23 @@
-{ cabal, aeson, aesonPretty, attoparsec, Diff, filepath, hexpat
-, hsBibutils, HTTP, json, mtl, network, pandocTypes, parsec
-, rfc5051, syb, tagsoup, texmath, text, time, utf8String, vector
-, yaml
+{ cabal, aeson, aesonPretty, attoparsec, filepath, hexpat
+, hsBibutils, HTTP, mtl, network, pandoc, pandocTypes, parsec
+, rfc5051, split, syb, tagsoup, temporary, texmath, text, time
+, vector, yaml
 }:
 
 cabal.mkDerivation (self: {
   pname = "pandoc-citeproc";
-  version = "0.1.1.1";
-  sha256 = "07h277cz5wzc2dsfqfh9lasz7ypb4pspvqljs9maj6lx5rkk5fq1";
+  version = "0.2";
+  sha256 = "0ghdkzml2rcvjf1wlpsa6ih117x56qlb3ajpbwnpwm3y4wm0jm2d";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [
-    aeson attoparsec filepath hexpat hsBibutils HTTP json mtl network
-    pandocTypes parsec rfc5051 syb tagsoup texmath text time utf8String
-    vector yaml
+    aeson aesonPretty attoparsec filepath hexpat hsBibutils HTTP mtl
+    network pandoc pandocTypes parsec rfc5051 split syb tagsoup
+    temporary texmath text time vector yaml
   ];
-  testDepends = [ aeson aesonPretty Diff pandocTypes utf8String ];
+  testDepends = [
+    aeson aesonPretty filepath pandoc pandocTypes temporary text yaml
+  ];
   doCheck = false;
   meta = {
     description = "Supports using pandoc with citeproc";

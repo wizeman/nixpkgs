@@ -2,7 +2,7 @@
 , pkgconfig, gtk, libXft, dbus, libpng, libjpeg, libungif
 , libtiff, librsvg, texinfo, gconf, libxml2, imagemagick, gnutls
 , alsaLib, cairo
-, withX ? true
+, withX ? !stdenv.isDarwin
 }:
 
 assert (libXft != null) -> libpng != null;	# probably a bug
@@ -46,10 +46,11 @@ stdenv.mkDerivation rec {
                           (append (reverse (mapcar (lambda (x) (concat x "/share/emacs/site-lisp/"))
                                                    (split-string (getenv "NIX_PROFILES"))))
                            load-path)))
+        
+    ;; make tramp work for NixOS machines
+    (eval-after-load 'tramp '(add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
     EOF
   '';
-
-
 
   doCheck = true;
 

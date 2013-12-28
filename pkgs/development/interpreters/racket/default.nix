@@ -27,7 +27,7 @@ stdenv.mkDerivation rec {
     sed -e 's@</fontconfig>@@' -i chroot-fontconfig/fonts.conf
     echo "<dir>${liberation_ttf}</dir>" >> chroot-fontconfig/fonts.conf
     echo "</fontconfig>" >> chroot-fontconfig/fonts.conf
-   
+
     export FONTCONFIG_FILE=$(pwd)/chroot-fontconfig/fonts.conf
 
     cd src
@@ -37,6 +37,8 @@ stdenv.mkDerivation rec {
 
   configureFlags = [ "--enable-shared" "--enable-lt=${libtool}/bin/libtool" ];
 
+  NIX_LDFLAGS = "-lgcc_s";
+
   postInstall = ''
     for p in $(ls $out/bin/) ; do
       wrapProgram $out/bin/$p --prefix LD_LIBRARY_PATH ":" "${ffiSharedLibs}" ;
@@ -44,7 +46,7 @@ stdenv.mkDerivation rec {
   '';
 
   meta = {
-    description = "A programming language derived from Scheme (formerly called PLT Scheme).";
+    description = "Programming language derived from Scheme (formerly called PLT Scheme)";
     longDescription = ''
       Racket (formerly called PLT Scheme) is a programming language derived
       from Scheme. The Racket project has four primary components: the

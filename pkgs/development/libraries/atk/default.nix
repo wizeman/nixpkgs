@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
   postInstall = "rm -rf $out/share/gtk-doc";
 
   meta = {
-    description = "ATK, the accessibility toolkit";
+    description = "Accessibility toolkit";
 
     longDescription = ''
       ATK is the Accessibility Toolkit.  It provides a set of generic
@@ -38,7 +38,7 @@ stdenv.mkDerivation rec {
     license = "LGPLv2+";
 
     maintainers = with stdenv.lib.maintainers; [ raskin urkud ];
-    platforms = stdenv.lib.platforms.linux;
+    platforms = stdenv.lib.platforms.linux ++ stdenv.lib.platforms.darwin;
   };
 
 }

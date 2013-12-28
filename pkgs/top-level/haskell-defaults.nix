@@ -19,6 +19,8 @@
     self : self.haskellPlatformArgs_future self // {
       haskellPlatform = null;
       extensibleExceptions = self.extensibleExceptions_0_1_1_4;
+      cabalInstall_1_18_0_2 = self.cabalInstall_1_18_0_2.override { Cabal = null; };
+      cabalInstall = self.cabalInstall_1_18_0_2.override { Cabal = null; };
     };
 
   ghc763Prefs =
@@ -60,6 +62,11 @@
       jailbreakCabal = self.jailbreakCabal.override { Cabal = self.disableTest self.Cabal_1_14_0; };
       prettyShow = self.prettyShow_1_2;
       bmp = self.bmp_1_2_2_1;
+      Cabal_1_18_1_2 = self.Cabal_1_18_1_2.override { deepseq = self.deepseq_1_3_0_2; };
+      quickcheckIo = self.quickcheckIo.override {
+        HUnit = self.HUnit_1_2_5_2;
+        QuickCheck = self.QuickCheck2;
+      };
     };
 
   ghc703Prefs =
@@ -71,6 +78,11 @@
       jailbreakCabal = self.jailbreakCabal.override { Cabal = self.disableTest self.Cabal_1_14_0; };
       prettyShow = self.prettyShow_1_2;
       bmp = self.bmp_1_2_2_1;
+      Cabal_1_18_1_2 = self.Cabal_1_18_1_2.override { deepseq = self.deepseq_1_3_0_2; };
+      quickcheckIo = self.quickcheckIo.override {
+        HUnit = self.HUnit_1_2_5_2;
+        QuickCheck = self.QuickCheck2;
+      };
     };
 
   ghc702Prefs = ghc701Prefs;
@@ -84,6 +96,11 @@
       jailbreakCabal = self.jailbreakCabal.override { Cabal = self.disableTest self.Cabal_1_14_0; };
       prettyShow = self.prettyShow_1_2;
       bmp = self.bmp_1_2_2_1;
+      Cabal_1_18_1_2 = self.Cabal_1_18_1_2.override { deepseq = self.deepseq_1_3_0_2; };
+      quickcheckIo = self.quickcheckIo.override {
+        HUnit = self.HUnit_1_2_5_2;
+        QuickCheck = self.QuickCheck2;
+      };
     };
 
   ghc6123Prefs = ghc6122Prefs;
@@ -103,6 +120,10 @@
         mtl = self.mtl_2_1_2;
         HTTP = self.HTTP_4000_1_1.override { mtl = self.mtl_2_1_2; };
       };
+      quickcheckIo = self.quickcheckIo.override {
+        HUnit = self.HUnit_1_2_5_2;
+        QuickCheck = self.QuickCheck2;
+      };
     };
 
   ghc6121Prefs =
@@ -121,6 +142,10 @@
         zlib = self.zlib_0_5_3_3;
         mtl = self.mtl_2_1_2;
         HTTP = self.HTTP_4000_1_1.override { mtl = self.mtl_2_1_2; };
+      };
+      quickcheckIo = self.quickcheckIo.override {
+        HUnit = self.HUnit_1_2_5_2;
+        QuickCheck = self.QuickCheck2;
       };
     };
 
@@ -153,6 +178,7 @@
     , extraPrefs ? (x : {})
     , profExplicit ? false, profDefault ? false
     , modifyPrio ? lowPrio
+    , extraArgs ? {}
     } :
       import ./haskell-packages.nix {
         inherit pkgs newScope modifyPrio;
@@ -161,7 +187,7 @@
         enableLibraryProfiling =
           if profExplicit then profDefault
                           else config.cabal.libraryProfiling or profDefault;
-        ghc = callPackage ghcPath { ghc = ghcBinary; };
+        ghc = callPackage ghcPath ({ ghc = ghcBinary; } // extraArgs);
       });
 
   defaultVersionPrioFun =
@@ -328,6 +354,10 @@
     packages { ghcPath = ../development/compilers/ghc/head.nix;
                ghcBinary = ghc742Binary;
                prefFun = ghcHEADPrefs;
+               extraArgs = {
+                 happy = pkgs.haskellPackages.happy_1_19_2;
+                 alex = pkgs.haskellPackages.alex_3_1_3;
+               };
              };
 
 }

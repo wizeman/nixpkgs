@@ -2,11 +2,11 @@
 , libgsf, libxml2, cairo, pango, librsvg, libspectre }:
 
 stdenv.mkDerivation rec {
-  name = "goffice-0.10.0";
+  name = "goffice-0.10.9";
 
   src = fetchurl {
     url = "mirror://gnome/sources/goffice/0.10/${name}.tar.xz";
-    sha256 = "0fc4s2z0fygf5c66710nzfg64yp8qsmwlswhcr4krc03jbv7fxby";
+    sha256 = "0xc82hymhkdglnksd3r7405p39d5ym826rwaa7dfkps5crjwq8cg";
   };
 
   propagatedBuildInputs = [ # ToDo lasem library for MathML, opt. introspection?

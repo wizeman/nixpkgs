@@ -4,20 +4,20 @@
 
 let
   name = "cppcheck";
-  version = "1.53";
+  version = "1.62";
 in
 stdenv.mkDerivation {
   name = "${name}-${version}";
 
   src = fetchurl {
     url = "mirror://sourceforge/${name}/${name}-${version}.tar.bz2";
-    sha256 = "878db83d3954d0c45135362308da951ec0670a160c76a7410466a9b539e8677f";
+    sha256 = "031x2khbk0anlacpdk5g5r3q3y4xj0z5zsfhf2wcv189hxl7698c";
   };
 
   configurePhase = "makeFlags=PREFIX=$out";
 
   meta = {
-    description = "check C/C++ code for memory leaks, mismatching allocation-deallocation, buffer overrun, etc.";
+    description = "Check C/C++ code for memory leaks, mismatching allocation-deallocation, buffer overrun and more";
     homepage = "http://sourceforge.net/apps/mediawiki/cppcheck/";
     license = "GPL";
     platforms = stdenv.lib.platforms.unix;
