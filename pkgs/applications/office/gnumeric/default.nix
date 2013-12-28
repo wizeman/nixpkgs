@@ -20,15 +20,16 @@ stdenv.mkDerivation rec {
     goffice gtk3 makeWrapper
   ];
 
-  # ToDo: make also the default hicolor icons work
   postInstall = ''
     wrapProgram "$out"/bin/gnumeric-* \
       --prefix XDG_DATA_DIRS : "${gtk3}/share:${gnome_icon_theme}/share"
   '';
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "The GNOME Office Spreadsheet";
     license = "GPLv2+";
     homepage = http://projects.gnome.org/gnumeric/;
+    platforms = platforms.linux;
+    maintainers = [ maintainers.vcunat ];
   };
 }
