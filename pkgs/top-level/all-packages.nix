@@ -8099,7 +8099,7 @@ let
   };
 
   gnumeric = callPackage ../applications/office/gnumeric {
-    inherit (gnome3) goffice;
+    inherit (gnome3) goffice gnome_icon_theme;
   };
 
   gnunet = callPackage ../applications/networking/p2p/gnunet { };

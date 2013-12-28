@@ -1,5 +1,5 @@
 { stdenv, fetchurl, pkgconfig, intltool, perl, perlXMLParser
-, goffice, gtk3, makeWrapper
+, goffice, makeWrapper, gtk3, gnome_icon_theme
 }:
 
 stdenv.mkDerivation rec {
@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
   # ToDo: make also the default hicolor icons work
   postInstall = ''
     wrapProgram "$out"/bin/gnumeric-* \
-      --prefix XDG_DATA_DIRS : "${gtk3}/share"
+      --prefix XDG_DATA_DIRS : "${gtk3}/share:${gnome_icon_theme}/share"
   '';
 
   meta = {
