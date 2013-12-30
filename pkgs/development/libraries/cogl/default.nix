@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, pkgconfig, mesa, glib, gdk_pixbuf, xorg, libintlOrEmpty
-, pangoSupport ? true, pango, cairo }:
+{ stdenv, fetchurl, pkgconfig, mesa_noglu, glib, gdk_pixbuf, xorg, libintlOrEmpty
+, pangoSupport ? true, pango, cairo, gobjectIntrospection, wayland }:
 
 let
   ver_maj = "1.16";
@@ -15,8 +15,19 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ pkgconfig ];
 
-  propagatedBuildInputs = with xorg;
-    [ mesa glib gdk_pixbuf libXfixes libXcomposite libXdamage libXrandr ]
+  configureFlags = [
+    "--enable-introspection"
+    "--enable-gles1"
+    "--enable-gles2"
+    "--enable-kms-egl-platform"
+    "--enable-wayland-egl-platform"
+    "--enable-wayland-egl-server"
+  ];
+
+  propagatedBuildInputs = with xorg; [
+      glib gdk_pixbuf gobjectIntrospection
+      mesa_noglu libXrandr libXfixes libXcomposite libXdamage wayland
+    ]
     ++ libintlOrEmpty;
 
   buildInputs = stdenv.lib.optionals pangoSupport [ pango cairo ];
