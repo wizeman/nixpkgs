@@ -1,9 +1,8 @@
 { stdenv, fetchurl, pkgconfig, intltool, flex, bison, autoreconfHook
 , python, libxml2Python, file, expat, makedepend
 , libdrm, xorg, wayland, udev, llvm, libffi
-, libvdpau
+, libvdpau, libelf
 , enableTextureFloats ? false # Texture floats are patented, see docs/patents.txt
-, enableR600LlvmCompiler ? true, libelf
 , enableExtraFeatures ? false # not maintained
 }:
 
@@ -70,11 +69,9 @@ stdenv.mkDerivation {
     "--enable-osmesa" # used by wine
 
     "--with-dri-drivers=i965,r200,radeon"
-    ("--with-gallium-drivers=i915,nouveau,r300,r600,svga,swrast"
-      + optionalString enableR600LlvmCompiler ",radeonsi")
+    ("--with-gallium-drivers=i915,nouveau,r300,r600,svga,swrast,radeonsi")
     "--with-egl-platforms=x11,wayland,drm" "--enable-gbm" "--enable-shared-glapi"
   ]
-    ++ optional enableR600LlvmCompiler "--enable-r600-llvm-compiler"
     ++ optional enableTextureFloats "--enable-texture-float"
     ++ optionals enableExtraFeatures [
       "--enable-openvg" "--enable-gallium-egl" # not needed for EGL in Gallium, but OpenVG might be useful
@@ -90,15 +87,14 @@ stdenv.mkDerivation {
   buildInputs = with xorg; [
     autoreconfHook intltool expat libxml2Python llvm
     libXfixes glproto dri2proto libX11 libXext libxcb libXt
-    libffi wayland libvdpau
+    libffi wayland libvdpau libelf
   ] ++ optionals enableExtraFeatures [ /*libXvMC*/ ]
     ++ optional stdenv.isLinux udev
-    ++ optional enableR600LlvmCompiler libelf
     ;
 
   enableParallelBuilding = true;
   #doCheck = true; # https://bugs.freedesktop.org/show_bug.cgi?id=67672,
-    #tests for 10.* seem to need LLVM-3.4
+    #tests for 10.* fail to link due to some RTTI problem
 
   # move gallium-related stuff to $drivers, so $out doesn't depend on LLVM;
   #   also move libOSMesa to $osmesa, as it's relatively big
