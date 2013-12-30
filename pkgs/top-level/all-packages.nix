@@ -129,18 +129,16 @@ let
 
 
   # The package compositions.  Yes, this isn't properly indented.
-  pkgsFun = pkgs: __overrides:
+  pkgsFun = pkgs: overrides:
     with helperFunctions;
-    let defaultScope = pkgs // pkgs.xorg; in
-    helperFunctions // rec {
-
-  # `__overrides' is a magic attribute that causes the attributes in
-  # its value to be added to the surrounding `rec'.  We'll remove this
-  # eventually.
-  inherit __overrides pkgs;
+    let defaultScope = pkgs // pkgs.xorg; self = self_ // overrides;
+    self_ = with self; helperFunctions // {
 
   # Make some arguments passed to all-packages.nix available
   inherit system stdenvType platform;
+
+  # Allow callPackage to fill in the pkgs argument
+  inherit pkgs;
 
 
   # We use `callPackage' to be able to omit function arguments that
@@ -1517,6 +1515,9 @@ let
       etcDir = "/etc/ssh";
       pam = if stdenv.isLinux then pam else null;
     };
+
+  openssh_hpn = lowPrio (pkgs.appendToName "hpn" (openssh.override { hpnSupport = true; }));
+
   openssh_with_kerberos = lowPrio (pkgs.appendToName "with-kerberos" (openssh.override { withKerberos = true; }));
 
   opensp = callPackage ../tools/text/sgml/opensp { };
@@ -5646,6 +5647,8 @@ let
   SDL2_gfx = callPackage ../development/libraries/SDL2_gfx { };
 
   serd = callPackage ../development/libraries/serd {};
+  
+  serf = callPackage ../development/libraries/serf {};
 
   silgraphite = callPackage ../development/libraries/silgraphite {};
   graphite2 = callPackage ../development/libraries/silgraphite/graphite2.nix {};
@@ -5873,6 +5876,16 @@ let
       else stdenv;
   };
 
+  wxGTK30 = callPackage ../development/libraries/wxGTK-3.0/default.nix {
+    inherit (gnome) GConf;
+    withMesa = lib.elem system lib.platforms.mesaPlatforms;
+
+    # use for Objective-C++ compiler
+    stdenv = if stdenv.isDarwin
+      then clangStdenv
+      else stdenv;
+  };
+
   wtk = callPackage ../development/libraries/wtk { };
 
   x264 = callPackage ../development/libraries/x264 { };
@@ -6033,7 +6046,7 @@ let
 
   perlPackages = recurseIntoAttrs (import ./perl-packages.nix {
     inherit pkgs;
-    __overrides = (config.perlPackageOverrides or (p: {})) pkgs;
+    overrides = (config.perlPackageOverrides or (p: {})) pkgs;
   });
 
   perl510Packages = import ./perl-packages.nix {
@@ -6041,7 +6054,7 @@ let
       perl = perl510;
       buildPerlPackage = import ../development/perl-modules/generic perl510;
     };
-    __overrides = (config.perl510PackageOverrides or (p: {})) pkgs;
+    overrides = (config.perl510PackageOverrides or (p: {})) pkgs;
   };
 
   perl514Packages = import ./perl-packages.nix {
@@ -6049,7 +6062,7 @@ let
       perl = perl514;
       buildPerlPackage = import ../development/perl-modules/generic perl514;
     };
-    __overrides = (config.perl514PackageOverrides or (p: {})) pkgs;
+    overrides = (config.perl514PackageOverrides or (p: {})) pkgs;
   };
 
   perlXMLParser = perlPackages.XMLParser;
@@ -6177,7 +6190,7 @@ let
 
   rPackages = recurseIntoAttrs (import ./r-packages.nix {
     inherit pkgs;
-    __overrides = (config.rPackageOverrides or (p: {})) pkgs;
+    overrides = (config.rPackageOverrides or (p: {})) pkgs;
   });
 
   ### SERVERS
@@ -10469,4 +10482,4 @@ let
   adobeReader = adobe-reader;
 
 
-}; in pkgs
+}; in self; in pkgs
