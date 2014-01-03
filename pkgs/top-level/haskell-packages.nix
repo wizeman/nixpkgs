@@ -522,9 +522,13 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   abstractPar = callPackage ../development/libraries/haskell/abstract-par {};
 
+  adjunctions = callPackage ../development/libraries/haskell/adjunctions {};
+
   aeson = callPackage ../development/libraries/haskell/aeson {};
 
   aesonPretty = callPackage ../development/libraries/haskell/aeson-pretty {};
+
+  algebra = callPackage ../development/libraries/haskell/algebra {};
 
   alternativeIo = callPackage ../development/libraries/haskell/alternative-io {};
 
@@ -694,6 +698,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   caseInsensitive_1_0_0_1 = callPackage ../development/libraries/haskell/case-insensitive/1.0.0.1.nix {};
   caseInsensitive_1_1_0_2 = callPackage ../development/libraries/haskell/case-insensitive/1.1.0.2.nix {};
   caseInsensitive = self.caseInsensitive_1_1_0_2;
+
+  categories = callPackage ../development/libraries/haskell/categories {};
 
   cautiousFile = callPackage ../development/libraries/haskell/cautious-file {};
 
@@ -1042,6 +1048,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   filesystemConduit = callPackage ../development/libraries/haskell/filesystem-conduit {};
 
   final = callPackage ../development/libraries/haskell/final {};
+
+  finiteField = callPackage ../development/libraries/haskell/finite-field {};
 
   fgl_5_4_2_2 = callPackage ../development/libraries/haskell/fgl/5.4.2.2.nix {};
   fgl_5_4_2_3 = callPackage ../development/libraries/haskell/fgl/5.4.2.3.nix {};
@@ -1817,6 +1825,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   punycode = callPackage ../development/libraries/haskell/punycode {};
 
+  primes = callPackage ../development/libraries/haskell/primes {};
+
   primitive_0_5_0_1 = callPackage ../development/libraries/haskell/primitive/0.5.0.1.nix   {};
   primitive_0_5_1_0 = callPackage ../development/libraries/haskell/primitive/0.5.1.0.nix   {};
   primitive = self.primitive_0_5_1_0;
@@ -1952,6 +1962,10 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   RepLib = callPackage ../development/libraries/haskell/RepLib {};
 
   repr = callPackage ../development/libraries/haskell/repr {};
+
+  representableFunctors = callPackage ../development/libraries/haskell/representableFunctors {};
+
+  representableTries = callPackage ../development/libraries/haskell/representableTries {};
 
   resourcePool = callPackage ../development/libraries/haskell/resource-pool {};
 
@@ -2263,6 +2277,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   typeEquality = callPackage ../development/libraries/haskell/type-equality {};
 
   typeLevelNaturalNumber = callPackage ../development/libraries/haskell/type-level-natural-number {};
+
+  typeLevelNumbers = callPackage ../development/libraries/haskell/type-level-numbers {};
 
   unbound = callPackage ../development/libraries/haskell/unbound {};
 
