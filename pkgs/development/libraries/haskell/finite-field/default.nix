@@ -1,13 +1,13 @@
-{ cabal, algebra, deepseq, HUnit, primes, QuickCheck, testFramework
-, testFrameworkHunit, testFrameworkQuickcheck2, testFrameworkTh
-, typeLevelNumbers
+{ cabal, algebra, deepseq, hashable, HUnit, primes, QuickCheck
+, testFramework, testFrameworkHunit, testFrameworkQuickcheck2
+, testFrameworkTh, typeLevelNumbers
 }:
 
 cabal.mkDerivation (self: {
   pname = "finite-field";
-  version = "0.6.0";
-  sha256 = "11zayi2cj3p4ky1x28w9czrr5r5fv1vcwxxhy4nr5zwsr442y2qm";
-  buildDepends = [ algebra deepseq typeLevelNumbers ];
+  version = "0.7.0";
+  sha256 = "1s8qa182glb370s2szyjkc3d9hlkc2xf09kziciw0nyy7j5ncphv";
+  buildDepends = [ algebra deepseq hashable typeLevelNumbers ];
   testDepends = [
     HUnit primes QuickCheck testFramework testFrameworkHunit
     testFrameworkQuickcheck2 testFrameworkTh typeLevelNumbers
