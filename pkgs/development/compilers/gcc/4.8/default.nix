@@ -323,7 +323,7 @@ stdenv.mkDerivation ({
       " --with-gnu-as --without-gnu-ld "
       else ""}
     --enable-lto
-    ${if enableMultilib then "" else "--disable-multilib"}
+    ${if enableMultilib then "--disable-libquadmath --enable-multilib" else "--disable-multilib"}
     ${if enableShared then "" else "--disable-shared"}
     ${if enablePlugin then "--enable-plugin" else "--disable-plugin"}
     ${if ppl != null then "--with-ppl=${ppl} --disable-ppl-version-check" else ""}
@@ -403,7 +403,7 @@ stdenv.mkDerivation ({
     NIX_GCC_CROSS = if cross == null then "${stdenv.gccCross}" else "";
     dontStrip = true;
     configureFlags = ''
-      ${if enableMultilib then "" else "--disable-multilib"}
+      ${if enableMultilib then "--disable-libquadmath --enable-multilib" else "--disable-multilib"}
       ${if enableShared then "" else "--disable-shared"}
       ${if ppl != null then "--with-ppl=${ppl.crossDrv}" else ""}
       ${if cloog != null then "--with-cloog=${cloog.crossDrv} --enable-cloog-backend=isl" else ""}

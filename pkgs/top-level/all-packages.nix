@@ -245,7 +245,7 @@ let
   # just the plain stdenv.
   stdenv_32bit = lowPrio (
     if system == "x86_64-linux" then
-      overrideGCC stdenv gcc46_multi
+      overrideGCC stdenv gcc_multi
     else
       stdenv);
 
@@ -2550,9 +2550,9 @@ let
     binutilsCross = null;
   }));
 
-  gcc46_multi =
+  gcc_multi =
     if system == "x86_64-linux" then lowPrio (
-      wrapGCCWith (import ../build-support/gcc-wrapper) glibc_multi (gcc46.gcc.override {
+      wrapGCCWith (import ../build-support/gcc-wrapper) glibc_multi (gcc.gcc.override {
         stdenv = overrideGCC stdenv (wrapGCCWith (import ../build-support/gcc-wrapper) glibc_multi gcc.gcc);
         profiledCompiler = false;
         enableMultilib = true;
