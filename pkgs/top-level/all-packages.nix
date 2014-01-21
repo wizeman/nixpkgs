@@ -6750,7 +6750,8 @@ let
     v86d = callPackage ../os-specific/linux/v86d { };
 
     virtualbox = callPackage ../applications/virtualization/virtualbox {
-      stdenv = stdenv_32bit;
+      stdenv = if system == "x86_64-linux" then stdenv_32bit
+        else overrideGCC stdenv gcc46; # gcc48 misses libstdc++.a
       inherit (gnome) libIDL;
       enableExtensionPack = config.virtualbox.enableExtensionPack or false;
     };
