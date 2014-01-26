@@ -1,7 +1,5 @@
 { composableDerivation, fetchurl, pkgconfig, x11, inputproto, libXi
-, freeglut, mesa, libjpeg, zlib, libXinerama, libXft, libpng
-
-, automake, autoconf, libtool
+, freeglut, mesa, libjpeg, zlib, libXinerama, libXft, libpng, autoreconfHook
 }:
 
 let inherit (composableDerivation) edf; in
@@ -19,11 +17,7 @@ composableDerivation.composableDerivation {} {
 
   enableParallelBilding = true;
 
-  nativeBuildInputs = [ pkgconfig
-
-  # only required because of patch
-  automake autoconf libtool
-  ];
+  nativeBuildInputs = [ pkgconfig autoreconfHook/*because of the patch*/ ];
 
   flags =
     # this could be tidied up (?).. eg why does it require freeglut without glSupport?
