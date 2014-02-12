@@ -1,0 +1,89 @@
+commit 57f80cb096be01aa8a22702ccd407062415673d3
+Author: Ricardo M. Correia <rcorreia@wizy.org>
+Date:   Thu Jan 9 13:01:27 2014 +0100
+
+    Fix keyboard navigation
+
+diff --git a/src/fielditem.cpp b/src/fielditem.cpp
+index 34ef18f..d783464 100644
+--- a/src/fielditem.cpp
++++ b/src/fielditem.cpp
+@@ -82,24 +82,53 @@ QRectF FieldItem::boundingRect() const
+     return QRectF(0, 0, m_cellSize*width(), m_cellSize*height());
+ }
+ 
++int FieldItem::cellNeigh(int index, Directions d)
++{
++    int newCell = 0;
++
++    switch(d) {
++    case Up:
++        newCell = index-width();
++        if (newCell < 0) newCell += cellCount();
++        break;
++    case Down:
++        newCell = index+width();
++        if (newCell >= cellCount()) newCell -= cellCount();
++        break;
++    case Left:
++        newCell = index-1;
++        if (newCell < 0 || (newCell % width()) == width()-1) newCell += width();
++        break;
++    case Right:
++        newCell = index+1;
++        if ((newCell % width()) == 0) newCell -= width();
++        break;
++    default:
++        qFatal("Invalid direction");
++        break;
++    }
++
++    return newCell;
++}
++
+ void FieldItem::kbGoRight()
+ {
+-    activateCell(qMin(m_activeCell+1, cellCount()-1));
++    activateCell(cellNeigh(m_activeCell, Right));
+ }
+ 
+ void FieldItem::kbGoLeft()
+ {
+-    activateCell(qMax(m_activeCell-1, 0));
++    activateCell(cellNeigh(m_activeCell, Left));
+ }
+ 
+ void FieldItem::kbGoUp()
+ {
+-    activateCell(m_activeCell < width() ? m_activeCell : m_activeCell-width());
++    activateCell(cellNeigh(m_activeCell, Up));
+ }
+ 
+ void FieldItem::kbGoDown()
+ {
+-    activateCell(m_activeCell+width() >= cellCount() ? m_activeCell : m_activeCell+width());
++    activateCell(cellNeigh(m_activeCell, Down));
+ }
+ 
+ void FieldItem::kbTurnClockwise()
+diff --git a/src/fielditem.h b/src/fielditem.h
+index e26bbc5..9571846 100644
+--- a/src/fielditem.h
++++ b/src/fielditem.h
+@@ -19,6 +19,7 @@
+ #define FIELDITEM_H
+ 
+ #include "cell.h"
++#include "globals.h"
+ 
+ class FieldItem : public QGraphicsObject, public AbstractGrid
+ {
+@@ -67,6 +68,8 @@ private slots:
+     // must not be virtual
+     void updateConnections();
+ private:
++    int cellNeigh(int index, Directions d);
++
+     int indexFromPos(const QPointF& pos);
+     Cell *cellAt(int index);
+ 
