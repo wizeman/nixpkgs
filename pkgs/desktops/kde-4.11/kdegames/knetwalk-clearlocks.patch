@@ -1,0 +1,55 @@
+commit b4807b4857d351c563177d98e1c58c22a4c9604e
+Author: Ricardo M. Correia <rcorreia@wizy.org>
+Date:   Thu Jan 9 13:05:53 2014 +0100
+
+    Add "Clear locks" keyboard shortcut
+
+diff --git a/src/fielditem.cpp b/src/fielditem.cpp
+index 44ee79a..34ef18f 100644
+--- a/src/fielditem.cpp
++++ b/src/fielditem.cpp
+@@ -117,6 +117,16 @@ void FieldItem::kbLock()
+     mClicked(m_activeCell);
+ }
+ 
++void FieldItem::kbClearLocks()
++{
++    if(!m_gameRunning)
++        return;
++
++    for(int i=0; i < cellCount(); i++) {
++        cellAt(i)->setLocked(false);
++    }
++}
++
+ void FieldItem::mousePressEvent(QGraphicsSceneMouseEvent* ev)
+ {
+     int index = indexFromPos(ev->pos());
+diff --git a/src/fielditem.h b/src/fielditem.h
+index 4e703e8..e26bbc5 100644
+--- a/src/fielditem.h
++++ b/src/fielditem.h
+@@ -50,6 +50,7 @@ public slots:
+     void kbTurnClockwise();
+     void kbTurnCounterclockwise();
+     void kbLock();
++    void kbClearLocks();
+ protected:
+     void mousePressEvent(QGraphicsSceneMouseEvent*);
+     void hoverEnterEvent(QGraphicsSceneHoverEvent*);
+diff --git a/src/mainwindow.cpp b/src/mainwindow.cpp
+index dc437fe..bf12247 100644
+--- a/src/mainwindow.cpp
++++ b/src/mainwindow.cpp
+@@ -148,6 +148,11 @@ void MainWindow::setupActions()
+     action->setShortcut(Qt::Key_Space);
+     connect(action, SIGNAL(triggered()), m_scene->fieldItem(), SLOT(kbLock()));
+     actionCollection()->addAction( QLatin1String( "kb_lock" ), action);
++
++    action = new KAction(i18n("Keyboard: Clear locks"),this);
++    action->setShortcut(Qt::CTRL + Qt::Key_F);
++    connect(action, SIGNAL(triggered()), m_scene->fieldItem(), SLOT(kbClearLocks()));
++    actionCollection()->addAction( QLatin1String( "kb_clear_locks" ), action);
+ }
+ 
+ void MainWindow::loadSettings()
