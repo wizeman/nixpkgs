@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
   # Propagate libgcrypt because it appears in `ucommon.pc'.
   propagatedBuildInputs = [ libgcrypt ];
 
-  doCheck = true;
+  doCheck = !stdenv.needsPax;
 
   meta = {
     description = "C++ library to facilitate using C++ design patterns";
