@@ -114,6 +114,8 @@
       logcheck = 103;
       nix-ssh = 104;
       dictd = 105;
+      couchdb = 106;
+      searx = 107;
 
       # When adding a uid, make sure it doesn't match an existing gid.
 
@@ -206,6 +208,8 @@
       munin = 95;
       keys = 96;
       dictd = 105;
+      couchdb = 106;
+      searx = 107;
 
       # When adding a gid, make sure it doesn't match an existing uid.
 
