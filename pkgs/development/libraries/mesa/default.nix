@@ -2,6 +2,7 @@
 , python, libxml2Python, file, expat, makedepend
 , libdrm, xorg, wayland, udev, llvm, libffi
 , libvdpau, libelf
+, grsecEnabled
 , enableTextureFloats ? false # Texture floats are patented, see docs/patents.txt
 , enableExtraFeatures ? false # not maintained
 }:
@@ -43,6 +44,7 @@ stdenv.mkDerivation {
     ./static-gallium.patch
     ./dricore-gallium.patch
     ./werror-wundef.patch
+    ./glx_ro_text_segm.patch # fix for grsecurity/PaX
   ];
 
   # Change the search path for EGL drivers from $drivers/* to driverLink
@@ -77,7 +79,8 @@ stdenv.mkDerivation {
       "--enable-openvg" "--enable-gallium-egl" # not needed for EGL in Gallium, but OpenVG might be useful
       #"--enable-xvmc" # tests segfault with 9.1.{1,2,3}
       #"--enable-opencl" # ToDo: opencl seems to need libclc for clover
-    ];
+    ]
+    ++ optional grsecEnabled "--enable-glx-rts"; # slight performance degradation, enable only for grsec
 
   nativeBuildInputs = [ pkgconfig python makedepend file flex bison ];
 

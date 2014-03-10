@@ -10,6 +10,8 @@ let lib = import ../../../lib; in lib.makeOverridable (
 , setupScript ? ./setup.sh
 
 , extraBuildInputs ? []
+
+, skipPaxMarking ? false
 }:
 
 if ! builtins ? langVersion then
@@ -155,6 +157,9 @@ let
       isArm = system == "armv5tel-linux"
            || system == "armv6l-linux"
            || system == "armv7l-linux";
+
+      # Whether we should run paxctl to pax-mark binaries
+      needsPax = isLinux && !skipPaxMarking;
 
       # For convenience, bring in the library functions in lib/ so
       # packages don't have to do that themselves.
