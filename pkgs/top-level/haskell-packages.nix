@@ -526,6 +526,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   adjunctions = callPackage ../development/libraries/haskell/adjunctions {};
 
+  aes = callPackage ../development/libraries/haskell/aes {};
+
   aeson = callPackage ../development/libraries/haskell/aeson {
     blazeBuilder = if (pkgs.stdenv.lib.versionOlder ghc.version "7.6") then self.blazeBuilder else null;
   };
@@ -698,6 +700,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   bytestringLexing = callPackage ../development/libraries/haskell/bytestring-lexing {};
 
   bytestringMmap = callPackage ../development/libraries/haskell/bytestring-mmap {};
+
+  bytestringShow = callPackage ../development/libraries/haskell/bytestring-show {};
 
   bytestringTrie = callPackage ../development/libraries/haskell/bytestring-trie {};
 
@@ -941,24 +945,12 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   dice = callPackage ../development/libraries/haskell/dice {};
 
   diagrams = callPackage ../development/libraries/haskell/diagrams/diagrams.nix {};
-  diagramsCairo = callPackage ../development/libraries/haskell/diagrams/cairo.nix {
-    lens = self.lens_3_10_2;
-  };
-  diagramsCore = callPackage ../development/libraries/haskell/diagrams/core.nix {
-    lens = self.lens_3_10_2;
-  };
-  diagramsContrib = callPackage ../development/libraries/haskell/diagrams/contrib.nix {
-    lens = self.lens_3_10_2;
-  };
-  diagramsLib = callPackage ../development/libraries/haskell/diagrams/lib.nix {
-    lens = self.lens_3_10_2;
-  };
-  diagramsPostscript = callPackage ../development/libraries/haskell/diagrams/postscript.nix {
-     lens = self.lens_3_10_2;
-  };
-  diagramsSvg = callPackage ../development/libraries/haskell/diagrams/svg.nix {
-    lens = self.lens_3_10_2;
-  };
+  diagramsCairo = callPackage ../development/libraries/haskell/diagrams/cairo.nix {};
+  diagramsCore = callPackage ../development/libraries/haskell/diagrams/core.nix {};
+  diagramsContrib = callPackage ../development/libraries/haskell/diagrams/contrib.nix {};
+  diagramsLib = callPackage ../development/libraries/haskell/diagrams/lib.nix {};
+  diagramsPostscript = callPackage ../development/libraries/haskell/diagrams/postscript.nix {};
+  diagramsSvg = callPackage ../development/libraries/haskell/diagrams/svg.nix {};
 
   Diff = callPackage ../development/libraries/haskell/Diff {};
 
@@ -1125,9 +1117,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   foldl = callPackage ../development/libraries/haskell/foldl {};
 
-  forceLayout = callPackage ../development/libraries/haskell/force-layout {
-    lens = self.lens_3_10_2;
-  };
+  forceLayout = callPackage ../development/libraries/haskell/force-layout {};
 
   free = callPackage ../development/libraries/haskell/free {};
 
@@ -1154,6 +1144,10 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   ghcHeapView = callPackage ../development/libraries/haskell/ghc-heap-view {
     cabal = self.cabal.override { enableLibraryProfiling = false; }; # pkg cannot be built with profiling enabled
   };
+
+  ghcjsDom = callPackage ../development/libraries/haskell/ghcjs-codemirror {};
+
+  ghcjsCodemirror = callPackage ../development/libraries/haskell/ghcjs-codemirror {};
 
   ghcMod = callPackage ../development/libraries/haskell/ghc-mod {
     inherit (pkgs) emacs;
@@ -1391,6 +1385,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   hoauth = callPackage ../development/libraries/haskell/hoauth {};
 
+  hoauth2 = callPackage ../development/libraries/haskell/hoauth2 {};
+
   hoodle = callPackage ../applications/graphics/hoodle {};
 
   hoodleBuilder = callPackage ../development/libraries/haskell/hoodle-builder {};
@@ -1584,9 +1580,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   leksahServer = callPackage ../development/libraries/haskell/leksah/leksah-server.nix {};
 
-  lens_3_10_2 = callPackage ../development/libraries/haskell/lens/3.10.2.nix {};
-  lens_4_0_5 = callPackage ../development/libraries/haskell/lens/4.0.5.nix {};
-  lens = self.lens_4_0_5;
+  lens = callPackage ../development/libraries/haskell/lens {};
 
   lensAeson = callPackage ../development/libraries/haskell/lens-aeson {};
 
@@ -1902,6 +1896,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   Pathfinder = callPackage ../development/libraries/haskell/Pathfinder {};
 
   pathtype = callPackage ../development/libraries/haskell/pathtype {};
+
+  pbkdf = callPackage ../development/libraries/haskell/pbkdf {};
 
   pcap = callPackage ../development/libraries/haskell/pcap {};
 
@@ -2522,9 +2518,15 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   vacuumCairo = callPackage ../development/libraries/haskell/vacuum-cairo {};
 
+  vado = callPackage ../development/libraries/haskell/vado {};
+
   vault = callPackage ../development/libraries/haskell/vault {};
 
+  vcsgui = callPackage ../development/libraries/haskell/vcsgui {};
+
   vcsRevision = callPackage ../development/libraries/haskell/vcs-revision {};
+
+  vcswrapper = callPackage ../development/libraries/haskell/vcswrapper {};
 
   Vec = callPackage ../development/libraries/haskell/Vec {};
 

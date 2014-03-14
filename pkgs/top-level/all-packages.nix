@@ -434,6 +434,8 @@ let
 
   analog = callPackage ../tools/admin/analog {};
 
+  apt-offline = callPackage ../tools/misc/apt-offline { };
+
   archivemount = callPackage ../tools/filesystems/archivemount { };
 
   arandr = callPackage ../tools/X11/arandr { };
@@ -1519,6 +1521,8 @@ let
     inherit (pythonPackages) pysqlite;
   };
 
+  notbit = callPackage ../applications/networking/notbit { };
+
   nss_pam_ldapd = callPackage ../tools/networking/nss-pam-ldapd {};
 
   ntfs3g = callPackage ../tools/filesystems/ntfs-3g { };
@@ -1901,6 +1905,8 @@ let
     inherit (pkgsi686Linux) pam gcc33;
     inherit (pkgsi686Linux.xlibs) libX11;
   };
+
+  solr = callPackage ../servers/search/solr { };
 
   sparsehash = callPackage ../development/libraries/sparsehash { };
 
@@ -2727,6 +2733,7 @@ let
   haskellPackages_ghc763_profiling    = recurseIntoAttrs (haskell.packages_ghc763.profiling);
   haskellPackages_ghc763              = recurseIntoAttrs (haskell.packages_ghc763.highPrio);
   # Reasonably current HEAD snapshot.
+  haskellPackages_ghc781 = haskell.packages_ghc781;
   haskellPackages_ghcHEAD = haskell.packages_ghcHEAD;
 
   haxe = callPackage ../development/compilers/haxe { };
@@ -3679,6 +3686,8 @@ let
 
   jikespg = callPackage ../development/tools/parsing/jikespg { };
 
+  jenkins = callPackage ../development/tools/continuous-integration/jenkins { };
+
   lcov = callPackage ../development/tools/analysis/lcov { };
 
   leiningen = callPackage ../development/tools/build-managers/leiningen { };
@@ -4590,7 +4599,6 @@ let
   judy = callPackage ../development/libraries/judy { };
 
   keybinder = callPackage ../development/libraries/keybinder {
-    inherit (gnome2) gnome_common;
     automake = automake111x;
     lua = lua5_1;
   };
@@ -5009,7 +5017,11 @@ let
 
   libpaper = callPackage ../development/libraries/libpaper { };
 
-  libproxy = callPackage ../development/libraries/libproxy { };
+  libproxy = callPackage ../development/libraries/libproxy {
+    stdenv = if stdenv.isDarwin
+      then overrideGCC stdenv gcc
+      else stdenv;
+  };
 
   libpseudo = callPackage ../development/libraries/libpseudo { };
 
@@ -6475,6 +6487,8 @@ let
   virtuoso = virtuoso6;
 
   vsftpd = callPackage ../servers/ftp/vsftpd { };
+
+  winstone = callPackage ../servers/http/winstone { };
 
   xinetd = callPackage ../servers/xinetd { };
 
@@ -8616,6 +8630,8 @@ let
     rake         = rake_10_1_0;
   };
 
+  synfigstudio = callPackage ../applications/graphics/synfigstudio { };
+
   msmtp = callPackage ../applications/networking/msmtp { };
 
   imapfilter = callPackage ../applications/networking/mailreaders/imapfilter.nix {
@@ -9224,7 +9240,7 @@ let
     , icon ? "${browser}/lib/${browser.name}/icons/mozicon128.png" }:
     let
       cfg = stdenv.lib.attrByPath [ browserName ] {} config;
-      enableAdobeFlash = cfg.enableAdobeFlash or true;
+      enableAdobeFlash = cfg.enableAdobeFlash or false;
       enableGnash = cfg.enableGnash or false;
     in
     import ../applications/networking/browsers/firefox/wrapper.nix {

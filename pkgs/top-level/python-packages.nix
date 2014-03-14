@@ -1504,6 +1504,49 @@ rec {
       platforms = stdenv.lib.platforms.all;
     };
   };
+  
+  urllib3 = buildPythonPackage rec {
+    name = "urllib3-1.8";
+
+    src = fetchurl {
+      url = "https://pypi.python.org/packages/source/u/urllib3/${name}.tar.gz";
+      sha256 = "0pdigfxkq8mhzxxsn6isx8c4h9azqywr1k18yanwyxyj8cdzm28s";
+    };
+    
+    preConfigure = ''
+      substituteInPlace test-requirements.txt --replace 'nose==1.3' 'nose'
+    '';
+    
+    checkPhase = ''
+      nosetests --cover-min-percentage 70
+    '';
+
+    buildInputs = [ coverage tornado mock nose ];
+
+    meta = with stdenv.lib; {
+      description = "A Python library for Dropbox's HTTP-based Core and Datastore APIs";
+      homepage = https://www.dropbox.com/developers/core/docs;
+      license = licenses.mit;
+    };
+  };
+
+  
+  dropbox = buildPythonPackage rec {
+    name = "dropbox-2.0.0";
+
+    src = fetchurl {
+      url = "https://pypi.python.org/packages/source/d/dropbox/${name}.zip";
+      sha256 = "1bi2z1lql6ryylfflmizhqn98ab55777vn7n5krhqz40pdcjilkx";
+    };
+
+    propagatedBuildInputs = [ urllib3 mock setuptools ];
+
+    meta = with stdenv.lib; {
+      description = "A Python library for Dropbox's HTTP-based Core and Datastore APIs";
+      homepage = https://www.dropbox.com/developers/core/docs;
+      license = licenses.mit;
+    };
+  };
 
 
   evdev = buildPythonPackage rec {
@@ -2982,7 +3025,32 @@ rec {
       maintainers = [ maintainers.bjornfor ];
     };
   };
+  
+  
+  gevent-socketio = buildPythonPackage rec {
+    name = "gevent-socketio-0.3.6";
 
+    src = fetchurl {
+      url = "https://pypi.python.org/packages/source/g/gevent-socketio/${name}.tar.gz";
+      sha256 = "1zra86hg2l1jcpl9nsnqagy3nl3akws8bvrbpgdxk15x7ywllfak";
+    };
+
+    buildInputs = [ versiontools gevent-websocket mock pytest ];
+    propagatedBuildInputs = [ gevent ];
+
+  };
+  
+  gevent-websocket = buildPythonPackage rec {
+    name = "gevent-websocket-0.9.3";
+
+    src = fetchurl {
+      url = "https://pypi.python.org/packages/source/g/gevent-websocket/${name}.tar.gz";
+      sha256 = "07rqwfpbv13mk6gg8mf0bmvcf6siyffjpgai1xd8ky7r801j4xb4";
+    };
+
+    propagatedBuildInputs = [ gevent ];
+
+  };
 
   genzshcomp = buildPythonPackage {
     name = "genzshcomp-0.5.1";
@@ -3044,7 +3112,7 @@ rec {
 
     src = fetchurl {
       url = "https://github.com/nicolargo/glances/archive/v${meta.version}.tar.gz";
-      sha256 = "0g2yg9qf7qgjwv13x0rx51rzhn99pcmjpb3vk0g3gmmdsqyqi0d6";
+      sha256 = "19pin04whc1z4gmwv2rqa7mh08d6007r8dyrhihnxj0v35ghp5i0";
     };
 
     buildInputs = [ pkgs.hddtemp ];
@@ -3058,7 +3126,7 @@ rec {
     '';
 
     meta = {
-      version = "1.7.1";
+      version = "1.7.4";
       homepage = "http://nicolargo.github.io/glances/";
       description = "Cross-platform curses-based monitoring tool";
     };
@@ -4138,12 +4206,12 @@ rec {
   });
 
   nose = buildPythonPackage rec {
-    version = "1.3.0";
+    version = "1.3.1";
     name = "nose-${version}";
 
     src = fetchurl {
       url = "http://pypi.python.org/packages/source/n/nose/${name}.tar.gz";
-      sha256 = "0q2j9zz39h3liwbp6lb94kl3sxb9z9rbwh5dzyccyxfy4lrwqqsf";
+      sha256 = "1fmn5b7v183ym793ghrbh76b27aww9qv0lhl7dz31f9xmf3kn9w5";
     };
 
     buildInputs = [ coverage ];
@@ -8429,6 +8497,16 @@ rec {
       maintainers = [ stdenv.lib.maintainers.rickynils ];
     };
   };
+  
+  versiontools = buildPythonPackage rec {
+    name = "versiontools-1.9.1";
+
+    src = fetchurl {
+      url = "https://pypi.python.org/packages/source/v/versiontools/${name}.tar.gz";
+      sha256 = "1xhl6kl7f4srgnw6zw4lr8j2z5vmrbaa83nzn2c9r2m1hwl36sd9";
+    };
+
+  };
 
   graphite_web = buildPythonPackage rec {
     name = "graphite-web-${version}";
@@ -8612,11 +8690,11 @@ rec {
 
   libvirt = pkgs.stdenv.mkDerivation rec {
     name = "libvirt-python-${version}";
-    version = "1.2.0";
+    version = "1.2.2";
 
     src = fetchurl {
       url = "http://libvirt.org/sources/python/${name}.tar.gz";
-      sha256 = "0azml1yv9iqnpj4sdg1wwsa70q7kb06lv85p63qwyd8vrd0y7rrg";
+      sha256 = "0fccpyppz79kbbnzwdgsiza3cxq7jlnnp1dqi33gc4305dk9vmwl";
     };
 
     buildInputs = [ python pkgs.pkgconfig pkgs.libvirt lxml ];
@@ -8628,7 +8706,7 @@ rec {
     meta = {
       homepage = http://www.libvirt.org/;
       description = "libvirt Python bindings";
-      license = "LGPLv2";
+      license = pkgs.lib.licenses.lgpl2;
     };
   };
 
