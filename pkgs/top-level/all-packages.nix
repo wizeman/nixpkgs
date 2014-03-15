@@ -1598,6 +1598,8 @@ let
 
   openvpn = callPackage ../tools/networking/openvpn { };
 
+  openvpn_learnaddress = callPackage ../tools/networking/openvpn/openvpn_learnaddress.nix { };
+
   optipng = callPackage ../tools/graphics/optipng { };
 
   oslrd = callPackage ../tools/networking/oslrd { };
@@ -2878,7 +2880,7 @@ let
 
   nvidia_cg_toolkit = callPackage ../development/compilers/nvidia-cg-toolkit { };
 
-  ocaml = ocaml_3_12_1;
+  ocaml = ocamlPackages.ocaml;
 
   ocaml_3_08_0 = callPackage ../development/compilers/ocaml/3.08.0.nix { };
 
@@ -3010,7 +3012,7 @@ let
     opam = opam_1_1;
   };
 
-  ocamlPackages = recurseIntoAttrs ocamlPackages_3_12_1;
+  ocamlPackages = recurseIntoAttrs ocamlPackages_4_01_0;
   ocamlPackages_3_10_0 = mkOcamlPackages ocaml_3_10_0 pkgs.ocamlPackages_3_10_0;
   ocamlPackages_3_11_2 = mkOcamlPackages ocaml_3_11_2 pkgs.ocamlPackages_3_11_2;
   ocamlPackages_3_12_1 = mkOcamlPackages ocaml_3_12_1 pkgs.ocamlPackages_3_12_1;
@@ -7806,6 +7808,8 @@ let
 
     cua = callPackage ../applications/editors/emacs-modes/cua { };
 
+    darcsum = callPackage ../applications/editors/emacs-modes/darcsum { };
+
     # ecb = callPackage ../applications/editors/emacs-modes/ecb { };
 
     jabber = callPackage ../applications/editors/emacs-modes/jabber { };
@@ -10564,6 +10568,12 @@ let
     inherit substituteAll pkgs;
     inherit (stdenv) mkDerivation;
   };
+
+  myEnvRun = import ../build-support/my-env-run {
+    inherit writeScript bash myEnvFun;
+  };
+
+  nix-run = callPackage ../misc/nix-run { };
 
   # patoline requires a rather large ocaml compilation environment.
   # this is why it is build as an environment and not just a normal package.

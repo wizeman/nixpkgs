@@ -1260,6 +1260,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   happstackLite = callPackage ../development/libraries/haskell/happstack/happstack-lite.nix {};
 
+  happstackFastCGI = callPackage ../development/libraries/haskell/happstack/happstack-fastcgi.nix {};
+
   hashable_1_1_2_5 = callPackage ../development/libraries/haskell/hashable/1.1.2.5.nix {};
   hashable_1_2_1_0 = callPackage ../development/libraries/haskell/hashable/1.2.1.0.nix {};
   hashable = self.hashable_1_2_1_0;
@@ -1589,6 +1591,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   lensFamilyCore = callPackage ../development/libraries/haskell/lens-family-core {};
 
   lenses = callPackage ../development/libraries/haskell/lenses {};
+
+  leveldbHaskell = callPackage ../development/libraries/haskell/leveldb-haskell {};
 
   libffi = callPackage ../development/libraries/haskell/libffi {
     libffi = pkgs.libffi;
@@ -2149,6 +2153,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   scottyHastache = callPackage ../development/libraries/haskell/scotty-hastache {};
 
+  scrypt = callPackage ../development/libraries/haskell/scrypt {};
+
   securemem = callPackage ../development/libraries/haskell/securemem {};
 
   sendfile = callPackage ../development/libraries/haskell/sendfile {};
@@ -2192,6 +2198,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   snapLoaderStatic = callPackage ../development/libraries/haskell/snap/loader-static.nix {};
 
   snapServer = callPackage ../development/libraries/haskell/snap/server.nix {};
+
+  snowball = callPackage ../development/libraries/haskell/snowball {};
 
   socks = callPackage ../development/libraries/haskell/socks {};
 
@@ -2569,6 +2577,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   waiMiddlewareStatic = callPackage ../development/libraries/haskell/wai-middleware-static {};
 
   waiTest = callPackage ../development/libraries/haskell/wai-test {};
+
+  waiWebsockets = callPackage ../development/libraries/haskell/wai-websockets {};
 
   warp = callPackage ../development/libraries/haskell/warp {};
 
