@@ -3954,12 +3954,12 @@ let
 
   boolstuff = callPackage ../development/libraries/boolstuff { };
 
-  boost144 = callPackage ../development/libraries/boost/1.44.nix { };
-  boost149 = callPackage ../development/libraries/boost/1.49.nix { };
-  boost155 = callPackage ../development/libraries/boost/1.55.nix { };
+  # all boost versions contain .headers, .libs, and .list containing both
+  boostWrap = callPackage ../development/libraries/boost/header-wrapper.nix { };
+  boost144 = boostWrap (callPackage ../development/libraries/boost/1.44.nix { });
+  boost149 = boostWrap (callPackage ../development/libraries/boost/1.49.nix { });
+  boost155 = boostWrap (callPackage ../development/libraries/boost/1.55.nix { });
   boost = boost155;
-
-  boostHeaders = callPackage ../development/libraries/boost/header-only-wrapper.nix { };
 
   botan = callPackage ../development/libraries/botan { };
 

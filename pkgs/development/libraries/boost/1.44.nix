@@ -58,7 +58,7 @@ stdenv.mkDerivation {
 
   buildPhase = "./bjam -j$NIX_BUILD_CORES -sEXPAT_INCLUDE=${expat}/include -sEXPAT_LIBPATH=${expat}/lib --layout=${finalLayout} variant=${variant} threading=${threading} link=${link} ${cflags} install";
 
-  installPhase = ":";
+  installPhase = ''rm -r "$out/include"'';
 
   patches = [
     # Patch to get rid of following error, experienced by some packages like encfs, bitcoin:

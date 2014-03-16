@@ -1,14 +1,19 @@
-{ stdenv, fetchurl, boost }:
+{ stdenv, fetchurl, buildEnv }: libs:
 
 let
-  version = stdenv.lib.removePrefix "boost-" boost.name;
-  pkgid = stdenv.lib.replaceChars ["-" "."] ["_" "_"] boost.name;
-in
+  version = (builtins.parseDrvName libs.name).version;
+  pkgid = "boost_" + stdenv.lib.replaceChars ["-" "."] ["_" "_"] version;
 
+  boost = (buildEnv {
+    name = "boost-${version}";
+    paths = boost.list;
+  }) // { inherit libs headers; list = [ libs headers ]; };
+
+headers =
 stdenv.mkDerivation {
   name = "boost-headers-${version}";
 
-  src = boost.src;
+  src = libs.src;
 
   phases = [ "installPhase" ];
 
@@ -33,3 +38,6 @@ stdenv.mkDerivation {
     maintainers = [ stdenv.lib.maintainers.viric stdenv.lib.maintainers.simons ];
   };
 }
+
+; in boost
+

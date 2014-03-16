@@ -40,7 +40,7 @@ let
 in
 
 stdenv.mkDerivation {
-  name = "boost-1.49.0";
+  name = "boost-libs-1.49.0";
 
   meta = {
     homepage = "http://boost.org/";
@@ -73,7 +73,7 @@ stdenv.mkDerivation {
 
   buildPhase = "./b2 -j$NIX_BUILD_CORES -sEXPAT_INCLUDE=${expat}/include -sEXPAT_LIBPATH=${expat}/lib --layout=${finalLayout} variant=${variant} threading=${threading} link=${link} ${cflags} install";
 
-  installPhase = ":";
+  installPhase = ''rm -r "$out/include"'';
 
   crossAttrs = rec {
     buildInputs = [ expat.crossDrv zlib.crossDrv bzip2.crossDrv ];
