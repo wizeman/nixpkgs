@@ -15,6 +15,11 @@ stdenv.mkDerivation {
   installPhase = ''
     mkdir -p $out/include
     tar xf $src -C $out/include --strip-components=1 ${pkgid}/boost
+  '' + /* relativize filenames in assert messages to avoid runtime dependency */ ''
+    (
+      cd "$out"
+      find ./include -name '*.hpp' -exec sed '1i#line 1 "{}"' -i '{}' \;
+    )
   '';
 
   preferLocalBuild = true;
