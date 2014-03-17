@@ -158,7 +158,15 @@ let
   # Used by wine, firefox with debugging version of Flash, ...
   pkgsi686Linux = forceSystem "i686-linux" "i386";
 
+  pkgsNative = forceSystem builtins.currentSystem (
+    if builtins.currentSystem == "i686-linux" then "i386"
+    else if builtins.currentSystem == "x86_64-linux" then "x86_64"
+    else throw "Unknown platform name: " + builtins.currentSystem
+  );
+
   callPackage_i686 = lib.callPackageWith (pkgsi686Linux // pkgsi686Linux.xorg);
+
+  callPackage_native = lib.callPackageWith (pkgsNative // pkgsNative.xorg);
 
 
   # For convenience, allow callers to get the path to Nixpkgs.
@@ -10942,7 +10950,7 @@ let
 
   watch = callPackage ../os-specific/linux/procps/watch.nix { };
 
-  qemu_kvm = lowPrio (qemu.override { x86Only = true; });
+  qemu_kvm = lowPrio (callPackage_native ../applications/virtualization/qemu { x86Only = true; });
 
   firmwareLinuxNonfree = callPackage ../os-specific/linux/firmware/firmware-linux-nonfree { };
 
