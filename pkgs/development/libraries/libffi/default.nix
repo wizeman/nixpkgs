@@ -8,9 +8,14 @@ stdenv.mkDerivation rec {
     sha256 = "077ibkf84bvcd6rw1m6jb107br63i2pp301rkmsbgg6300adxp8x";
   };
 
+  patches = [ ./libffi-3.0.13-emutramp_pax_proc.patch ];
+
   buildInputs = stdenv.lib.optional doCheck dejagnu;
 
-  configureFlags = [ "--with-gcc-arch=generic" ]; # no detection of -march= or -mtune=
+  configureFlags = [
+    "--with-gcc-arch=generic" # no detection of -march= or -mtune=
+    "--enable-pax_emutramp"
+  ];
 
   doCheck = stdenv.isLinux; # until we solve dejagnu problems on darwin and expect on BSD
 
