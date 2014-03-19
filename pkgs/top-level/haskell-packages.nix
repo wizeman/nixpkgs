@@ -758,6 +758,10 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   checkers = callPackage ../development/libraries/haskell/checkers {};
 
+  chell = callPackage ../development/libraries/haskell/chell {};
+
+  chellQuickcheck = callPackage ../development/libraries/haskell/chell-quickcheck {};
+
   chunkedData = callPackage ../development/libraries/haskell/chunked-data {};
 
   citeprocHs = callPackage ../development/libraries/haskell/citeproc-hs {};
@@ -999,6 +1003,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   DRBG = callPackage ../development/libraries/haskell/DRBG {};
 
   DSH = callPackage ../development/libraries/haskell/DSH {};
+
+  dsp = callPackage ../development/libraries/haskell/dsp {};
 
   dstring = callPackage ../development/libraries/haskell/dstring {};
 
@@ -1646,6 +1652,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   lushtags = callPackage ../development/libraries/haskell/lushtags {};
 
+  lzmaEnumerator = callPackage ../development/libraries/haskell/lzma-enumerator {};
+
   maccatcher = callPackage ../development/libraries/haskell/maccatcher {};
 
   markdownUnlit = callPackage ../development/libraries/haskell/markdown-unlit {};
@@ -1854,6 +1862,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   opensslStreams = callPackage ../development/libraries/haskell/openssl-streams {};
 
   operational = callPackage ../development/libraries/haskell/operational {};
+
+  options = callPackage ../development/libraries/haskell/options {};
 
   optparseApplicative = callPackage ../development/libraries/haskell/optparse-applicative {};
 
@@ -2376,6 +2386,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   Tensor = callPackage ../development/libraries/haskell/Tensor {};
 
   terminalProgressBar = callPackage ../development/libraries/haskell/terminal-progress-bar {};
+
+  terminalSize = callPackage ../development/libraries/haskell/terminal-size {};
 
   terminfo_0_3_2_6 = callPackage ../development/libraries/haskell/terminfo/0.3.2.6.nix { inherit (pkgs) ncurses; };
   terminfo_0_4_0_0 = callPackage ../development/libraries/haskell/terminfo/0.4.0.0.nix { inherit (pkgs) ncurses; };

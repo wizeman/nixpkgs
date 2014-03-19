@@ -586,6 +586,10 @@ let
 
   enca = callPackage ../tools/text/enca { };
 
+  fasd = callPackage ../tools/misc/fasd {
+    inherit (haskellPackages) pandoc;
+  };
+
   fop = callPackage ../tools/typesetting/fop { };
 
   mcrl = callPackage ../tools/misc/mcrl { };
@@ -850,6 +854,8 @@ let
   dropbear = callPackage ../tools/networking/dropbear { };
 
   dtach = callPackage ../tools/misc/dtach { };
+
+  duo-unix = callPackage ../tools/security/duo-unix { };
 
   duplicity = callPackage ../tools/backup/duplicity {
     inherit (pythonPackages) boto lockfile;
@@ -1872,6 +1878,8 @@ let
   sg3_utils = callPackage ../tools/system/sg3_utils { };
 
   sharutils = callPackage ../tools/archivers/sharutils { };
+  
+  shotwell = callPackage ../applications/graphics/shotwell { };
 
   shebangfix = callPackage ../tools/misc/shebangfix { };
 
@@ -2961,11 +2969,11 @@ let
 
     mlgmp =  callPackage ../development/ocaml-modules/mlgmp { };
 
-    ocaml_batteries = callPackage ../development/ocaml-modules/batteries {
-      camomile = camomile_0_8_2;
-    };
+    ocaml_batteries = callPackage ../development/ocaml-modules/batteries { };
 
     ocaml_cryptgps = callPackage ../development/ocaml-modules/cryptgps { };
+
+    ocaml_data_notation = callPackage ../development/ocaml-modules/odn { };
 
     ocaml_expat = callPackage ../development/ocaml-modules/expat { };
 
@@ -2973,11 +2981,17 @@ let
 
     ocaml_http = callPackage ../development/ocaml-modules/http { };
 
+    ocamlify = callPackage ../development/tools/ocaml/ocamlify { };
+
     ocaml_lwt = callPackage ../development/ocaml-modules/lwt { };
+
+    ocamlmod = callPackage ../development/tools/ocaml/ocamlmod { };
 
     ocaml_mysql = callPackage ../development/ocaml-modules/mysql { };
 
     ocamlnet = callPackage ../development/ocaml-modules/ocamlnet { };
+
+    ocaml_oasis = callPackage ../development/tools/ocaml/oasis { };
 
     ocaml_pcre = callPackage ../development/ocaml-modules/pcre {
       inherit pcre;
@@ -3000,6 +3014,8 @@ let
     };
 
     ocaml_typeconv = callPackage ../development/ocaml-modules/typeconv { };
+
+    ocaml_typeconv_3_0_5 = callPackage ../development/ocaml-modules/typeconv/3.0.5.nix { };
 
     ocaml_sexplib = callPackage ../development/ocaml-modules/sexplib { };
 
@@ -4224,9 +4240,7 @@ let
 
   geoclue2 = callPackage ../development/libraries/geoclue/2.0.nix {};
 
-  geoip = builderDefsPackage ../development/libraries/geoip {
-    inherit zlib;
-  };
+  geoip = callPackage ../development/libraries/geoip { };
 
   geoipjava = callPackage ../development/libraries/java/geoipjava { };
 
@@ -6091,6 +6105,8 @@ let
   ack = perlPackages.ack;
 
   perlcritic = perlPackages.PerlCritic;
+  
+  planetary_annihilation = callPackage ../games/planetaryannihilation { };
 
 
   ### DEVELOPMENT / PYTHON MODULES
@@ -6116,10 +6132,10 @@ let
     python = python33;
   });
 
-  python34Packages = import ./python-packages.nix {
+  python34Packages = recurseIntoAttrs (import ./python-packages.nix {
     inherit pkgs;
     python = python34;
-  };
+  });
 
   python32Packages = import ./python-packages.nix {
     inherit pkgs;
@@ -6591,6 +6607,8 @@ let
   cpufrequtils = callPackage ../os-specific/linux/cpufrequtils { };
 
   cryopid = callPackage ../os-specific/linux/cryopid { };
+
+  criu = callPackage ../os-specific/linux/criu { };
 
   cryptsetup = callPackage ../os-specific/linux/cryptsetup { };
 
@@ -7093,9 +7111,11 @@ let
 
   prayer = callPackage ../servers/prayer { };
 
-  procps = callPackage ../os-specific/linux/procps { };
+  procps = procps-ng;
 
-  "procps-ng" = callPackage ../os-specific/linux/procps-ng { };
+  procps-old = lowPrio (callPackage ../os-specific/linux/procps { });
+
+  procps-ng = callPackage ../os-specific/linux/procps-ng { };
 
   qemu_kvm = lowPrio (qemu.override { x86Only = true; });
 
@@ -7452,6 +7472,8 @@ let
 
   vistafonts = callPackage ../data/fonts/vista-fonts { };
 
+  wqy_microhei = callPackage ../data/fonts/wqy-microhei { };
+
   wqy_zenhei = callPackage ../data/fonts/wqy-zenhei { };
 
   xhtml1 = callPackage ../data/sgml+xml/schemas/xml-dtd/xhtml1 { };
@@ -7502,11 +7524,9 @@ let
 
   antiword = callPackage ../applications/office/antiword {};
 
-  ardour = callPackage ../applications/audio/ardour {
-    inherit (gnome) libgnomecanvas libgnomecanvasmm;
-  };
+  ardour = ardour3;
 
-  ardour3 =  lowPrio (callPackage ../applications/audio/ardour/ardour3.nix {
+  ardour3 =  lowPrio (callPackage ../applications/audio/ardour {
     inherit (gnome) libgnomecanvas libgnomecanvasmm;
   });
 
@@ -9182,6 +9202,8 @@ let
 
   vlc = callPackage ../applications/video/vlc { };
 
+  vmpk = callPackage ../applications/audio/vmpk { };
+
   vnstat = callPackage ../applications/networking/vnstat { };
 
   vorbisTools = callPackage ../applications/audio/vorbis-tools { };
@@ -10568,12 +10590,6 @@ let
     inherit substituteAll pkgs;
     inherit (stdenv) mkDerivation;
   };
-
-  myEnvRun = import ../build-support/my-env-run {
-    inherit writeScript bash myEnvFun;
-  };
-
-  nix-run = callPackage ../misc/nix-run { };
 
   # patoline requires a rather large ocaml compilation environment.
   # this is why it is build as an environment and not just a normal package.
