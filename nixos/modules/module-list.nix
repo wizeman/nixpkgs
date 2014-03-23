@@ -155,6 +155,7 @@
   ./services/networking/avahi-daemon.nix
   ./services/networking/bind.nix
   ./services/networking/bitlbee.nix
+  ./services/networking/btsync.nix
   ./services/networking/connman.nix
   ./services/networking/cntlm.nix
   ./services/networking/chrony.nix
@@ -180,6 +181,7 @@
   ./services/networking/minidlna.nix
   ./services/networking/nat.nix
   ./services/networking/networkmanager.nix
+  ./services/networking/ngircd.nix
   ./services/networking/notbit.nix
   ./services/networking/ntopng.nix
   ./services/networking/ntpd.nix
