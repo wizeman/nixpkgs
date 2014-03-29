@@ -2,17 +2,18 @@
 , pkgconfig, boehmgc, perlPackages
 , storeDir ? "/nix/store"
 , stateDir ? "/nix/var"
+, valgrind
 }:
 
 stdenv.mkDerivation rec {
-  name = "nix-1.6.1";
+  name = "nix-1.7pre3545_034b6f6";
 
   src = fetchurl {
-    url = "http://nixos.org/releases/nix/${name}/${name}.tar.xz";
-    sha256 = "31d15f99b2405924a4be278334cc973a71999303631e6798c1d294db9be4bf84";
+    url = "http://hydra.nixos.org/build/9904026/download/5/nix-1.7pre3545_034b6f6.tar.xz";
+    sha256 = "1rsn4czna649igjy5yp0162mc380fg4q4rcgxgsbp2dv8ahw5hck";
   };
 
-  patches = [ ./hash-check.patch ];
+  #patches = [ ./hash-check.patch ];
 
   nativeBuildInputs = [ perl pkgconfig ];
 
@@ -34,14 +35,21 @@ stdenv.mkDerivation rec {
       --with-www-curl=${perlPackages.WWWCurl}/${perl.libPrefix}
       --disable-init-state
       --enable-gc
-      CFLAGS=-O3 CXXFLAGS=-O3
+      CFLAGS=-ggdb CXXFLAGS=-ggdb
     '';
 
   makeFlags = "profiledir=$(out)/etc/profile.d";
 
   installFlags = "sysconfdir=$(out)/etc";
 
-  doInstallCheck = true;
+  #doInstallCheck = true;
+
+  postInstall = ''
+    export GC_DEBUG=1
+    ${valgrind}/bin/valgrind --trace-children=yes --log-file=%p.log \
+      --suppressions=${./valgrind-suppressions.txt} --read-var-info=yes \
+      make installcheck
+  '';
 
   crossAttrs = {
     postUnpack =
