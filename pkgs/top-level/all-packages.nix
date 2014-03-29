@@ -823,6 +823,8 @@ let
 
   dhcpcd = callPackage ../tools/networking/dhcpcd { };
 
+  dhcpcd_without_udev = callPackage ../tools/networking/dhcpcd { udev = null; };
+
   diffstat = callPackage ../tools/text/diffstat { };
 
   diffutils = callPackage ../tools/text/diffutils { };
@@ -1392,6 +1394,8 @@ let
 
   minecraft = callPackage ../games/minecraft { };
 
+  minecraft-server = callPackage ../games/minecraft-server { };
+
   minetest = callPackage ../games/minetest {
     libpng = libpng12;
   };
@@ -1467,6 +1471,8 @@ let
 
   nbd = callPackage ../tools/networking/nbd { };
 
+  ndjbdns = callPackage ../tools/networking/ndjbdns { };
+
   netatalk = callPackage ../tools/filesystems/netatalk { };
 
   netcdf = callPackage ../development/libraries/netcdf { };
@@ -1524,6 +1530,8 @@ let
   nilfs_utils = callPackage ../tools/filesystems/nilfs-utils {};
 
   nlopt = callPackage ../development/libraries/nlopt {};
+
+  npapi_sdk = callPackage ../development/libraries/npapi-sdk {};
 
   npth = callPackage ../development/libraries/npth {};
 
@@ -1633,6 +1641,12 @@ let
   patchutils = callPackage ../tools/text/patchutils { };
 
   parted = callPackage ../tools/misc/parted { hurd = null; };
+
+  pitivi = callPackage ../applications/video/pitivi {
+    gst = gst_all_1;
+    clutter-gtk = clutter_gtk;
+    inherit (gnome3) gnome_icon_theme gnome_icon_theme_symbolic;
+  };
 
   hurdPartedCross =
     if crossSystem != null && crossSystem.config == "i586-pc-gnu"
@@ -1896,6 +1910,8 @@ let
   silc_server = callPackage ../servers/silc-server { };
 
   silver-searcher = callPackage ../tools/text/silver-searcher { };
+
+  simplescreenrecorder = callPackage ../applications/video/simplescreenrecorder { };
 
   sleuthkit = callPackage ../tools/system/sleuthkit {};
 
@@ -2360,6 +2376,7 @@ let
 
   aspectj = callPackage ../development/compilers/aspectj { };
 
+  ats = callPackage ../development/compilers/ats { };
   ats2 = callPackage ../development/compilers/ats2 { };
 
   avra = callPackage ../development/compilers/avra { };
@@ -2707,6 +2724,18 @@ let
       regexCompat HsSyck random;
   };
 
+  gcc-arm-embedded-4_7 = callPackage_i686 ../development/compilers/gcc-arm-embedded {
+    version = "4.7-2013q3-20130916";
+    releaseType = "update";
+    sha256 = "1bd9bi9q80xn2rpy0rn1vvj70rh15kb7dmah0qs4q2rv78fqj40d";
+  };
+  gcc-arm-embedded-4_8 = callPackage_i686 ../development/compilers/gcc-arm-embedded {
+    version = "4.8-2014q1-20140314";
+    releaseType = "update";
+    sha256 = "ce92859550819d4a3d1a6e2672ea64882b30afa2c08cf67fa8e1d93788c2c577";
+  };
+  gcc-arm-embedded = gcc-arm-embedded-4_8;
+
   # Haskell and GHC
 
   # Import Haskell infrastructure.
@@ -2721,7 +2750,13 @@ let
   # NOTE (recurseIntoAttrs): After discussion, we originally decided to
   # enable it for all GHC versions. However, this is getting too much,
   # particularly in connection with Hydra builds for all these packages.
-  # So we enable it for selected versions only.
+  # So we enable it for selected versions only. We build all ghcs, though
+
+  ghc = recurseIntoAttrs (lib.mapAttrs' (name: value:
+    lib.nameValuePair (builtins.substring (builtins.stringLength "packages_") (builtins.stringLength name) name) value.ghc
+  ) (lib.filterAttrs (name: value:
+    builtins.substring 0 (builtins.stringLength "packages_") name == "packages_"
+  ) haskell));
 
   # Current default version: 7.6.3.
   haskellPackages = haskellPackages_ghc763;
@@ -2783,6 +2818,19 @@ let
 
   gwt240 = callPackage ../development/compilers/gwt/2.4.0.nix { };
 
+  icedtea7_jdk = callPackage ../development/compilers/icedtea rec {
+    jdk = openjdk;
+    jdkPath = "${openjdk}/lib/openjdk";
+  } // { outputs = [ "out" ]; };
+
+  icedtea7_jre = (lib.setName "icedtea7-${lib.getVersion pkgs.icedtea7_jdk.jre}" (lib.addMetaAttrs
+    { description = "Free Java runtime environment based on OpenJDK 7.0 and the IcedTea project"; }
+    pkgs.icedtea7_jdk.jre)) // { outputs = [ "jre" ]; };
+
+  icedtea7_web = callPackage ../development/compilers/icedtea-web {
+    jdk = "${icedtea7_jdk}/lib/icedtea";
+  };
+
   ikarus = callPackage ../development/compilers/ikarus { };
 
   hugs = callPackage ../development/compilers/hugs { };
@@ -2837,10 +2885,15 @@ let
 
   jikes = callPackage ../development/compilers/jikes { };
 
-  julia = callPackage ../development/compilers/julia {
+  juliaGit = callPackage ../development/compilers/julia/git-20131013.nix {
     liblapack = liblapack.override {shared = true;};
     llvm = llvm_33;
   };
+  julia021 = callPackage ../development/compilers/julia/0.2.1.nix {
+    liblapack = liblapack.override {shared = true;};
+    llvm = llvm_33;
+  };
+  julia = julia021;
 
   lazarus = builderDefsPackage (import ../development/compilers/fpc/lazarus.nix) {
     inherit makeWrapper gtk glib pango atk gdk_pixbuf;
@@ -3266,6 +3319,10 @@ let
   perl = if system != "i686-cygwin" then perl516 else sysPerl;
 
   php = php54;
+
+  phpPackages = import ./php-packages.nix {
+    inherit php pkgs;
+  };
 
   php53 = callPackage ../development/interpreters/php/5.3.nix { };
 
@@ -4530,7 +4587,7 @@ let
 
   gts = callPackage ../development/libraries/gts { };
 
-  gvfs = callPackage ../development/libraries/gvfs { };
+  gvfs = callPackage ../development/libraries/gvfs { gconf = gnome.GConf; };
 
   gwenhywfar = callPackage ../development/libraries/gwenhywfar { };
 
@@ -4874,6 +4931,8 @@ let
   libmhash = callPackage ../development/libraries/libmhash {};
 
   libmtp = callPackage ../development/libraries/libmtp { };
+
+  libmsgpack = callPackage ../development/libraries/libmsgpack { };
 
   libnatspec = callPackage ../development/libraries/libnatspec { };
 
@@ -5314,6 +5373,8 @@ let
   mkvtoolnix = callPackage ../applications/video/mkvtoolnix { };
 
   mlt = callPackage ../development/libraries/mlt { };
+
+  mps = callPackage ../development/libraries/mps { };
 
   libmpeg2 = callPackage ../development/libraries/libmpeg2 { };
 
@@ -5911,6 +5972,11 @@ let
     gst-plugins-base = gst_all_1.gst-plugins-base;
   };
 
+  webkitgtk2 = webkitgtk.override {
+    withGtk2 = true;
+    enableIntrospection = false;
+  };
+
   wildmidi = callPackage ../development/libraries/wildmidi { };
 
   wvstreams = callPackage ../development/libraries/wvstreams { };
@@ -6172,6 +6238,8 @@ let
 
   bsddb3 = callPackage ../development/python-modules/bsddb3 { };
 
+  ecdsa = callPackage ../development/python-modules/ecdsa { };
+
   numeric = callPackage ../development/python-modules/numeric { };
 
   pil = pythonPackages.pil;
@@ -6229,6 +6297,8 @@ let
   rbtools = callPackage ../development/python-modules/rbtools { };
 
   setuptools = pythonPackages.setuptools;
+
+  slowaes = callPackage ../development/python-modules/slowaes { };
 
   wxPython = pythonPackages.wxPython;
   wxPython28 = pythonPackages.wxPython28;
@@ -6492,6 +6562,8 @@ let
   });
 
   serfdom = callPackage ../servers/serfdom { };
+
+  seyren = callPackage ../servers/monitoring/seyren { };
 
   shishi = callPackage ../servers/shishi { };
 
@@ -6806,19 +6878,23 @@ let
   # Note: grsec is not enabled automatically, you need to specify which kernel
   # config options you need (e.g. by overriding extraConfig). See list of options here:
   # https://en.wikibooks.org/wiki/Grsecurity/Appendix/Grsecurity_and_PaX_Configuration_Options
-  linux_3_2_grsecurity = lowPrio (lib.overrideDerivation (linux_3_2.override (args: {
+  linux_3_2_grsecurity = lowPrio (lib.addMetaAttrs {
+    maintainers = with lib.maintainers; [ wizeman ];
+  } (lib.overrideDerivation (linux_3_2.override (args: {
     kernelPatches = args.kernelPatches ++ [ kernelPatches.grsecurity_3_0_3_2_55 kernelPatches.grsec_path ];
     argsOverride = {
       modDirVersion = "${linux_3_2.modDirVersion}-grsec";
     };
-  })) (args: grsecurityOverrider args));
+  })) (args: grsecurityOverrider args)));
 
-  linux_3_13_grsecurity = lowPrio (lib.overrideDerivation (linux_3_13.override (args: {
-    kernelPatches = args.kernelPatches ++ [ kernelPatches.grsecurity_3_0_3_13_6 kernelPatches.grsec_path ];
+  linux_3_13_grsecurity = lowPrio (lib.addMetaAttrs {
+    maintainers = with lib.maintainers; [ wizeman ];
+  } (lib.overrideDerivation (linux_3_13.override (args: {
+    kernelPatches = args.kernelPatches ++ [ kernelPatches.grsecurity_3_0_3_13_7 kernelPatches.grsec_path ];
     argsOverride = {
       modDirVersion = "${linux_3_13.modDirVersion}-grsec";
     };
-  })) (args: grsecurityOverrider args));
+  })) (args: grsecurityOverrider args)));
 
   linux_3_2_apparmor = lowPrio (linux_3_2.override {
     kernelPatches = [ kernelPatches.apparmor_3_2 ];
@@ -7780,6 +7856,8 @@ let
 
   ekho = callPackage ../applications/audio/ekho { };
 
+  electrum = callPackage ../applications/misc/electrum { };
+
   elinks = callPackage ../applications/networking/browsers/elinks { };
 
   elvis = callPackage ../applications/editors/elvis { };
@@ -8594,12 +8672,15 @@ let
 
   mpc_cli = callPackage ../applications/audio/mpc { };
 
+  ncmpc = callPackage ../applications/audio/ncmpc { };
+
   ncmpcpp = callPackage ../applications/audio/ncmpcpp { };
 
   normalize = callPackage ../applications/audio/normalize { };
 
   mplayer = callPackage ../applications/video/mplayer {
     pulseSupport = config.pulseaudio or false;
+    vdpauSupport = config.mplayer.vdpauSupport or false;
   };
 
   mplayer2 = callPackage ../applications/video/mplayer2 { };
@@ -8953,6 +9034,10 @@ let
             MathPlanePath Moo IOStringy ClassXSAccessor Wx GrowlGNTP NetDBus;
     perl = perl514;
   };
+
+  curaengine = callPackage ../applications/misc/curaengine { };
+
+  cura = callPackage ../applications/misc/cura { };
 
   slim = callPackage ../applications/display-managers/slim {
     libpng = libpng12;
@@ -9436,6 +9521,8 @@ let
 
   zgrviewer = callPackage ../applications/graphics/zgrviewer {};
 
+  zotero = callPackage ../applications/office/zotero { };
+
   zynaddsubfx = callPackage ../applications/audio/zynaddsubfx { };
 
 
@@ -9580,6 +9667,10 @@ let
   mars = callPackage ../games/mars { };
 
   micropolis = callPackage ../games/micropolis { };
+  
+  mnemosyne = callPackage ../games/mnemosyne { 
+    inherit (pythonPackages) matplotlib cherrypy sqlite3;
+  };
 
   naev = callPackage ../games/naev { };
 
@@ -9735,7 +9826,7 @@ let
   warzone2100 = callPackage ../games/warzone2100 { };
 
   widelands = callPackage ../games/widelands {
-    libpng = libpng12;
+    lua = lua5_1;
   };
 
   worldofgoo_demo = callPackage ../games/worldofgoo {
@@ -10149,6 +10240,7 @@ let
 
   tptp = callPackage ../applications/science/logic/tptp {};
 
+  z3 = callPackage ../applications/science/logic/z3 {};
 
   ### SCIENCE / ELECTRONICS
 

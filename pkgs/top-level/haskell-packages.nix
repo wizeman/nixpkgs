@@ -674,9 +674,9 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   bloomfilter = callPackage ../development/libraries/haskell/bloomfilter {};
 
-  bmp_1_2_2_1 = callPackage ../development/libraries/haskell/bmp/1.2.2.1.nix {};
-  bmp_1_2_5_2 = callPackage ../development/libraries/haskell/bmp/1.2.5.2.nix {};
-  bmp = self.bmp_1_2_2_1;       # the latest version needs a very recent 'binary' library
+  bmp = callPackage ../development/libraries/haskell/bmp {
+    binary = self.binary_0_7_1_0;
+  };
 
   Boolean = callPackage ../development/libraries/haskell/Boolean {};
 
@@ -1452,8 +1452,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   hsloggerTemplate = callPackage ../development/libraries/haskell/hslogger-template {};
 
   hspec = callPackage ../development/libraries/haskell/hspec {
-    QuickCheck = self.QuickCheck_2_7_1;
-    quickcheckIo = self.quickcheckIo.override { QuickCheck = self.QuickCheck_2_7_1; };
+    QuickCheck = self.QuickCheck_2_7_3;
+    quickcheckIo = self.quickcheckIo.override { QuickCheck = self.QuickCheck_2_7_3; };
   };
 
   hspecExpectations = callPackage ../development/libraries/haskell/hspec-expectations {};
@@ -1461,8 +1461,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   hspecExpectationsLens = callPackage ../development/libraries/haskell/hspec-expectations-lens {};
 
   hspecMeta = callPackage ../development/libraries/haskell/hspec-meta {
-    QuickCheck = self.QuickCheck_2_7_1;
-    quickcheckIo = self.quickcheckIo.override { QuickCheck = self.QuickCheck_2_7_1; };
+    QuickCheck = self.QuickCheck_2_7_3;
+    quickcheckIo = self.quickcheckIo.override { QuickCheck = self.QuickCheck_2_7_3; };
   };
 
   hstatsd = callPackage ../development/libraries/haskell/hstatsd {};
@@ -2058,14 +2058,16 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   QuickCheck_2_4_2 = callPackage ../development/libraries/haskell/QuickCheck/2.4.2.nix {};
   QuickCheck_2_5_1_1 = callPackage ../development/libraries/haskell/QuickCheck/2.5.1.1.nix {};
   QuickCheck_2_6 = callPackage ../development/libraries/haskell/QuickCheck/2.6.nix {};
-  QuickCheck_2_7_1 = callPackage ../development/libraries/haskell/QuickCheck/2.7.1.nix {};
+  QuickCheck_2_7_3 = callPackage ../development/libraries/haskell/QuickCheck/2.7.3.nix {};
   QuickCheck1 = self.QuickCheck_1_2_0_1;
   QuickCheck2 = self.QuickCheck_2_6;
   QuickCheck  = self.QuickCheck2;
 
   quickcheckAssertions = callPackage ../development/libraries/haskell/quickcheck-assertions {};
 
-  quickcheckInstances = callPackage ../development/libraries/haskell/quickcheck-instances {};
+  quickcheckInstances = callPackage ../development/libraries/haskell/quickcheck-instances {
+    QuickCheck = self.QuickCheck_2_7_3;
+  };
 
   quickcheckIo = callPackage ../development/libraries/haskell/quickcheck-io {};
 
@@ -2389,7 +2391,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   tastyHunit = callPackage ../development/libraries/haskell/tasty-hunit {};
 
   tastyQuickcheck = callPackage ../development/libraries/haskell/tasty-quickcheck {
-    QuickCheck = self.QuickCheck_2_7_1;
+    QuickCheck = self.QuickCheck_2_7_3;
   };
 
   tastyRerun = callPackage ../development/libraries/haskell/tasty-rerun {};
@@ -2479,8 +2481,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   timeCompat = callPackage ../development/libraries/haskell/time-compat {};
 
   tls_1_1_5 = callPackage ../development/libraries/haskell/tls/1.1.5.nix {};
-  tls_1_2_3 = callPackage ../development/libraries/haskell/tls/1.2.3.nix {};
-  tls = self.tls_1_2_3;
+  tls_1_2_6 = callPackage ../development/libraries/haskell/tls/1.2.6.nix {};
+  tls = self.tls_1_2_6;
 
   tlsExtra = callPackage ../development/libraries/haskell/tls-extra {
     tls = self.tls_1_1_5;
@@ -2875,6 +2877,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
 
   nc-indicators = callPackage ../applications/misc/nc-indicators {};
 
+  sloane = callPackage ../applications/science/math/sloane {};
+
   taffybar = callPackage ../applications/misc/taffybar {};
 
   yi = callPackage ../applications/editors/yi/yi.nix {};
@@ -2907,7 +2911,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
           | grep -v FILTERME | sed \
             -e 's/licenses.proprietary/licenses.unfree/' \
             -e 's/{ cabal/{ cabal, src/' \
-            -e 's/pname = \([^\n]*\)/pname = \1\n  inherit src;/'  > $out
+            -e 's/pname = \([^\n]*\)/pname = \1\n  inherit src;\n  jailbreak = true;/'  > $out
       '';
     };
   in callPackage cabalExpr { inherit src; };
@@ -2930,7 +2934,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.finalReturn x
   cabalInstall = self.cabalInstall_1_18_0_3;
 
   gitAnnex = callPackage ../applications/version-management/git-and-tools/git-annex {
-    hS3 = self.hS3.override { Crypto = self.Crypto.override { QuickCheck = self.QuickCheck_2_7_1; }; };
+    hS3 = self.hS3.override { Crypto = self.Crypto.override { QuickCheck = self.QuickCheck_2_7_3; }; };
   };
 
   githubBackup = callPackage ../applications/version-management/git-and-tools/github-backup {};

@@ -4,7 +4,9 @@
   /* Add your name and email address here.  Keep the list
      alphabetically sorted.  */
 
+  _1126 = "Christian Lask <mail@elfsechsundzwanzig.de>";
   aforemny = "Alexander Foremny <alexanderforemny@googlemail.com>";
+  akc = "Anders Claesson <akc@akc.is>";
   algorith = "Dries Van Daele <dries_van_daele@telenet.be>";
   all = "Nix Committers <nix-commits@lists.science.uu.nl>";
   amiddelk = "Arie Middelkoop <amiddelk@gmail.com>";
@@ -35,6 +37,7 @@
   ianwookim = "Ian-Woo Kim <ianwookim@gmail.com>";
   iElectric = "Domen Kozar <domen@dev.si>";
   iyzsong = "Song Wenwu <iyzsong@gmail.com>";
+  JagaJaga = "Arseniy Seroka <ars.seroka@gmail.com>";
   jcumming = "Jack Cummings <jack@mudshark.org>";
   kkallio = "Karn Kallio <tierpluspluslists@gmail.com>";
   ktosiek = "Tomasz Kontusz <tomasz.kontusz@gmail.com>";
@@ -59,6 +62,7 @@
   pSub = "Pascal Wittmann <mail@pascal-wittmann.de>";
   qknight = "Joachim Schiele <js@lastlog.de>";
   raskin = "Michael Raskin <7c6f434c@mail.ru>";
+  redbaron = "Maxim Ivanov <ivanov.maxim@gmail.com>";
   rickynils = "Rickard Nilsson <rickynils@gmail.com>";
   rob = "Rob Vermaas <rob.vermaas@gmail.com>";
   roconnor = "Russell O'Connor <roconnor@theorem.ca>";
