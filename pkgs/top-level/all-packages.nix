@@ -6855,13 +6855,15 @@ let
   libnl = callPackage ../os-specific/linux/libnl { };
   libnl_3_2_19 = callPackage ../os-specific/linux/libnl/3.2.19.nix { };
 
-  linuxHeaders = linuxHeaders37;
+  linuxHeaders = linuxHeaders310;
 
   linuxConsoleTools = callPackage ../os-specific/linux/consoletools { };
 
   linuxHeaders26 = callPackage ../os-specific/linux/kernel-headers/2.6.32.nix { };
 
   linuxHeaders37 = callPackage ../os-specific/linux/kernel-headers/3.7.nix { };
+
+  linuxHeaders310 = callPackage ../os-specific/linux/kernel-headers/3.10.nix { };
 
   linuxHeaders26Cross = forceNativeDrv (import ../os-specific/linux/kernel-headers/2.6.32.nix {
     inherit stdenv fetchurl perl;
