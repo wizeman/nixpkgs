@@ -14,7 +14,7 @@ let lib = import ../../../lib; in lib.makeOverridable (
 
 let
 
-  allowUnfree = config.allowUnfree or true && builtins.getEnv "HYDRA_DISALLOW_UNFREE" != "1";
+  allowUnfree = config.allowUnfree or false && builtins.getEnv "HYDRA_DISALLOW_UNFREE" != "1";
 
   allowBroken = builtins.getEnv "NIXPKGS_ALLOW_BROKEN" == "1";
 
@@ -58,7 +58,8 @@ let
           pos' = if pos != null then "‘" + pos.file + ":" + toString pos.line + "’" else "«unknown-file»";
         in
         if !allowUnfree && (let l = lib.lists.toList attrs.meta.license or []; in lib.lists.elem "unfree" l || lib.lists.elem "unfree-redistributable" l) then
-          throw "package ‘${attrs.name}’ in ${pos'} has an unfree license, refusing to evaluate"
+          throw ("package ‘${attrs.name}’ in ${pos'} has an unfree license, refusing to evaluate."
+            + "\nYou can override this by setting ‘allowUnfree = true;’ in your configuration.")
         else if !allowBroken && attrs.meta.broken or false then
           throw "you can't use package ‘${attrs.name}’ in ${pos'} because it has been marked as broken"
         else if !allowBroken && attrs.meta.platforms or null != null && !lib.lists.elem result.system attrs.meta.platforms then
