@@ -6855,7 +6855,7 @@ let
   libnl = callPackage ../os-specific/linux/libnl { };
   libnl_3_2_19 = callPackage ../os-specific/linux/libnl/3.2.19.nix { };
 
-  linuxHeaders = linuxHeaders310;
+  linuxHeaders = linuxHeaders37;
 
   linuxConsoleTools = callPackage ../os-specific/linux/consoletools { };
 
@@ -7283,7 +7283,9 @@ let
 
   sysstat = callPackage ../os-specific/linux/sysstat { };
 
-  systemd = callPackage ../os-specific/linux/systemd { };
+  systemd = callPackage ../os-specific/linux/systemd {
+    linuxHeaders = linuxHeaders310;
+  };
 
   systemtap = callPackage ../development/tools/profiling/systemtap {
     inherit (gnome) libglademm;
