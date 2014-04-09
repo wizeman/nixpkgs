@@ -6859,6 +6859,10 @@ let
 
   linuxConsoleTools = callPackage ../os-specific/linux/consoletools { };
 
+  linuxHeaders26 = callPackage ../os-specific/linux/kernel-headers/2.6.32.nix { };
+
+  linuxHeaders37 = callPackage ../os-specific/linux/kernel-headers/3.7.nix { };
+
   linuxHeaders310 = callPackage ../os-specific/linux/kernel-headers/3.10.nix { };
 
   linuxHeaders26Cross = forceNativeDrv (import ../os-specific/linux/kernel-headers/2.6.32.nix {
@@ -6878,6 +6882,8 @@ let
 
   linuxHeadersCross = assert crossSystem != null;
     linuxHeadersCrossChooser crossSystem.platform.kernelMajor;
+
+  linuxHeaders_2_6_28 = callPackage ../os-specific/linux/kernel-headers/2.6.28.nix { };
 
   kernelPatches = callPackage ../os-specific/linux/kernel/patches.nix { };
 
