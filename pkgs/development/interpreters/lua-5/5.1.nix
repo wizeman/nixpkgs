@@ -18,7 +18,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ readline ];
 
-  patches = [ dsoPatch ];
+  patches = [ dsoPatch ]
+    ++ stdenv.lib.optional stdenv.isDarwin ./51-darwin-link.patch;
 
   configurePhase = ''
     makeFlagsArray=( INSTALL_TOP=$out INSTALL_MAN=$out/share/man/man1 PLAT=linux CFLAGS="-DLUA_USE_LINUX -O2 -fPIC" LDLAGS="-fPIC" )
