@@ -9303,6 +9303,12 @@ let
     conf = config.st.conf or null;
   };
 
+  sweetHome3d = recurseIntoAttrs (  (callPackage ../applications/misc/sweethome3d { })
+                                 // (callPackage ../applications/misc/sweethome3d/editors.nix {
+                                      sweethome3dApp = sweetHome3d.application;
+                                    })
+                                 );
+
   sxiv = callPackage ../applications/graphics/sxiv { };
 
   bittorrentSync = callPackage ../applications/networking/bittorrentsync { };
