@@ -108,7 +108,7 @@ else stdenv.mkDerivation {
 
   # If set, prefer the content-addressable mirrors
   # (http://tarballs.nixos.org) over the original URLs.
-  preferHashedMirrors = true;
+  preferHashedMirrors = false; # This causes failures when tarballs.nixos.org misbehaves.
 
   # New-style output content requirements.
   outputHashAlgo = if outputHashAlgo != "" then outputHashAlgo else
