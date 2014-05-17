@@ -13,7 +13,6 @@ rec {
   zathura_pdf_poppler = callPackage ./pdf-poppler { };
 
   zathura_pdf_mupdf = callPackage ./pdf-mupdf {
-    inherit fetchpatch;
     gtk = pkgs.gtk3;
   };
 
