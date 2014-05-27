@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, m4, perl }:
+{ stdenv, fetchurl, m4, perl, autoconf }:
 
 stdenv.mkDerivation rec {
   name = "bison-2.7";
@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
     sha256 = "0cd8s2g7zjshya7kwjc9rh3drsssl4hiq4sccnkgf0nn9wvygfqr";
   };
 
-  nativeBuildInputs = [ m4 ] ++ stdenv.lib.optional doCheck perl;
+  nativeBuildInputs = [ m4 ] ++ stdenv.lib.optionals doCheck [ perl autoconf ];
   propagatedBuildInputs = [ m4 ];
 
   doCheck = true;
