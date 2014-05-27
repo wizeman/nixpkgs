@@ -1,10 +1,10 @@
-{stdenv, fetchurl, fetchcvs, makeWrapper, makeDesktopItem, jdk, jre, ant, p7zip
+{ stdenv, fetchurl, fetchcvs, makeWrapper, makeDesktopItem, jdk, jre, ant, p7zip
 , sweethome3dApp }:
 
 let
 
   mkEditorProject =
-  {name, module, version, src, license, description}:
+  { name, module, version, src, license, description }:
 
   stdenv.mkDerivation rec {
     application = sweethome3dApp;
@@ -31,10 +31,10 @@ let
     installPhase = ''
       mkdir -p $out/bin
       mkdir -p $out/share/{java,applications}
-      cp $name.jar $out/share/java/.
+      cp ${module}-${version}.jar $out/share/java/.
       cp ${editorItem}/share/applications/* $out/share/applications
       makeWrapper ${jre}/bin/java $out/bin/$exec \
-        --add-flags "-jar $out/share/java/$name.jar -Xmx1024m"
+        --add-flags "-jar $out/share/java/${module}-${version}.jar -Xmx1024m"
     '';
 
     dontStrip = true;
@@ -53,10 +53,10 @@ let
 
 in rec {
 
-  texturesLibraryEditor = mkEditorProject rec {
+  textures-editor = mkEditorProject rec {
     version = "1.3";
     module = "TexturesLibraryEditor";
-    name = "${module}-${version}";
+    name = "sweethome3d-textures-editor-${version}";
     description = "Easily create SH3T files and edit the properties of the texture images it contain.";
     license = stdenv.lib.licenses.gpl2Plus;
     src = fetchcvs {
@@ -67,10 +67,10 @@ in rec {
     };
   };
 
-  furnitureLibraryEditor = mkEditorProject rec {
+  furniture-editor = mkEditorProject rec {
     version = "1.13";
     module = "FurnitureLibraryEditor";
-    name = "${module}-${version}";
+    name = "sweethome3d-furniture-editor-${version}";
     description = "Quickly create SH3F files and edit the properties of the 3D models it contain.";
     license = stdenv.lib.licenses.gpl2;
     src = fetchcvs {

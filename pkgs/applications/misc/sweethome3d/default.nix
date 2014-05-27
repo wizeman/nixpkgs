@@ -1,9 +1,9 @@
-{stdenv, fetchurl, fetchcvs, makeWrapper, makeDesktopItem, jdk, jre, ant, p7zip}:
+{ stdenv, fetchurl, fetchcvs, makeWrapper, makeDesktopItem, jdk, jre, ant, p7zip }:
 
 let
 
   mkSweetHome3D =
-  { name, module, version, src, license, description}:
+  { name, module, version, src, license, description }:
 
   stdenv.mkDerivation rec {
     inherit name version src description;
@@ -27,10 +27,10 @@ let
 
     installPhase = ''
       mkdir -p $out/bin
-      cp install/$name.jar $out/share/java/.
+      cp install/${module}-${version}.jar $out/share/java/.
       cp ${sweethome3dItem}/share/applications/* $out/share/applications
       makeWrapper ${jre}/bin/java $out/bin/$exec \
-        --add-flags "-jar $out/share/java/$name.jar -Xmx1024m -cp $out/share/java/Furniture.jar:$out/share/java/Textures.jar:$out/share/java/Help.jar"
+        --add-flags "-jar $out/share/java/${module}-${version}.jar -Xmx1024m -cp $out/share/java/Furniture.jar:$out/share/java/Textures.jar:$out/share/java/Help.jar"
     '';
 
     dontStrip = true;
@@ -51,7 +51,7 @@ in rec {
   application = mkSweetHome3D rec {
     version = "4.3.1";
     module = "SweetHome3D";
-    name = "${module}-${version}";
+    name = "sweethome3d-${version}";
     description = "Design and visualize your future home.";
     license = stdenv.lib.licenses.gpl2Plus;
     src = fetchcvs {
