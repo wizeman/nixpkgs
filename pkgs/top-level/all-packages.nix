@@ -25,6 +25,7 @@
   # outside of the store.  Thus, GCC, GFortran, & co. must always look for
   # files in standard system directories (/usr/include, etc.)
   noSysDirs ? (system != "x86_64-darwin"
+               && system != "x86_64-solaris"
                && system != "x86_64-freebsd" && system != "i686-freebsd"
                && system != "x86_64-kfreebsd-gnu")
 
@@ -1226,6 +1227,8 @@ let
 
   haproxy = callPackage ../tools/networking/haproxy { };
 
+  haproxy_1_5 = callPackage ../tools/networking/haproxy/1.5.nix { };
+
   haveged = callPackage ../tools/security/haveged { };
 
   hardlink = callPackage ../tools/system/hardlink { };
@@ -2125,6 +2128,8 @@ let
 
   tinc = callPackage ../tools/networking/tinc { };
 
+  tinc_1_1 = callPackage ../tools/networking/tinc/1.1-git.nix { };
+
   tiny8086 = callPackage ../applications/virtualization/8086tiny { };
 
   tmpwatch = callPackage ../tools/misc/tmpwatch  { };
@@ -2691,7 +2696,7 @@ let
     inherit noSysDirs;
 
     # PGO seems to speed up compilation by gcc by ~10%, see #445 discussion
-    profiledCompiler = with stdenv; (!isDarwin && (isi686 || isx86_64));
+    profiledCompiler = with stdenv; (!isSunOS && !isDarwin && (isi686 || isx86_64));
 
     # When building `gcc.crossDrv' (a "Canadian cross", with host == target
     # and host != build), `cross' must be null but the cross-libc must still
