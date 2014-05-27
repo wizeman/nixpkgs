@@ -19,13 +19,13 @@ rec {
   inherit buildInputs;
   configureFlags = [
     ''--with-mountutildir="$out/sbin"''
-    (stdenv.lib.optionalString stdenv.isSunOS "--disable-fusermount")
-    ];
+    ]
+    ++ stdenv.lib.optional stdenv.isSunOS "--disable-fusermount";
   src = fetchurl {
     inherit (s) url sha256;
   };
 
-  patches = stdenv.lib.optional stdenv.isSunOS [./disable-non-std-dir-testing.diff];
+  patches = stdenv.lib.optional stdenv.isSunOS ./disable-non-std-dir-testing.diff;
 
   preConfigure = stdenv.lib.optionalString stdenv.isSunOS ''
     find . -name \*.c -or -name \*.h -exec sed -i \
