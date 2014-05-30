@@ -45,7 +45,7 @@ in rec {
 
         (all nixos.iso_minimal)
         (all nixos.iso_graphical)
-        (all nixos.ova)
+        #(all nixos.ova)
 
         #(all nixos.tests.containers)
         (all nixos.tests.chromium)
