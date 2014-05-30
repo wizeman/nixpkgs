@@ -55,7 +55,7 @@ in rec {
         nixos.iso_minimal.x86_64-linux or []
         nixos.iso_minimal.i686-linux or []
         nixos.iso_graphical.x86_64-linux or []
-        nixos.ova.x86_64-linux or []
+        #nixos.ova.x86_64-linux or []
 
         #(all nixos.tests.containers)
         (all nixos.tests.containers-imperative)
