@@ -8,7 +8,7 @@ die(){ echo $@; exit 1; }
 
 # custom unpack:
 unzip $src
-run_file=$(echo amd-catalyst-*)
+run_file=$(echo fglrx-*/amd-*.run)
 sh $run_file --extract .
 
 eval "$patchPhase"
