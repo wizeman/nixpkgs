@@ -20,6 +20,11 @@ stdenv.mkDerivation rec {
   # To overcome the bug https://bugzilla.novell.com/show_bug.cgi?id=644723
   dontDisableStatic = true;
 
+  preConfigure = ''
+    # For PaX kernels:
+    sed '/exec "/ i\paxctl -c -zex -mr "$r/@mono_runtime@"' -i runtime/mono-wrapper.in
+  '';
+
   # In fact I think this line does not help at all to what I
   # wanted to achieve: have mono to find libgdiplus automatically
   configureFlags = "--x-includes=${libX11}/include --x-libraries=${libX11}/lib --with-libgdiplus=${libgdiplus}/lib/libgdiplus.so ${llvmOpts}";
