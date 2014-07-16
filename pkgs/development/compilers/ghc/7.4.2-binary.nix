@@ -73,6 +73,17 @@ stdenv.mkDerivation rec {
   # calls install-strip ...
   buildPhase = "true";
 
+  preInstall =
+    ''
+      # ghci uses mmap with rwx protection at it implements dynamic
+      # linking on its own. See:
+      # - https://bugs.gentoo.org/show_bug.cgi?id=299709
+      # - https://ghc.haskell.org/trac/ghc/ticket/4244
+      # Therefore, we have to pax-mark the resulting binary.
+      # Haddock also seems to run with ghci, so mark it as well.
+      paxmark m ghc/stage2/build/tmp/ghc-stage2
+    '';
+
   postInstall =
       ''
         # Sanity check, can ghc create executables?
