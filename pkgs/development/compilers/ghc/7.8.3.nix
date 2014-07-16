@@ -1,6 +1,13 @@
 { stdenv, fetchurl, ghc, perl, gmp, ncurses }:
 
-stdenv.mkDerivation rec {
+let
+  # The "-Wa,--noexecstack" options might be needed only with GNU ld (as opposed
+  # to the gold linker). It prevents binaries' stacks from being marked as
+  # executable, which fails to run on a grsecurity/PaX kernel.
+  ghcFlags = "-optc-Wa,--noexecstack -opta-Wa,--noexecstack";
+  cFlags = "-Wa,--noexecstack";
+
+in stdenv.mkDerivation rec {
   version = "7.8.3";
   name = "ghc-${version}";
 
@@ -17,11 +24,20 @@ stdenv.mkDerivation rec {
     libraries/integer-gmp_CONFIGURE_OPTS += --configure-option=--with-gmp-libraries="${gmp}/lib"
     libraries/integer-gmp_CONFIGURE_OPTS += --configure-option=--with-gmp-includes="${gmp}/include"
     DYNAMIC_BY_DEFAULT = NO
+  '' + stdenv.lib.optionalString stdenv.isLinux ''
+    # Set ghcFlags for building ghc itself
+    SRC_HC_OPTS += ${ghcFlags}
+    SRC_CC_OPTS += ${cFlags}
   '';
 
   preConfigure = ''
     echo "${buildMK}" > mk/build.mk
     sed -i -e 's|-isysroot /Developer/SDKs/MacOSX10.5.sdk||' configure
+
+  '' + stdenv.lib.optionalString stdenv.isLinux ''
+    # Set ghcFlags for binaries that ghc builds
+    sed -i -e 's|"\$topdir"|"\$topdir" ${ghcFlags}|' ghc/ghc.wrapper
+
   '' + stdenv.lib.optionalString (!stdenv.isDarwin) ''
     export NIX_LDFLAGS="$NIX_LDFLAGS -rpath $out/lib/ghc-${version}"
   '';
