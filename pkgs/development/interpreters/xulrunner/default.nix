@@ -69,6 +69,12 @@ stdenv.mkDerivation rec {
       configureScript=../mozilla-release/configure
     '';
 
+  preInstall =
+    ''
+      # The following is needed for startup cache creation on grsecurity kernels.
+      paxmark m ../objdir/dist/bin/xpcshell
+    '';
+
   meta = {
     description = "Mozilla Firefox XUL runner";
     homepage = http://www.mozilla.com/en-US/firefox/;
