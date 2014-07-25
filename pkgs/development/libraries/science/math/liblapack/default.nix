@@ -1,47 +1,47 @@
-{ stdenv, fetchurl, gfortran, atlas, cmake, python, shared ? false }:
+{ stdenv, fetchurl, gfortran, blas, cmake, python, shared ? false }:
 let
-  atlasMaybeShared = atlas.override { inherit shared; };
-  usedLibExtension = if shared then ".so" else ".a";
+  blasMS = blas; #.override { inherit shared; }; # currently provides both by default
+  version = "3.5.0";
 in
 stdenv.mkDerivation {
-  name = "liblapack-3.4.1";
+  name = "liblapack-${version}";
   src = fetchurl {
-    url = "http://www.netlib.org/lapack/lapack-3.4.1.tgz";
-    sha256 = "93b910f94f6091a2e71b59809c4db4a14655db527cfc5821ade2e8c8ab75380f";
+    url = "http://www.netlib.org/lapack/lapack-${version}.tgz";
+    sha256 = "0lk3f97i9imqascnlf6wr5mjpyxqcdj73pgj97dj2mgvyg9z1n4s";
   };
 
-  propagatedBuildInputs = [ atlasMaybeShared ];
+  propagatedBuildInputs = [ blasMS ];
   buildInputs = [ gfortran cmake ];
   nativeBuildInputs = [ python ];
 
-  cmakeFlags = [
-    "-DUSE_OPTIMIZED_BLAS=ON"
-    "-DBLAS_ATLAS_f77blas_LIBRARY=${atlasMaybeShared}/lib/libf77blas${usedLibExtension}"
-    "-DBLAS_ATLAS_atlas_LIBRARY=${atlasMaybeShared}/lib/libatlas${usedLibExtension}"
-    "-DCMAKE_Fortran_FLAGS=-fPIC"
-  ]
-  ++ (stdenv.lib.optional shared "-DBUILD_SHARED_LIBS=ON")
-  ;
+  # not a standard cmakeFlags list because of a space in cmake var
+  # -frecursive: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=693269
+  preConfigure = ''
+    cmakeFlagsArray=(
+      "-DUSE_OPTIMIZED_BLAS=ON"
+      "-DCMAKE_Fortran_FLAGS=-frecursive -fPIC"
+      ${stdenv.lib.optionalString shared ''"-DBUILD_SHARED_LIBS=ON"''}
+    )
+  '';
 
-  doCheck = ! shared;
-
-  checkPhase = "
+  doCheck = false; # all tests fail on shared, and also -frecursive is problem for tests
+  checkPhase = ''
     sed -i 's,^#!.*,#!${python}/bin/python,' lapack_testing.py
     ctest
-  ";
+  '';
 
   enableParallelBuilding = true;
 
   passthru = {
-    blas = atlas;
+    blas = blasMS;
   };
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "Linear Algebra PACKage";
     homepage = "http://www.netlib.org/lapack/";
-    license = "revised-BSD";
+    license = licenses.bsd3; # possibly slightly revised
 
-    platforms = stdenv.lib.platforms.all;
-    maintainers = [ stdenv.lib.maintainers.simons ];
+    platforms = platforms.all;
+    maintainers = [ maintainers.simons ];
   };
 }

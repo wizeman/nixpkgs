@@ -10690,7 +10690,7 @@ let
     tolerateCpuTimingInaccuracy = true;
   };
 
-  blas = blas_original; # the default libblas.so.3 provider
+  blas = blas_original; # the default libblas.{so.3,a} provider
   blas_original = callPackage ../development/libraries/science/math/blas { };
 
   content = builderDefsPackage ../applications/science/math/content {
@@ -10701,7 +10701,8 @@ let
 
   jags = callPackage ../applications/science/math/jags { };
 
-  liblapack = callPackage ../development/libraries/science/math/liblapack { };
+  liblapack = liblapack_original; # the default liblapack.{so,a} provider
+  liblapack_original = callPackage ../development/libraries/science/math/liblapack { };
 
   liblbfgs = callPackage ../development/libraries/science/math/liblbfgs { };
 
