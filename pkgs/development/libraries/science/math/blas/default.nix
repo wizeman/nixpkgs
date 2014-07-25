@@ -3,7 +3,10 @@
 stdenv.mkDerivation {
   name = "blas-20110419";
   src = fetchurl {
-    url = "http://www.netlib.org/blas/blas.tgz";
+    urls = [
+      "http://www.netlib.org/blas/blas.tgz" # didn't work at some point
+      "http://ftp.cc.uoc.gr/mirrors/OpenBSD/distfiles/blas-1.0/blas.tgz"
+    ];
     sha256 = "1d931d91byv2svydpj2ipjh1f2sm1h9ns8ik2w5fwaa8qinxz1za";
   };
 
@@ -44,9 +47,10 @@ stdenv.mkDerivation {
     ln -s libblas.so.3.0.3 "$out/lib/libblas.so"
   '';
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "Basic Linear Algebra Subprograms";
-    license = "public domain";
+    license = licenses.publicDomain;
     homepage = "http://www.netlib.org/blas/";
+    platforms = platforms.all;
   };
 }
