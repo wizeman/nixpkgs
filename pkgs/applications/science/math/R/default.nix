@@ -1,7 +1,7 @@
 { stdenv, fetchurl, blas, bzip2, gfortran, liblapack, libX11, libXmu, libXt
 , libjpeg, libpng, libtiff, ncurses, pango, pcre, perl, readline, tcl
 , texLive, tk, xz, zlib, less, texinfo, graphviz, icu, pkgconfig, bison
-, imake, which, jdk, atlas
+, imake, which, jdk
 , withRecommendedPackages ? true
 }:
 
@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ blas bzip2 gfortran liblapack libX11 libXmu libXt
     libXt libjpeg libpng libtiff ncurses pango pcre perl readline tcl
     texLive tk xz zlib less texinfo graphviz icu pkgconfig bison imake
-    which jdk atlas
+    which jdk
   ];
 
   patches = [ ./no-usr-local-search-paths.patch ];
@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
     configureFlagsArray=(
       --disable-lto
       --with${stdenv.lib.optionalString (!withRecommendedPackages) "out"}-recommended-packages
-      --with-blas="-L${atlas}/lib -lf77blas -latlas"
+      --with-blas="-L${blas}/lib -lblas"
       --with-lapack="-L${liblapack}/lib -llapack"
       --with-readline
       --with-tcltk --with-tcl-config="${tcl}/lib/tclConfig.sh" --with-tk-config="${tk}/lib/tkConfig.sh"
@@ -43,9 +43,7 @@ stdenv.mkDerivation rec {
       AWK=$(type -p gawk)
       CC=$(type -p gcc)
       CXX=$(type -p g++)
-      FC="${gfortran}/bin/gfortran" F77="${gfortran}/bin/gfortran"
       JAVA_HOME="${jdk}"
-      LDFLAGS="-L${gfortran.gcc}/lib"
       RANLIB=$(type -p ranlib)
       R_SHELL="${stdenv.shell}"
     )
@@ -60,10 +58,10 @@ stdenv.mkDerivation rec {
 
   setupHook = ./setup-hook.sh;
 
-  meta = {
+  meta = with stdenv.lib; {
     homepage = "http://www.r-project.org/";
     description = "Free software environment for statistical computing and graphics";
-    license = stdenv.lib.licenses.gpl2Plus;
+    license = licenses.gpl2Plus;
 
     longDescription = ''
       GNU R is a language and environment for statistical computing and
@@ -84,7 +82,7 @@ stdenv.mkDerivation rec {
       user-defined recursive functions and input and output facilities.
     '';
 
-    hydraPlatforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.simons ];
+    hydraPlatforms = platforms.all;
+    maintainers = [ maintainers.simons ];
   };
 }
