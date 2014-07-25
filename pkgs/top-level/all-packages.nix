@@ -10690,7 +10690,8 @@ let
     tolerateCpuTimingInaccuracy = true;
   };
 
-  blas = callPackage ../development/libraries/science/math/blas { };
+  blas = blas_original; # the default libblas.so.3 provider
+  blas_original = callPackage ../development/libraries/science/math/blas { };
 
   content = builderDefsPackage ../applications/science/math/content {
     inherit mesa lesstif;
