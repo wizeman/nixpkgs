@@ -2,12 +2,14 @@
 
 rec {
 
-  # Run the shell command `buildCommand' to produce a store path named
-  # `name'.  The attributes in `env' are added to the environment
+  # Run the shell command `buildCommand' to produce a store path named `name'.
+  # The attributes in `env' are added to the environment
   # prior to running the command.
+  # It is meant mainly for trivial commands, so preferLocalBuild = true;
   runCommand = name: env: buildCommand:
     stdenv.mkDerivation ({
       inherit name buildCommand;
+      preferLocalBuild = true;
     } // env);
 
 
@@ -18,11 +20,7 @@ rec {
     , executable ? false # run chmod +x ?
     , destination ? ""   # relative path appended to $out eg "/bin/foo"
     }:
-    runCommand name
-      { inherit text executable;
-        # Pointless to do this on a remote machine.
-        preferLocalBuild = true;
-      }
+    runCommand name { inherit text executable; }
       ''
         n=$out${destination}
         mkdir -p "$(dirname "$n")"
