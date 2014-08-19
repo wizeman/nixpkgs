@@ -12,13 +12,13 @@ let
 
   makeUnit = name: unit:
     if unit.enable then
-      pkgs.runCommand "unit" { preferLocalBuild = true; inherit (unit) text; }
+      pkgs.runCommand "unit" { inherit (unit) text; }
         ''
           mkdir -p $out
           echo -n "$text" > $out/${shellEscape name}
         ''
     else
-      pkgs.runCommand "unit" { preferLocalBuild = true; }
+      pkgs.runCommand "unit" { }
         ''
           mkdir -p $out
           ln -s /dev/null $out/${shellEscape name}
@@ -374,7 +374,7 @@ let
     };
 
   generateUnits = type: units: upstreamUnits: upstreamWants:
-    pkgs.runCommand "${type}-units" { preferLocalBuild = true; } ''
+    pkgs.runCommand "${type}-units" { } ''
       mkdir -p $out
 
       # Copy the upstream systemd units we're interested in.
