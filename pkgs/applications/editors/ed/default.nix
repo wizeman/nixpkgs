@@ -1,11 +1,13 @@
 { fetchurl, stdenv }:
 
 stdenv.mkDerivation rec {
-  name = "ed-1.9";
+  name = "ed-1.10";
 
   src = fetchurl {
-    url = "mirror://gnu/ed/${name}.tar.gz";
-    sha256 = "122syihsx2hwzj75mkf5a9ssiky2xby748kp4cc00wzhmp7p5cym";
+    # gnu only provides *.lz tarball, which is unfriendly for stdenv bootstrapping
+    #url = "mirror://gnu/ed/${name}.tar.gz";
+    url = "mirror://debian/exherbo/${name}.tar.gz";
+    sha256 = "0ldxv3pzaq2vw9r5igfnyl8y6b9mbww6yb91qvzif7qyadddmcd3";
   };
 
   /* FIXME: Tests currently fail on Darwin:
