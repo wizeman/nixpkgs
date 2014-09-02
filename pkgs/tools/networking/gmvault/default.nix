@@ -1,30 +1,27 @@
-{ pkgs, fetchurl, buildPythonPackage, pythonPackages }:
+{ pkgs, fetchFromGitHub, buildPythonPackage, pythonPackages }:
 
 buildPythonPackage rec {
-  version = "1.8.1-beta";
+  version = "1.9.1-git-2015-08-27";
   name = "gmvault-${version}";
 
-  src = fetchurl {
-    url = "https://bitbucket.org/gaubert/gmvault-official-download/downloads/gmvault-v${version}-src.tar.gz";
-    name = "${name}.tar.bz";
-    sha256 = "0b575cnrd6jzcpa05mbn2swzcy0r9ck09pkhs4ydj6d3ir52j80c";
+  src = fetchFromGitHub {
+    owner = "gaubert";
+    repo = "gmvault";
+    rev = "7d948b430a80509b1d2fdb73155a9aef6d4f38b9";
+    sha256 = "15nhc5qack9dv5z9vwi4d0viccxgxqs9p27ccz06nrwr4297dibd";
   };
 
   doCheck = false;
 
-  propagatedBuildInputs = [
-    pythonPackages.gdata
-    pythonPackages.IMAPClient
-    pythonPackages.Logbook
-    pythonPackages.argparse
+  propagatedBuildInputs = with pythonPackages; [
+    argparse Logbook IMAPClient chardet
   ];
 
   startScript = ./gmvault.py;
 
-  patchPhase = ''
+  postPatch = ''
     cat ${startScript} > etc/scripts/gmvault
     chmod +x etc/scripts/gmvault
-    substituteInPlace setup.py --replace "Logbook==0.4.1" "Logbook==0.4.2"
   '';
 
   meta = {
