@@ -1,0 +1,40 @@
+From 337d4123b7801b9927ca03473448586927fd84e6 Mon Sep 17 00:00:00 2001
+From: Erik van Zijst <erik.van.zijst@gmail.com>
+Date: Sat, 1 Mar 2014 21:00:39 -0800
+Subject: [PATCH] Non-zero return code on error.
+
+This change makes gmvault exit with return code 1 if it encountered an error.
+This makes it easier for automated tasks like cronjobs to detect problems and
+inform the user.
+---
+ src/gmv/gmv_cmd.py | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/src/gmv/gmv_cmd.py b/src/gmv/gmv_cmd.py
+index c7ad25e..7bfd297 100644
+--- a/src/gmv/gmv_cmd.py
++++ b/src/gmv/gmv_cmd.py
+@@ -806,10 +806,13 @@ def run(self, args): #pylint:disable=R0912
+             LOG.critical(gmvault_utils.get_exception_traceback())
+             LOG.critical("=== End of Exception traceback ===\n")
+             die_with_usage = False
+-        finally: 
+-            if on_error and die_with_usage:
+-                args['parser'].die_with_usage()
+- 
++        finally:
++            if on_error:
++                if die_with_usage:
++                    args['parser'].die_with_usage()
++                sys.exit(1)
++
++
+ def init_logging():
+     """
+        init logging infrastructure
+@@ -884,5 +887,3 @@ def bootstrap_run():
+     register_traceback_signal()
+     
+     bootstrap_run()
+-    
+-    sys.exit(0)
