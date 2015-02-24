@@ -11869,6 +11869,23 @@ let
     };
   };
 
+  toml = buildPythonPackage rec {
+    name = "toml-git-2015-02-24";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "uiri";
+      repo = "toml";
+      rev = "33b58cd5cddc55c795aa12dde634512a2ec63ae8";
+      sha256 = "14j1p26r3wl6b6517xhfz2vd59glx1dcy3dijh1jhbviszykynwl";
+    };
+
+    meta = {
+      description = "Library for Tom's Obvious, Minimal Language";
+      homepage = https://github.com/uiri/toml;
+      license = with licenses; [ mit ];
+    };
+  };
+
   trac = buildPythonPackage {
     name = "trac-1.0.1";
     disabled = isPy3k;
