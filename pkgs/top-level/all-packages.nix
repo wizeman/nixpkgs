@@ -4918,6 +4918,10 @@ let
 
   cargoSnapshot = callPackage ../development/tools/build-managers/cargo/snapshot.nix { };
 
+  cargo-nix = callPackage ../development/tools/rust/cargo-nix {
+      pythonPackages = python3Packages;
+  };
+
   casperjs = callPackage ../development/tools/casperjs { };
 
   cbrowser = callPackage ../development/tools/misc/cbrowser { };
