@@ -9,5 +9,5 @@ callPackage ./generic.nix (args // rec {
     sha256 = "1fy5zlh8cs65s52vixkp00ihrlrhs2frd6vwxwjqmpzyb7fnh3m8";
   };
 
-  patches = [ ./const.patch ./install_prefix.patch ];
+  patches = [ ./const.patch ./install_prefix-git.patch ];
 })
