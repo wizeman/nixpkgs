@@ -14027,7 +14027,7 @@ let
 
   mupen64plus1_5 = callPackage ../misc/emulators/mupen64plus/1.5.nix { };
 
-  nix = nixStable;
+  nix = nixUnstable;
 
   nixStable = callPackage ../tools/package-management/nix {
     storeDir = config.nix.storeDir or "/nix/store";
