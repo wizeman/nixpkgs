@@ -46,7 +46,7 @@ in rec {
   inherit (lib.evalModules {
     inherit prefix check;
     modules = modules ++ extraModules ++ baseModules ++ [ pkgsModule ];
-    args = extraArgs;
+    args = { modulesPath = ../modules; } // extraArgs;
   }) config options;
 
   # These are the extra arguments passed to every module.  In
