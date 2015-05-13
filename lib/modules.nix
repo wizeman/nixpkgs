@@ -102,7 +102,7 @@ rec {
      of ‘options’, ‘config’ and ‘imports’ attributes. */
   unifyModuleSyntax = file: key: m:
     if m ? config || m ? options then
-      let badAttrs = removeAttrs m ["imports" "options" "config" "key" "_file"]; in
+      let badAttrs = removeAttrs m ["imports" "importsArgs" "options" "config" "key" "_file"]; in
       if badAttrs != {} then
         throw "Module `${key}' has an unsupported attribute `${head (attrNames badAttrs)}'. This is caused by assignments to the top-level attributes `config' or `options'."
       else
@@ -136,12 +136,32 @@ rec {
       # evaluation of the option.
       requiredArgs = builtins.attrNames (builtins.functionArgs f);
       context = name: ''while evaluating the module argument `${name}' in "${key}":'';
-      extraArgs = builtins.listToAttrs (map (name: {
-        inherit name;
-        value = addErrorContext (context name) config._module.args.${name};
-      }) requiredArgs);
 
-    in f (extraArgs // args)
+      stage = except: rec {
+        configArgs = subtractLists except requiredArgs;
+        extraArgs = builtins.listToAttrs (map (name: {
+          inherit name;
+          value = addErrorContext (context name) config._module.args.${name};
+        }) configArgs);
+
+        result = f (extraArgs // args);
+      };
+
+      # In order to work-around reflexivity issues, such as default values,
+      # we have to ask the module if some of its arguments are necessary for
+      # importing another module.
+      #
+      # To solve this issue, we evaluate a module a first time to look for
+      # the importsArgs within the module, then we re-evaluate the same
+      # function but with the correct set of arguments.
+      stage1 = (stage []).result;
+      stage2 =
+        if stage1 ? importsArgs then
+          (stage stage1.importsArgs).result
+        else
+          stage1;
+
+    in stage2
   else
     f;
 
