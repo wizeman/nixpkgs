@@ -52,7 +52,7 @@ let
       { imports =
           [ ./hardware-configuration.nix
             <nixpkgs/nixos/modules/testing/test-instrumentation.nix>
-            <nixpkgs/nixos/modules/profiles/minimal.nix>
+            "''${modulesPath}/profiles/minimal.nix"
           ];
 
         boot.loader.grub.version = ${toString grubVersion};
