@@ -1695,6 +1695,8 @@ let
 
   google-cloud-sdk = callPackage ../tools/admin/google-cloud-sdk { };
 
+  got-your-back = callPackage ../tools/networking/got-your-back { };
+
   gource = callPackage ../applications/version-management/gource { };
 
   gparted = callPackage ../tools/misc/gparted { };
