@@ -1,0 +1,17 @@
+diff --git a/gyb.py b/gyb.py
+index e40f04f..4a7d509 100644
+--- a/gyb.py
++++ b/gyb.py
+@@ -150,11 +150,7 @@ def win32_unicode_argv():
+     return [argv[i] for i in xrange(start, argc.value)]
+ 
+ def getProgPath():
+-  if os.path.abspath('/') != -1:
+-    divider = '/'
+-  else:
+-    divider = '\\'
+-  return os.path.dirname(os.path.realpath(sys.argv[0]))+divider
++  return os.getenv("HOME") + "/.gyb/"
+ 
+ def batch(iterable, size):
+   sourceiter = iter(iterable)

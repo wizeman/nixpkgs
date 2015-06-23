@@ -1665,6 +1665,8 @@ let
 
   google-fonts = callPackage ../data/fonts/google-fonts { };
 
+  got-your-back = callPackage ../tools/networking/got-your-back { };
+
   gource = callPackage ../applications/version-management/gource { };
 
   gpart = callPackage ../tools/filesystems/gpart { };
