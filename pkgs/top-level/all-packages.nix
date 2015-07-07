@@ -4657,7 +4657,7 @@ let
   rustUnstable = recurseIntoAttrs (makeRustPlatform rustcMaster cargo rustUnstable);
 
   # rust platform to build cargo itself (with cargoSnapshot)
-  rustCargoPlatform = makeRustPlatform rustc cargoSnapshot rustCargoPlatform;
+  rustCargoPlatform = makeRustPlatform rustc cargoSnapshot.cargo rustCargoPlatform;
 
   makeRustPlatform = rustc: cargo: self:
     let
@@ -5311,7 +5311,9 @@ let
     rustPlatform = rustCargoPlatform;
   };
 
-  cargoSnapshot = callPackage ../development/tools/build-managers/cargo/snapshot.nix { };
+  cargoSnapshot = {
+    cargo = callPackage ../development/tools/build-managers/cargo/snapshot.nix { };
+  };
 
   casperjs = callPackage ../development/tools/casperjs { };
 
