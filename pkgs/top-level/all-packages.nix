@@ -490,7 +490,7 @@ let
 
   nukeReferences = callPackage ../build-support/nuke-references/default.nix { };
 
-  vmTools = import ../build-support/vm/default.nix {
+  vmTools = makeOverridable (import ../build-support/vm/default.nix) {
     inherit pkgs;
   };
 
