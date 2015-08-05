@@ -13741,6 +13741,8 @@ let
 
   lincity_ng = callPackage ../games/lincity/ng.nix {};
 
+  lincity_ng_git = callPackage ../games/lincity/ng_git.nix {};
+
   mars = callPackage ../games/mars { };
 
   megaglest = callPackage ../games/megaglest {};
