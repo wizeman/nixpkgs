@@ -19,6 +19,10 @@ let
 in stdenv.mkDerivation rec {
   name = "llvm-${version}";
 
+  patches = [
+    ./3.7.0-api-regression.patch # remove when 3.7.1 is released
+  ];
+
   unpackPhase = ''
     unpackFile ${src}
     mv llvm-${version}.src llvm

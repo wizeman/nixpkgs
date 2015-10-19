@@ -1,0 +1,80 @@
+From 41585aa62adf581f4ce31d670ae516f813736db3 Mon Sep 17 00:00:00 2001
+From: Reid Kleckner <rnk@google.com>
+Date: Wed, 9 Sep 2015 21:03:25 +0000
+Subject: [PATCH] Merge r242372 to 3.7 so that it goes out in 3.7.1
+
+It restores the signature of LLVMBuildLandingPad in the C API back to what it
+was in 3.6 and earlier.
+
+The 3.7.0 release should have had this but it did not.
+
+
+
+git-svn-id: https://llvm.org/svn/llvm-project/llvm/branches/release_37@247191 91177308-0d34-0410-b5e6-96231b3b80d8
+---
+ bindings/go/llvm/ir.go           | 2 +-
+ bindings/ocaml/llvm/llvm_ocaml.c | 2 +-
+ include/llvm-c/Core.h            | 3 ++-
+ lib/IR/Core.cpp                  | 9 ++++++++-
+ 4 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/bindings/go/llvm/ir.go b/bindings/go/llvm/ir.go
+index 80f7798..76f5f06 100644
+--- a/bindings/go/llvm/ir.go
++++ b/bindings/go/llvm/ir.go
+@@ -1728,7 +1728,7 @@ func (b Builder) CreatePtrDiff(lhs, rhs Value, name string) (v Value) {
+ func (b Builder) CreateLandingPad(t Type, personality Value, nclauses int, name string) (l Value) {
+ 	cname := C.CString(name)
+ 	defer C.free(unsafe.Pointer(cname))
+-	l.C = C.LLVMBuildLandingPad(b.C, t.C, C.unsigned(nclauses), cname)
++	l.C = C.LLVMBuildLandingPad(b.C, t.C, nil, C.unsigned(nclauses), cname)
+ 	return l
+ }
+ 
+diff --git a/bindings/ocaml/llvm/llvm_ocaml.c b/bindings/ocaml/llvm/llvm_ocaml.c
+index 26835d0..3889f92 100644
+--- a/bindings/ocaml/llvm/llvm_ocaml.c
++++ b/bindings/ocaml/llvm/llvm_ocaml.c
+@@ -1745,7 +1745,7 @@ CAMLprim LLVMValueRef llvm_build_invoke_bc(value Args[], int NumArgs) {
+ CAMLprim LLVMValueRef llvm_build_landingpad(LLVMTypeRef Ty, LLVMValueRef PersFn,
+                                             value NumClauses,  value Name,
+                                             value B) {
+-    return LLVMBuildLandingPad(Builder_val(B), Ty, Int_val(NumClauses),
++    return LLVMBuildLandingPad(Builder_val(B), Ty, PersFn, Int_val(NumClauses),
+                                String_val(Name));
+ }
+ 
+diff --git a/include/llvm-c/Core.h b/include/llvm-c/Core.h
+index 1529007..9dbcbfe 100644
+--- a/include/llvm-c/Core.h
++++ b/include/llvm-c/Core.h
+@@ -2675,7 +2675,8 @@ LLVMValueRef LLVMBuildInvoke(LLVMBuilderRef, LLVMValueRef Fn,
+                              LLVMBasicBlockRef Then, LLVMBasicBlockRef Catch,
+                              const char *Name);
+ LLVMValueRef LLVMBuildLandingPad(LLVMBuilderRef B, LLVMTypeRef Ty,
+-                                 unsigned NumClauses, const char *Name);
++                                 LLVMValueRef PersFn, unsigned NumClauses,
++                                 const char *Name);
+ LLVMValueRef LLVMBuildResume(LLVMBuilderRef B, LLVMValueRef Exn);
+ LLVMValueRef LLVMBuildUnreachable(LLVMBuilderRef);
+ 
+diff --git a/lib/IR/Core.cpp b/lib/IR/Core.cpp
+index e0e729d..0eb88a9 100644
+--- a/lib/IR/Core.cpp
++++ b/lib/IR/Core.cpp
+@@ -2257,7 +2257,14 @@ LLVMValueRef LLVMBuildInvoke(LLVMBuilderRef B, LLVMValueRef Fn,
+ }
+ 
+ LLVMValueRef LLVMBuildLandingPad(LLVMBuilderRef B, LLVMTypeRef Ty,
+-                                 unsigned NumClauses, const char *Name) {
++                                 LLVMValueRef PersFn, unsigned NumClauses,
++                                 const char *Name) {
++  // The personality used to live on the landingpad instruction, but now it
++  // lives on the parent function. For compatibility, take the provided
++  // personality and put it on the parent function.
++  if (PersFn)
++    unwrap(B)->GetInsertBlock()->getParent()->setPersonalityFn(
++        cast<Function>(unwrap(PersFn)));
+   return wrap(unwrap(B)->CreateLandingPad(unwrap(Ty), NumClauses, Name));
+ }
+ 
