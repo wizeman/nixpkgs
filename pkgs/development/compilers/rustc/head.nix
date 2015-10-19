@@ -4,7 +4,6 @@
 callPackage ./generic.nix {
   shortVersion = "2015-10-17";
   isRelease = false;
-  forceBundledLLVM = true;
   srcRev = "20a6938c0";
   srcSha = "18dalmwmyw2csnm72qwkkh37ixxbrn2i5lmwp2q0x9plh5qj5627";
 
