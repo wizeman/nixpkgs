@@ -3,7 +3,7 @@
 }:
 
 let
-  version = "20141029";
+  version = "20150919";
 in stdenv.mkDerivation rec {
   name = "openra-${version}";
 
@@ -18,7 +18,7 @@ in stdenv.mkDerivation rec {
   src = fetchurl {
     name = "${name}.tar.gz";
     url = "https://github.com/OpenRA/OpenRA/archive/release-${version}.tar.gz";
-    sha256 = "082rwcy866k636s4qhbry3ja2p81mdz58bh1dw2mic5mv2q6p67r";
+    sha256 = "1w8q0sxvbv1w13nnyhyym4ail6d89ayp8sy1sdnyblg9say99wp4";
   };
 
   dontStrip = true;
@@ -43,7 +43,7 @@ in stdenv.mkDerivation rec {
       --prefix PATH : "${mono}/bin" \
       --set PWD $out/lib/openra/ \
       --prefix LD_LIBRARY_PATH : "${runtime}"
-      
+
     mkdir -p $out/bin
     echo "cd $out/lib/openra && $out/lib/openra/launch-game.sh" > $out/bin/openra
     chmod +x $out/bin/openra
