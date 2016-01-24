@@ -2,13 +2,13 @@
 
 stdenv.mkDerivation rec {
   name = "fstar-${version}";
-  version = "2016-01-12";
+  version = "2016-01-23";
 
   src = fetchFromGitHub {
     owner = "FStarLang";
     repo = "FStar";
-    rev = "af9a231566ca52c9bc3409398c801ae9e8191cfa";
-    sha256 = "1zri4gqr6j6hygnh0ckfhq93mqwk9i19vng8chnmvlr27zq734a2";
+    rev = "f0c2e85fba0c403e95263ad130e3a0df607d30e1";
+    sha256 = "1dc0kvg4zyaa6n9qdcs3ci9qqw9b0qbqsqabz9h4yk621070a4yz";
   };
 
   buildInputs = with ocamlPackages; [
@@ -53,19 +53,16 @@ stdenv.mkDerivation rec {
   preCheck = "ulimit -s unlimited";
 
   # Basic test suite:
-  #checkFlags = "VERBOSE=y -C examples";
+  checkTarget = "test";
+  checkFlags = "VERBOSE=y -C examples";
 
   # Complete, but heavyweight test suite:
-  checkTarget = "regressions";
-  checkFlags = "VERBOSE=y -C src";
+  #checkTarget = "regressions";
+  #checkFlags = "VERBOSE=y -C src";
 
   installFlags = "-C src/ocaml-output";
 
   postInstall = ''
-    # Workaround for FStarLang/FStar#456
-    mv $out/lib/fstar/* $out/lib/
-    rmdir $out/lib/fstar
-
     wrapProgram $out/bin/fstar.exe --prefix PATH ":" "${z3}/bin"
   '';
 
