@@ -1,6 +1,6 @@
 { stdenv, fetchurl, pkgconfig, libvirt, glib, libxml2, intltool, libtool, yajl
 , nettle, libgcrypt, pythonPackages, gobjectIntrospection, libcap_ng, numactl
-, xen, libapparmor
+, libapparmor
 }:
 
 let
@@ -17,8 +17,6 @@ in stdenv.mkDerivation rec {
   buildInputs = [
     libvirt glib libxml2 intltool libtool yajl nettle libgcrypt
     python pygobject2 gobjectIntrospection libcap_ng numactl libapparmor
-  ] ++ stdenv.lib.optionals stdenv.isx86_64 [
-    xen
   ];
 
   enableParallelBuilding = true;
