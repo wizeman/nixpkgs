@@ -1,6 +1,5 @@
 { stdenv, fetchurl, pkgconfig, libvirt, glib, libxml2, intltool, libtool, yajl
 , nettle, libgcrypt, python, pygobject, gobjectIntrospection, libcap_ng, numactl
-, xen
 }:
 
 stdenv.mkDerivation rec {
@@ -13,7 +12,7 @@ stdenv.mkDerivation rec {
 
   buildInputs = [
     pkgconfig libvirt glib libxml2 intltool libtool yajl nettle libgcrypt
-    python pygobject gobjectIntrospection libcap_ng numactl xen
+    python pygobject gobjectIntrospection libcap_ng numactl
   ];
 
   meta = with stdenv.lib; {
