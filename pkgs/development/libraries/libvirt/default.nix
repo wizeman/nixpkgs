@@ -4,7 +4,7 @@
 , iproute, iptables, readline, lvm2, utillinux, systemd, libpciaccess, gettext
 , libtasn1, ebtables, libgcrypt, yajl, pmutils, libcap_ng, libapparmor
 , dnsmasq, libnl, libpcap, libxslt, xhtml1, numad, numactl, perlPackages
-, curl, libiconv, gmp, xen, zfs, parted
+, curl, libiconv, gmp, zfs, parted
 }:
 
 with stdenv.lib;
@@ -28,8 +28,6 @@ stdenv.mkDerivation rec {
   ] ++ optionals stdenv.isLinux [
     libpciaccess devicemapper lvm2 utillinux systemd libnl numad zfs
     libapparmor libcap_ng numactl attr parted
-  ] ++ optionals (stdenv.isLinux && stdenv.isx86_64) [
-    xen
   ] ++ optionals stdenv.isDarwin [
     libiconv gmp
   ];
