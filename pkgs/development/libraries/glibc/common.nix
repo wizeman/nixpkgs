@@ -61,6 +61,7 @@ stdenv.mkDerivation ({
     # http://comments.gmane.org/gmane.linux.lfs.support/31227
     ''
       sed -i 's/ot \$/ot:\n\ttouch $@\n$/' manual/Makefile
+
     ''
     # nscd needs libgcc, and we don't want it dynamically linked
     # because we don't want it to depend on bootstrap-tools libs.
