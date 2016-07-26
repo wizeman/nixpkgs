@@ -30,6 +30,11 @@ python2Packages.buildPythonApplication {
 
   doCheck = false;
 
+  preBuild = ''
+    rm nixops/backends/azure_*
+    rm nixops/resources/azure_*
+  '';
+
   postInstall =
     ''
       make -C doc/manual install nixops.1 docbookxsl=${docbook5_xsl}/xml/xsl/docbook \
