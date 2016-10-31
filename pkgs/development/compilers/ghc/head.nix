@@ -6,14 +6,14 @@ let
   inherit (bootPkgs) ghc;
 
 in stdenv.mkDerivation rec {
-  version = "8.1.20160930";
+  version = "8.1.20160826";
   name = "ghc-${version}";
-  rev = "9e862765ffe161da8a4fd9cd67b0a600874feaa9";
+  rev = "0050aff22ba04baca732bf5124002417ab667f8a";
 
   src = fetchgit {
     url = "git://git.haskell.org/ghc.git";
     inherit rev;
-    sha256 = "01fmp5yrh3is8vzv2vabkzlvm1ry1zcq99m078plx9wgy20giq59";
+    sha256 = "1iirb11fr8914pb6i988cfji56gs698ll819bgb0hpcdkrmffwqc";
   };
 
   patches = [
