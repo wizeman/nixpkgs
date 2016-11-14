@@ -26,6 +26,8 @@ let
       mkdir -p "$DIR"
       chmod 770 "$DIR"
     done
+    chmod 775 ${fullSettings.download-dir} ${fullSettings.incomplete-dir}
+    chmod 700 ${homeDir} ${settingsDir}
     cp -f ${settingsFile} ${settingsDir}/settings.json
   '';
 in
