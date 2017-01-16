@@ -12,7 +12,7 @@ stdenv.lib.overrideDerivation (import ./generic.nix (args // rec {
     owner = "raspberrypi";
     repo = "linux";
     rev = "raspberrypi-kernel_${tag}";
-    sha256 = "0bydlzmd9mar07j6dihhzn1xm6vpn92y33vf1qsdkl3hjil6brf0";
+    sha256 = "0y76xrapq7710zzf6sif94xzly72gg505y65lslfirng500ncnv5";
   };
 
   features.iwlwifi = true;

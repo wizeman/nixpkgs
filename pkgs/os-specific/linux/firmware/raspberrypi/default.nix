@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
     owner = "raspberrypi";
     repo = "firmware";
     rev = version;
-    sha256 = "06g691px0abndp5zvz2ba1g675rcqb64n055h5ahgnlck5cdpaw0";
+    sha256 = "073cry7xqrbkn8p1qzl4f3z6jvcbks4i61fz7i2pbwa60vddcp34";
   };
 
   dontStrip = true;    # Stripping breaks some of the binaries
