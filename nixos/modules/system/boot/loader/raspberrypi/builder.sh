@@ -61,6 +61,7 @@ addEntry() {
 
     local kernel=$(readlink -f $path/kernel)
     local initrd=$(readlink -f $path/initrd)
+    local dtb_path=$(readlink -f $path/kernel-modules/dtbs)
 
     if test -n "@copyKernels@"; then
         copyToKernelsDir $kernel; kernel=$result
@@ -80,6 +81,9 @@ addEntry() {
         copyForced $kernel /boot/kernel7.img
       fi
       copyForced $initrd /boot/initrd
+      for dtb in $dtb_path/*; do
+        copyForced $dtb /boot/$(basename $dtb)
+      done
       cp "$(readlink -f "$path/init")" /boot/nixos-init
       echo "`cat $path/kernel-params` init=$path/init" >/boot/cmdline.txt
 
