@@ -13,6 +13,8 @@ stdenv.mkDerivation rec {
     sha256 = "0a1ilzr88xhzx1ql3xhn36a4rvl79hvp0dvgm3az4cjhhzav47qd";
   };
 
+  patches = [ ./drift.patch ];
+
   postPatch = ''
     patchShebangs test
   '';
