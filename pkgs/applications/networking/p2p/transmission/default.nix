@@ -33,6 +33,7 @@ stdenv.mkDerivation rec {
       url = https://github.com/transmission/transmission/files/1624507/transmission-fix-dns-rebinding-vuln.patch.txt;
       sha256 = "1p9m20kp4kdyp5jjr3yp5px627n8cfa29mg5n3wzsdfv0qzk9gy4";
     })
+    ./pr161-ipv6.patch
   ];
 
   postPatch = ''
