@@ -24,6 +24,10 @@ stdenv.mkDerivation rec {
     ++ optionals enableSystemd [ systemd ]
     ++ optionals stdenv.isLinux [ inotify-tools ];
 
+  patches = [
+    ./pr161-ipv6.patch
+  ];
+
   postPatch = ''
     substituteInPlace ./configure \
       --replace "libsystemd-daemon" "libsystemd" \
