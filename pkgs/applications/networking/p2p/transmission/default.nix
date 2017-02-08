@@ -25,6 +25,10 @@ stdenv.mkDerivation rec {
     ++ optionals stdenv.isLinux [ inotify-tools ]
     ++ optionals enableGTK3 [ hicolor-icon-theme ];
 
+  patches = [
+    ./pr161-ipv6.patch
+  ];
+
   postPatch = ''
     substituteInPlace ./configure \
       --replace "libsystemd-daemon" "libsystemd" \
