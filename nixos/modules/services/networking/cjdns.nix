@@ -6,6 +6,8 @@ let
 
   pkg = pkgs.cjdns;
 
+  cjpath = "/var/lib/cjdns";
+
   cfgs = config.services.cjdns.networks;
 
   enabledCfgs = filter (x: x.enable) cfgs;
@@ -282,11 +284,11 @@ in
         cjdns network encryption and routing engine configuration.
 
         For each defined attribute name, a TUN network interface will be created
-        with the specified name. Also, a file with path <literal>/etc/cjdns-&lt;name&gt;.keys</literal>
+        with the specified name. Also, a file with path <literal>/var/lib/cjdns/cjdns-&lt;name&gt;.keys</literal>
         will be created if it does not exist to contain a random secret key that
         your IPv6 address will be derived from.
 
-        A file with path <literal>/etc/cjdns-&lt;name&gt;.public</literal> will also
+        A file with path <literal>/var/lib/cjdns/cjdns-&lt;name&gt;.public</literal> will also
         be created, containing the IPv6 address and public key of the specified
         cjdns network.
       '';
@@ -308,30 +310,32 @@ in
         bindsTo = [ "network-online.target" ];
 
         preStart = if opts.confFile != null then "" else ''
-          [ -e /etc/cjdns-${name}.keys ] && source /etc/cjdns-${name}.keys
+          [ -d ${cjpath} ] || mkdir -p ${cjpath}
+
+          [ -e ${cjpath}/cjdns-${name}.keys ] && source ${cjpath}/cjdns-${name}.keys
 
           if [ -z "$CJDNS_PRIVATE_KEY" ]; then
               shopt -s lastpipe
               ${pkg}/bin/makekeys | { read private ipv6 public; }
 
               umask 0077
-              echo "CJDNS_PRIVATE_KEY=$private" >> /etc/cjdns-${name}.keys
-              echo -e "CJDNS_IPV6=$ipv6\nCJDNS_PUBLIC_KEY=$public" > /etc/cjdns-${name}.public
+              echo "CJDNS_PRIVATE_KEY=$private" >> ${cjpath}/cjdns-${name}.keys
+              echo -e "CJDNS_IPV6=$ipv6\nCJDNS_PUBLIC_KEY=$public" > ${cjpath}/cjdns-${name}.public
 
-              chmod 600 /etc/cjdns-${name}.keys
-              chmod 444 /etc/cjdns-${name}.public
+              chmod 600 ${cjpath}/cjdns-${name}.keys
+              chmod 444 ${cjpath}/cjdns-${name}.public
           fi
 
           if [ -z "$CJDNS_ADMIN_PASSWORD" ]; then
               echo "CJDNS_ADMIN_PASSWORD=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 96)" \
-                  >> /etc/cjdns-${name}.keys
+                  >> ${cjpath}/cjdns-${name}.keys
           fi
         '';
 
         script = (
           if opts.confFile != null then "${pkg}/bin/cjdroute < ${opts.confFile}" else
             ''
-              source /etc/cjdns-${name}.keys
+              source ${cjpath}/cjdns-${name}.keys
               echo '${cjdrouteConf name}' | sed \
                   -e "s/@CJDNS_ADMIN_PASSWORD@/$CJDNS_ADMIN_PASSWORD/g" \
                   -e "s/@CJDNS_PRIVATE_KEY@/$CJDNS_PRIVATE_KEY/g" \
