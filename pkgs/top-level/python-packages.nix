@@ -5993,8 +5993,8 @@ in modules // {
     version = "1.20";
     name = "${pname}-${version}";
 
-    src = fetchPypi {
-      inherit pname version;
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/u/urllib3/${name}.tar.gz";
       sha256 = "0bx76if7shzlyykmaj4fhjkir5bswc4fdx5r4q0lrn3q51p2pvwp";
     };
 
