@@ -29,6 +29,10 @@ rec {
     srcSha = "117ivvs9wz848mwf8bw797n10qpn77agd353z8b0hxgbxhpribya";
     depsSha256 = "11s2xpgfhl4mb4wa2nk4mzsypr7m9daxxc7l0vraiz5cr77gk7qq";
 
+    patches = [
+      ./cargo-libressl.patch
+    ];
+
     inherit rustc; # the rustc that will be wrapped by cargo
     inherit rustPlatform; # used to build cargo
   };
