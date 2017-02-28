@@ -2359,6 +2359,7 @@ in
 
   nodejs-4_x = callPackage ../development/web/nodejs/v4.nix {
     libtool = darwin.cctools;
+    openssl = openssl_real;
   };
 
   nodejs-6_x = callPackage ../development/web/nodejs/v6.nix {
@@ -5929,6 +5930,7 @@ in
 
   pypy27 = callPackage ../development/interpreters/python/pypy/2.7 {
     self = pypy27;
+    openssl = openssl_real;
   };
 
   pythonFull = python2Full;
@@ -9011,7 +9013,7 @@ in
 
   openslp = callPackage ../development/libraries/openslp {};
 
-  libressl = self.libressl_2_4;
+  libressl = self.libressl_2_5;
   libressl_2_3 = callPackage ../development/libraries/libressl/2.3.nix {
     fetchurl = fetchurlBoot;
   };
@@ -9027,7 +9029,8 @@ in
 
   wolfssl = callPackage ../development/libraries/wolfssl { };
 
-  openssl = openssl_1_0_2;
+  openssl = self.libressl_2_5;
+  openssl_real = openssl_1_0_2;
 
   inherit (callPackages ../development/libraries/openssl {
       fetchurl = fetchurlBoot;
@@ -10483,7 +10486,12 @@ in
 
   popa3d = callPackage ../servers/mail/popa3d { };
 
-  postfix = callPackage ../servers/mail/postfix { };
+  postfix = callPackage ../servers/mail/postfix {
+    openssl = openssl_real;
+    cyrus_sasl = cyrus_sasl.override {
+      openssl = openssl_real;
+    };
+  };
 
   postsrsd = callPackage ../servers/mail/postsrsd { };
 
