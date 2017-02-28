@@ -4070,7 +4070,9 @@ in modules // {
       sha256 = "cf82ddac919b587f5e44247579b433224cc2e03332d2ea4d89aa70d7e6b64ae5";
     };
 
-    buildInputs = [ pkgs.openssl self.pretend self.cryptography_vectors
+    patches = [ ./cryptography-libressl.patch ];
+
+    buildInputs = [ pkgs.libressl_2_4 self.pretend self.cryptography_vectors
                     self.iso8601 self.pyasn1 self.pytest_29 self.py self.hypothesis self.pytz ]
                ++ optional stdenv.isDarwin pkgs.darwin.apple_sdk.frameworks.Security;
     propagatedBuildInputs = with self; [ six idna ipaddress pyasn1 cffi pyasn1-modules modules.sqlite3 pytz ]
