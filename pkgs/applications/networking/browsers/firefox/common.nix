@@ -29,7 +29,7 @@ stdenv.mkDerivation rec {
 
   # this patch should no longer be needed in 53
   # from https://bugzilla.mozilla.org/show_bug.cgi?id=1013882
-  patches = lib.optional debugBuild ./fix-debug.patch;
+  patches = [ ./cargo.patch ] ++ lib.optional debugBuild ./fix-debug.patch;
 
   buildInputs =
     [ gtk2 zip libIDL libjpeg zlib bzip2
