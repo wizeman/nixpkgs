@@ -186,10 +186,6 @@ lib.makeScope pkgs.newScope (self: with self; {
 
   nautilus = callPackage ./core/nautilus { };
 
-  networkmanager-openvpn = pkgs.networkmanager-openvpn.override {
-    withGnome = true;
-  };
-
   networkmanager-vpnc = pkgs.networkmanager-vpnc.override {
     withGnome = true;
   };
