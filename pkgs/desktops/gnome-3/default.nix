@@ -199,10 +199,6 @@ let
 
   nautilus = callPackage ./core/nautilus { };
 
-  networkmanager-openvpn = pkgs.networkmanager-openvpn.override {
-    inherit gnome3;
-  };
-
   networkmanager-vpnc = pkgs.networkmanager-vpnc.override {
     inherit gnome3;
   };
