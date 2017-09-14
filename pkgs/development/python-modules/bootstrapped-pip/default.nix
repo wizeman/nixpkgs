@@ -1,4 +1,4 @@
-{ stdenv, python, fetchPypi, fetchurl, makeWrapper, unzip }:
+{ stdenv, python, fetchPypi, fetchFromGitHub, makeWrapper, unzip }:
 
 let
   wheel_source = fetchPypi {
@@ -14,32 +14,25 @@ let
     sha256 = "4d54c0bfee283e78609169213f9c075827d5837086f58b588b417b093c23464b";
   };
 
-  # TODO: Shouldn't be necessary anymore for pip > 9.0.1!
-  # https://github.com/NixOS/nixpkgs/issues/26392
-  # https://github.com/pypa/setuptools/issues/885
-  pkg_resources = fetchurl {
-    url = "https://raw.githubusercontent.com/pypa/setuptools/v36.0.1/pkg_resources/__init__.py";
-    sha256 = "1wdnq3mammk75mifkdmmjx7yhnpydvnvi804na8ym4mj934l2jkv";
-  };
-
 in stdenv.mkDerivation rec {
   pname = "pip";
-  version = "9.0.1";
+  version = "9.0.2.dev0";
   name = "${python.libPrefix}-bootstrapped-${pname}-${version}";
 
-  src = fetchPypi {
-    inherit pname version;
-    format = "wheel";
-    sha256 = "690b762c0a8460c303c089d5d0be034fb15a5ea2b75bdf565f40421f542fefb0";
+  src = fetchFromGitHub {
+    owner = "pradyunsg";
+    repo = "pip";
+    rev = "1a872bc8e22ac8deb3514bae7bc9d857a646c260";
+    sha256 = "0ap6al8j93gp62z80f0i900h4zvwimc0s5vgfdfr3scjalsii6in";
   };
 
   unpackPhase = ''
     mkdir -p $out/${python.sitePackages}
-    unzip -d $out/${python.sitePackages} $src
+    rmdir $out/${python.sitePackages}
+    cp -r $src $out/${python.sitePackages}
+    find $out/${python.sitePackages} -type d -exec chmod 755 {} \;
     unzip -d $out/${python.sitePackages} ${setuptools_source}
     unzip -d $out/${python.sitePackages} ${wheel_source}
-    # TODO: Shouldn't be necessary anymore for pip > 9.0.1!
-    cp ${pkg_resources} $out/${python.sitePackages}/pip/_vendor/pkg_resources/__init__.py
   '';
 
   patchPhase = ''
