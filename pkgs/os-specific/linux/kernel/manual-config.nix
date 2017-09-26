@@ -247,7 +247,8 @@ let
           maintainers.thoughtpolice
         ];
         platforms = platforms.linux;
-        timeout = 14400; # 4 hours
+        maxSilent = 144000;
+        timeout = 259200;
       } // extraMeta;
     };
 in
