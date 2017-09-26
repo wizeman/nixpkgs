@@ -248,6 +248,8 @@ let
           maintainers.thoughtpolice
         ];
         platforms = platforms.linux;
+        maxSilent = 144000;
+        timeout = 144000;
       } // extraMeta;
     };
 in
