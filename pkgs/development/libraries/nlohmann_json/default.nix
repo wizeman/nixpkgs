@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ cmake ];
 
-  enableParallelBuilding = true;
+  enableParallelBuilding = false;
 
   cmakeFlags = [
     "-DBuildTests=${if doCheck then "ON" else "OFF"}"

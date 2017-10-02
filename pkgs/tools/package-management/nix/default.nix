@@ -81,7 +81,7 @@ let
 
     separateDebugInfo = stdenv.isLinux;
 
-    enableParallelBuilding = true;
+    enableParallelBuilding = false;
 
     meta = {
       description = "Powerful package manager that makes package management reliable and reproducible";
