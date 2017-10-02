@@ -53,7 +53,7 @@ in
 
     dontDisableStatic = true;
 
-    enableParallelBuilding = true;
+    enableParallelBuilding = false;
 
     passthru.interpreterName = "nodejs";
 
