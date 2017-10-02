@@ -51,7 +51,6 @@ let
   b2Args = concatStringsSep " " ([
     "--includedir=$dev/include"
     "--libdir=$out/lib"
-    "-j$NIX_BUILD_CORES"
     "--layout=${layout}"
     "variant=${variant}"
     "threading=${threading}"
@@ -111,7 +110,7 @@ stdenv.mkDerivation {
   NIX_CFLAGS_LINK = stdenv.lib.optionalString stdenv.isDarwin
                       "-headerpad_max_install_names";
 
-  enableParallelBuilding = true;
+  enableParallelBuilding = false;
 
   nativeBuildInputs = [ which buildPackages.stdenv.cc ];
   buildInputs = [ expat zlib bzip2 libiconv ]
