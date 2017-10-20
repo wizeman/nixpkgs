@@ -102,6 +102,7 @@ let
             sed -i "$mf" -e 's|/usr/bin/||g ; s|/bin/||g ; s|/sbin/||g'
         done
         sed -i Makefile -e 's|= depmod|= ${buildPackages.kmod}/bin/depmod|'
+        patch -p1 < ${./startech.patch}
       '';
 
       configurePhase = ''
