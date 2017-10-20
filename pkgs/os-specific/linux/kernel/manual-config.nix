@@ -97,6 +97,7 @@ let
         done
         sed -i Makefile -e 's|= depmod|= ${buildPackages.kmod}/bin/depmod|'
         sed -i scripts/ld-version.sh -e "s|/usr/bin/awk|${buildPackages.gawk}/bin/awk|"
+        patch -p1 < ${./startech.patch}
       '';
 
       configurePhase = ''
