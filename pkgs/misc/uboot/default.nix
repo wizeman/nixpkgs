@@ -182,6 +182,14 @@ in rec {
     filesToInstall = ["u-boot-sunxi-with-spl.bin"];
   };
 
+  ubootOrangePiPrime = buildUBoot rec {
+    extraPatches = [sunxiPatch];
+    defconfig = "orangepi_prime_defconfig";
+    extraMeta.platforms = ["aarch64-linux"];
+    BL31 = "${armTrustedFirmwareAllwinner}/bl31.bin";
+    filesToInstall = ["u-boot-sunxi-with-spl.bin"];
+  };
+
   ubootQemuAarch64 = buildUBoot rec {
     defconfig = "qemu_arm64_defconfig";
     extraMeta.platforms = ["aarch64-linux"];
