@@ -13948,6 +13948,7 @@ with pkgs;
     ubootJetsonTK1
     ubootOdroidXU3
     ubootOrangePiPc
+    ubootOrangePiPrime
     ubootPcduino3Nano
     ubootPine64
     ubootQemuAarch64
