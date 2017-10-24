@@ -14769,6 +14769,7 @@ with pkgs;
     ubootNovena
     ubootOdroidXU3
     ubootOrangePiPc
+    ubootOrangePiPrime
     ubootPcduino3Nano
     ubootPine64
     ubootQemuAarch64
