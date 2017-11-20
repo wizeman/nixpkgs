@@ -1,4 +1,4 @@
-{ fetchurl, stdenv, ocamlPackages, coq }:
+{ fetchurl, stdenv, ocamlPackages, coq, isabelle }:
 
 stdenv.mkDerivation rec {
   name    = "why3-${version}";
@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
     sha256 = "199ziq8mv3r24y3dd1n2r8k2gy09p7kdyyhkg9qn1vzfd2fxwzc1";
   };
 
-  buildInputs = (with ocamlPackages; [
+  buildInputs = [ isabelle ] ++ (with ocamlPackages; [
       ocaml findlib num lablgtk ocamlgraph zarith menhir ]) ++
     stdenv.lib.optionals (ocamlPackages.ocaml == coq.ocaml ) [
       coq coq.camlp5
