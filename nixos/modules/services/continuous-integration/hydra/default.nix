@@ -415,7 +415,8 @@ in
         hydra-users hydra hydra
         hydra-users hydra-queue-runner hydra
         hydra-users hydra-www hydra
-        hydra-users root hydra
+        hydra-users root postgres
+        hydra-users postgres postgres
       '';
 
     services.postgresql.authentication = optionalString haveLocalDB
