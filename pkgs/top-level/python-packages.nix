@@ -17879,6 +17879,8 @@ in {
       sha256 = "0d283g4zi0hr9papd24mjl70mi15gyzq6fx618rizi87dgipqqax";
     };
 
+    patches = [ ./pyopenssl_test.patch ];
+
     outputs = [ "out" "dev" ];
 
     preCheck = ''
