@@ -1,0 +1,13 @@
+diff --git a/tests/test_ssl.py b/tests/test_ssl.py
+index e154811..3deb78a 100644
+--- a/tests/test_ssl.py
++++ b/tests/test_ssl.py
+@@ -2556,7 +2556,7 @@ class TestConnection(object):
+         # always happen on all platforms (FreeBSD and OS X particular) for the
+         # very last bit of available buffer space.
+         msg = b"x"
+-        for i in range(1024 * 1024 * 4):
++        for i in range(1024 * 1024 * 16):
+             try:
+                 client_socket.send(msg)
+             except error as e:
