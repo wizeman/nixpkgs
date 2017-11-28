@@ -20,6 +20,8 @@ buildPythonPackage rec {
     sha256 = "6488f1423b00f73b7ad5167885312bb0ce410d3312eb212393795b53c8caa580";
   };
 
+  patches = [ ./pyopenssl_test.patch ];
+
   outputs = [ "out" "dev" ];
 
   preCheck = ''
