@@ -22,6 +22,8 @@ let
 
     outputs = [ "out" "dev" "man" "doc" ];
 
+    patches = lib.optional is20 ./fix-build.patch;
+
     nativeBuildInputs =
       [ pkgconfig ]
       ++ lib.optionals (!is20) [ curl perl ]
@@ -30,17 +32,7 @@ let
     buildInputs = [ curl openssl sqlite xz bzip2 ]
       ++ lib.optional (stdenv.isLinux || stdenv.isDarwin) libsodium
       ++ lib.optionals is20 [ brotli boost ]
-      ++ lib.optional withLibseccomp libseccomp
-      ++ lib.optional ((stdenv.isLinux || stdenv.isDarwin) && is20)
-          ((aws-sdk-cpp.override {
-            apis = ["s3" "transfer"];
-            customMemoryManagement = false;
-          }).overrideDerivation (args: {
-            patches = args.patches or [] ++ [(fetchpatch {
-              url = https://github.com/edolstra/aws-sdk-cpp/commit/7d58e303159b2fb343af9a1ec4512238efa147c7.patch;
-              sha256 = "103phn6kyvs1yc7fibyin3lgxz699qakhw671kl207484im55id1";
-            })];
-          }));
+      ++ lib.optional withLibseccomp libseccomp;
 
     propagatedBuildInputs = [ boehmgc ];
 
