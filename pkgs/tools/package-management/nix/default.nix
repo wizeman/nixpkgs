@@ -22,6 +22,8 @@ let
 
     outputs = [ "out" "dev" "man" "doc" ];
 
+    patches = lib.optional is20 ./fix-build.patch;
+
     nativeBuildInputs =
       [ pkgconfig ]
       ++ lib.optionals (!is20) [ curl perl ]
@@ -30,12 +32,7 @@ let
     buildInputs = [ curl openssl sqlite xz bzip2 ]
       ++ lib.optional (stdenv.isLinux || stdenv.isDarwin) libsodium
       ++ lib.optionals is20 [ brotli ] # Since 1.12
-      ++ lib.optional (hostPlatform.isSeccomputable) libseccomp
-      ++ lib.optional ((stdenv.isLinux || stdenv.isDarwin) && is20)
-          (aws-sdk-cpp.override {
-            apis = ["s3" "transfer"];
-            customMemoryManagement = false;
-          });
+      ++ lib.optional (hostPlatform.isSeccomputable) libseccomp;
 
     propagatedBuildInputs = [ boehmgc ];
 
