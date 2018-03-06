@@ -1,0 +1,12 @@
+diff --git a/src/libstore/download.cc b/src/libstore/download.cc
+index a8bcab2f..fe9017e0 100644
+--- a/src/libstore/download.cc
++++ b/src/libstore/download.cc
+@@ -14,6 +14,7 @@
+ 
+ #include <unistd.h>
+ #include <fcntl.h>
++#include <string.h>
+ 
+ #include <curl/curl.h>
+ 
