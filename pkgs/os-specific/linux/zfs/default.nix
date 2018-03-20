@@ -78,6 +78,9 @@ let
           substituteInPlace "$f" --replace "/lib/udev/vdev_id" "$out/lib/udev/vdev_id"
         done
 
+        # ./scripts/enum-extract.pl does not exist in older branches such as legacy crypto
+        substituteInPlace ./scripts/enum-extract.pl   --replace "/usr/bin/perl"           "${perl}/bin/perl" || true
+
         ./autogen.sh
         configureFlagsArray+=("--libexecdir=$out/libexec")
       '';
