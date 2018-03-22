@@ -273,7 +273,7 @@ let
       # (it will often be on "critical path" and at risk of timing out)
       buildCommand = target: ''
         ninja -C "${buildPath}"  \
-          -j$(( ($NIX_BUILD_CORES+1) / 2 )) -l$(( $NIX_BUILD_CORES+1 )) \
+          -j$NIX_BUILD_CORES \
           "${target}"
         (
           source chrome/installer/linux/common/installer.include
