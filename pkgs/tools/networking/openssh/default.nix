@@ -1,7 +1,7 @@
 { stdenv, fetchurl, fetchpatch, zlib, openssl, perl, libedit, pkgconfig, pam, autoreconfHook
 , etcDir ? null
 , hpnSupport ? false
-, withKerberos ? true
+, withKerberos ? false
 , withGssapiPatches ? false
 , kerberos
 , linkOpenssl? true
