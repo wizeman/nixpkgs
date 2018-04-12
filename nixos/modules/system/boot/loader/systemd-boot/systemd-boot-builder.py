@@ -27,7 +27,7 @@ def system_dir(profile, generation):
         return "/nix/var/nix/profiles/system-%d-link" % (generation)
 
 BOOT_ENTRY = """title NixOS{profile}
-version Generation {generation} {description}
+version Gen {generation} {description}
 linux {kernel}
 initrd {initrd}
 options {kernel_params}
@@ -71,7 +71,7 @@ def describe_generation(generation_dir):
     build_time = int(os.path.getctime(generation_dir))
     build_date = datetime.datetime.fromtimestamp(build_time).strftime('%F')
 
-    description = "NixOS {}, Linux Kernel {}, Built on {}".format(
+    description = "NixOS {}, Kernel {}, {}".format(
         nixos_version, kernel_version, build_date
     )
 
