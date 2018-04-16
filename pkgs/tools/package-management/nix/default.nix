@@ -35,8 +35,7 @@ let
           (aws-sdk-cpp.override {
             apis = ["s3" "transfer"];
             customMemoryManagement = false;
-          })
-      ++ lib.optional fromGit boost;
+          });
 
     propagatedBuildInputs = [ boehmgc ];
 
@@ -141,6 +140,8 @@ in rec {
     };
   }) // { perl-bindings = perl-bindings { nix = nixStable; }; };
 
+  nixUnstable = nix;
+/*
   nixUnstable = (lib.lowPrio (common rec {
     name = "nix-2.1${suffix}";
     suffix = "pre6338_45bcf541";
@@ -155,5 +156,5 @@ in rec {
     nix = nixUnstable;
     needsBoost = true;
   }; };
-
+*/
 }
