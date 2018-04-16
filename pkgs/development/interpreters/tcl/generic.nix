@@ -22,6 +22,8 @@ stdenv.mkDerivation rec {
     configureFlagsArray+=(--with-tzdata=no)
 
     cd unix
+  '' + stdenv.lib.optionalString (stdenv.hostPlatform != stdenv.buildPlatform) ''
+    export ac_cv_func_strtod=yes
   '';
 
   enableParallelBuilding = true;
