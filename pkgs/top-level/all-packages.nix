@@ -27,6 +27,8 @@ with pkgs;
   # Used by wine, firefox with debugging version of Flash, ...
   pkgsi686Linux = forceSystem "i686-linux" "i386";
 
+  pkgs_a64 = nixpkgsFun { localSystem = lib.systems.examples.aarch64-multiplatform; };
+
   callPackage_i686 = if stdenv.system == "i686-linux" || stdenv.system == "x86_64-linux"
     then pkgsi686Linux.callPackage
     else throw "callPackage_i686 not supported on system '${stdenv.system}'";
