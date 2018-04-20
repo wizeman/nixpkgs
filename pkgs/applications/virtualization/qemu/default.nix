@@ -73,6 +73,7 @@ stdenv.mkDerivation rec {
   patches = [
     ./no-etc-install.patch
     ./fix-qemu-ga.patch
+    ./strip.patch
   ] ++ optional nixosTestRunner ./force-uid0-on-9p.patch
     ++ optional pulseSupport ./fix-hda-recording.patch
     ++ optionals stdenv.hostPlatform.isMusl [
@@ -106,6 +107,8 @@ stdenv.mkDerivation rec {
     [ "--audio-drv-list=${audio}"
       "--sysconfdir=/etc"
       "--localstatedir=/var"
+      "--enable-debug-info"
+      "--disable-strip"
     ]
     # disable sysctl check on darwin.
     ++ optional stdenv.isDarwin "--cpu=x86_64"
@@ -123,6 +126,8 @@ stdenv.mkDerivation rec {
     ++ optional smbdSupport "--smbd=${samba}/bin/smbd";
 
   doCheck = false; # tries to access /dev
+
+  dontStrip = true;
 
   postFixup =
     ''
