@@ -1,0 +1,12 @@
+diff --git a/rules.mak b/rules.mak
+index 6e943335f3..d8427d7038 100644
+--- a/rules.mak
++++ b/rules.mak
+@@ -146,7 +146,6 @@ set-vpath = $(if $1,$(foreach PATTERN,$(VPATH_SUFFIXES),$(eval vpath $(PATTERN)
+ define install-prog
+ 	$(INSTALL_DIR) "$2"
+ 	$(INSTALL_PROG) $1 "$2"
+-	$(if $(STRIP),$(STRIP) $(foreach T,$1,"$2/$(notdir $T)"),)
+ endef
+ 
+ # find-in-path
