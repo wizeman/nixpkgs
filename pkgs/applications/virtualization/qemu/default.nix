@@ -61,7 +61,7 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
 
-  patches = [ ./no-etc-install.patch ]
+  patches = [ ./no-etc-install.patch ./strip.patch ]
     ++ optional nixosTestRunner ./force-uid0-on-9p.patch
     ++ optional pulseSupport ./fix-hda-recording.patch;
 
@@ -76,6 +76,8 @@ stdenv.mkDerivation rec {
       "--audio-drv-list=${audio}"
       "--sysconfdir=/etc"
       "--localstatedir=/var"
+      "--enable-debug-info"
+      "--disable-strip"
     ]
     ++ optional numaSupport "--enable-numa"
     ++ optional seccompSupport "--enable-seccomp"
@@ -85,6 +87,8 @@ stdenv.mkDerivation rec {
     ++ optional stdenv.isDarwin "--enable-cocoa"
     ++ optional stdenv.isLinux "--enable-linux-aio"
     ++ optional xenSupport "--enable-xen";
+
+  dontStrip = true;
 
   postFixup =
     ''
