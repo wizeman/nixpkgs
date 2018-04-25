@@ -18,8 +18,8 @@
 
 with stdenv.lib;
 let
-  version = "2.11.2";
-  sha256 = "17xz3j17sndz1z8hl3qcci50bz4qk6xb60hy1f61486jhx2vhbyw";
+  version = "2.12.0";
+  sha256 = "17377xxbmwbrnh895a108z944pqi39hzrbw4jzgj8pcipi3s3x69";
   audio = optionalString (hasSuffix "linux" stdenv.system) "alsa,"
     + optionalString pulseSupport "pa,"
     + optionalString sdlSupport "sdl,";
@@ -61,7 +61,7 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
 
-  patches = [ ./no-etc-install.patch ./statfs-flags.patch ]
+  patches = [ ./no-etc-install.patch ]
     ++ optional nixosTestRunner ./force-uid0-on-9p.patch
     ++ optional pulseSupport ./fix-hda-recording.patch;
 
