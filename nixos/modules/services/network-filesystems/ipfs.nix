@@ -248,21 +248,18 @@ in {
 
     systemd.services.ipfs = recursiveUpdate baseService {
       description = "IPFS Daemon";
-      wantedBy = mkIf (cfg.defaultMode == "online") [ "multi-user.target" ];
       after = [ "network.target" "local-fs.target" "ipfs-init.service" ];
       conflicts = [ "ipfs-offline.service" "ipfs-norouting.service"];
     };
 
     systemd.services.ipfs-offline = recursiveUpdate baseService {
       description = "IPFS Daemon (offline mode)";
-      wantedBy = mkIf (cfg.defaultMode == "offline") [ "multi-user.target" ];
       after = [ "local-fs.target" "ipfs-init.service" ];
       conflicts = [ "ipfs.service" "ipfs-norouting.service"];
     };
 
     systemd.services.ipfs-norouting = recursiveUpdate baseService {
       description = "IPFS Daemon (no routing mode)";
-      wantedBy = mkIf (cfg.defaultMode == "norouting") [ "multi-user.target" ];
       after = [ "local-fs.target" "ipfs-init.service" ];
       conflicts = [ "ipfs.service" "ipfs-offline.service"];
     };
