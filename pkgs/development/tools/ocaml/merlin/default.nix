@@ -16,6 +16,8 @@ stdenv.mkDerivation {
     sha256 = "06h0klzzvb62rzb6m0pq8aa207fz7z54mjr05vky4wv8195bbjiy";
   };
 
+  patches = [ ./neomake.patch ];
+
   buildInputs = [ ocaml findlib yojson ]
     ++ stdenv.lib.optional withEmacsMode emacs;
 

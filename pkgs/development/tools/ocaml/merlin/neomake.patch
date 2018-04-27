@@ -1,0 +1,58 @@
+From 6afb3532204d63e0c2a98a23da1907bd9a219f67 Mon Sep 17 00:00:00 2001
+From: Bobby Priambodo <bobby.priambodo@gmail.com>
+Date: Sun, 10 Dec 2017 10:28:46 +0700
+Subject: [PATCH] Fix Neomake autoload
+
+Instruct merlin.install to copy Neomake autoload files. Neomake
+expects makers to be under `makers` directory, and filetype
+specific configs in `makers/ft`. Also enable merlin as default.
+---
+ merlin.install                                  |  1 +
+ vim/merlin/autoload/neomake/makers/ft/ocaml.vim | 11 +++++++++++
+ vim/merlin/autoload/neomake/ocaml.vim           |  7 -------
+ 3 files changed, 12 insertions(+), 7 deletions(-)
+ create mode 100644 vim/merlin/autoload/neomake/makers/ft/ocaml.vim
+ delete mode 100644 vim/merlin/autoload/neomake/ocaml.vim
+
+diff --git a/merlin.install b/merlin.install
+index 3e66e186d..09b9aeae0 100644
+--- a/merlin.install
++++ b/merlin.install
+@@ -6,6 +6,7 @@ bin: [
+ share: [
+   "vim/merlin/autoload/ctrlp/locate.vim" { "vim/autoload/ctrlp/locate.vim" }
+   "vim/merlin/autoload/ctrlp/outline.vim" { "vim/autoload/ctrlp/outline.vim" }
++  "vim/merlin/autoload/neomake/makers/ft/ocaml.vim" { "vim/autoload/neomake/makers/ft/ocaml.vim" }
+   "vim/merlin/autoload/merlin_find.vim" { "vim/autoload/merlin_find.vim" }
+   "vim/merlin/autoload/merlin.py" { "vim/autoload/merlin.py" }
+   "vim/merlin/autoload/merlin_type.vim" { "vim/autoload/merlin_type.vim" }
+diff --git a/vim/merlin/autoload/neomake/makers/ft/ocaml.vim b/vim/merlin/autoload/neomake/makers/ft/ocaml.vim
+new file mode 100644
+index 000000000..a921ddeac
+--- /dev/null
++++ b/vim/merlin/autoload/neomake/makers/ft/ocaml.vim
+@@ -0,0 +1,11 @@
++function! neomake#makers#ft#ocaml#EnabledMakers() abort
++  return ['merlin']
++endfunction
++
++function! neomake#makers#ft#ocaml#merlin() abort
++  let maker = {}
++  function! maker.get_list_entries(jobinfo)
++    return merlin#ErrorLocList()
++  endfunction
++  return maker
++endfunction
+diff --git a/vim/merlin/autoload/neomake/ocaml.vim b/vim/merlin/autoload/neomake/ocaml.vim
+deleted file mode 100644
+index 44622e2fb..000000000
+--- a/vim/merlin/autoload/neomake/ocaml.vim
++++ /dev/null
+@@ -1,7 +0,0 @@
+-function! neomake#makers#ft#ocaml#merlin()
+-  let maker = {}
+-  function! maker.get_list_entries(jobinfo)
+-    return merlin#ErrorLocList()
+-  endfunction
+-  return maker
+-endfunction
