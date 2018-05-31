@@ -1,19 +1,21 @@
-{ fetchurl, stdenv, ocamlPackages, coq, isabelle }:
+{ fetchzip, stdenv, autoconf, automake, ocamlPackages, coq, isabelle }:
 
 stdenv.mkDerivation rec {
   name    = "why3-${version}";
-  version = "0.88.3";
+  version = "unstable";
 
-  src = fetchurl {
-    url    = https://gforge.inria.fr/frs/download.php/file/37313/why3-0.88.3.tar.gz;
-    sha256 = "0limdqy9l5bjzwhdalcfdyh0b6laxgiphhvr4bby9p0030agssiy";
+  src = fetchzip {
+    url = "https://gitlab.inria.fr/why3/why3/repository/archive.tar.gz?ref=4bfdab0de88488896d826b0f77a8dae3c164a486";
+    sha256 = "0f237y8r1z8bpywjkx914xy2ri2jcjx1jnd1kq8zvgdrxfc78m0y";
   };
 
-  buildInputs = [ isabelle ] ++ (with ocamlPackages; [
+  buildInputs = [ autoconf automake isabelle ] ++ (with ocamlPackages; [
       ocaml findlib lablgtk ocamlgraph zarith menhir ]) ++
     stdenv.lib.optionals (ocamlPackages.ocaml == coq.ocaml ) [
       coq coq.camlp5
     ];
+
+  preConfigure = "autoconf && (automake --add-missing 2> /dev/null || true)";
 
   installTargets = [ "install" "install-lib" ];
 
