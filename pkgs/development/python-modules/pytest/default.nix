@@ -16,6 +16,8 @@ buildPythonPackage rec {
     sha256 = "2d7c49e931316cc7d1638a3e5f54f5d7b4e5225972b3c9838f3584788d27f349";
   };
 
+  patches = [ ./fix-test.patch ];
+
   checkInputs = [ hypothesis mock ];
   buildInputs = [ setuptools_scm ];
   propagatedBuildInputs = [ attrs py setuptools six pluggy more-itertools atomicwrites]

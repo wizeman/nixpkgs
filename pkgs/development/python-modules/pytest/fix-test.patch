@@ -1,0 +1,12 @@
+diff --git a/testing/python/metafunc.py b/testing/python/metafunc.py
+index f2732ef..ff21a2c 100644
+--- a/testing/python/metafunc.py
++++ b/testing/python/metafunc.py
+@@ -187,6 +187,7 @@ class TestMetafunc(object):
+         assert metafunc._calls[2].id == "x1-a"
+         assert metafunc._calls[3].id == "x1-b"
+ 
++    @hypothesis.settings(timeout=hypothesis.unlimited)
+     @hypothesis.given(strategies.text() | strategies.binary())
+     def test_idval_hypothesis(self, value):
+         from _pytest.python import _idval
