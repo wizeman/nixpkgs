@@ -2,7 +2,7 @@
 , src, patches ? [], extraConfigureFlags ? [], extraMakeFlags ? [], overrides ? {}, meta
 , isTorBrowserLike ? false }:
 
-{ lib, stdenv, pkgconfig, pango, perl, python, zip, libIDL
+{ lib, stdenv, pkgconfig, pango, perl, python, python3, zip, libIDL
 , libjpeg, zlib, dbus, dbus-glib, bzip2, xorg
 , freetype, fontconfig, file, nspr, nss, libnotify
 , yasm, libGLU_combined, sqlite, unzip, makeWrapper
@@ -94,7 +94,7 @@ stdenv.mkDerivation (rec {
   NIX_CFLAGS_COMPILE = "-I${nspr.dev}/include/nspr -I${nss.dev}/include/nss";
 
   nativeBuildInputs =
-    [ autoconf213 which gnused pkgconfig perl python cargo rustc ]
+    [ autoconf213 which gnused pkgconfig perl python python3 cargo rustc ]
     ++ lib.optional gtk3Support wrapGAppsHook;
 
   preConfigure = ''

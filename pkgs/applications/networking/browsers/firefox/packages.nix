@@ -6,10 +6,6 @@ let
 
   nixpkgsPatches = [
     ./env_var_for_system_dir.patch
-
-    # this one is actually an omnipresent bug
-    # https://bugzilla.mozilla.org/show_bug.cgi?id=1444519
-    ./fix-pa-context-connect-retval.patch
   ];
 
   firefox60_aarch64_skia_patch = fetchpatch {
@@ -24,10 +20,10 @@ rec {
 
   firefox = common rec {
     pname = "firefox";
-    version = "60.0.2";
+    version = "61.0";
     src = fetchurl {
-      url = "mirror://mozilla/firefox/releases/${version}/source/firefox-${version}.source.tar.xz";
-      sha512 = "2my4v8al3swwbiqcp3a5y89imly6apc2p9q0cbkhbiz0sqylc0l02jh0qp95migmik56m4prwqdi81kgqs7cw5r2np3mm6sc1b45mkg";
+      url = "https://archive.mozilla.org/pub/firefox/releases/61.0/source/firefox-61.0.source.tar.xz";
+      sha512 = "0ww2j5gxr7h142lfi0xvckvd7vmnha72j8c0wyyqmmp1rr341f10vfd0hvawiagik4ih6dz8h5pmkl67zdnwqc3z75vwnci20ajlg2s";
     };
 
     patches = nixpkgsPatches ++ [
