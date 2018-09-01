@@ -1,4 +1,4 @@
-{ fetchurl, stdenv, pkgconfig, libao, readline, json_c, libgcrypt, libav, curl }:
+{ fetchurl, stdenv, pkgconfig, libao, readline, json_c, libgcrypt, libav_12, curl }:
 
 stdenv.mkDerivation rec {
   name = "pianobar-2018.06.22";
@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ pkgconfig ];
   buildInputs = [
-    libao json_c libgcrypt libav curl
+    libao json_c libgcrypt libav_12 curl
   ];
 
   makeFlags="PREFIX=$(out)";
