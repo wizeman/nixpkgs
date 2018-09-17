@@ -1,0 +1,15 @@
+diff --git a/node_build/builder.js b/node_build/builder.js
+index cc01806b..f5870a1b 100644
+--- a/node_build/builder.js
++++ b/node_build/builder.js
+@@ -200,8 +200,8 @@ var execJs = function (js, builder, file, fileName, callback) {
+     // # 74 "./wire/Message.h"
+     js = js.replace(/\n#.*\n/g, '');
+     var to = setTimeout(function () {
+-        throw new Error("Inline JS did not return after 120 seconds [" + js + "]");
+-    }, 120000);
++        throw new Error("Inline JS did not return after 1200 seconds [" + js + "]");
++    }, 1200000);
+ 
+     var REQUIRE = function (str) {
+         if (typeof(str) !== 'string') {
