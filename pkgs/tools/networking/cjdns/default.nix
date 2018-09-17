@@ -11,6 +11,8 @@ stdenv.mkDerivation {
     sha256 = "13zhcfwx8c3vdcf6ifivrgf8q7mgx00vnxcspdz88zk7dh65c6jn";
   };
 
+  patches = [ ./timeout.patch ];
+
   buildInputs = [ which python27 nodejs ] ++
     # for flock
     stdenv.lib.optional stdenv.isLinux utillinux;
