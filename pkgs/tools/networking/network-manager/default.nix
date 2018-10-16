@@ -73,7 +73,7 @@ in stdenv.mkDerivation rec {
     })
     (fetchurl {
       url = https://gitlab.freedesktop.org/NetworkManager/NetworkManager/commit/0a3755c1799d3a4dc1875d4c59c7c568a64c8456.patch;
-      sha256 = "af1717f7c6fdd6dadb4082dd847f4bbc42cf1574833299f3e47024e785533f2e";
+      sha256 = "1flnxgjjrrlzdk5klx47l8y8rg1vmzdd9vhzxxq6wiwyvd4bd92r";
     })
     (substituteAll {
       src = ./fix-paths.patch;
