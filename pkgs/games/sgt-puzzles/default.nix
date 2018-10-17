@@ -5,11 +5,11 @@
 
 stdenv.mkDerivation rec {
   name = "sgt-puzzles-r${version}";
-  version = "20180429.31384ca";
+  version = "20181007.f281644";
 
   src = fetchurl {
    url = "http://www.chiark.greenend.org.uk/~sgtatham/puzzles/puzzles-${version}.tar.gz";
-   sha256 = "0r97kyy0rxgzw78lby2kwi8fg1yimw8a3biy5psgd983d0nwcf9l";
+   sha256 = "0fi1pbpjfjd8bqir9q15365hsiljdlv5nyp8j6ldmqzp15m57isv";
   };
 
   nativeBuildInputs = [ autoreconfHook makeWrapper pkgconfig perl wrapGAppsHook ];
