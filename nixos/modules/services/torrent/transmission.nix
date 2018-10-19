@@ -145,6 +145,7 @@ in
           ${getLib pkgs.lz4}/lib/liblz4*.so*               mr,
           ${getLib pkgs.libkrb5}/lib/lib*.so*              mr,
           ${getLib pkgs.keyutils}/lib/libkeyutils*.so*     mr,
+          ${getLib pkgs.utillinuxMinimal}/lib/lib*.so*     mr,
 
           @{PROC}/sys/kernel/random/uuid   r,
           @{PROC}/sys/vm/overcommit_memory r,
