@@ -2,12 +2,16 @@
 
 stdenv.mkDerivation rec {
   name = "eprover-${version}";
-  version = "2.2";
+  version = "2.3pre002";
 
   src = fetchurl {
-    url = "https://wwwlehre.dhbw-stuttgart.de/~sschulz/WORK/E_DOWNLOAD/V_${version}/E.tgz";
-    sha256 = "08ihpwgkz0l7skr42iw8lm202kqr51i792bs61qsbnk9gsjlab1c";
+    url = "https://github.com/eprover/eprover/archive/E-${version}.tar.gz";
+    sha256 = "1dq110r63jji39szz1hlazvyxrxa5c17pjjsqc8csh79r3jckm7v";
   };
+
+  patches = [
+    ./eho.patch
+  ];
 
   buildInputs = [ which ];
 
@@ -17,6 +21,7 @@ stdenv.mkDerivation rec {
   configureFlags = [
     "--exec-prefix=$(out)"
     "--man-prefix=$(out)/share/man"
+    "--enable-ho"
   ];
 
   meta = with stdenv.lib; {
