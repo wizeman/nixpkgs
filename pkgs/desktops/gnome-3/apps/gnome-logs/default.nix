@@ -16,7 +16,6 @@ stdenv.mkDerivation rec {
   ];
 
   nativeBuildInputs = [
-    (python3.withPackages (pkgs: with pkgs; [ dogtail ]))
     meson ninja pkgconfig wrapGAppsHook gettext itstool desktop-file-utils
     libxml2 libxslt docbook_xsl docbook_xml_dtd_43
   ];
