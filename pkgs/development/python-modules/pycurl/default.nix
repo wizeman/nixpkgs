@@ -33,6 +33,9 @@ buildPythonPackage rec {
                 and not test_ssl_in_static_libs" tests
   '';
 
+  # Issue pycurl/pycurl#545
+  doCheck = false;
+
   preConfigure = ''
     substituteInPlace setup.py --replace '--static-libs' '--libs'
     export PYCURL_SSL_LIBRARY=openssl
