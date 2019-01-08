@@ -22,6 +22,8 @@ buildPythonPackage rec {
                     and not test_rsyncignore"
   '';
 
+  doCheck = false;
+
   meta = with stdenv.lib; {
     description = "py.test xdist plugin for distributed testing and loop-on-failing modes";
     homepage = https://github.com/pytest-dev/pytest-xdist;
