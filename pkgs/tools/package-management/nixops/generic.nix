@@ -7,6 +7,12 @@ python2Packages.buildPythonApplication {
   name = "nixops-${version}";
   inherit version src;
 
+  preConfigure = ''
+    # Workaround for NixOS/nixops#643
+    substituteInPlace nixops/deployment.py \
+      --replace 'if not allow_reboot and not force_reboot:' 'if not allow_reboot:'
+  '';
+
   buildInputs = [ libxslt ];
 
   pythonPath = with python2Packages;
