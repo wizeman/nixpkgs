@@ -93,6 +93,9 @@ stdenv.mkDerivation rec {
     sed -i 's,/usr/share/zoneinfo/,${tzdata}/share/zoneinfo/,' src/time/zoneinfo_unix.go
   '' + optionalString stdenv.isAarch32 ''
     echo '#!${stdenv.shell}' > misc/cgo/testplugin/test.bash
+  '' + optionalString stdenv.isAarch64 ''
+    # Remove test due to failure (issue golang/go#29657)
+    rm src/runtime/softfloat64_test.go
   '' + optionalString stdenv.isDarwin ''
     substituteInPlace src/race.bash --replace \
       "sysctl machdep.cpu.extfeatures | grep -qv EM64T" true
