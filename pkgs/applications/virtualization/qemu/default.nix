@@ -73,6 +73,7 @@ stdenv.mkDerivation rec {
   patches = [
     ./no-etc-install.patch
     ./fix-qemu-ga.patch
+    ./aarch64-float.patch
   ] ++ optional nixosTestRunner ./force-uid0-on-9p.patch
     ++ optional pulseSupport ./fix-hda-recording.patch
     ++ optionals stdenv.hostPlatform.isMusl [
