@@ -381,7 +381,7 @@ sub addEntry {
         $conf .= "  " . ($xen ? "module" : "kernel") . " $kernel $kernelParams\n";
         $conf .= "  " . ($xen ? "module" : "initrd") . " $initrd\n\n";
     } else {
-        $conf .= "menuentry \"$name\" {\n";
+        $conf .= "menuentry \"$name\" --unrestricted {\n";
         $conf .= $grubBoot->search . "\n";
         if ($copyKernels == 0) {
             $conf .= $grubStore->search . "\n";
