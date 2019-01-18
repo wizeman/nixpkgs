@@ -6,7 +6,7 @@ let
 
   cfg = config.services.packagekit;
 
-  backend = "nix";
+  backend = "test_nop";
 
   packagekitConf = ''
 [Daemon]
