@@ -23,11 +23,11 @@
 buildPythonPackage rec {
   # also bump cryptography_vectors
   pname = "cryptography";
-  version = "2.4.2";
+  version = "2.5";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "1pc60dksi9w9mshl6cvn7gdjazbp3pmydy3qp9wgy5wzd8n0b9h5";
+    sha256 = "4946b67235b9d2ea7d31307be9d5ad5959d6c4a8f98f900157b47abddf698401";
   };
 
   outputs = [ "out" "dev" ];
